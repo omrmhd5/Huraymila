@@ -1,0 +1,307 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Harimlaa Healthy City Design System - All colors MUST be HSL */
+
+@layer base {
+  :root {
+    /* Core Colors - Harmonious Healthy City Theme */
+    --background: 35 25% 92%;       /* Light Brown Background */
+    --foreground: 140 8% 15%;       /* Dark Green Text */
+
+    --card: 35 15% 96%;             /* Very Light Brown Cards */
+    --card-foreground: 140 8% 15%;
+
+    --popover: 35 15% 96%;          /* Very Light Brown Popover */
+    --popover-foreground: 140 8% 15%;
+
+    /* Harmonious Green Primary */
+    --primary: 142 55% 35%;         /* Softer Green */
+    --primary-foreground: 0 0% 100%;
+    --primary-light: 142 35% 88%;
+
+    /* Warm Beige Secondary */
+    --secondary: 35 45% 75%;        /* Warm Beige */
+    --secondary-foreground: 140 8% 15%;
+    --secondary-light: 35 35% 92%;
+
+    /* Soft Gold Accent */
+    --accent: 45 65% 65%;           /* Softer Gold */
+    --accent-foreground: 140 8% 15%;
+    --accent-light: 45 45% 90%;
+
+    /* Earthy Muted Tones */
+    --muted: 35 20% 88%;            /* Light Earthy Tone */
+    --muted-foreground: 140 8% 46%;
+
+    --destructive: 0 65% 55%;       /* Softer Red */
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 35 25% 82%;           /* Soft Brown Border */
+    --input: 35 20% 90%;            /* Light Brown Input */
+    --ring: 142 55% 35%;
+
+    /* Design System Extensions */
+    --radius: 0.75rem;
+    
+    /* Gradients - Harmonious Earth Tones */
+    --gradient-primary: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--secondary)) 100%);
+    --gradient-hero: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(142 45% 40%) 50%, hsl(var(--secondary)) 100%);
+    --gradient-card: linear-gradient(145deg, hsl(var(--card)) 0%, hsl(35 12% 94%) 100%);
+    
+    /* Shadows - Warm Earth Tones */
+    --shadow-soft: 0 4px 16px -4px hsl(35 20% 70% / 0.15);
+    --shadow-card: 0 8px 32px -8px hsl(35 25% 65% / 0.2);
+    --shadow-hero: 0 20px 60px -12px hsl(var(--primary) / 0.25);
+    
+    /* Heritage Pattern Colors - Updated for Harmony */
+    --pattern-primary: 142 55% 35%;     /* Softer Green */
+    --pattern-secondary: 35 20% 88%;    /* Light Earthy Tone */
+    --pattern-light: 45 45% 90%;        /* Soft Gold Light */
+
+    --sidebar-background: 0 0% 98%;
+
+    --sidebar-foreground: 240 5.3% 26.1%;
+
+    --sidebar-primary: 240 5.9% 10%;
+
+    --sidebar-primary-foreground: 0 0% 98%;
+
+    --sidebar-accent: 240 4.8% 95.9%;
+
+    --sidebar-accent-foreground: 240 5.9% 10%;
+
+    --sidebar-border: 220 13% 91%;
+
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+
+  .dark {
+    /* Dark Mode - Healthy City Theme */
+    --background: 140 20% 8%;
+    --foreground: 140 10% 95%;
+
+    --card: 140 15% 12%;
+    --card-foreground: 140 10% 95%;
+
+    --popover: 140 15% 12%;
+    --popover-foreground: 140 10% 95%;
+
+    /* Dark Mode Primary - Softer Green */
+    --primary: 142 55% 50%;
+    --primary-foreground: 140 20% 8%;
+    --primary-light: 142 25% 25%;
+
+    /* Dark Mode Secondary - Muted Blue */
+    --secondary: 205 60% 60%;
+    --secondary-foreground: 140 20% 8%;
+    --secondary-light: 205 30% 20%;
+
+    /* Dark Mode Accent - Warm Gold */
+    --accent: 48 80% 60%;
+    --accent-foreground: 140 20% 8%;
+    --accent-light: 48 30% 20%;
+
+    --muted: 140 10% 15%;
+    --muted-foreground: 140 8% 70%;
+
+    --destructive: 0 65% 55%;
+    --destructive-foreground: 140 10% 95%;
+
+    --border: 140 15% 20%;
+    --input: 140 15% 18%;
+    --ring: 142 55% 50%;
+    
+    /* Dark Mode Gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--secondary)) 100%);
+    --gradient-hero: linear-gradient(135deg, hsl(140 20% 8%) 0%, hsl(142 30% 15%) 50%, hsl(205 30% 20%) 100%);
+    --gradient-card: linear-gradient(145deg, hsl(140 15% 12%) 0%, hsl(140 12% 15%) 100%);
+    --sidebar-background: 240 5.9% 10%;
+    --sidebar-foreground: 240 4.8% 95.9%;
+    --sidebar-primary: 224.3 76.3% 48%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 240 3.7% 15.9%;
+    --sidebar-accent-foreground: 240 4.8% 95.9%;
+    --sidebar-border: 240 3.7% 15.9%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-family: 'Cairo', 'Inter', system-ui, sans-serif;
+  }
+
+  html[dir="rtl"] {
+    text-align: right;
+  }
+
+  html[dir="ltr"] {
+    text-align: left;
+  }
+
+  /* Smooth scrolling */
+  html {
+    scroll-behavior: smooth;
+  }
+
+  /* Custom scrollbar */
+  ::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: hsl(var(--muted));
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: hsl(var(--primary));
+    border-radius: 4px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: hsl(var(--primary) / 0.8);
+  }
+
+  /* Heritage Pattern - Traditional Harimlaa Patterns */
+  .heritage-pattern {
+    background-image: 
+      /* Traditional geometric pattern inspired by Harimlaa architecture */
+      radial-gradient(circle at 50% 50%, hsl(var(--pattern-secondary) / 0.15) 0%, transparent 25%),
+      /* Clay brick pattern */
+      linear-gradient(45deg, hsl(var(--pattern-primary) / 0.08) 12.5%, transparent 12.5%, transparent 37.5%, hsl(var(--pattern-primary) / 0.08) 37.5%, hsl(var(--pattern-primary) / 0.08) 62.5%, transparent 62.5%, transparent 87.5%, hsl(var(--pattern-primary) / 0.08) 87.5%),
+      /* Traditional arabesque pattern */
+      linear-gradient(-45deg, hsl(var(--pattern-light) / 0.1) 25%, transparent 25%, transparent 75%, hsl(var(--pattern-light) / 0.1) 75%),
+      /* Palm tree inspired vertical lines */
+      repeating-linear-gradient(90deg, transparent, transparent 60px, hsl(var(--pattern-secondary) / 0.05) 60px, hsl(var(--pattern-secondary) / 0.05) 62px);
+    background-size: 120px 120px, 60px 60px, 40px 40px, 200px 100%;
+    background-position: 0 0, 30px 30px, 0 0, 0 0;
+  }
+
+  /* Animation for counting numbers */
+  @keyframes countUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .animate-count-up {
+    animation: countUp 0.6s ease-out;
+  }
+
+  /* Enhanced button hover effects */
+  .btn-enhanced {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .btn-enhanced::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+    transition: left 0.5s;
+  }
+
+  .btn-enhanced:hover::before {
+    left: 100%;
+  }
+
+  .btn-enhanced:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px -5px hsl(var(--primary) / 0.4);
+  }
+
+  /* Enhanced scroll indicator */
+  .scroll-indicator {
+    animation: bounce 2s infinite;
+  }
+
+  @keyframes bounce {
+    0%, 20%, 50%, 80%, 100% {
+      transform: translateY(0);
+    }
+    40% {
+      transform: translateY(-10px);
+    }
+    60% {
+      transform: translateY(-5px);
+    }
+  }
+
+  /* Glow Effect for Community Hub */
+  .glow-effect {
+    box-shadow: 
+      0 0 20px rgba(245, 158, 11, 0.3),
+      0 0 40px rgba(245, 158, 11, 0.2),
+      0 0 60px rgba(245, 158, 11, 0.1);
+    animation: glowPulse 4s ease-in-out infinite;
+  }
+
+  @keyframes glowPulse {
+    0%, 100% { 
+      box-shadow: 
+        0 0 20px rgba(245, 158, 11, 0.3),
+        0 0 40px rgba(245, 158, 11, 0.2),
+        0 0 60px rgba(245, 158, 11, 0.1);
+    }
+    50% { 
+      box-shadow: 
+        0 0 30px rgba(245, 158, 11, 0.4),
+        0 0 60px rgba(245, 158, 11, 0.3),
+        0 0 90px rgba(245, 158, 11, 0.2);
+    }
+  }
+
+  /* Simple Flow Animations for Network Lines */
+  @keyframes communityDataFlow {
+    0% { 
+      background: linear-gradient(90deg, transparent 0%, transparent 100%);
+    }
+    25% { 
+      background: linear-gradient(90deg, rgba(251, 146, 60, 0.8) 0%, transparent 30%, transparent 100%);
+    }
+    50% { 
+      background: linear-gradient(90deg, transparent 0%, rgba(251, 146, 60, 0.8) 20%, transparent 50%, transparent 100%);
+    }
+    75% { 
+      background: linear-gradient(90deg, transparent 0%, transparent 30%, rgba(251, 146, 60, 0.8) 60%, transparent 100%);
+    }
+    100% { 
+      background: linear-gradient(90deg, transparent 0%, transparent 100%);
+    }
+  }
+
+  @keyframes organizationServiceFlow {
+    0% { 
+      background: linear-gradient(90deg, transparent 0%, transparent 100%);
+    }
+    25% { 
+      background: linear-gradient(90deg, transparent 0%, transparent 70%, rgba(34, 197, 94, 0.8) 100%);
+    }
+    50% { 
+      background: linear-gradient(90deg, transparent 0%, transparent 50%, rgba(34, 197, 94, 0.8) 80%, transparent 100%);
+    }
+    75% { 
+      background: linear-gradient(90deg, transparent 0%, rgba(34, 197, 94, 0.8) 40%, transparent 70%, transparent 100%);
+    }
+    100% { 
+      background: linear-gradient(90deg, transparent 0%, transparent 100%);
+    }
+  }
+}

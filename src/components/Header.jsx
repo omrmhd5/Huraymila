@@ -1,0 +1,252 @@
+import React, { useState, useEffect } from "react";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { 
+  Menu, 
+  X, 
+  Globe, 
+  Sun, 
+  Moon, 
+  User,
+  LogOut,
+  Settings,
+  Bell
+} from "lucide-react";
+import { useAuth } from "./AuthContext";
+import { useTheme } from "@/contexts/ThemeContext";
+import { Link, useLocation } from "react-router-dom";
+
+const Header = () => {
+  const { user, signOut } = useAuth();
+  const { language, theme, setLanguage, setTheme } = useTheme();
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
+  const location = useLocation();
+
+  useEffect(() => {
+    // Close mobile menu when route changes
+    setIsMobileMenuOpen(false);
+  }, [location]);
+
+  const toggleMobileMenu = () => {
+    setIsMobileMenuOpen(!isMobileMenuOpen);
+  };
+
+  const toggleUserMenu = () => {
+    setIsUserMenuOpen(!isUserMenuOpen);
+  };
+
+  const handleLanguageChange = () => {
+    const newLanguage = language === "ar" ? "en" : "ar";
+    setLanguage(newLanguage);
+  };
+
+  const handleThemeChange = () => {
+    const newTheme = theme === "light" ? "dark" : "light";
+    setTheme(newTheme);
+  };
+
+  const navigationItems = [
+    { href: "/", label: language === "ar" ? "الرئيسية" : "Home" },
+    { href: "/about", label: language === "ar" ? "من نحن" : "About" },
+    { href: "/initiatives", label: language === "ar" ? "المبادرات" : "Initiatives" },
+    { href: "/volunteer", label: language === "ar" ? "التطوع" : "Volunteer" },
+    { href: "/contact", label: language === "ar" ? "اتصل بنا" : "Contact" },
+  ];
+
+  const isActive = (href) => location.pathname === href;
+
+  return (
+    <header className="bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b border-border sticky top-0 z-50">
+      <div className="container mx-auto px-4">
+        <div className="flex items-center justify-between h-16">
+          {/* Logo */}
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
+              <span className="text-white font-bold text-lg">ح</span>
+            </div>
+            <div className="hidden sm:block">
+              <h1 className="text-xl font-bold text-primary">
+                {language === "ar" ? "مدينة حريملاء الصحية" : "Harimlaa Healthy City"}
+              </h1>
+              <p className="text-xs text-muted-foreground">
+                {language === "ar" ? "مبادرة وطنية" : "National Initiative"}
+              </p>
+            </div>
+          </div>
+
+          {/* Desktop Navigation */}
+          <nav className="hidden md:flex items-center gap-6">
+            {navigationItems.map((item) => (
+              <Link
+                key={item.href}
+                to={item.href}
+                className={`text-sm font-medium transition-colors hover:text-primary ${
+                  isActive(item.href)
+                    ? "text-primary"
+                    : "text-muted-foreground"
+                }`}
+              >
+                {item.label}
+              </Link>
+            ))}
+          </nav>
+
+          {/* Right Side Controls */}
+          <div className="flex items-center gap-3">
+            {/* Language Toggle */}
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={handleLanguageChange}
+              className="hidden sm:flex"
+            >
+              <Globe className="w-4 h-4" />
+              <span className="ml-2 text-xs">
+                {language === "ar" ? "EN" : "عربي"}
+              </span>
+            </Button>
+
+            {/* Theme Toggle */}
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={handleThemeChange}
+              className="hidden sm:flex"
+            >
+              {theme === "light" ? (
+                <Moon className="w-4 h-4" />
+              ) : (
+                <Sun className="w-4 h-4" />
+              )}
+            </Button>
+
+            {/* User Menu */}
+            {user ? (
+              <div className="relative">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={toggleUserMenu}
+                  className="flex items-center gap-2"
+                >
+                  <User className="w-4 h-4" />
+                  <span className="hidden sm:block text-sm">
+                    {user.email?.split("@")[0] || "User"}
+                  </span>
+                </Button>
+
+                {isUserMenuOpen && (
+                  <div className="absolute right-0 mt-2 w-48 bg-background border border-border rounded-lg shadow-lg py-2 z-50">
+                    <div className="px-4 py-2 border-b border-border">
+                      <p className="text-sm font-medium">{user.email}</p>
+                      <p className="text-xs text-muted-foreground">
+                        {user.user_metadata?.full_name || "User"}
+                      </p>
+                    </div>
+                    
+                    <Link
+                      to="/admin"
+                      className="flex items-center gap-2 px-4 py-2 text-sm hover:bg-muted transition-colors"
+                      onClick={() => setIsUserMenuOpen(false)}
+                    >
+                      <Settings className="w-4 h-4" />
+                      {language === "ar" ? "الإعدادات" : "Settings"}
+                    </Link>
+                    
+                    <button
+                      onClick={() => {
+                        signOut();
+                        setIsUserMenuOpen(false);
+                      }}
+                      className="flex items-center gap-2 px-4 py-2 text-sm hover:bg-muted transition-colors w-full text-left text-destructive"
+                    >
+                      <LogOut className="w-4 h-4" />
+                      {language === "ar" ? "تسجيل الخروج" : "Sign Out"}
+                    </button>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <div className="flex items-center gap-2">
+                <Link to="/auth">
+                  <Button variant="outline" size="sm">
+                    {language === "ar" ? "تسجيل الدخول" : "Sign In"}
+                  </Button>
+                </Link>
+                <Link to="/auth">
+                  <Button size="sm">
+                    {language === "ar" ? "إنشاء حساب" : "Sign Up"}
+                  </Button>
+                </Link>
+              </div>
+            )}
+
+            {/* Mobile Menu Button */}
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={toggleMobileMenu}
+              className="md:hidden"
+            >
+              {isMobileMenuOpen ? (
+                <X className="w-5 h-5" />
+              ) : (
+                <Menu className="w-5 h-5" />
+              )}
+            </Button>
+          </div>
+        </div>
+
+        {/* Mobile Navigation */}
+        {isMobileMenuOpen && (
+          <div className="md:hidden border-t border-border py-4">
+            <nav className="flex flex-col space-y-3">
+              {navigationItems.map((item) => (
+                <Link
+                  key={item.href}
+                  to={item.href}
+                  className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+                    isActive(item.href)
+                      ? "bg-primary text-primary-foreground"
+                      : "text-muted-foreground hover:text-primary hover:bg-muted"
+                  }`}
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  {item.label}
+                </Link>
+              ))}
+              
+              {/* Mobile Controls */}
+              <div className="flex items-center gap-2 pt-4 border-t border-border">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handleLanguageChange}
+                  className="flex-1"
+                >
+                  <Globe className="w-4 h-4 mr-2" />
+                  {language === "ar" ? "English" : "عربي"}
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handleThemeChange}
+                  className="flex-1"
+                >
+                  {theme === "light" ? (
+                    <Moon className="w-4 h-4" />
+                  ) : (
+                    <Sun className="w-4 h-4" />
+                  )}
+                </Button>
+              </div>
+            </nav>
+          </div>
+        )}
+      </div>
+    </header>
+  );
+};
+
+export default Header;
