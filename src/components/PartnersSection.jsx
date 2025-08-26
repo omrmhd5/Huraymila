@@ -1,5 +1,16 @@
 import { Card, CardContent } from "@/components/ui/card";
-import { Building, Heart, GraduationCap, Droplets, Car, Shield, Users, Target, UserCheck, HandHeart } from "lucide-react";
+import {
+  Building,
+  Heart,
+  GraduationCap,
+  Droplets,
+  Car,
+  Shield,
+  Users,
+  Target,
+  UserCheck,
+  HandHeart,
+} from "lucide-react";
 
 const PartnersSection = () => {
   const partners = [
@@ -7,86 +18,86 @@ const PartnersSection = () => {
       name: "وزارة الصحة",
       role: "سياسات صحية",
       icon: Heart,
-      color: "bg-red-500"
+      color: "bg-red-500",
     },
     {
       name: "بلدية حريملاء",
       role: "خدمات محلية",
       icon: Building,
-      color: "bg-blue-500"
+      color: "bg-blue-500",
     },
     {
       name: "إدارة التعليم",
       role: "برامج توعوية",
       icon: GraduationCap,
-      color: "bg-green-500"
+      color: "bg-green-500",
     },
     {
       name: "شركة المياه",
       role: "جودة المياه",
       icon: Droplets,
-      color: "bg-cyan-500"
+      color: "bg-cyan-500",
     },
     {
       name: "إدارة المرور",
       role: "سلامة مرورية",
       icon: Car,
-      color: "bg-orange-500"
+      color: "bg-orange-500",
     },
     {
       name: "الدفاع المدني",
       role: "استجابة طوارئ",
       icon: Shield,
-      color: "bg-purple-500"
+      color: "bg-purple-500",
     },
     {
       name: "المنظمات الخيرية",
       role: "دعم اجتماعي",
       icon: HandHeart,
-      color: "bg-pink-500"
+      color: "bg-pink-500",
     },
     {
       name: "الهيئة العامة للغذاء والدواء",
       role: "سلامة غذائية",
       icon: Shield,
-      color: "bg-indigo-500"
+      color: "bg-indigo-500",
     },
     {
       name: "وزارة البيئة",
       role: "حماية بيئية",
       icon: Building,
-      color: "bg-emerald-500"
+      color: "bg-emerald-500",
     },
     {
       name: "إدارة الطوارئ الطبية",
       role: "خدمات إسعافية",
       icon: Heart,
-      color: "bg-red-600"
+      color: "bg-red-600",
     },
     {
       name: "مكتب العمل",
       role: "تنمية مهارات",
       icon: Building,
-      color: "bg-blue-600"
+      color: "bg-blue-600",
     },
     {
       name: "إدارة المتاحف والتراث",
       role: "حفظ تراث",
       icon: Building,
-      color: "bg-amber-500"
+      color: "bg-amber-500",
     },
     {
       name: "مركز الأحياء",
       role: "تطوير مجتمعي",
       icon: Users,
-      color: "bg-teal-500"
+      color: "bg-teal-500",
     },
     {
       name: "هيئة الرياضة",
       role: "نشاط رياضي",
       icon: Users,
-      color: "bg-lime-500"
-    }
+      color: "bg-lime-500",
+    },
   ];
 
   const stats = [
@@ -94,26 +105,26 @@ const PartnersSection = () => {
       icon: Users,
       value: "19",
       label: "جهات شريكة",
-      color: "text-primary"
+      color: "text-primary",
     },
     {
       icon: Target,
       value: "50+",
       label: "مبادرة تكاملية",
-      color: "text-secondary"
+      color: "text-secondary",
     },
     {
       icon: UserCheck,
       value: "500+",
       label: "متطوع نشط",
-      color: "text-accent"
+      color: "text-accent",
     },
     {
       icon: HandHeart,
       value: "95%",
       label: "رضا المجتمع",
-      color: "text-primary"
-    }
+      color: "text-primary",
+    },
   ];
 
   return (
@@ -140,8 +151,12 @@ const PartnersSection = () => {
           <p className="text-lg text-muted-foreground mb-4">
             الركيزة الأساسية لكل المبادرات
           </p>
-          <div className="text-3xl font-bold text-primary">
-            500+ متطوع نشط
+          <div className="text-3xl font-bold text-primary">500+ متطوع نشط</div>
+          <div className="text-center mt-2">
+            <p className="text-md text-muted-foreground">
+              <span className="font-bold text-primary">20+</span> جهة شريكة تعمل
+              معنا لتحقيق الرؤية
+            </p>
           </div>
         </div>
 
@@ -150,9 +165,12 @@ const PartnersSection = () => {
           {partners.map((partner, index) => {
             const IconComponent = partner.icon;
             return (
-              <Card key={index} className="group hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
+              <Card
+                key={index}
+                className="group hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
                 <CardContent className="p-6 text-center">
-                  <div className={`w-16 h-16 ${partner.color} rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300`}>
+                  <div
+                    className={`w-16 h-16 ${partner.color} rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300`}>
                     <IconComponent className="h-8 w-8 text-white" />
                   </div>
                   <h4 className="font-semibold text-foreground mb-2 text-lg">
@@ -170,8 +188,9 @@ const PartnersSection = () => {
         {/* Collaboration Flow Description */}
         <div className="text-center mb-12">
           <p className="text-lg text-muted-foreground max-w-4xl mx-auto leading-relaxed">
-            جودة الحياة تتحقق بتكامل المجتمع والجهات في تقديم الخدمات وتطويرها. 
-            كل منظمة تقدم خدمات للمجتمع بينما تستفيد من بيانات المواطنين وملاحظاتهم لتحسين الأداء.
+            جودة الحياة تتحقق بتكامل المجتمع والجهات في تقديم الخدمات وتطويرها.
+            كل منظمة تقدم خدمات للمجتمع بينما تستفيد من بيانات المواطنين
+            وملاحظاتهم لتحسين الأداء.
           </p>
         </div>
 
@@ -180,14 +199,16 @@ const PartnersSection = () => {
           {stats.map((stat, index) => {
             const IconComponent = stat.icon;
             return (
-              <Card key={index} className="text-center p-6 bg-gradient-to-br from-primary/10 to-primary/5 border-primary/20">
-                <IconComponent className={`h-8 w-8 ${stat.color} mx-auto mb-3`} />
+              <Card
+                key={index}
+                className="text-center p-6 bg-gradient-to-br from-primary/10 to-primary/5 border-primary/20">
+                <IconComponent
+                  className={`h-8 w-8 ${stat.color} mx-auto mb-3`}
+                />
                 <div className={`text-3xl font-bold ${stat.color} mb-1`}>
                   {stat.value}
                 </div>
-                <p className="text-sm text-muted-foreground">
-                  {stat.label}
-                </p>
+                <p className="text-sm text-muted-foreground">{stat.label}</p>
               </Card>
             );
           })}
@@ -198,4 +219,3 @@ const PartnersSection = () => {
 };
 
 export default PartnersSection;
-

@@ -1,14 +1,25 @@
 import React, { useState } from "react";
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Mail, Phone, MapPin, Clock, Send, MessageSquare } from "lucide-react";
-import { useAuth } from "@/components/AuthContext";
+import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
 
 const Contact = () => {
@@ -18,7 +29,7 @@ const Contact = () => {
     email: "",
     phone: "",
     subject: "",
-    message: ""
+    message: "",
   });
   const [submitting, setSubmitting] = useState(false);
 
@@ -36,31 +47,35 @@ const Contact = () => {
   const handleInputChange = (e) => {
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value
+      [e.target.name]: e.target.value,
     });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
-    if (!formData.name.trim() || !formData.email.trim() || !formData.message.trim()) {
+
+    if (
+      !formData.name.trim() ||
+      !formData.email.trim() ||
+      !formData.message.trim()
+    ) {
       toast.error("يرجى ملء جميع الحقول المطلوبة");
       return;
     }
 
     setSubmitting(true);
-    
+
     try {
       // Mock implementation - simulate contact form submission
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+
       toast.success("تم إرسال رسالتك بنجاح! سنتواصل معك قريباً");
       setFormData({
         name: "",
         email: "",
         phone: "",
         subject: "",
-        message: ""
+        message: "",
       });
     } catch (error) {
       toast.error("حدث خطأ في إرسال الرسالة");
@@ -74,31 +89,30 @@ const Contact = () => {
       icon: Mail,
       title: "البريد الإلكتروني",
       value: "info@harimlaa-healthy.city",
-      description: "راسلنا عبر البريد الإلكتروني"
+      description: "راسلنا عبر البريد الإلكتروني",
     },
     {
       icon: Phone,
       title: "الهاتف",
       value: "+966-11-123-4567",
-      description: "اتصل بنا مباشرة"
+      description: "اتصل بنا مباشرة",
     },
     {
       icon: MapPin,
       title: "العنوان",
       value: "مدينة حريملاء، الرياض، المملكة العربية السعودية",
-      description: "موقع مبادرة المدينة الصحية"
+      description: "موقع مبادرة المدينة الصحية",
     },
     {
       icon: Clock,
       title: "ساعات العمل",
       value: "الأحد - الخميس: 8:00 ص - 4:00 م",
-      description: "أوقات العمل الرسمية"
-    }
+      description: "أوقات العمل الرسمية",
+    },
   ];
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
-      <Header />
       <main className="flex-1 container mx-auto px-4 py-8">
         <div className="text-center mb-8">
           <h1 className="text-4xl font-bold text-primary mb-4">اتصل بنا</h1>
@@ -127,9 +141,15 @@ const Contact = () => {
                       <info.icon className="w-5 h-5 text-primary" />
                     </div>
                     <div>
-                      <h4 className="font-medium text-foreground">{info.title}</h4>
-                      <p className="text-sm font-medium text-primary">{info.value}</p>
-                      <p className="text-xs text-muted-foreground">{info.description}</p>
+                      <h4 className="font-medium text-foreground">
+                        {info.title}
+                      </h4>
+                      <p className="text-sm font-medium text-primary">
+                        {info.value}
+                      </p>
+                      <p className="text-xs text-muted-foreground">
+                        {info.description}
+                      </p>
                     </div>
                   </div>
                 ))}
@@ -158,7 +178,8 @@ const Contact = () => {
                 </div>
                 <div className="mt-4 p-3 bg-muted/50 rounded-lg">
                   <p className="text-xs text-muted-foreground">
-                    <strong>ملاحظة:</strong> في أيام العطل الرسمية، قد تتغير ساعات العمل
+                    <strong>ملاحظة:</strong> في أيام العطل الرسمية، قد تتغير
+                    ساعات العمل
                   </p>
                 </div>
               </CardContent>
@@ -215,15 +236,25 @@ const Contact = () => {
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="subject">الموضوع</Label>
-                      <Select value={formData.subject} onValueChange={(value) => setFormData({...formData, subject: value})}>
+                      <Select
+                        value={formData.subject}
+                        onValueChange={(value) =>
+                          setFormData({ ...formData, subject: value })
+                        }>
                         <SelectTrigger>
                           <SelectValue placeholder="اختر موضوع الرسالة" />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="استفسار عام">استفسار عام</SelectItem>
-                          <SelectItem value="معلومات عن المبادرات">معلومات عن المبادرات</SelectItem>
+                          <SelectItem value="استفسار عام">
+                            استفسار عام
+                          </SelectItem>
+                          <SelectItem value="معلومات عن المبادرات">
+                            معلومات عن المبادرات
+                          </SelectItem>
                           <SelectItem value="التطوع">التطوع</SelectItem>
-                          <SelectItem value="شكوى أو اقتراح">شكوى أو اقتراح</SelectItem>
+                          <SelectItem value="شكوى أو اقتراح">
+                            شكوى أو اقتراح
+                          </SelectItem>
                           <SelectItem value="أخرى">أخرى</SelectItem>
                         </SelectContent>
                       </Select>
@@ -243,7 +274,10 @@ const Contact = () => {
                     />
                   </div>
 
-                  <Button type="submit" className="w-full" disabled={submitting}>
+                  <Button
+                    type="submit"
+                    className="w-full"
+                    disabled={submitting}>
                     {submitting ? (
                       <>
                         <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
@@ -266,35 +300,41 @@ const Contact = () => {
         <Card className="mt-8">
           <CardHeader>
             <CardTitle>الأسئلة الشائعة</CardTitle>
-            <CardDescription>
-              إجابات على أكثر الأسئلة شيوعاً
-            </CardDescription>
+            <CardDescription>إجابات على أكثر الأسئلة شيوعاً</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
               <div className="border-b border-border pb-4">
-                <h4 className="font-medium mb-2">كيف يمكنني الانضمام كمتطوع؟</h4>
+                <h4 className="font-medium mb-2">
+                  كيف يمكنني الانضمام كمتطوع؟
+                </h4>
                 <p className="text-sm text-muted-foreground">
-                  يمكنك التقديم عبر صفحة التطوع في الموقع أو التواصل معنا مباشرة عبر البريد الإلكتروني
+                  يمكنك التقديم عبر صفحة التطوع في الموقع أو التواصل معنا مباشرة
+                  عبر البريد الإلكتروني
                 </p>
               </div>
               <div className="border-b border-border pb-4">
-                <h4 className="font-medium mb-2">ما هي المبادرات المتاحة حالياً؟</h4>
+                <h4 className="font-medium mb-2">
+                  ما هي المبادرات المتاحة حالياً؟
+                </h4>
                 <p className="text-sm text-muted-foreground">
-                  لدينا عدة مبادرات نشطة تشمل التشجير الحضري، التوعية الصحية، والأنشطة المجتمعية
+                  لدينا عدة مبادرات نشطة تشمل التشجير الحضري، التوعية الصحية،
+                  والأنشطة المجتمعية
                 </p>
               </div>
               <div className="border-b border-border pb-4">
-                <h4 className="font-medium mb-2">كيف يمكنني اقتراح مبادرة جديدة؟</h4>
+                <h4 className="font-medium mb-2">
+                  كيف يمكنني اقتراح مبادرة جديدة؟
+                </h4>
                 <p className="text-sm text-muted-foreground">
-                  يمكنك إرسال اقتراحك عبر نموذج الاتصال أو البريد الإلكتروني مع تفاصيل المبادرة
+                  يمكنك إرسال اقتراحك عبر نموذج الاتصال أو البريد الإلكتروني مع
+                  تفاصيل المبادرة
                 </p>
               </div>
             </div>
           </CardContent>
         </Card>
       </main>
-      <Footer />
     </div>
   );
 };

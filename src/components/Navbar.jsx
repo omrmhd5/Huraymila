@@ -1,22 +1,22 @@
 import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { 
-  Menu, 
-  X, 
-  Globe, 
-  Sun, 
-  Moon, 
+import {
+  Menu,
+  X,
+  Globe,
+  Sun,
+  Moon,
   User,
   LogOut,
   Settings,
-  Bell
+  Bell,
 } from "lucide-react";
-import { useAuth } from "./AuthContext";
+import { useAuth } from "@/contexts/AuthContext";
 import { useTheme } from "@/contexts/ThemeContext";
 import { Link, useLocation } from "react-router-dom";
 
-const Header = () => {
+const Navbar = () => {
   const { user, signOut } = useAuth();
   const { language, theme, setLanguage, setTheme } = useTheme();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -49,7 +49,10 @@ const Header = () => {
   const navigationItems = [
     { href: "/", label: language === "ar" ? "الرئيسية" : "Home" },
     { href: "/about", label: language === "ar" ? "من نحن" : "About" },
-    { href: "/initiatives", label: language === "ar" ? "المبادرات" : "Initiatives" },
+    {
+      href: "/initiatives",
+      label: language === "ar" ? "المبادرات" : "Initiatives",
+    },
     { href: "/volunteer", label: language === "ar" ? "التطوع" : "Volunteer" },
     { href: "/contact", label: language === "ar" ? "اتصل بنا" : "Contact" },
   ];
@@ -57,7 +60,7 @@ const Header = () => {
   const isActive = (href) => location.pathname === href;
 
   return (
-    <header className="bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b border-border sticky top-0 z-50">
+    <nav className="bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b border-border sticky top-0 z-50">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
@@ -67,7 +70,9 @@ const Header = () => {
             </div>
             <div className="hidden sm:block">
               <h1 className="text-xl font-bold text-primary">
-                {language === "ar" ? "مدينة حريملاء الصحية" : "Harimlaa Healthy City"}
+                {language === "ar"
+                  ? "مدينة حريملاء الصحية"
+                  : "Harimlaa Healthy City"}
               </h1>
               <p className="text-xs text-muted-foreground">
                 {language === "ar" ? "مبادرة وطنية" : "National Initiative"}
@@ -82,11 +87,8 @@ const Header = () => {
                 key={item.href}
                 to={item.href}
                 className={`text-sm font-medium transition-colors hover:text-primary ${
-                  isActive(item.href)
-                    ? "text-primary"
-                    : "text-muted-foreground"
-                }`}
-              >
+                  isActive(item.href) ? "text-primary" : "text-muted-foreground"
+                }`}>
                 {item.label}
               </Link>
             ))}
@@ -99,8 +101,7 @@ const Header = () => {
               variant="ghost"
               size="sm"
               onClick={handleLanguageChange}
-              className="hidden sm:flex"
-            >
+              className="hidden sm:flex">
               <Globe className="w-4 h-4" />
               <span className="ml-2 text-xs">
                 {language === "ar" ? "EN" : "عربي"}
@@ -112,8 +113,7 @@ const Header = () => {
               variant="ghost"
               size="sm"
               onClick={handleThemeChange}
-              className="hidden sm:flex"
-            >
+              className="hidden sm:flex">
               {theme === "light" ? (
                 <Moon className="w-4 h-4" />
               ) : (
@@ -128,8 +128,7 @@ const Header = () => {
                   variant="ghost"
                   size="sm"
                   onClick={toggleUserMenu}
-                  className="flex items-center gap-2"
-                >
+                  className="flex items-center gap-2">
                   <User className="w-4 h-4" />
                   <span className="hidden sm:block text-sm">
                     {user.email?.split("@")[0] || "User"}
@@ -144,23 +143,21 @@ const Header = () => {
                         {user.user_metadata?.full_name || "User"}
                       </p>
                     </div>
-                    
+
                     <Link
                       to="/admin"
                       className="flex items-center gap-2 px-4 py-2 text-sm hover:bg-muted transition-colors"
-                      onClick={() => setIsUserMenuOpen(false)}
-                    >
+                      onClick={() => setIsUserMenuOpen(false)}>
                       <Settings className="w-4 h-4" />
                       {language === "ar" ? "الإعدادات" : "Settings"}
                     </Link>
-                    
+
                     <button
                       onClick={() => {
                         signOut();
                         setIsUserMenuOpen(false);
                       }}
-                      className="flex items-center gap-2 px-4 py-2 text-sm hover:bg-muted transition-colors w-full text-left text-destructive"
-                    >
+                      className="flex items-center gap-2 px-4 py-2 text-sm hover:bg-muted transition-colors w-full text-left text-destructive">
                       <LogOut className="w-4 h-4" />
                       {language === "ar" ? "تسجيل الخروج" : "Sign Out"}
                     </button>
@@ -187,8 +184,7 @@ const Header = () => {
               variant="ghost"
               size="sm"
               onClick={toggleMobileMenu}
-              className="md:hidden"
-            >
+              className="md:hidden">
               {isMobileMenuOpen ? (
                 <X className="w-5 h-5" />
               ) : (
@@ -211,20 +207,18 @@ const Header = () => {
                       ? "bg-primary text-primary-foreground"
                       : "text-muted-foreground hover:text-primary hover:bg-muted"
                   }`}
-                  onClick={() => setIsMobileMenuOpen(false)}
-                >
+                  onClick={() => setIsMobileMenuOpen(false)}>
                   {item.label}
                 </Link>
               ))}
-              
+
               {/* Mobile Controls */}
               <div className="flex items-center gap-2 pt-4 border-t border-border">
                 <Button
                   variant="outline"
                   size="sm"
                   onClick={handleLanguageChange}
-                  className="flex-1"
-                >
+                  className="flex-1">
                   <Globe className="w-4 h-4 mr-2" />
                   {language === "ar" ? "English" : "عربي"}
                 </Button>
@@ -232,8 +226,7 @@ const Header = () => {
                   variant="outline"
                   size="sm"
                   onClick={handleThemeChange}
-                  className="flex-1"
-                >
+                  className="flex-1">
                   {theme === "light" ? (
                     <Moon className="w-4 h-4" />
                   ) : (
@@ -245,8 +238,8 @@ const Header = () => {
           </div>
         )}
       </div>
-    </header>
+    </nav>
   );
 };
 
-export default Header;
+export default Navbar;

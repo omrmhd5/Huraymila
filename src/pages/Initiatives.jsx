@@ -1,8 +1,7 @@
 import React from "react";
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
+
 import InitiativesSection from "@/components/InitiativesSection";
-import { useAuth } from "@/components/AuthContext";
+import { useAuth } from "@/contexts/AuthContext";
 
 const Initiatives = () => {
   const { loading } = useAuth();
@@ -20,7 +19,6 @@ const Initiatives = () => {
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
-      <Header />
       <main className="flex-1">
         <div className="text-center py-16">
           <h1 className="text-4xl font-bold text-primary mb-4">المبادرات</h1>
@@ -30,7 +28,6 @@ const Initiatives = () => {
         </div>
         <InitiativesSection />
       </main>
-      <Footer />
     </div>
   );
 };

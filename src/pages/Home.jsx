@@ -1,20 +1,16 @@
 import React from "react";
-import Header from "@/components/Header";
 import HeroSection from "@/components/HeroSection";
 import AboutSection from "@/components/AboutSection";
 import InitiativesSection from "@/components/InitiativesSection";
-import InitiativesCarousel from "@/components/InitiativesCarousel";
-import InteractiveMapSimple from "@/components/InteractiveMapSimple";
-import PartnersLogos from "@/components/PartnersLogos";
-import OptimizedHealthDashboard from "@/components/OptimizedHealthDashboard";
+import InteractiveMap from "@/components/InteractiveMap";
 import NewsSection from "@/components/NewsSection";
 import SuccessStories from "@/components/SuccessStories";
 import PartnersSection from "@/components/PartnersSection";
 import QuickLinksSection from "@/components/QuickLinksSection";
-import Footer from "@/components/Footer";
-import { useAuth } from "@/components/AuthContext";
+import { useAuth } from "@/contexts/AuthContext";
+import HealthDashboard from "@/components/HealthDashboard";
 
-const Index = () => {
+const Home = () => {
   const { loading } = useAuth();
 
   if (loading) {
@@ -30,23 +26,19 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <Header />
       <main>
         <HeroSection />
         <AboutSection />
         <NewsSection />
         <SuccessStories />
-        <OptimizedHealthDashboard />
-        <InitiativesCarousel />
-        <InteractiveMapSimple />
+        <HealthDashboard />
+        <InteractiveMap />
         <InitiativesSection />
         <PartnersSection />
-        <PartnersLogos />
         <QuickLinksSection />
       </main>
-      <Footer />
     </div>
   );
 };
 
-export default Index;
+export default Home;

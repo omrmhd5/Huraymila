@@ -1,8 +1,7 @@
 import React from "react";
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
+
 import VolunteerForm from "@/components/VolunteerForm";
-import { useAuth } from "@/components/AuthContext";
+import { useAuth } from "@/contexts/AuthContext";
 
 const Volunteer = () => {
   const { loading } = useAuth();
@@ -20,7 +19,6 @@ const Volunteer = () => {
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
-      <Header />
       <main className="flex-1 container mx-auto px-4 py-8">
         <div className="text-center mb-8">
           <h1 className="text-4xl font-bold text-primary mb-4">التطوع</h1>
@@ -30,7 +28,6 @@ const Volunteer = () => {
         </div>
         <VolunteerForm />
       </main>
-      <Footer />
     </div>
   );
 };

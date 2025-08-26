@@ -1,14 +1,19 @@
 import React, { useState } from "react";
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
+
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Star, Send, MessageCircle } from "lucide-react";
-import { useAuth } from "@/components/AuthContext";
+import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
 
 const Feedback = () => {
@@ -32,18 +37,18 @@ const Feedback = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     if (!message.trim()) {
       toast.error("يرجى كتابة رسالتك");
       return;
     }
 
     setSubmitting(true);
-    
+
     try {
       // Mock implementation - simulate feedback submission
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+
       toast.success("تم إرسال ملاحظاتك بنجاح! شكراً لك");
       setRating(0);
       setMessage("");
@@ -58,10 +63,11 @@ const Feedback = () => {
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
-      <Header />
       <main className="flex-1 container mx-auto px-4 py-8">
         <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-primary mb-4">الملاحظات والتقييم</h1>
+          <h1 className="text-4xl font-bold text-primary mb-4">
+            الملاحظات والتقييم
+          </h1>
           <p className="text-lg text-muted-foreground">
             شاركنا آراءك وملاحظاتك لمساعدتنا في تحسين خدماتنا
           </p>
@@ -93,8 +99,7 @@ const Feedback = () => {
                           star <= rating
                             ? "text-yellow-500 bg-yellow-50"
                             : "text-gray-300 hover:text-yellow-400"
-                        }`}
-                      >
+                        }`}>
                         <Star className="w-6 h-6 fill-current" />
                       </button>
                     ))}
@@ -112,23 +117,33 @@ const Feedback = () => {
                 {/* Feedback Type */}
                 <div className="space-y-3">
                   <Label>نوع الملاحظات</Label>
-                  <RadioGroup value={feedbackType} onValueChange={setFeedbackType}>
+                  <RadioGroup
+                    value={feedbackType}
+                    onValueChange={setFeedbackType}>
                     <div className="grid grid-cols-2 gap-4">
                       <div className="flex items-center space-x-2 border rounded-lg p-3 hover:bg-accent/50 transition-colors">
                         <RadioGroupItem value="general" id="general" />
-                        <Label htmlFor="general" className="cursor-pointer">ملاحظات عامة</Label>
+                        <Label htmlFor="general" className="cursor-pointer">
+                          ملاحظات عامة
+                        </Label>
                       </div>
                       <div className="flex items-center space-x-2 border rounded-lg p-3 hover:bg-accent/50 transition-colors">
                         <RadioGroupItem value="initiative" id="initiative" />
-                        <Label htmlFor="initiative" className="cursor-pointer">مبادرة معينة</Label>
+                        <Label htmlFor="initiative" className="cursor-pointer">
+                          مبادرة معينة
+                        </Label>
                       </div>
                       <div className="flex items-center space-x-2 border rounded-lg p-3 hover:bg-accent/50 transition-colors">
                         <RadioGroupItem value="website" id="website" />
-                        <Label htmlFor="website" className="cursor-pointer">الموقع الإلكتروني</Label>
+                        <Label htmlFor="website" className="cursor-pointer">
+                          الموقع الإلكتروني
+                        </Label>
                       </div>
                       <div className="flex items-center space-x-2 border rounded-lg p-3 hover:bg-accent/50 transition-colors">
                         <RadioGroupItem value="suggestion" id="suggestion" />
-                        <Label htmlFor="suggestion" className="cursor-pointer">اقتراحات</Label>
+                        <Label htmlFor="suggestion" className="cursor-pointer">
+                          اقتراحات
+                        </Label>
                       </div>
                     </div>
                   </RadioGroup>
@@ -150,15 +165,21 @@ const Feedback = () => {
                 {/* Privacy */}
                 <div className="space-y-3">
                   <Label>خصوصية الملاحظات</Label>
-                  <RadioGroup value={isPublic ? "public" : "private"} onValueChange={(value) => setIsPublic(value === "public")}>
+                  <RadioGroup
+                    value={isPublic ? "public" : "private"}
+                    onValueChange={(value) => setIsPublic(value === "public")}>
                     <div className="grid grid-cols-2 gap-4">
                       <div className="flex items-center space-x-2 border rounded-lg p-3 hover:bg-accent/50 transition-colors">
                         <RadioGroupItem value="public" id="public" />
-                        <Label htmlFor="public" className="cursor-pointer">عامة (يمكن مشاركتها)</Label>
+                        <Label htmlFor="public" className="cursor-pointer">
+                          عامة (يمكن مشاركتها)
+                        </Label>
                       </div>
                       <div className="flex items-center space-x-2 border rounded-lg p-3 hover:bg-accent/50 transition-colors">
                         <RadioGroupItem value="private" id="private" />
-                        <Label htmlFor="private" className="cursor-pointer">خاصة (للاستخدام الداخلي فقط)</Label>
+                        <Label htmlFor="private" className="cursor-pointer">
+                          خاصة (للاستخدام الداخلي فقط)
+                        </Label>
                       </div>
                     </div>
                   </RadioGroup>
@@ -196,7 +217,6 @@ const Feedback = () => {
           </Card>
         </div>
       </main>
-      <Footer />
     </div>
   );
 };

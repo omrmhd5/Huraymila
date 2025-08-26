@@ -15,6 +15,11 @@ export const AuthProvider = ({ children }) => {
   const [session, setSession] = useState(null);
   const [loading, setLoading] = useState(false);
 
+  const login = async (userData) => {
+    setUser(userData);
+    setSession({ id: Date.now(), createdAt: new Date() });
+  };
+
   const signOut = async () => {
     setUser(null);
     setSession(null);
@@ -24,6 +29,7 @@ export const AuthProvider = ({ children }) => {
     user,
     session,
     loading,
+    login,
     signOut,
   };
 

@@ -33,7 +33,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useTheme } from "@/contexts/ThemeContext";
-import { useAuth } from "@/components/AuthContext";
+import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
 import {
   Table,
@@ -82,7 +82,7 @@ const AdminDashboard = () => {
   }, [userRole]);
 
   const checkUserRole = async () => {
-    if (!user) {
+    if (user) {
       navigate("/auth");
       return;
     }
@@ -91,7 +91,8 @@ const AdminDashboard = () => {
       // Mock implementation - simulate admin role check
       await new Promise((resolve) => setTimeout(resolve, 1000));
 
-      // Always grant admin access for demo purposes
+      // Check if user has admin role (for demo purposes, always grant access)
+      // In production, this should check user.role === "admin"
       setUserRole("admin");
     } catch (error) {
       console.error("Error checking user role:", error);
@@ -303,572 +304,533 @@ const AdminDashboard = () => {
   }
 
   return (
-    <div
-      className={cn(
-        "min-h-screen bg-gradient-to-br from-background via-background to-muted/30",
-        language === "ar" ? "font-arabic" : "font-english"
-      )}>
-      {/* Header */}
-      <header className="bg-card/95 backdrop-blur-sm border-b border-border shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
-                <Database className="w-6 h-6 text-white" />
-              </div>
-              <div>
-                <h1 className="text-xl font-bold text-foreground font-arabic">
-                  لوحة التحكم الإدارية
-                </h1>
-                <p className="text-sm text-muted-foreground font-arabic">
-                  إدارة جميع بيانات الموقع
-                </p>
-              </div>
-            </div>
+    <div className="space-y-6">
+      {/* Page Header */}
+      <div className="mb-6">
+        <h1 className="text-3xl font-bold text-foreground mb-2">
+          {language === "ar" ? "لوحة التحكم" : "Dashboard"}
+        </h1>
+        <p className="text-muted-foreground">
+          {language === "ar"
+            ? "نظرة عامة على النظام والإحصائيات"
+            : "System overview and statistics"}
+        </p>
+      </div>
 
-            <div className="flex items-center gap-3">
-              <Button variant="ghost" size="sm" className="relative">
-                <Bell className="w-4 h-4" />
-              </Button>
-              <Button variant="ghost" size="sm">
-                <Settings className="w-4 h-4" />
-              </Button>
-              <Button variant="ghost" size="sm" onClick={handleSignOut}>
-                <LogOut className="w-4 h-4" />
-              </Button>
-            </div>
-          </div>
-        </div>
-      </header>
-
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Stats Overview */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          {statCards.map((stat, index) => (
-            <Card
-              key={index}
-              className="hover:shadow-md transition-all duration-300 border-0 bg-card/95 backdrop-blur-sm group">
-              <CardContent className="p-6">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm font-medium text-muted-foreground font-arabic mb-1">
-                      {stat.title}
-                    </p>
-                    <p className="text-2xl font-bold text-foreground">
-                      {loading ? "..." : stat.value}
-                    </p>
-                  </div>
-                  <div
-                    className={cn(
-                      "w-12 h-12 rounded-lg flex items-center justify-center",
-                      stat.bgColor
-                    )}>
-                    <stat.icon className={cn("w-6 h-6", stat.color)} />
-                  </div>
+      {/* Stats Overview */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        {statCards.map((stat, index) => (
+          <Card
+            key={index}
+            className="hover:shadow-md transition-all duration-300 border-0 bg-card/95 backdrop-blur-sm group">
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-muted-foreground font-arabic mb-1">
+                    {stat.title}
+                  </p>
+                  <p className="text-2xl font-bold text-foreground">
+                    {loading ? "..." : stat.value}
+                  </p>
                 </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
+                <div
+                  className={cn(
+                    "w-12 h-12 rounded-lg flex items-center justify-center",
+                    stat.bgColor
+                  )}>
+                  <stat.icon className={cn("w-6 h-6", stat.color)} />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
 
-        {/* Data Tables */}
-        <Tabs defaultValue="profiles" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-4 lg:grid-cols-8">
-            <TabsTrigger value="profiles" className="font-arabic">
-              الملفات
-            </TabsTrigger>
-            <TabsTrigger value="initiatives" className="font-arabic">
-              المبادرات
-            </TabsTrigger>
-            <TabsTrigger value="news" className="font-arabic">
-              الأخبار
-            </TabsTrigger>
-            <TabsTrigger value="feedback" className="font-arabic">
-              التقييمات
-            </TabsTrigger>
-            <TabsTrigger value="partners" className="font-arabic">
-              الشركاء
-            </TabsTrigger>
-            <TabsTrigger value="applications" className="font-arabic">
-              التطوع
-            </TabsTrigger>
-            <TabsTrigger value="notifications" className="font-arabic">
-              الإشعارات
-            </TabsTrigger>
-            <TabsTrigger value="health" className="font-arabic">
-              الصحة
-            </TabsTrigger>
-          </TabsList>
+      {/* Data Tables */}
+      <Tabs defaultValue="profiles" className="space-y-6">
+        <TabsList className="grid w-full grid-cols-4 lg:grid-cols-8">
+          <TabsTrigger value="profiles" className="font-arabic">
+            الملفات
+          </TabsTrigger>
+          <TabsTrigger value="initiatives" className="font-arabic">
+            المبادرات
+          </TabsTrigger>
+          <TabsTrigger value="news" className="font-arabic">
+            الأخبار
+          </TabsTrigger>
+          <TabsTrigger value="feedback" className="font-arabic">
+            التقييمات
+          </TabsTrigger>
+          <TabsTrigger value="partners" className="font-arabic">
+            الشركاء
+          </TabsTrigger>
+          <TabsTrigger value="applications" className="font-arabic">
+            التطوع
+          </TabsTrigger>
+          <TabsTrigger value="notifications" className="font-arabic">
+            الإشعارات
+          </TabsTrigger>
+          <TabsTrigger value="health" className="font-arabic">
+            الصحة
+          </TabsTrigger>
+        </TabsList>
 
-          {/* Profiles Tab */}
-          <TabsContent value="profiles">
-            <Card>
-              <CardHeader>
-                <CardTitle className="font-arabic text-right">
-                  الملفات الشخصية
-                </CardTitle>
-                <CardDescription className="font-arabic text-right">
-                  قائمة جميع المستخدمين المسجلين
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead className="text-right font-arabic">
-                        النوع
-                      </TableHead>
-                      <TableHead className="text-right font-arabic">
-                        الهاتف
-                      </TableHead>
-                      <TableHead className="text-right font-arabic">
-                        الاسم الكامل
-                      </TableHead>
-                      <TableHead className="text-right font-arabic">
-                        تاريخ الإنشاء
-                      </TableHead>
+        {/* Profiles Tab */}
+        <TabsContent value="profiles">
+          <Card>
+            <CardHeader>
+              <CardTitle className="font-arabic text-right">
+                الملفات الشخصية
+              </CardTitle>
+              <CardDescription className="font-arabic text-right">
+                قائمة جميع المستخدمين المسجلين
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead className="text-right font-arabic">
+                      النوع
+                    </TableHead>
+                    <TableHead className="text-right font-arabic">
+                      الهاتف
+                    </TableHead>
+                    <TableHead className="text-right font-arabic">
+                      الاسم الكامل
+                    </TableHead>
+                    <TableHead className="text-right font-arabic">
+                      تاريخ الإنشاء
+                    </TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {data.profiles.slice(0, 10).map((profile) => (
+                    <TableRow key={profile.id}>
+                      <TableCell className="text-right">
+                        <Badge variant="outline" className="font-arabic">
+                          {profile.user_type}
+                        </Badge>
+                      </TableCell>
+                      <TableCell className="text-right font-arabic">
+                        {profile.phone || "غير محدد"}
+                      </TableCell>
+                      <TableCell className="text-right font-arabic">
+                        {profile.full_name}
+                      </TableCell>
+                      <TableCell className="text-right font-arabic">
+                        {formatDate(profile.created_at)}
+                      </TableCell>
                     </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {data.profiles.slice(0, 10).map((profile) => (
-                      <TableRow key={profile.id}>
-                        <TableCell className="text-right">
-                          <Badge variant="outline" className="font-arabic">
-                            {profile.user_type}
-                          </Badge>
-                        </TableCell>
-                        <TableCell className="text-right font-arabic">
-                          {profile.phone || "غير محدد"}
-                        </TableCell>
-                        <TableCell className="text-right font-arabic">
-                          {profile.full_name}
-                        </TableCell>
-                        <TableCell className="text-right font-arabic">
-                          {formatDate(profile.created_at)}
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </CardContent>
-            </Card>
-          </TabsContent>
+                  ))}
+                </TableBody>
+              </Table>
+            </CardContent>
+          </Card>
+        </TabsContent>
 
-          {/* Initiatives Tab */}
-          <TabsContent value="initiatives">
-            <Card>
-              <CardHeader>
-                <CardTitle className="font-arabic text-right">
-                  المبادرات
-                </CardTitle>
-                <CardDescription className="font-arabic text-right">
-                  جميع المبادرات المنشورة في الموقع
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead className="text-right font-arabic">
-                        الحالة
-                      </TableHead>
-                      <TableHead className="text-right font-arabic">
-                        الفئة
-                      </TableHead>
-                      <TableHead className="text-right font-arabic">
-                        العنوان
-                      </TableHead>
-                      <TableHead className="text-right font-arabic">
-                        تاريخ الإنشاء
-                      </TableHead>
+        {/* Initiatives Tab */}
+        <TabsContent value="initiatives">
+          <Card>
+            <CardHeader>
+              <CardTitle className="font-arabic text-right">
+                المبادرات
+              </CardTitle>
+              <CardDescription className="font-arabic text-right">
+                جميع المبادرات المنشورة في الموقع
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead className="text-right font-arabic">
+                      الحالة
+                    </TableHead>
+                    <TableHead className="text-right font-arabic">
+                      الفئة
+                    </TableHead>
+                    <TableHead className="text-right font-arabic">
+                      العنوان
+                    </TableHead>
+                    <TableHead className="text-right font-arabic">
+                      تاريخ الإنشاء
+                    </TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {data.initiatives.slice(0, 10).map((initiative) => (
+                    <TableRow key={initiative.id}>
+                      <TableCell className="text-right">
+                        <Badge
+                          variant={
+                            initiative.status === "active"
+                              ? "default"
+                              : "secondary"
+                          }
+                          className="font-arabic">
+                          {initiative.status}
+                        </Badge>
+                      </TableCell>
+                      <TableCell className="text-right font-arabic">
+                        {initiative.category}
+                      </TableCell>
+                      <TableCell className="text-right font-arabic">
+                        {initiative.title}
+                      </TableCell>
+                      <TableCell className="text-right font-arabic">
+                        {formatDate(initiative.created_at)}
+                      </TableCell>
                     </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {data.initiatives.slice(0, 10).map((initiative) => (
-                      <TableRow key={initiative.id}>
-                        <TableCell className="text-right">
-                          <Badge
-                            variant={
-                              initiative.status === "active"
-                                ? "default"
-                                : "secondary"
-                            }
-                            className="font-arabic">
-                            {initiative.status}
-                          </Badge>
-                        </TableCell>
-                        <TableCell className="text-right font-arabic">
-                          {initiative.category}
-                        </TableCell>
-                        <TableCell className="text-right font-arabic">
-                          {initiative.title}
-                        </TableCell>
-                        <TableCell className="text-right font-arabic">
-                          {formatDate(initiative.created_at)}
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </CardContent>
-            </Card>
-          </TabsContent>
+                  ))}
+                </TableBody>
+              </Table>
+            </CardContent>
+          </Card>
+        </TabsContent>
 
-          {/* News Tab */}
-          <TabsContent value="news">
-            <Card>
-              <CardHeader>
-                <CardTitle className="font-arabic text-right">الأخبار</CardTitle>
-                <CardDescription className="font-arabic text-right">
-                  جميع المقالات الإخبارية
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead className="text-right font-arabic">
-                        النشر
-                      </TableHead>
-                      <TableHead className="text-right font-arabic">
-                        الفئة
-                      </TableHead>
-                      <TableHead className="text-right font-arabic">
-                        العنوان
-                      </TableHead>
-                      <TableHead className="text-right font-arabic">
-                        تاريخ الإنشاء
-                      </TableHead>
+        {/* News Tab */}
+        <TabsContent value="news">
+          <Card>
+            <CardHeader>
+              <CardTitle className="font-arabic text-right">الأخبار</CardTitle>
+              <CardDescription className="font-arabic text-right">
+                جميع المقالات الإخبارية
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead className="text-right font-arabic">
+                      النشر
+                    </TableHead>
+                    <TableHead className="text-right font-arabic">
+                      الفئة
+                    </TableHead>
+                    <TableHead className="text-right font-arabic">
+                      العنوان
+                    </TableHead>
+                    <TableHead className="text-right font-arabic">
+                      تاريخ الإنشاء
+                    </TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {data.news.slice(0, 10).map((article) => (
+                    <TableRow key={article.id}>
+                      <TableCell className="text-right">
+                        <Badge
+                          variant={
+                            article.is_published ? "default" : "secondary"
+                          }
+                          className="font-arabic">
+                          {article.is_published ? "منشور" : "مسودة"}
+                        </Badge>
+                      </TableCell>
+                      <TableCell className="text-right font-arabic">
+                        {article.category}
+                      </TableCell>
+                      <TableCell className="text-right font-arabic">
+                        {article.title}
+                      </TableCell>
+                      <TableCell className="text-right font-arabic">
+                        {formatDate(article.created_at)}
+                      </TableCell>
                     </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {data.news.slice(0, 10).map((article) => (
-                      <TableRow key={article.id}>
-                        <TableCell className="text-right">
-                          <Badge
-                            variant={
-                              article.is_published ? "default" : "secondary"
-                            }
-                            className="font-arabic">
-                            {article.is_published ? "منشور" : "مسودة"}
-                          </Badge>
-                        </TableCell>
-                        <TableCell className="text-right font-arabic">
-                          {article.category}
-                        </TableCell>
-                        <TableCell className="text-right font-arabic">
-                          {article.title}
-                        </TableCell>
-                        <TableCell className="text-right font-arabic">
-                          {formatDate(article.created_at)}
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </CardContent>
-            </Card>
-          </TabsContent>
+                  ))}
+                </TableBody>
+              </Table>
+            </CardContent>
+          </Card>
+        </TabsContent>
 
-          {/* Feedback Tab */}
-          <TabsContent value="feedback">
-            <Card>
-              <CardHeader>
-                <CardTitle className="font-arabic text-right">
-                  التقييمات والملاحظات
-                </CardTitle>
-                <CardDescription className="font-arabic text-right">
-                  جميع التقييمات المرسلة من المستخدمين
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead className="text-right font-arabic">
-                        عام
-                      </TableHead>
-                      <TableHead className="text-right font-arabic">
-                        التقييم
-                      </TableHead>
-                      <TableHead className="text-right font-arabic">
-                        النوع
-                      </TableHead>
-                      <TableHead className="text-right font-arabic">
-                        تاريخ الإرسال
-                      </TableHead>
+        {/* Feedback Tab */}
+        <TabsContent value="feedback">
+          <Card>
+            <CardHeader>
+              <CardTitle className="font-arabic text-right">
+                التقييمات والملاحظات
+              </CardTitle>
+              <CardDescription className="font-arabic text-right">
+                جميع التقييمات المرسلة من المستخدمين
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead className="text-right font-arabic">
+                      عام
+                    </TableHead>
+                    <TableHead className="text-right font-arabic">
+                      التقييم
+                    </TableHead>
+                    <TableHead className="text-right font-arabic">
+                      النوع
+                    </TableHead>
+                    <TableHead className="text-right font-arabic">
+                      تاريخ الإرسال
+                    </TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {data.feedback.slice(0, 10).map((feedback) => (
+                    <TableRow key={feedback.id}>
+                      <TableCell className="text-right">
+                        <Badge
+                          variant={feedback.is_public ? "default" : "secondary"}
+                          className="font-arabic">
+                          {feedback.is_public ? "عام" : "خاص"}
+                        </Badge>
+                      </TableCell>
+                      <TableCell className="text-right font-arabic">
+                        {feedback.rating
+                          ? `${feedback.rating}/5`
+                          : "بدون تقييم"}
+                      </TableCell>
+                      <TableCell className="text-right font-arabic">
+                        {feedback.feedback_type}
+                      </TableCell>
+                      <TableCell className="text-right font-arabic">
+                        {formatDate(feedback.created_at)}
+                      </TableCell>
                     </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {data.feedback.slice(0, 10).map((feedback) => (
-                      <TableRow key={feedback.id}>
-                        <TableCell className="text-right">
-                          <Badge
-                            variant={
-                              feedback.is_public ? "default" : "secondary"
-                            }
-                            className="font-arabic">
-                            {feedback.is_public ? "عام" : "خاص"}
-                          </Badge>
-                        </TableCell>
-                        <TableCell className="text-right font-arabic">
-                          {feedback.rating
-                            ? `${feedback.rating}/5`
-                            : "بدون تقييم"}
-                        </TableCell>
-                        <TableCell className="text-right font-arabic">
-                          {feedback.feedback_type}
-                        </TableCell>
-                        <TableCell className="text-right font-arabic">
-                          {formatDate(feedback.created_at)}
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </CardContent>
-            </Card>
-          </TabsContent>
+                  ))}
+                </TableBody>
+              </Table>
+            </CardContent>
+          </Card>
+        </TabsContent>
 
-          {/* Partners Tab */}
-          <TabsContent value="partners">
-            <Card>
-              <CardHeader>
-                <CardTitle className="font-arabic text-right">
-                  الشركاء
-                </CardTitle>
-                <CardDescription className="font-arabic text-right">
-                  جميع الشركاء والجهات المتعاونة
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead className="text-right font-arabic">
-                        الحالة
-                      </TableHead>
-                      <TableHead className="text-right font-arabic">
-                        نوع الشراكة
-                      </TableHead>
-                      <TableHead className="text-right font-arabic">
-                        الاسم
-                      </TableHead>
-                      <TableHead className="text-right font-arabic">
-                        تاريخ الإضافة
-                      </TableHead>
+        {/* Partners Tab */}
+        <TabsContent value="partners">
+          <Card>
+            <CardHeader>
+              <CardTitle className="font-arabic text-right">الشركاء</CardTitle>
+              <CardDescription className="font-arabic text-right">
+                جميع الشركاء والجهات المتعاونة
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead className="text-right font-arabic">
+                      الحالة
+                    </TableHead>
+                    <TableHead className="text-right font-arabic">
+                      نوع الشراكة
+                    </TableHead>
+                    <TableHead className="text-right font-arabic">
+                      الاسم
+                    </TableHead>
+                    <TableHead className="text-right font-arabic">
+                      تاريخ الإضافة
+                    </TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {data.partners.slice(0, 10).map((partner) => (
+                    <TableRow key={partner.id}>
+                      <TableCell className="text-right">
+                        <Badge
+                          variant={partner.is_active ? "default" : "secondary"}
+                          className="font-arabic">
+                          {partner.is_active ? "نشط" : "غير نشط"}
+                        </Badge>
+                      </TableCell>
+                      <TableCell className="text-right font-arabic">
+                        {partner.partnership_type || "غير محدد"}
+                      </TableCell>
+                      <TableCell className="text-right font-arabic">
+                        {partner.name}
+                      </TableCell>
+                      <TableCell className="text-right font-arabic">
+                        {formatDate(partner.created_at)}
+                      </TableCell>
                     </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {data.partners.slice(0, 10).map((partner) => (
-                      <TableRow key={partner.id}>
-                        <TableCell className="text-right">
-                          <Badge
-                            variant={
-                              partner.is_active ? "default" : "secondary"
-                            }
-                            className="font-arabic">
-                            {partner.is_active ? "نشط" : "غير نشط"}
-                          </Badge>
-                        </TableCell>
-                        <TableCell className="text-right font-arabic">
-                          {partner.partnership_type || "غير محدد"}
-                        </TableCell>
-                        <TableCell className="text-right font-arabic">
-                          {partner.name}
-                        </TableCell>
-                        <TableCell className="text-right font-arabic">
-                          {formatDate(partner.created_at)}
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </CardContent>
-            </Card>
-          </TabsContent>
+                  ))}
+                </TableBody>
+              </Table>
+            </CardContent>
+          </Card>
+        </TabsContent>
 
-          {/* Applications Tab */}
-          <TabsContent value="applications">
-            <Card>
-              <CardHeader>
-                <CardTitle className="font-arabic text-right">
-                  طلبات التطوع
-                </CardTitle>
-                <CardDescription className="font-arabic text-right">
-                  جميع طلبات التطوع المقدمة
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead className="text-right font-arabic">
-                        الحالة
-                      </TableHead>
-                      <TableHead className="text-right font-arabic">
-                        التوفر
-                      </TableHead>
-                      <TableHead className="text-right font-arabic">
-                        تاريخ المراجعة
-                      </TableHead>
-                      <TableHead className="text-right font-arabic">
-                        تاريخ التقديم
-                      </TableHead>
+        {/* Applications Tab */}
+        <TabsContent value="applications">
+          <Card>
+            <CardHeader>
+              <CardTitle className="font-arabic text-right">
+                طلبات التطوع
+              </CardTitle>
+              <CardDescription className="font-arabic text-right">
+                جميع طلبات التطوع المقدمة
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead className="text-right font-arabic">
+                      الحالة
+                    </TableHead>
+                    <TableHead className="text-right font-arabic">
+                      التوفر
+                    </TableHead>
+                    <TableHead className="text-right font-arabic">
+                      تاريخ المراجعة
+                    </TableHead>
+                    <TableHead className="text-right font-arabic">
+                      تاريخ التقديم
+                    </TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {data.applications.slice(0, 10).map((application) => (
+                    <TableRow key={application.id}>
+                      <TableCell className="text-right">
+                        <Badge
+                          variant={
+                            application.status === "approved"
+                              ? "default"
+                              : application.status === "rejected"
+                              ? "destructive"
+                              : "secondary"
+                          }
+                          className="font-arabic">
+                          {application.status}
+                        </Badge>
+                      </TableCell>
+                      <TableCell className="text-right font-arabic">
+                        {application.availability || "غير محدد"}
+                      </TableCell>
+                      <TableCell className="text-right font-arabic">
+                        {application.reviewed_at
+                          ? formatDate(application.reviewed_at)
+                          : "لم تتم المراجعة"}
+                      </TableCell>
+                      <TableCell className="text-right font-arabic">
+                        {formatDate(application.created_at)}
+                      </TableCell>
                     </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {data.applications.slice(0, 10).map((application) => (
-                      <TableRow key={application.id}>
-                        <TableCell className="text-right">
-                          <Badge
-                            variant={
-                              application.status === "approved"
-                                ? "default"
-                                : application.status === "rejected"
-                                ? "destructive"
-                                : "secondary"
-                            }
-                            className="font-arabic">
-                            {application.status}
-                          </Badge>
-                        </TableCell>
-                        <TableCell className="text-right font-arabic">
-                          {application.availability || "غير محدد"}
-                        </TableCell>
-                        <TableCell className="text-right font-arabic">
-                          {application.reviewed_at
-                            ? formatDate(application.reviewed_at)
-                            : "لم تتم المراجعة"}
-                        </TableCell>
-                        <TableCell className="text-right font-arabic">
-                          {formatDate(application.created_at)}
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </CardContent>
-            </Card>
-          </TabsContent>
+                  ))}
+                </TableBody>
+              </Table>
+            </CardContent>
+          </Card>
+        </TabsContent>
 
-          {/* Notifications Tab */}
-          <TabsContent value="notifications">
-            <Card>
-              <CardHeader>
-                <CardTitle className="font-arabic text-right">
-                  الإشعارات
-                </CardTitle>
-                <CardDescription className="font-arabic text-right">
-                  جميع الإشعارات المرسلة للمستخدمين
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead className="text-right font-arabic">
-                        مقروء
-                      </TableHead>
-                      <TableHead className="text-right font-arabic">
-                        النوع
-                      </TableHead>
-                      <TableHead className="text-right font-arabic">
-                        العنوان
-                      </TableHead>
-                      <TableHead className="text-right font-arabic">
-                        تاريخ الإرسال
-                      </TableHead>
+        {/* Notifications Tab */}
+        <TabsContent value="notifications">
+          <Card>
+            <CardHeader>
+              <CardTitle className="font-arabic text-right">
+                الإشعارات
+              </CardTitle>
+              <CardDescription className="font-arabic text-right">
+                جميع الإشعارات المرسلة للمستخدمين
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead className="text-right font-arabic">
+                      مقروء
+                    </TableHead>
+                    <TableHead className="text-right font-arabic">
+                      النوع
+                    </TableHead>
+                    <TableHead className="text-right font-arabic">
+                      العنوان
+                    </TableHead>
+                    <TableHead className="text-right font-arabic">
+                      تاريخ الإرسال
+                    </TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {data.notifications.slice(0, 10).map((notification) => (
+                    <TableRow key={notification.id}>
+                      <TableCell className="text-right">
+                        <Badge
+                          variant={
+                            notification.read_status ? "default" : "secondary"
+                          }
+                          className="font-arabic">
+                          {notification.read_status ? "مقروء" : "غير مقروء"}
+                        </Badge>
+                      </TableCell>
+                      <TableCell className="text-right font-arabic">
+                        {notification.type}
+                      </TableCell>
+                      <TableCell className="text-right font-arabic">
+                        {notification.title}
+                      </TableCell>
+                      <TableCell className="text-right font-arabic">
+                        {formatDate(notification.created_at)}
+                      </TableCell>
                     </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {data.notifications
-                      .slice(0, 10)
-                      .map((notification) => (
-                        <TableRow key={notification.id}>
-                          <TableCell className="text-right">
-                            <Badge
-                              variant={
-                                notification.read_status
-                                  ? "default"
-                                  : "secondary"
-                              }
-                              className="font-arabic">
-                              {notification.read_status
-                                ? "مقروء"
-                                : "غير مقروء"}
-                            </Badge>
-                          </TableCell>
-                          <TableCell className="text-right font-arabic">
-                            {notification.type}
-                          </TableCell>
-                          <TableCell className="text-right font-arabic">
-                            {notification.title}
-                          </TableCell>
-                          <TableCell className="text-right font-arabic">
-                            {formatDate(notification.created_at)}
-                          </TableCell>
-                        </TableRow>
-                      ))}
-                  </TableBody>
-                </Table>
-              </CardContent>
-            </Card>
-          </TabsContent>
+                  ))}
+                </TableBody>
+              </Table>
+            </CardContent>
+          </Card>
+        </TabsContent>
 
-          {/* Health Metrics Tab */}
-          <TabsContent value="health">
-            <Card>
-              <CardHeader>
-                <CardTitle className="font-arabic text-right">
-                  المؤشرات الصحية
-                </CardTitle>
-                <CardDescription className="font-arabic text-right">
-                  جميع مؤشرات المدينة الصحية
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead className="text-right font-arabic">
-                        المصدر
-                      </TableHead>
-                      <TableHead className="text-right font-arabic">
-                        المنطقة
-                      </TableHead>
-                      <TableHead className="text-right font-arabic">
-                        القيمة
-                      </TableHead>
-                      <TableHead className="text-right font-arabic">
-                        اسم المؤشر
-                      </TableHead>
+        {/* Health Metrics Tab */}
+        <TabsContent value="health">
+          <Card>
+            <CardHeader>
+              <CardTitle className="font-arabic text-right">
+                المؤشرات الصحية
+              </CardTitle>
+              <CardDescription className="font-arabic text-right">
+                جميع مؤشرات المدينة الصحية
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead className="text-right font-arabic">
+                      المصدر
+                    </TableHead>
+                    <TableHead className="text-right font-arabic">
+                      المنطقة
+                    </TableHead>
+                    <TableHead className="text-right font-arabic">
+                      القيمة
+                    </TableHead>
+                    <TableHead className="text-right font-arabic">
+                      اسم المؤشر
+                    </TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {data.health_metrics.slice(0, 10).map((metric) => (
+                    <TableRow key={metric.id}>
+                      <TableCell className="text-right font-arabic">
+                        {metric.source || "غير محدد"}
+                      </TableCell>
+                      <TableCell className="text-right font-arabic">
+                        {metric.region || "غير محدد"}
+                      </TableCell>
+                      <TableCell className="text-right font-arabic">
+                        {metric.value} {metric.unit}
+                      </TableCell>
+                      <TableCell className="text-right font-arabic">
+                        {metric.metric_name}
+                      </TableCell>
                     </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {data.health_metrics.slice(0, 10).map((metric) => (
-                      <TableRow key={metric.id}>
-                        <TableCell className="text-right font-arabic">
-                          {metric.source || "غير محدد"}
-                        </TableCell>
-                        <TableCell className="text-right font-arabic">
-                          {metric.region || "غير محدد"}
-                        </TableCell>
-                        <TableCell className="text-right font-arabic">
-                          {metric.value} {metric.unit}
-                        </TableCell>
-                        <TableCell className="text-right font-arabic">
-                          {metric.metric_name}
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </CardContent>
-            </Card>
-          </TabsContent>
-        </Tabs>
-      </main>
+                  ))}
+                </TableBody>
+              </Table>
+            </CardContent>
+          </Card>
+        </TabsContent>
+      </Tabs>
     </div>
   );
 };

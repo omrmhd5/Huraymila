@@ -1,9 +1,4 @@
-import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import Header from "@/components/Header";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import React, { useState } from "react";
 import {
   Card,
   CardContent,
@@ -11,74 +6,70 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Textarea } from "@/components/ui/textarea";
-import { useAuth } from "@/components/AuthContext";
-import { toast } from "sonner";
-import { ArrowRight, Building2, Heart, Loader2 } from "lucide-react";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Loader2, Mail, Lock, User, Eye, EyeOff, Phone } from "lucide-react";
+import { useNavigate, Link } from "react-router-dom";
+import { useAuth } from "@/contexts/AuthContext";
 import { cn } from "@/lib/utils";
+import { useTheme } from "@/contexts/ThemeContext";
 
 const Auth = () => {
+  const { language } = useTheme();
+  const { user, login } = useAuth();
   const navigate = useNavigate();
-  const { user } = useAuth();
   const [loading, setLoading] = useState(false);
-  const [activeTab, setActiveTab] = useState("signin");
-  const [language, setLanguage] = useState(() => {
-    const saved = localStorage.getItem("preferred-language");
-    return saved === "ar" || saved === "en" ? saved : "ar";
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [formData, setFormData] = useState({
+    email: "",
+    password: "",
+    fullName: "",
+    confirmPassword: "",
+    phone: "",
   });
-  const [theme, setTheme] = useState(() => {
-    const saved = localStorage.getItem("preferred-theme");
-    return saved === "light" || saved === "dark" ? saved : "light";
-  });
-
-  // Apply theme and language settings
-  useEffect(() => {
-    document.documentElement.classList.toggle("dark", theme === "dark");
-    document.documentElement.dir = language === "ar" ? "rtl" : "ltr";
-    document.documentElement.lang = language === "ar" ? "ar" : "en";
-    localStorage.setItem("preferred-language", language);
-    localStorage.setItem("preferred-theme", theme);
-  }, [theme, language]);
 
   // Redirect if already authenticated
-  useEffect(() => {
+  React.useEffect(() => {
     if (user) {
       navigate("/");
     }
   }, [user, navigate]);
 
-  const [signInData, setSignInData] = useState({
-    email: "",
-    password: "",
-  });
-
-  const [signUpData, setSignUpData] = useState({
-    email: "",
-    password: "",
-    confirmPassword: "",
-    fullName: "",
-    phone: "",
-    userType: "volunteer",
-    organizationName: "",
-    organizationDescription: "",
-    volunteerSkills: "",
-    volunteerInterests: "",
-  });
+  const handleInputChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
+    });
+    setError("");
+    setSuccess("");
+  };
 
   const handleSignIn = async (e) => {
     e.preventDefault();
     setLoading(true);
+    setError("");
 
     try {
       // Mock implementation - simulate sign in
       await new Promise((resolve) => setTimeout(resolve, 1000));
 
-      toast.success("تم تسجيل الدخول بنجاح");
+      // Set user in context
+      await login({
+        email: formData.email,
+        role: "volunteer",
+        name: formData.fullName || "User",
+      });
+
       navigate("/");
-    } catch (error) {
-      toast.error("حدث خطأ غير متوقع");
+    } catch (err) {
+      setError(
+        language === "ar" ? "حدث خطأ غير متوقع" : "An unexpected error occurred"
+      );
     } finally {
       setLoading(false);
     }
@@ -86,351 +77,524 @@ const Auth = () => {
 
   const handleSignUp = async (e) => {
     e.preventDefault();
+    setLoading(true);
+    setError("");
+    setSuccess("");
 
-    if (signUpData.password !== signUpData.confirmPassword) {
-      toast.error("كلمتا المرور غير متطابقتين");
+    if (formData.password !== formData.confirmPassword) {
+      setError(
+        language === "ar"
+          ? "كلمات المرور غير متطابقة"
+          : "Passwords do not match"
+      );
+      setLoading(false);
       return;
     }
 
-    setLoading(true);
+    if (formData.password.length < 6) {
+      setError(
+        language === "ar"
+          ? "كلمة المرور يجب أن تكون 6 أحرف على الأقل"
+          : "Password must be at least 6 characters"
+      );
+      setLoading(false);
+      return;
+    }
 
     try {
       // Mock implementation - simulate sign up
       await new Promise((resolve) => setTimeout(resolve, 1000));
 
-      toast.success(
-        "تم إنشاء الحساب بنجاح! تحقق من بريدك الإلكتروني لتأكيد الحساب"
+      setSuccess(
+        language === "ar"
+          ? "تم إنشاء الحساب بنجاح! تم تسجيل الدخول تلقائياً"
+          : "Account created successfully! You are now signed in"
       );
-      setActiveTab("signin");
-    } catch (error) {
-      toast.error("حدث خطأ غير متوقع");
+
+      // Auto-login after successful signup
+      await login({
+        email: formData.email,
+        role: "volunteer",
+        name: formData.fullName,
+        phone: formData.phone,
+      });
+
+      // Clear form
+      setFormData({
+        email: "",
+        password: "",
+        fullName: "",
+        confirmPassword: "",
+        phone: "",
+      });
+
+      // Redirect to home after a short delay
+      setTimeout(() => {
+        navigate("/");
+      }, 1500);
+    } catch (err) {
+      setError(
+        language === "ar" ? "حدث خطأ غير متوقع" : "An unexpected error occurred"
+      );
     } finally {
       setLoading(false);
     }
   };
 
-  return (
-    <div
-      className={cn(
-        "min-h-screen bg-background text-foreground",
-        language === "ar" ? "font-arabic" : "font-english"
-      )}>
-      <Header
-        language={language}
-        onLanguageChange={setLanguage}
-        theme={theme}
-        onThemeChange={setTheme}
-      />
+  const content = {
+    ar: {
+      title: "مرحباً بك",
+      subtitle: "سجل دخولك أو سجل كمتطوع جديد",
+      signIn: "تسجيل الدخول",
+      signUp: "سجل كمتطوع",
+      email: "البريد الإلكتروني",
+      password: "كلمة المرور",
+      confirmPassword: "تأكيد كلمة المرور",
+      fullName: "الاسم الكامل",
+      phone: "رقم الهاتف",
+      signInButton: "دخول",
+      signUpButton: "سجل كمتطوع",
+      backToHome: "العودة للصفحة الرئيسية",
+      emailPlaceholder: "your@email.com",
+      passwordPlaceholder: "••••••••",
+      fullNamePlaceholder: "الاسم الكامل",
+      phonePlaceholder: "+966 50 123 4567",
+      hasAccount: "لديك حساب؟",
+      noAccount: "ليس لديك حساب؟",
+      switchToSignIn: "تسجيل الدخول",
+      switchToSignUp: "سجل كمتطوع",
+    },
+    en: {
+      title: "Hello, Welcome",
+      subtitle: "Sign in or sign up as a volunteer",
+      signIn: "Sign In",
+      signUp: "Sign Up as Volunteer",
+      email: "Email",
+      password: "Password",
+      confirmPassword: "Confirm Password",
+      fullName: "Full Name",
+      phone: "Phone Number",
+      signInButton: "Sign In",
+      signUpButton: "Sign Up as Volunteer",
+      backToHome: "Back to Home",
+      emailPlaceholder: "your@email.com",
+      passwordPlaceholder: "••••••••",
+      fullNamePlaceholder: "Full Name",
+      phonePlaceholder: "+966 50 123 4567",
+      hasAccount: "Have an account?",
+      noAccount: "Don't have an account?",
+      switchToSignIn: "Sign In",
+      switchToSignUp: "Sign Up as Volunteer",
+    },
+  };
 
+  const current = content[language];
+
+  return (
+    <div className="min-h-screen bg-background">
       <main className="pt-16 pb-8">
-        <div className="min-h-[calc(100vh-4rem)] bg-gradient-to-br from-primary/10 via-background to-secondary/10 flex items-center justify-center p-4">
+        <div className="min-h-[calc(100vh-8rem)] bg-gradient-to-br from-primary/5 via-background to-secondary/5 flex items-center justify-center p-4">
           <div className="w-full max-w-md">
+            {/* Header */}
             <div className="text-center mb-8">
-              <h1 className="text-3xl font-bold text-foreground mb-2">
-                مرحباً بك
+              <div className="w-16 h-16 bg-primary rounded-xl flex items-center justify-center mx-auto mb-4">
+                <span className="text-white font-bold text-2xl">ح</span>
+              </div>
+              <h1 className="text-2xl font-bold text-foreground mb-2">
+                {language === "ar"
+                  ? "مدينة حريملاء الصحية"
+                  : "Harimlaa Healthy City"}
               </h1>
               <p className="text-muted-foreground">
-                سجل دخولك أو أنشئ حساباً جديداً للمتابعة
+                {language === "ar"
+                  ? "مبادرة وطنية للمدن الصحية"
+                  : "National Initiative for Healthy Cities"}
               </p>
             </div>
 
-            <Card className="border-0 shadow-xl">
-              <Tabs
-                value={activeTab}
-                onValueChange={setActiveTab}
-                className="w-full">
-                <TabsList className="grid w-full grid-cols-2 mb-6">
-                  <TabsTrigger value="signin" className="text-sm">
-                    تسجيل الدخول
-                  </TabsTrigger>
-                  <TabsTrigger value="signup" className="text-sm">
-                    حساب جديد
-                  </TabsTrigger>
-                </TabsList>
+            {/* Auth Card */}
+            <Card className="border-0 shadow-2xl bg-card/95 backdrop-blur-sm">
+              <CardHeader className="text-center pb-2">
+                <CardTitle
+                  className={cn(
+                    "text-2xl",
+                    language === "ar" ? "font-arabic" : "font-english"
+                  )}>
+                  {current.title}
+                </CardTitle>
+                <CardDescription
+                  className={cn(
+                    language === "ar" ? "font-arabic" : "font-english"
+                  )}>
+                  {current.subtitle}
+                </CardDescription>
+              </CardHeader>
 
-                <TabsContent value="signin">
-                  <Card className="border-0 shadow-none">
-                    <CardHeader className="text-center pb-4">
-                      <CardTitle className="text-xl">تسجيل الدخول</CardTitle>
-                      <CardDescription>
-                        أدخل بياناتك للوصول إلى حسابك
-                      </CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                      <form onSubmit={handleSignIn} className="space-y-4">
-                        <div className="space-y-2">
-                          <Label htmlFor="signin-email">
-                            البريد الإلكتروني
-                          </Label>
+              <CardContent>
+                <Tabs defaultValue="signin" className="w-full">
+                  <TabsList className="grid w-full grid-cols-2 mb-6">
+                    <TabsTrigger
+                      value="signin"
+                      className={cn(
+                        "font-medium",
+                        language === "ar" ? "font-arabic" : "font-english"
+                      )}>
+                      {current.signIn}
+                    </TabsTrigger>
+                    <TabsTrigger
+                      value="signup"
+                      className={cn(
+                        "font-medium",
+                        language === "ar" ? "font-arabic" : "font-english"
+                      )}>
+                      {current.signUp}
+                    </TabsTrigger>
+                  </TabsList>
+
+                  {/* Error/Success Alert */}
+                  {error && (
+                    <Alert className="mb-4 border-destructive/50 text-destructive">
+                      <AlertDescription
+                        className={cn(
+                          language === "ar"
+                            ? "font-arabic text-right"
+                            : "font-english"
+                        )}>
+                        {error}
+                      </AlertDescription>
+                    </Alert>
+                  )}
+
+                  {success && (
+                    <Alert className="mb-4 border-green-500/50 text-green-700 bg-green-50 dark:bg-green-950 dark:text-green-400">
+                      <AlertDescription
+                        className={cn(
+                          language === "ar"
+                            ? "font-arabic text-right"
+                            : "font-english"
+                        )}>
+                        {success}
+                      </AlertDescription>
+                    </Alert>
+                  )}
+
+                  {/* Sign In Tab */}
+                  <TabsContent value="signin">
+                    <form onSubmit={handleSignIn} className="space-y-4">
+                      <div className="space-y-2">
+                        <Label
+                          htmlFor="signin-email"
+                          className={cn(
+                            language === "ar" ? "font-arabic" : "font-english"
+                          )}>
+                          {current.email}
+                        </Label>
+                        <div className="relative">
+                          <Mail
+                            className={cn(
+                              "absolute w-4 h-4 text-muted-foreground top-1/2 -translate-y-1/2",
+                              language === "ar" ? "right-3" : "left-3"
+                            )}
+                          />
                           <Input
                             id="signin-email"
+                            name="email"
                             type="email"
-                            placeholder="أدخل بريدك الإلكتروني"
-                            value={signInData.email}
-                            onChange={(e) =>
-                              setSignInData({
-                                ...signInData,
-                                email: e.target.value,
-                              })
-                            }
+                            value={formData.email}
+                            onChange={handleInputChange}
+                            placeholder={current.emailPlaceholder}
+                            className={cn(
+                              "h-12",
+                              language === "ar" ? "pr-10 text-right" : "pl-10"
+                            )}
+                            dir={language === "ar" ? "rtl" : "ltr"}
                             required
                           />
                         </div>
-                        <div className="space-y-2">
-                          <Label htmlFor="signin-password">كلمة المرور</Label>
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label
+                          htmlFor="signin-password"
+                          className={cn(
+                            language === "ar" ? "font-arabic" : "font-english"
+                          )}>
+                          {current.password}
+                        </Label>
+                        <div className="relative">
+                          <Lock
+                            className={cn(
+                              "absolute w-4 h-4 text-muted-foreground top-1/2 -translate-y-1/2",
+                              language === "ar" ? "right-3" : "left-3"
+                            )}
+                          />
                           <Input
                             id="signin-password"
-                            type="password"
-                            placeholder="أدخل كلمة المرور"
-                            value={signInData.password}
-                            onChange={(e) =>
-                              setSignInData({
-                                ...signInData,
-                                password: e.target.value,
-                              })
-                            }
+                            name="password"
+                            type={showPassword ? "text" : "password"}
+                            value={formData.password}
+                            onChange={handleInputChange}
+                            placeholder={current.passwordPlaceholder}
+                            className={cn(
+                              "h-12",
+                              language === "ar"
+                                ? "pr-10 pl-10 text-right"
+                                : "pl-10 pr-10"
+                            )}
+                            dir={language === "ar" ? "rtl" : "ltr"}
+                            required
+                          />
+                          <button
+                            type="button"
+                            onClick={() => setShowPassword(!showPassword)}
+                            className={cn(
+                              "absolute top-3 w-4 h-4 text-muted-foreground hover:text-foreground",
+                              language === "ar" ? "left-3" : "right-3"
+                            )}>
+                            {showPassword ? (
+                              <EyeOff className="w-4 h-4" />
+                            ) : (
+                              <Eye className="w-4 h-4" />
+                            )}
+                          </button>
+                        </div>
+                      </div>
+
+                      <Button
+                        type="submit"
+                        className={cn(
+                          "w-full h-12 font-medium",
+                          language === "ar" ? "font-arabic" : "font-english"
+                        )}
+                        disabled={loading}>
+                        {loading ? (
+                          <>
+                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                            {language === "ar"
+                              ? "جاري التحميل..."
+                              : "Loading..."}
+                          </>
+                        ) : (
+                          current.signInButton
+                        )}
+                      </Button>
+                    </form>
+                  </TabsContent>
+
+                  {/* Sign Up Tab */}
+                  <TabsContent value="signup">
+                    <form onSubmit={handleSignUp} className="space-y-4">
+                      <div className="space-y-2">
+                        <Label
+                          htmlFor="signup-name"
+                          className={cn(
+                            language === "ar" ? "font-arabic" : "font-english"
+                          )}>
+                          {current.fullName}
+                        </Label>
+                        <div className="relative">
+                          <User
+                            className={cn(
+                              "absolute w-4 h-4 text-muted-foreground top-1/2 -translate-y-1/2",
+                              language === "ar" ? "right-3" : "left-3"
+                            )}
+                          />
+                          <Input
+                            id="signup-name"
+                            name="fullName"
+                            type="text"
+                            value={formData.fullName}
+                            onChange={handleInputChange}
+                            placeholder={current.fullNamePlaceholder}
+                            className={cn(
+                              "h-12",
+                              language === "ar" ? "pr-10 text-right" : "pl-10"
+                            )}
+                            dir={language === "ar" ? "rtl" : "ltr"}
                             required
                           />
                         </div>
-                        <Button
-                          type="submit"
-                          className="w-full"
-                          disabled={loading}>
-                          {loading ? (
-                            <Loader2 className="ml-2 h-4 w-4 animate-spin" />
-                          ) : (
-                            <>
-                              تسجيل الدخول
-                              <ArrowRight className="mr-2 h-4 w-4" />
-                            </>
-                          )}
-                        </Button>
-                      </form>
-                    </CardContent>
-                  </Card>
-                </TabsContent>
+                      </div>
 
-                <TabsContent value="signup">
-                  <Card className="border-0 shadow-none">
-                    <CardHeader className="text-center pb-4">
-                      <CardTitle className="text-xl">حساب جديد</CardTitle>
-                      <CardDescription>
-                        أنشئ حساباً جديداً للانضمام إلينا
-                      </CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                      <form onSubmit={handleSignUp} className="space-y-4">
-                        <div className="space-y-3">
-                          <Label>نوع الحساب</Label>
-                          <RadioGroup
-                            value={signUpData.userType}
-                            onValueChange={(value) =>
-                              setSignUpData({ ...signUpData, userType: value })
-                            }
-                            className="grid grid-cols-2 gap-4">
-                            <div className="flex items-center space-x-2 border rounded-lg p-3 hover:bg-accent/50 transition-colors">
-                              <RadioGroupItem value="volunteer" id="volunteer" />
-                              <Label
-                                htmlFor="volunteer"
-                                className="flex items-center gap-2 cursor-pointer">
-                                <Heart className="h-4 w-4 text-primary" />
-                                متطوع
-                              </Label>
-                            </div>
-                            <div className="flex items-center space-x-2 border rounded-lg p-3 hover:bg-accent/50 transition-colors">
-                              <RadioGroupItem
-                                value="organization"
-                                id="organization"
-                              />
-                              <Label
-                                htmlFor="organization"
-                                className="flex items-center gap-2 cursor-pointer">
-                                <Building2 className="h-4 w-4 text-primary" />
-                                جهة
-                              </Label>
-                            </div>
-                          </RadioGroup>
-                        </div>
-
-                        <div className="grid grid-cols-2 gap-4">
-                          <div className="space-y-2">
-                            <Label htmlFor="email">البريد الإلكتروني</Label>
-                            <Input
-                              id="email"
-                              type="email"
-                              placeholder="البريد الإلكتروني"
-                              value={signUpData.email}
-                              onChange={(e) =>
-                                setSignUpData({
-                                  ...signUpData,
-                                  email: e.target.value,
-                                })
-                              }
-                              required
-                            />
-                          </div>
-                          <div className="space-y-2">
-                            <Label htmlFor="fullName">الاسم الكامل</Label>
-                            <Input
-                              id="fullName"
-                              placeholder="الاسم الكامل"
-                              value={signUpData.fullName}
-                              onChange={(e) =>
-                                setSignUpData({
-                                  ...signUpData,
-                                  fullName: e.target.value,
-                                })
-                              }
-                              required
-                            />
-                          </div>
-                        </div>
-
-                        <div className="space-y-2">
-                          <Label htmlFor="phone">رقم الهاتف</Label>
+                      <div className="space-y-2">
+                        <Label
+                          htmlFor="signup-phone"
+                          className={cn(
+                            language === "ar" ? "font-arabic" : "font-english"
+                          )}>
+                          {current.phone}
+                        </Label>
+                        <div className="relative">
+                          <Phone
+                            className={cn(
+                              "absolute w-4 h-4 text-muted-foreground top-1/2 -translate-y-1/2",
+                              language === "ar" ? "right-3" : "left-3"
+                            )}
+                          />
                           <Input
-                            id="phone"
+                            id="signup-phone"
+                            name="phone"
                             type="tel"
-                            placeholder="رقم الهاتف"
-                            value={signUpData.phone}
-                            onChange={(e) =>
-                              setSignUpData({
-                                ...signUpData,
-                                phone: e.target.value,
-                              })
-                            }
+                            value={formData.phone}
+                            onChange={handleInputChange}
+                            placeholder={current.phonePlaceholder}
+                            className={cn(
+                              "h-12",
+                              language === "ar" ? "pr-10 text-right" : "pl-10"
+                            )}
+                            dir={language === "ar" ? "rtl" : "ltr"}
+                            required
                           />
                         </div>
+                      </div>
 
-                        <div className="grid grid-cols-2 gap-4">
-                          <div className="space-y-2">
-                            <Label htmlFor="password">كلمة المرور</Label>
-                            <Input
-                              id="password"
-                              type="password"
-                              placeholder="كلمة المرور"
-                              value={signUpData.password}
-                              onChange={(e) =>
-                                setSignUpData({
-                                  ...signUpData,
-                                  password: e.target.value,
-                                })
-                              }
-                              required
-                            />
-                          </div>
-                          <div className="space-y-2">
-                            <Label htmlFor="confirmPassword">
-                              تأكيد كلمة المرور
-                            </Label>
-                            <Input
-                              id="confirmPassword"
-                              type="password"
-                              placeholder="تأكيد كلمة المرور"
-                              value={signUpData.confirmPassword}
-                              onChange={(e) =>
-                                setSignUpData({
-                                  ...signUpData,
-                                  confirmPassword: e.target.value,
-                                })
-                              }
-                              required
-                            />
-                          </div>
+                      <div className="space-y-2">
+                        <Label
+                          htmlFor="signup-email"
+                          className={cn(
+                            language === "ar" ? "font-arabic" : "font-english"
+                          )}>
+                          {current.email}
+                        </Label>
+                        <div className="relative">
+                          <Mail
+                            className={cn(
+                              "absolute w-4 h-4 text-muted-foreground top-1/2 -translate-y-1/2",
+                              language === "ar" ? "right-3" : "left-3"
+                            )}
+                          />
+                          <Input
+                            id="signup-email"
+                            name="email"
+                            type="email"
+                            value={formData.email}
+                            onChange={handleInputChange}
+                            placeholder={current.emailPlaceholder}
+                            className={cn(
+                              "h-12",
+                              language === "ar" ? "pr-10 text-right" : "pl-10"
+                            )}
+                            dir={language === "ar" ? "rtl" : "ltr"}
+                            required
+                          />
                         </div>
+                      </div>
 
-                        {signUpData.userType === "organization" && (
-                          <>
-                            <div className="space-y-2">
-                              <Label htmlFor="organizationName">
-                                اسم الجهة
-                              </Label>
-                              <Input
-                                id="organizationName"
-                                placeholder="اسم الجهة أو المؤسسة"
-                                value={signUpData.organizationName}
-                                onChange={(e) =>
-                                  setSignUpData({
-                                    ...signUpData,
-                                    organizationName: e.target.value,
-                                  })
-                                }
-                              />
-                            </div>
-                            <div className="space-y-2">
-                              <Label htmlFor="organizationDescription">
-                                وصف الجهة
-                              </Label>
-                              <Textarea
-                                id="organizationDescription"
-                                placeholder="وصف مختصر عن الجهة وأنشطتها"
-                                value={signUpData.organizationDescription}
-                                onChange={(e) =>
-                                  setSignUpData({
-                                    ...signUpData,
-                                    organizationDescription: e.target.value,
-                                  })
-                                }
-                              />
-                            </div>
-                          </>
+                      <div className="space-y-2">
+                        <Label
+                          htmlFor="signup-password"
+                          className={cn(
+                            language === "ar" ? "font-arabic" : "font-english"
+                          )}>
+                          {current.password}
+                        </Label>
+                        <div className="relative">
+                          <Lock
+                            className={cn(
+                              "absolute w-4 h-4 text-muted-foreground top-1/2 -translate-y-1/2",
+                              language === "ar" ? "right-3" : "left-3"
+                            )}
+                          />
+                          <Input
+                            id="signup-password"
+                            name="password"
+                            type={showPassword ? "text" : "password"}
+                            value={formData.password}
+                            onChange={handleInputChange}
+                            placeholder={current.passwordPlaceholder}
+                            className={cn(
+                              "h-12",
+                              language === "ar"
+                                ? "pr-10 pl-10 text-right"
+                                : "pl-10 pr-10"
+                            )}
+                            dir={language === "ar" ? "rtl" : "ltr"}
+                            required
+                          />
+                          <button
+                            type="button"
+                            onClick={() => setShowPassword(!showPassword)}
+                            className={cn(
+                              "absolute top-3 w-4 h-4 text-muted-foreground hover:text-foreground",
+                              language === "ar" ? "left-3" : "right-3"
+                            )}>
+                            {showPassword ? (
+                              <EyeOff className="w-4 h-4" />
+                            ) : (
+                              <Eye className="w-4 h-4" />
+                            )}
+                          </button>
+                        </div>
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label
+                          htmlFor="signup-confirm"
+                          className={cn(
+                            language === "ar" ? "font-arabic" : "font-english"
+                          )}>
+                          {current.confirmPassword}
+                        </Label>
+                        <div className="relative">
+                          <Lock
+                            className={cn(
+                              "absolute w-4 h-4 text-muted-foreground top-1/2 -translate-y-1/2",
+                              language === "ar" ? "right-3" : "left-3"
+                            )}
+                          />
+                          <Input
+                            id="signup-confirm"
+                            name="confirmPassword"
+                            type={showPassword ? "text" : "password"}
+                            value={formData.confirmPassword}
+                            onChange={handleInputChange}
+                            placeholder={current.passwordPlaceholder}
+                            className={cn(
+                              "h-12",
+                              language === "ar" ? "pr-10 text-right" : "pl-10"
+                            )}
+                            dir={language === "ar" ? "rtl" : "ltr"}
+                            required
+                          />
+                        </div>
+                      </div>
+
+                      <Button
+                        type="submit"
+                        className={cn(
+                          "w-full h-12 font-medium",
+                          language === "ar" ? "font-arabic" : "font-english"
                         )}
-
-                        {signUpData.userType === "volunteer" && (
+                        disabled={loading}>
+                        {loading ? (
                           <>
-                            <div className="space-y-2">
-                              <Label htmlFor="volunteerSkills">
-                                المهارات (اختياري)
-                              </Label>
-                              <Input
-                                id="volunteerSkills"
-                                placeholder="المهارات، مفصولة بفواصل"
-                                value={signUpData.volunteerSkills}
-                                onChange={(e) =>
-                                  setSignUpData({
-                                    ...signUpData,
-                                    volunteerSkills: e.target.value,
-                                  })
-                                }
-                              />
-                            </div>
-                            <div className="space-y-2">
-                              <Label htmlFor="volunteerInterests">
-                                الاهتمامات (اختياري)
-                              </Label>
-                              <Input
-                                id="volunteerInterests"
-                                placeholder="الاهتمامات، مفصولة بفواصل"
-                                value={signUpData.volunteerInterests}
-                                onChange={(e) =>
-                                  setSignUpData({
-                                    ...signUpData,
-                                    volunteerInterests: e.target.value,
-                                  })
-                                }
-                              />
-                            </div>
+                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                            {language === "ar"
+                              ? "جاري التحميل..."
+                              : "Loading..."}
                           </>
+                        ) : (
+                          current.signUpButton
                         )}
+                      </Button>
+                    </form>
+                  </TabsContent>
+                </Tabs>
 
-                        <Button
-                          type="submit"
-                          className="w-full"
-                          disabled={loading}>
-                          {loading ? (
-                            <Loader2 className="ml-2 h-4 w-4 animate-spin" />
-                          ) : (
-                            <>
-                              إنشاء الحساب
-                              <ArrowRight className="mr-2 h-4 w-4" />
-                            </>
-                          )}
-                        </Button>
-                      </form>
-                    </CardContent>
-                  </Card>
-                </TabsContent>
-              </Tabs>
+                {/* Back to Home */}
+                <div className="mt-6 pt-6 border-t border-border">
+                  <Link to="/">
+                    <Button
+                      variant="ghost"
+                      className={cn(
+                        "w-full",
+                        language === "ar" ? "font-arabic" : "font-english"
+                      )}>
+                      {current.backToHome}
+                    </Button>
+                  </Link>
+                </div>
+              </CardContent>
             </Card>
           </div>
         </div>

@@ -1,16 +1,19 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
-import { 
-  Heart, 
-  Droplets, 
-  Wind, 
-  Activity, 
-  Car, 
-  Recycle, 
-  TrendingUp, 
+import {
+  Heart,
+  Droplets,
+  Wind,
+  Activity,
+  Car,
+  Recycle,
+  TrendingUp,
   TrendingDown,
-  Shield
+  Shield,
+  Target,
+  Sparkles,
+  Award,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -25,46 +28,46 @@ const HealthDashboard = () => {
           value: 85,
           status: "جيد",
           trend: "up",
-          description: "PM2.5: 12 μg/m³"
+          description: "PM2.5: 12 μg/m³",
         },
         waterQuality: {
           title: "جودة المياه",
           value: 92,
           status: "ممتاز",
           trend: "up",
-          description: "نقاء 99.8%"
+          description: "نقاء 99.8%",
         },
         vaccination: {
           title: "معدل التطعيمات",
           value: 96,
           status: "عالي",
           trend: "up",
-          description: "96% من السكان"
+          description: "96% من السكان",
         },
         physicalActivity: {
           title: "النشاط البدني",
           value: 68,
           status: "متوسط",
           trend: "up",
-          description: "68% يمارسون الرياضة"
+          description: "68% يمارسون الرياضة",
         },
         trafficAccidents: {
           title: "الحوادث المرورية",
           value: 12,
           status: "منخفض",
           trend: "down",
-          description: "12 حادث/شهر"
+          description: "12 حادث/شهر",
         },
         recycling: {
           title: "إعادة التدوير",
           value: 74,
           status: "جيد",
           trend: "up",
-          description: "74% من النفايات"
-        }
+          description: "74% من النفايات",
+        },
       },
-      lastUpdate: "آخر تحديث"
-    }
+      lastUpdate: "آخر تحديث",
+    },
   };
 
   const current = content.ar; // Default to Arabic
@@ -77,7 +80,7 @@ const HealthDashboard = () => {
       color: "text-green-600",
       bgColor: "bg-green-100",
       progressColor: "bg-green-500",
-      inverted: false
+      inverted: false,
     },
     {
       ...current.indicators.waterQuality,
@@ -85,7 +88,7 @@ const HealthDashboard = () => {
       color: "text-blue-600",
       bgColor: "bg-blue-100",
       progressColor: "bg-blue-500",
-      inverted: false
+      inverted: false,
     },
     {
       ...current.indicators.vaccination,
@@ -93,7 +96,7 @@ const HealthDashboard = () => {
       color: "text-purple-600",
       bgColor: "bg-purple-100",
       progressColor: "bg-purple-500",
-      inverted: false
+      inverted: false,
     },
     {
       ...current.indicators.physicalActivity,
@@ -101,7 +104,7 @@ const HealthDashboard = () => {
       color: "text-orange-600",
       bgColor: "bg-orange-100",
       progressColor: "bg-orange-500",
-      inverted: false
+      inverted: false,
     },
     {
       ...current.indicators.trafficAccidents,
@@ -109,7 +112,7 @@ const HealthDashboard = () => {
       color: "text-red-600",
       bgColor: "bg-red-100",
       progressColor: "bg-red-500",
-      inverted: true // Lower is better
+      inverted: true, // Lower is better
     },
     {
       ...current.indicators.recycling,
@@ -117,18 +120,24 @@ const HealthDashboard = () => {
       color: "text-teal-600",
       bgColor: "bg-teal-100",
       progressColor: "bg-teal-500",
-      inverted: false
-    }
+      inverted: false,
+    },
   ];
 
   const getStatusColor = (status) => {
     switch (status) {
-      case "ممتاز": return "bg-green-100 text-green-700";
-      case "جيد": return "bg-blue-100 text-blue-700";
-      case "متوسط": return "bg-yellow-100 text-yellow-700";
-      case "منخفض": return "bg-green-100 text-green-700";
-      case "عالي": return "bg-purple-100 text-purple-700";
-      default: return "bg-gray-100 text-gray-700";
+      case "ممتاز":
+        return "bg-green-100 text-green-700";
+      case "جيد":
+        return "bg-blue-100 text-blue-700";
+      case "متوسط":
+        return "bg-yellow-100 text-yellow-700";
+      case "منخفض":
+        return "bg-green-100 text-green-700";
+      case "عالي":
+        return "bg-purple-100 text-purple-700";
+      default:
+        return "bg-gray-100 text-gray-700";
     }
   };
 
@@ -149,15 +158,22 @@ const HealthDashboard = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
           {indicators.map((indicator, index) => {
             const IconComponent = indicator.icon;
-            const progressValue = indicator.inverted ? 100 - indicator.value : indicator.value;
-            
+            const progressValue = indicator.inverted
+              ? 100 - indicator.value
+              : indicator.value;
+
             return (
-              <Card key={index} className="bg-card border border-border shadow-soft hover:shadow-card transition-all duration-300">
+              <Card
+                key={index}
+                className="bg-card border border-border shadow-soft hover:shadow-card transition-all duration-300">
                 <CardHeader className="pb-4">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
-                      <div className={`w-12 h-12 rounded-full flex items-center justify-center ${indicator.bgColor}`}>
-                        <IconComponent className={`h-6 w-6 ${indicator.color}`} />
+                      <div
+                        className={`w-12 h-12 rounded-full flex items-center justify-center ${indicator.bgColor}`}>
+                        <IconComponent
+                          className={`h-6 w-6 ${indicator.color}`}
+                        />
                       </div>
                       <div>
                         <CardTitle className="text-lg font-semibold text-foreground">
@@ -185,10 +201,7 @@ const HealthDashboard = () => {
                         {!indicator.title.includes("الحوادث") && "%"}
                       </span>
                     </div>
-                    <Progress 
-                      value={progressValue} 
-                      className="h-2"
-                    />
+                    <Progress value={progressValue} className="h-2" />
                     <p className="text-sm text-muted-foreground">
                       {indicator.description}
                     </p>
@@ -199,10 +212,37 @@ const HealthDashboard = () => {
           })}
         </div>
 
+        {/* Summary Statistics */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-12">
+          <Card className="text-center p-6 bg-gradient-to-br from-green-50 to-green-100 border-green-200">
+            <Target className="h-8 w-8 text-green-600 mx-auto mb-3" />
+            <div className="text-2xl font-bold text-green-700 mb-1">6</div>
+            <p className="text-sm text-green-600">مؤشرات صحية</p>
+          </Card>
+
+          <Card className="text-center p-6 bg-gradient-to-br from-blue-50 to-blue-100 border-blue-200">
+            <Award className="h-8 w-8 text-blue-600 mx-auto mb-3" />
+            <div className="text-2xl font-bold text-blue-700 mb-1">4</div>
+            <p className="text-sm text-blue-600">مؤشرات ممتازة</p>
+          </Card>
+
+          <Card className="text-center p-6 bg-gradient-to-br from-purple-50 to-purple-100 border-purple-200">
+            <TrendingUp className="h-8 w-8 text-purple-600 mx-auto mb-3" />
+            <div className="text-2xl font-bold text-purple-700 mb-1">100%</div>
+            <p className="text-sm text-purple-600">اتجاه إيجابي</p>
+          </Card>
+
+          <Card className="text-center p-6 bg-gradient-to-br from-orange-50 to-orange-100 border-orange-200">
+            <Sparkles className="h-8 w-8 text-orange-600 mx-auto mb-3" />
+            <div className="text-2xl font-bold text-orange-700 mb-1">87%</div>
+            <p className="text-sm text-orange-600">متوسط الأداء</p>
+          </Card>
+        </div>
+
         {/* Last Update */}
         <div className="text-center">
           <p className="text-sm text-muted-foreground">
-            {current.lastUpdate}: {new Date().toLocaleDateString('ar-SA')}
+            {current.lastUpdate}: {new Date().toLocaleDateString("ar-SA")}
           </p>
         </div>
       </div>
@@ -211,4 +251,3 @@ const HealthDashboard = () => {
 };
 
 export default HealthDashboard;
-
