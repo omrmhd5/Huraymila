@@ -16,16 +16,20 @@ import {
   CheckCircle,
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
+import { useTheme } from "@/contexts/ThemeContext";
 
 const EnvironmentalReport = () => {
   const { loading } = useAuth();
+  const { language } = useTheme();
 
   if (loading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center">
           <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-muted-foreground">جاري التحميل...</p>
+          <p className="text-muted-foreground">
+            {language === "ar" ? "جاري التحميل..." : "Loading..."}
+          </p>
         </div>
       </div>
     );
@@ -33,72 +37,89 @@ const EnvironmentalReport = () => {
 
   const environmentalData = {
     airQuality: {
-      status: "جيد",
+      status: language === "ar" ? "جيد" : "Good",
       value: "65",
       unit: "AQI",
-      trend: "متحسن",
+      trend: language === "ar" ? "متحسن" : "Improving",
       color: "bg-green-500",
     },
     waterQuality: {
-      status: "ممتاز",
+      status: language === "ar" ? "ممتاز" : "Excellent",
       value: "95",
       unit: "%",
-      trend: "مستقر",
+      trend: language === "ar" ? "مستقر" : "Stable",
       color: "bg-blue-500",
     },
     greenSpaces: {
-      status: "جيد",
+      status: language === "ar" ? "جيد" : "Good",
       value: "12.5",
-      unit: "م²/شخص",
-      trend: "متحسن",
+      unit: language === "ar" ? "م²/شخص" : "m²/person",
+      trend: language === "ar" ? "متحسن" : "Improving",
       color: "bg-green-500",
     },
     wasteManagement: {
-      status: "مقبول",
+      status: language === "ar" ? "مقبول" : "Acceptable",
       value: "78",
       unit: "%",
-      trend: "متحسن",
+      trend: language === "ar" ? "متحسن" : "Improving",
       color: "bg-yellow-500",
     },
   };
 
   const initiatives = [
     {
-      title: "مشروع التشجير الحضري",
-      status: "نشط",
+      title:
+        language === "ar" ? "مشروع التشجير الحضري" : "Urban Greening Project",
+      status: language === "ar" ? "نشط" : "Active",
       progress: 75,
-      description: "زيادة المساحات الخضراء في المدينة بنسبة 25%",
+      description:
+        language === "ar"
+          ? "زيادة المساحات الخضراء في المدينة بنسبة 25%"
+          : "Increase green spaces in the city by 25%",
     },
     {
-      title: "برنامج إعادة التدوير",
-      status: "مكتمل",
+      title: language === "ar" ? "برنامج إعادة التدوير" : "Recycling Program",
+      status: language === "ar" ? "مكتمل" : "Completed",
       progress: 100,
-      description: "تطبيق نظام إعادة التدوير في جميع الأحياء",
+      description:
+        language === "ar"
+          ? "تطبيق نظام إعادة التدوير في جميع الأحياء"
+          : "Implement recycling system in all neighborhoods",
     },
     {
-      title: "مشروع الطاقة المتجددة",
-      status: "قيد التنفيذ",
+      title:
+        language === "ar"
+          ? "مشروع الطاقة المتجددة"
+          : "Renewable Energy Project",
+      status: language === "ar" ? "قيد التنفيذ" : "In Progress",
       progress: 45,
-      description: "تركيب ألواح شمسية في المباني الحكومية",
+      description:
+        language === "ar"
+          ? "تركيب ألواح شمسية في المباني الحكومية"
+          : "Install solar panels in government buildings",
     },
   ];
 
   const getStatusBadge = (status) => {
     switch (status) {
-      case "نشط":
+      case language === "ar" ? "نشط" : "Active":
         return (
           <Badge variant="default" className="bg-green-500">
-            نشط
+            {language === "ar" ? "نشط" : "Active"}
           </Badge>
         );
-      case "مكتمل":
+      case language === "ar" ? "مكتمل" : "Completed":
         return (
           <Badge variant="default" className="bg-blue-500">
-            مكتمل
+            {language === "ar" ? "مكتمل" : "Completed"}
           </Badge>
         );
-      case "قيد التنفيذ":
-        return <Badge variant="secondary">قيد التنفيذ</Badge>;
+      case language === "ar" ? "قيد التنفيذ" : "In Progress":
+        return (
+          <Badge variant="secondary">
+            {language === "ar" ? "قيد التنفيذ" : "In Progress"}
+          </Badge>
+        );
       default:
         return <Badge variant="outline">{status}</Badge>;
     }
@@ -109,10 +130,12 @@ const EnvironmentalReport = () => {
       <main className="flex-1 container mx-auto px-4 py-8">
         <div className="text-center mb-8">
           <h1 className="text-4xl font-bold text-primary mb-4">
-            التقرير البيئي
+            {language === "ar" ? "التقرير البيئي" : "Environmental Report"}
           </h1>
           <p className="text-lg text-muted-foreground">
-            نظرة شاملة على الوضع البيئي في مدينة حريملاء الصحية
+            {language === "ar"
+              ? "نظرة شاملة على الوضع البيئي في مدينة حريملاء الصحية"
+              : "Comprehensive overview of the environmental status in Harimlaa Healthy City"}
           </p>
         </div>
 
@@ -143,7 +166,9 @@ const EnvironmentalReport = () => {
         {/* Environmental Initiatives */}
         <div className="mb-8">
           <h2 className="text-2xl font-bold text-foreground mb-6 text-center">
-            المبادرات البيئية النشطة
+            {language === "ar"
+              ? "المبادرات البيئية النشطة"
+              : "Active Environmental Initiatives"}
           </h2>
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             {initiatives.map((initiative, index) => (
@@ -160,7 +185,7 @@ const EnvironmentalReport = () => {
                 <CardContent>
                   <div className="space-y-3">
                     <div className="flex items-center justify-between text-sm">
-                      <span>التقدم</span>
+                      <span>{language === "ar" ? "التقدم" : "Progress"}</span>
                       <span className="font-medium">
                         {initiative.progress}%
                       </span>
@@ -182,49 +207,67 @@ const EnvironmentalReport = () => {
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-green-800">
               <Leaf className="w-5 h-5" />
-              الأهداف البيئية 2030
+              {language === "ar"
+                ? "الأهداف البيئية 2030"
+                : "Environmental Goals 2030"}
             </CardTitle>
             <CardDescription className="text-green-700">
-              خطة المدينة لتحقيق الاستدامة البيئية
+              {language === "ar"
+                ? "خطة المدينة لتحقيق الاستدامة البيئية"
+                : "City's plan to achieve environmental sustainability"}
             </CardDescription>
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-4">
                 <h4 className="font-semibold text-green-800">
-                  أهداف قصيرة المدى (2024-2026)
+                  {language === "ar"
+                    ? "أهداف قصيرة المدى (2024-2026)"
+                    : "Short-term Goals (2024-2026)"}
                 </h4>
                 <ul className="space-y-2 text-sm text-green-700">
                   <li className="flex items-center gap-2">
                     <CheckCircle className="w-4 h-4 text-green-600" />
-                    زيادة المساحات الخضراء بنسبة 30%
+                    {language === "ar"
+                      ? "زيادة المساحات الخضراء بنسبة 30%"
+                      : "Increase green spaces by 30%"}
                   </li>
                   <li className="flex items-center gap-2">
                     <CheckCircle className="w-4 h-4 text-green-600" />
-                    تطبيق نظام إعادة التدوير الشامل
+                    {language === "ar"
+                      ? "تطبيق نظام إعادة التدوير الشامل"
+                      : "Implement comprehensive recycling system"}
                   </li>
                   <li className="flex items-center gap-2">
                     <CheckCircle className="w-4 h-4 text-green-600" />
-                    تحسين جودة الهواء بنسبة 25%
+                    {language === "ar"
+                      ? "تحسين جودة الهواء بنسبة 25%"
+                      : "Improve air quality by 25%"}
                   </li>
                 </ul>
               </div>
               <div className="space-y-4">
                 <h4 className="font-semibold text-green-800">
-                  أهداف طويلة المدى (2027-2030)
+                  {language === "ar"
+                    ? "أهداف طويلة المدى (2027-2030)"
+                    : "Long-term Goals (2027-2030)"}
                 </h4>
                 <ul className="space-y-2 text-sm text-green-700">
                   <li className="flex items-center gap-2">
                     <TrendingUp className="w-4 h-4 text-green-600" />
-                    تحقيق الحياد الكربوني
+                    {language === "ar"
+                      ? "تحقيق الحياد الكربوني"
+                      : "Achieve carbon neutrality"}
                   </li>
                   <li className="flex items-center gap-2">
                     <TrendingUp className="w-4 h-4 text-green-600" />
-                    100% طاقة متجددة
+                    {language === "ar"
+                      ? "100% طاقة متجددة"
+                      : "100% renewable energy"}
                   </li>
                   <li className="flex items-center gap-2">
                     <TrendingUp className="w-4 h-4 text-green-600" />
-                    صفر نفايات
+                    {language === "ar" ? "صفر نفايات" : "Zero waste"}
                   </li>
                 </ul>
               </div>

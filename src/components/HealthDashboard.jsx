@@ -16,8 +16,11 @@ import {
   Award,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useTheme } from "@/contexts/ThemeContext";
 
 const HealthDashboard = () => {
+  const { language } = useTheme();
+
   const content = {
     ar: {
       title: "لوحة المؤشرات الصحية",
@@ -68,10 +71,59 @@ const HealthDashboard = () => {
       },
       lastUpdate: "آخر تحديث",
     },
+    en: {
+      title: "Health Indicators Dashboard",
+      subtitle: "Real-time quality of life indicators in Harimlaa",
+      indicators: {
+        airQuality: {
+          title: "Air Quality",
+          value: 85,
+          status: "Good",
+          trend: "up",
+          description: "PM2.5: 12 μg/m³",
+        },
+        waterQuality: {
+          title: "Water Quality",
+          value: 92,
+          status: "Excellent",
+          trend: "up",
+          description: "99.8% purity",
+        },
+        vaccination: {
+          title: "Vaccination Rate",
+          value: 96,
+          status: "High",
+          trend: "up",
+          description: "96% of population",
+        },
+        physicalActivity: {
+          title: "Physical Activity",
+          value: 68,
+          status: "Medium",
+          trend: "up",
+          description: "68% exercise regularly",
+        },
+        trafficAccidents: {
+          title: "Traffic Accidents",
+          value: 12,
+          status: "Low",
+          trend: "down",
+          description: "12 accidents/month",
+        },
+        recycling: {
+          title: "Recycling",
+          value: 74,
+          status: "Good",
+          trend: "up",
+          description: "74% of waste",
+        },
+      },
+      lastUpdate: "Last Update",
+    },
   };
 
-  const current = content.ar; // Default to Arabic
-  const isRTL = true; // Default to RTL
+  const current = content[language] || content.ar;
+  const isRTL = language === "ar";
 
   const indicators = [
     {
@@ -125,16 +177,22 @@ const HealthDashboard = () => {
   ];
 
   const getStatusColor = (status) => {
+    // Handle both Arabic and English status values
     switch (status) {
       case "ممتاز":
+      case "Excellent":
         return "bg-green-100 text-green-700";
       case "جيد":
+      case "Good":
         return "bg-blue-100 text-blue-700";
       case "متوسط":
+      case "Medium":
         return "bg-yellow-100 text-yellow-700";
       case "منخفض":
+      case "Low":
         return "bg-green-100 text-green-700";
       case "عالي":
+      case "High":
         return "bg-purple-100 text-purple-700";
       default:
         return "bg-gray-100 text-gray-700";
@@ -217,25 +275,33 @@ const HealthDashboard = () => {
           <Card className="text-center p-6 bg-gradient-to-br from-green-50 to-green-100 border-green-200">
             <Target className="h-8 w-8 text-green-600 mx-auto mb-3" />
             <div className="text-2xl font-bold text-green-700 mb-1">6</div>
-            <p className="text-sm text-green-600">مؤشرات صحية</p>
+            <p className="text-sm text-green-600">
+              {language === "ar" ? "مؤشرات صحية" : "Health Indicators"}
+            </p>
           </Card>
 
           <Card className="text-center p-6 bg-gradient-to-br from-blue-50 to-blue-100 border-blue-200">
             <Award className="h-8 w-8 text-blue-600 mx-auto mb-3" />
             <div className="text-2xl font-bold text-blue-700 mb-1">4</div>
-            <p className="text-sm text-blue-600">مؤشرات ممتازة</p>
+            <p className="text-sm text-blue-600">
+              {language === "ar" ? "مؤشرات ممتازة" : "Excellent Indicators"}
+            </p>
           </Card>
 
           <Card className="text-center p-6 bg-gradient-to-br from-purple-50 to-purple-100 border-purple-200">
             <TrendingUp className="h-8 w-8 text-purple-600 mx-auto mb-3" />
             <div className="text-2xl font-bold text-purple-700 mb-1">100%</div>
-            <p className="text-sm text-purple-600">اتجاه إيجابي</p>
+            <p className="text-sm text-purple-600">
+              {language === "ar" ? "اتجاه إيجابي" : "Positive Trend"}
+            </p>
           </Card>
 
           <Card className="text-center p-6 bg-gradient-to-br from-orange-50 to-orange-100 border-orange-200">
             <Sparkles className="h-8 w-8 text-orange-600 mx-auto mb-3" />
             <div className="text-2xl font-bold text-orange-700 mb-1">87%</div>
-            <p className="text-sm text-orange-600">متوسط الأداء</p>
+            <p className="text-sm text-orange-600">
+              {language === "ar" ? "متوسط الأداء" : "Performance Average"}
+            </p>
           </Card>
         </div>
 

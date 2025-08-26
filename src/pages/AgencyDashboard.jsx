@@ -25,10 +25,12 @@ import {
   Trash2,
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
+import { useTheme } from "@/contexts/ThemeContext";
 import { toast } from "sonner";
 
 const AgencyDashboard = () => {
   const { user, loading } = useAuth();
+  const { language } = useTheme();
   const [activeTab, setActiveTab] = useState("overview");
   const [showAddForm, setShowAddForm] = useState(false);
 
@@ -37,7 +39,9 @@ const AgencyDashboard = () => {
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center">
           <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-muted-foreground">جاري التحميل...</p>
+          <p className="text-muted-foreground">
+            {language === "ar" ? "جاري التحميل..." : "Loading..."}
+          </p>
         </div>
       </div>
     );
@@ -45,9 +49,12 @@ const AgencyDashboard = () => {
 
   // Mock data
   const agencyData = {
-    name: "وزارة الصحة - حريملاء",
-    type: "صحة",
-    status: "نشط",
+    name:
+      language === "ar"
+        ? "وزارة الصحة - حريملاء"
+        : "Ministry of Health - Harimlaa",
+    type: language === "ar" ? "صحة" : "Health",
+    status: language === "ar" ? "نشط" : "Active",
     employees: 45,
     initiatives: 12,
     completedInitiatives: 8,
@@ -59,9 +66,15 @@ const AgencyDashboard = () => {
   const initiatives = [
     {
       id: 1,
-      title: "برنامج التوعية الصحية",
-      description: "توعية المجتمع بأهمية الصحة الوقائية",
-      status: "مكتمل",
+      title:
+        language === "ar"
+          ? "برنامج التوعية الصحية"
+          : "Health Awareness Program",
+      description:
+        language === "ar"
+          ? "توعية المجتمع بأهمية الصحة الوقائية"
+          : "Raising community awareness about preventive health",
+      status: language === "ar" ? "مكتمل" : "Completed",
       progress: 100,
       startDate: "2024-01-01",
       endDate: "2024-03-31",
@@ -71,9 +84,13 @@ const AgencyDashboard = () => {
     },
     {
       id: 2,
-      title: "مشروع الفحص المبكر",
-      description: "فحص مبكر للأمراض المزمنة",
-      status: "نشط",
+      title:
+        language === "ar" ? "مشروع الفحص المبكر" : "Early Screening Project",
+      description:
+        language === "ar"
+          ? "فحص مبكر للأمراض المزمنة"
+          : "Early screening for chronic diseases",
+      status: language === "ar" ? "نشط" : "Active",
       progress: 75,
       startDate: "2024-02-01",
       endDate: "2024-06-30",
@@ -83,9 +100,15 @@ const AgencyDashboard = () => {
     },
     {
       id: 3,
-      title: "مبادرة البيئة الصحية",
-      description: "تحسين البيئة المحيطة بالمرافق الصحية",
-      status: "نشط",
+      title:
+        language === "ar"
+          ? "مبادرة البيئة الصحية"
+          : "Healthy Environment Initiative",
+      description:
+        language === "ar"
+          ? "تحسين البيئة المحيطة بالمرافق الصحية"
+          : "Improving the environment around health facilities",
+      status: language === "ar" ? "نشط" : "Active",
       progress: 45,
       startDate: "2024-03-01",
       endDate: "2024-08-31",

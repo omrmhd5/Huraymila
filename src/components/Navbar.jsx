@@ -65,8 +65,8 @@ const Navbar = () => {
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
-              <span className="text-white font-bold text-lg">ح</span>
+            <div className="w-7 rounded-lg flex items-center justify-center">
+              <img src="assets/Logo.png" alt="Logo" />
             </div>
             <div className="hidden sm:block">
               <h1 className="text-xl font-bold text-primary">
@@ -167,13 +167,10 @@ const Navbar = () => {
             ) : (
               <div className="flex items-center gap-2">
                 <Link to="/auth">
-                  <Button variant="outline" size="sm">
-                    {language === "ar" ? "تسجيل الدخول" : "Sign In"}
-                  </Button>
-                </Link>
-                <Link to="/auth">
                   <Button size="sm">
-                    {language === "ar" ? "إنشاء حساب" : "Sign Up"}
+                    {language === "ar"
+                      ? "تسجيل الدخول / إنشاء حساب"
+                      : "Sign In / Sign Up"}
                   </Button>
                 </Link>
               </div>

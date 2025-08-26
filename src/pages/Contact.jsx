@@ -20,10 +20,12 @@ import {
 } from "@/components/ui/select";
 import { Mail, Phone, MapPin, Clock, Send, MessageSquare } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
+import { useTheme } from "@/contexts/ThemeContext";
 import { toast } from "sonner";
 
 const Contact = () => {
   const { user, loading } = useAuth();
+  const { language } = useTheme();
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -38,7 +40,9 @@ const Contact = () => {
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center">
           <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-muted-foreground">جاري التحميل...</p>
+          <p className="text-muted-foreground">
+            {language === "ar" ? "جاري التحميل..." : "Loading..."}
+          </p>
         </div>
       </div>
     );
@@ -59,7 +63,11 @@ const Contact = () => {
       !formData.email.trim() ||
       !formData.message.trim()
     ) {
-      toast.error("يرجى ملء جميع الحقول المطلوبة");
+      toast.error(
+        language === "ar"
+          ? "يرجى ملء جميع الحقول المطلوبة"
+          : "Please fill in all required fields"
+      );
       return;
     }
 
@@ -69,7 +77,11 @@ const Contact = () => {
       // Mock implementation - simulate contact form submission
       await new Promise((resolve) => setTimeout(resolve, 1000));
 
-      toast.success("تم إرسال رسالتك بنجاح! سنتواصل معك قريباً");
+      toast.success(
+        language === "ar"
+          ? "تم إرسال رسالتك بنجاح! سنتواصل معك قريباً"
+          : "Your message has been sent successfully! We'll contact you soon"
+      );
       setFormData({
         name: "",
         email: "",
@@ -78,7 +90,11 @@ const Contact = () => {
         message: "",
       });
     } catch (error) {
-      toast.error("حدث خطأ في إرسال الرسالة");
+      toast.error(
+        language === "ar"
+          ? "حدث خطأ في إرسال الرسالة"
+          : "An error occurred while sending the message"
+      );
     } finally {
       setSubmitting(false);
     }
@@ -87,27 +103,34 @@ const Contact = () => {
   const contactInfo = [
     {
       icon: Mail,
-      title: "البريد الإلكتروني",
+      title: language === "ar" ? "البريد الإلكتروني" : "Email",
       value: "info@harimlaa-healthy.city",
-      description: "راسلنا عبر البريد الإلكتروني",
+      description:
+        language === "ar"
+          ? "راسلنا عبر البريد الإلكتروني"
+          : "Contact us via email",
     },
     {
       icon: Phone,
-      title: "الهاتف",
+      title: language === "ar" ? "الهاتف" : "Phone",
       value: "+966-11-123-4567",
-      description: "اتصل بنا مباشرة",
+      description: language === "ar" ? "اتصل بنا مباشرة" : "Call us directly",
     },
     {
       icon: MapPin,
-      title: "العنوان",
+      title: language === "ar" ? "العنوان" : "Address",
       value: "مدينة حريملاء، الرياض، المملكة العربية السعودية",
-      description: "موقع مبادرة المدينة الصحية",
+      description:
+        language === "ar"
+          ? "موقع مبادرة المدينة الصحية"
+          : "Location of the Healthy City initiative",
     },
     {
       icon: Clock,
-      title: "ساعات العمل",
+      title: language === "ar" ? "ساعات العمل" : "Office Hours",
       value: "الأحد - الخميس: 8:00 ص - 4:00 م",
-      description: "أوقات العمل الرسمية",
+      description:
+        language === "ar" ? "أوقات العمل الرسمية" : "Official working hours",
     },
   ];
 
@@ -115,9 +138,13 @@ const Contact = () => {
     <div className="min-h-screen bg-background flex flex-col">
       <main className="flex-1 container mx-auto px-4 py-8">
         <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-primary mb-4">اتصل بنا</h1>
+          <h1 className="text-4xl font-bold text-primary mb-4">
+            {language === "ar" ? "اتصل بنا" : "Contact Us"}
+          </h1>
           <p className="text-lg text-muted-foreground">
-            نحن هنا للإجابة على استفساراتك ومساعدتك
+            {language === "ar"
+              ? "نحن هنا للإجابة على استفساراتك ومساعدتك"
+              : "We are here to answer your questions and help you"}
           </p>
         </div>
 
@@ -128,10 +155,14 @@ const Contact = () => {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <MessageSquare className="w-5 h-5" />
-                  معلومات التواصل
+                  {language === "ar"
+                    ? "معلومات التواصل"
+                    : "Contact Information"}
                 </CardTitle>
                 <CardDescription>
-                  طرق مختلفة للتواصل مع فريق مبادرة المدينة الصحية
+                  {language === "ar"
+                    ? "طرق مختلفة للتواصل مع فريق مبادرة المدينة الصحية"
+                    : "Different ways to contact the Healthy City initiative team"}
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
@@ -159,27 +190,45 @@ const Contact = () => {
             {/* Office Hours */}
             <Card>
               <CardHeader>
-                <CardTitle>ساعات العمل</CardTitle>
+                <CardTitle>
+                  {language === "ar" ? "ساعات العمل" : "Office Hours"}
+                </CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="space-y-2 text-sm">
                   <div className="flex justify-between">
-                    <span>الأحد - الخميس</span>
-                    <span className="font-medium">8:00 ص - 4:00 م</span>
+                    <span>
+                      {language === "ar"
+                        ? "الأحد - الخميس"
+                        : "Sunday - Thursday"}
+                    </span>
+                    <span className="font-medium">
+                      {language === "ar"
+                        ? "8:00 ص - 4:00 م"
+                        : "8:00 AM - 4:00 PM"}
+                    </span>
                   </div>
                   <div className="flex justify-between">
-                    <span>الجمعة</span>
-                    <span className="font-medium">مغلق</span>
+                    <span>{language === "ar" ? "الجمعة" : "Friday"}</span>
+                    <span className="font-medium">
+                      {language === "ar" ? "مغلق" : "Closed"}
+                    </span>
                   </div>
                   <div className="flex justify-between">
-                    <span>السبت</span>
-                    <span className="font-medium">9:00 ص - 1:00 م</span>
+                    <span>{language === "ar" ? "السبت" : "Saturday"}</span>
+                    <span className="font-medium">
+                      {language === "ar"
+                        ? "9:00 ص - 1:00 م"
+                        : "9:00 AM - 1:00 PM"}
+                    </span>
                   </div>
                 </div>
                 <div className="mt-4 p-3 bg-muted/50 rounded-lg">
                   <p className="text-xs text-muted-foreground">
-                    <strong>ملاحظة:</strong> في أيام العطل الرسمية، قد تتغير
-                    ساعات العمل
+                    <strong>{language === "ar" ? "ملاحظة:" : "Note:"}</strong>{" "}
+                    {language === "ar"
+                      ? "في أيام العطل الرسمية، قد تتغير ساعات العمل"
+                      : "In official holidays, working hours may change"}
                   </p>
                 </div>
               </CardContent>
@@ -190,34 +239,50 @@ const Contact = () => {
           <div className="lg:col-span-2">
             <Card>
               <CardHeader>
-                <CardTitle>أرسل لنا رسالة</CardTitle>
+                <CardTitle>
+                  {language === "ar" ? "أرسل لنا رسالة" : "Send Us a Message"}
+                </CardTitle>
                 <CardDescription>
-                  املأ النموذج أدناه وسنرد عليك في أقرب وقت ممكن
+                  {language === "ar"
+                    ? "املأ النموذج أدناه وسنرد عليك في أقرب وقت ممكن"
+                    : "Fill out the form below and we'll get back to you as soon as possible"}
                 </CardDescription>
               </CardHeader>
               <CardContent>
                 <form onSubmit={handleSubmit} className="space-y-4">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <Label htmlFor="name">الاسم الكامل *</Label>
+                      <Label htmlFor="name">
+                        {language === "ar" ? "الاسم الكامل *" : "Full Name *"}
+                      </Label>
                       <Input
                         id="name"
                         name="name"
                         value={formData.name}
                         onChange={handleInputChange}
-                        placeholder="أدخل اسمك الكامل"
+                        placeholder={
+                          language === "ar"
+                            ? "أدخل اسمك الكامل"
+                            : "Enter your full name"
+                        }
                         required
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="email">البريد الإلكتروني *</Label>
+                      <Label htmlFor="email">
+                        {language === "ar" ? "البريد الإلكتروني *" : "Email *"}
+                      </Label>
                       <Input
                         id="email"
                         name="email"
                         type="email"
                         value={formData.email}
                         onChange={handleInputChange}
-                        placeholder="example@email.com"
+                        placeholder={
+                          language === "ar"
+                            ? "example@email.com"
+                            : "example@email.com"
+                        }
                         required
                       />
                     </div>
@@ -225,50 +290,80 @@ const Contact = () => {
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <Label htmlFor="phone">رقم الهاتف</Label>
+                      <Label htmlFor="phone">
+                        {language === "ar" ? "رقم الهاتف" : "Phone Number"}
+                      </Label>
                       <Input
                         id="phone"
                         name="phone"
                         value={formData.phone}
                         onChange={handleInputChange}
-                        placeholder="+966-50-123-4567"
+                        placeholder={
+                          language === "ar"
+                            ? "+966-50-123-4567"
+                            : "+966-50-123-4567"
+                        }
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="subject">الموضوع</Label>
+                      <Label htmlFor="subject">
+                        {language === "ar" ? "الموضوع" : "Subject"}
+                      </Label>
                       <Select
                         value={formData.subject}
                         onValueChange={(value) =>
                           setFormData({ ...formData, subject: value })
                         }>
                         <SelectTrigger>
-                          <SelectValue placeholder="اختر موضوع الرسالة" />
+                          <SelectValue
+                            placeholder={
+                              language === "ar"
+                                ? "اختر موضوع الرسالة"
+                                : "Select a subject"
+                            }
+                          />
                         </SelectTrigger>
                         <SelectContent>
                           <SelectItem value="استفسار عام">
-                            استفسار عام
+                            {language === "ar"
+                              ? "استفسار عام"
+                              : "General Inquiry"}
                           </SelectItem>
                           <SelectItem value="معلومات عن المبادرات">
-                            معلومات عن المبادرات
+                            {language === "ar"
+                              ? "معلومات عن المبادرات"
+                              : "Information about initiatives"}
                           </SelectItem>
-                          <SelectItem value="التطوع">التطوع</SelectItem>
+                          <SelectItem value="التطوع">
+                            {language === "ar" ? "التطوع" : "Volunteering"}
+                          </SelectItem>
                           <SelectItem value="شكوى أو اقتراح">
-                            شكوى أو اقتراح
+                            {language === "ar"
+                              ? "شكوى أو اقتراح"
+                              : "Complaint or Suggestion"}
                           </SelectItem>
-                          <SelectItem value="أخرى">أخرى</SelectItem>
+                          <SelectItem value="أخرى">
+                            {language === "ar" ? "أخرى" : "Other"}
+                          </SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="message">الرسالة *</Label>
+                    <Label htmlFor="message">
+                      {language === "ar" ? "الرسالة *" : "Message *"}
+                    </Label>
                     <Textarea
                       id="message"
                       name="message"
                       value={formData.message}
                       onChange={handleInputChange}
-                      placeholder="اكتب رسالتك هنا..."
+                      placeholder={
+                        language === "ar"
+                          ? "اكتب رسالتك هنا..."
+                          : "Write your message here..."
+                      }
                       rows={5}
                       required
                     />
@@ -281,12 +376,12 @@ const Contact = () => {
                     {submitting ? (
                       <>
                         <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
-                        جاري الإرسال...
+                        {language === "ar" ? "جاري الإرسال..." : "Sending..."}
                       </>
                     ) : (
                       <>
                         <Send className="w-4 h-4 mr-2" />
-                        إرسال الرسالة
+                        {language === "ar" ? "إرسال الرسالة" : "Send Message"}
                       </>
                     )}
                   </Button>
@@ -299,36 +394,53 @@ const Contact = () => {
         {/* FAQ Section */}
         <Card className="mt-8">
           <CardHeader>
-            <CardTitle>الأسئلة الشائعة</CardTitle>
-            <CardDescription>إجابات على أكثر الأسئلة شيوعاً</CardDescription>
+            <CardTitle>
+              {language === "ar"
+                ? "الأسئلة الشائعة"
+                : "Frequently Asked Questions"}
+            </CardTitle>
+            <CardDescription>
+              {language === "ar"
+                ? "إجابات على أكثر الأسئلة شيوعاً"
+                : "Answers to the most frequently asked questions"}
+            </CardDescription>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
               <div className="border-b border-border pb-4">
                 <h4 className="font-medium mb-2">
-                  كيف يمكنني الانضمام كمتطوع؟
+                  {language === "ar"
+                    ? "كيف يمكنني الانضمام كمتطوع؟"
+                    : "How can I join as a volunteer?"}
                 </h4>
                 <p className="text-sm text-muted-foreground">
-                  يمكنك التقديم عبر صفحة التطوع في الموقع أو التواصل معنا مباشرة
-                  عبر البريد الإلكتروني
+                  {language === "ar"
+                    ? "يمكنك التقديم عبر صفحة التطوع في الموقع أو التواصل معنا مباشرة عبر البريد الإلكتروني"
+                    : "You can apply through the volunteering page on the website or contact us directly via email"}
                 </p>
               </div>
               <div className="border-b border-border pb-4">
                 <h4 className="font-medium mb-2">
-                  ما هي المبادرات المتاحة حالياً؟
+                  {language === "ar"
+                    ? "ما هي المبادرات المتاحة حالياً؟"
+                    : "What initiatives are available currently?"}
                 </h4>
                 <p className="text-sm text-muted-foreground">
-                  لدينا عدة مبادرات نشطة تشمل التشجير الحضري، التوعية الصحية،
-                  والأنشطة المجتمعية
+                  {language === "ar"
+                    ? "لدينا عدة مبادرات نشطة تشمل التشجير الحضري، التوعية الصحية، والأنشطة المجتمعية"
+                    : "We have several active initiatives including urban greening, health awareness, and community activities"}
                 </p>
               </div>
               <div className="border-b border-border pb-4">
                 <h4 className="font-medium mb-2">
-                  كيف يمكنني اقتراح مبادرة جديدة؟
+                  {language === "ar"
+                    ? "كيف يمكنني اقتراح مبادرة جديدة؟"
+                    : "How can I propose a new initiative?"}
                 </h4>
                 <p className="text-sm text-muted-foreground">
-                  يمكنك إرسال اقتراحك عبر نموذج الاتصال أو البريد الإلكتروني مع
-                  تفاصيل المبادرة
+                  {language === "ar"
+                    ? "يمكنك إرسال اقتراحك عبر نموذج الاتصال أو البريد الإلكتروني مع تفاصيل المبادرة"
+                    : "You can submit your proposal through the contact form or email us with details of the initiative"}
                 </p>
               </div>
             </div>

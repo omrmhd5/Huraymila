@@ -11,90 +11,102 @@ import {
   UserCheck,
   HandHeart,
 } from "lucide-react";
+import { useTheme } from "@/contexts/ThemeContext";
 
 const PartnersSection = () => {
+  const { language } = useTheme();
+
   const partners = [
     {
-      name: "وزارة الصحة",
-      role: "سياسات صحية",
+      name: language === "ar" ? "وزارة الصحة" : "Ministry of Health",
+      role: language === "ar" ? "سياسات صحية" : "Health Policies",
       icon: Heart,
       color: "bg-red-500",
     },
     {
-      name: "بلدية حريملاء",
-      role: "خدمات محلية",
+      name: language === "ar" ? "بلدية حريملاء" : "Harimlaa Municipality",
+      role: language === "ar" ? "خدمات محلية" : "Local Services",
       icon: Building,
       color: "bg-blue-500",
     },
     {
-      name: "إدارة التعليم",
-      role: "برامج توعوية",
+      name: language === "ar" ? "إدارة التعليم" : "Education Department",
+      role: language === "ar" ? "برامج توعوية" : "Awareness Programs",
       icon: GraduationCap,
       color: "bg-green-500",
     },
     {
-      name: "شركة المياه",
-      role: "جودة المياه",
+      name: language === "ar" ? "شركة المياه" : "Water Company",
+      role: language === "ar" ? "جودة المياه" : "Water Quality",
       icon: Droplets,
       color: "bg-cyan-500",
     },
     {
-      name: "إدارة المرور",
-      role: "سلامة مرورية",
+      name: language === "ar" ? "إدارة المرور" : "Traffic Department",
+      role: language === "ar" ? "سلامة مرورية" : "Traffic Safety",
       icon: Car,
       color: "bg-orange-500",
     },
     {
-      name: "الدفاع المدني",
-      role: "استجابة طوارئ",
+      name: language === "ar" ? "الدفاع المدني" : "Civil Defense",
+      role: language === "ar" ? "استجابة طوارئ" : "Emergency Response",
       icon: Shield,
       color: "bg-purple-500",
     },
     {
-      name: "المنظمات الخيرية",
-      role: "دعم اجتماعي",
+      name: language === "ar" ? "المنظمات الخيرية" : "Charitable Organizations",
+      role: language === "ar" ? "دعم اجتماعي" : "Social Support",
       icon: HandHeart,
       color: "bg-pink-500",
     },
     {
-      name: "الهيئة العامة للغذاء والدواء",
-      role: "سلامة غذائية",
+      name:
+        language === "ar"
+          ? "الهيئة العامة للغذاء والدواء"
+          : "Food and Drug Authority",
+      role: language === "ar" ? "سلامة غذائية" : "Food Safety",
       icon: Shield,
       color: "bg-indigo-500",
     },
     {
-      name: "وزارة البيئة",
-      role: "حماية بيئية",
+      name: language === "ar" ? "وزارة البيئة" : "Ministry of Environment",
+      role: language === "ar" ? "حماية بيئية" : "Environmental Protection",
       icon: Building,
       color: "bg-emerald-500",
     },
     {
-      name: "إدارة الطوارئ الطبية",
-      role: "خدمات إسعافية",
+      name:
+        language === "ar"
+          ? "إدارة الطوارئ الطبية"
+          : "Medical Emergency Department",
+      role: language === "ar" ? "خدمات إسعافية" : "Ambulance Services",
       icon: Heart,
       color: "bg-red-600",
     },
     {
-      name: "مكتب العمل",
-      role: "تنمية مهارات",
+      name: language === "ar" ? "مكتب العمل" : "Labor Office",
+      role: language === "ar" ? "تنمية مهارات" : "Skills Development",
       icon: Building,
       color: "bg-blue-600",
     },
     {
-      name: "إدارة المتاحف والتراث",
-      role: "حفظ تراث",
+      name:
+        language === "ar"
+          ? "إدارة المتاحف والتراث"
+          : "Museums and Heritage Department",
+      role: language === "ar" ? "حفظ تراث" : "Heritage Preservation",
       icon: Building,
       color: "bg-amber-500",
     },
     {
-      name: "مركز الأحياء",
-      role: "تطوير مجتمعي",
+      name: language === "ar" ? "مركز الأحياء" : "Community Center",
+      role: language === "ar" ? "تطوير مجتمعي" : "Community Development",
       icon: Users,
       color: "bg-teal-500",
     },
     {
-      name: "هيئة الرياضة",
-      role: "نشاط رياضي",
+      name: language === "ar" ? "هيئة الرياضة" : "Sports Authority",
+      role: language === "ar" ? "نشاط رياضي" : "Sports Activities",
       icon: Users,
       color: "bg-lime-500",
     },
@@ -104,25 +116,25 @@ const PartnersSection = () => {
     {
       icon: Users,
       value: "19",
-      label: "جهات شريكة",
+      label: language === "ar" ? "جهات شريكة" : "Partner Organizations",
       color: "text-primary",
     },
     {
       icon: Target,
       value: "50+",
-      label: "مبادرة تكاملية",
+      label: language === "ar" ? "مبادرة تكاملية" : "Integrated Initiatives",
       color: "text-secondary",
     },
     {
       icon: UserCheck,
       value: "500+",
-      label: "متطوع نشط",
+      label: language === "ar" ? "متطوع نشط" : "Active Volunteers",
       color: "text-accent",
     },
     {
       icon: HandHeart,
       value: "95%",
-      label: "رضا المجتمع",
+      label: language === "ar" ? "رضا المجتمع" : "Community Satisfaction",
       color: "text-primary",
     },
   ];
@@ -133,10 +145,14 @@ const PartnersSection = () => {
         {/* Header */}
         <div className="text-center mb-16">
           <h2 className="text-4xl md:text-5xl font-bold text-foreground mb-6">
-            شبكة التكامل المجتمعي
+            {language === "ar"
+              ? "شبكة التكامل المجتمعي"
+              : "Community Integration Network"}
           </h2>
           <p className="text-xl text-muted-foreground max-w-4xl mx-auto leading-relaxed">
-            المجتمع والمتطوعون في المركز، والجهات الشريكة تعمل معهم ولهم
+            {language === "ar"
+              ? "المجتمع والمتطوعون في المركز، والجهات الشريكة تعمل معهم ولهم"
+              : "Community and volunteers at the center, with partner organizations working with and for them"}
           </p>
         </div>
 
@@ -146,16 +162,24 @@ const PartnersSection = () => {
             <Users className="h-12 w-12 text-primary" />
           </div>
           <h3 className="text-2xl font-bold text-foreground mb-2">
-            المجتمع والمتطوعون
+            {language === "ar"
+              ? "المجتمع والمتطوعون"
+              : "Community and Volunteers"}
           </h3>
           <p className="text-lg text-muted-foreground mb-4">
-            الركيزة الأساسية لكل المبادرات
+            {language === "ar"
+              ? "الركيزة الأساسية لكل المبادرات"
+              : "The foundation of all initiatives"}
           </p>
-          <div className="text-3xl font-bold text-primary">500+ متطوع نشط</div>
+          <div className="text-3xl font-bold text-primary">
+            {language === "ar" ? "500+ متطوع نشط" : "500+ Active Volunteers"}
+          </div>
           <div className="text-center mt-2">
             <p className="text-md text-muted-foreground">
-              <span className="font-bold text-primary">20+</span> جهة شريكة تعمل
-              معنا لتحقيق الرؤية
+              <span className="font-bold text-primary">20+</span>{" "}
+              {language === "ar"
+                ? "جهة شريكة تعمل معنا لتحقيق الرؤية"
+                : "partner organizations working with us to achieve the vision"}
             </p>
           </div>
         </div>
@@ -188,9 +212,9 @@ const PartnersSection = () => {
         {/* Collaboration Flow Description */}
         <div className="text-center mb-12">
           <p className="text-lg text-muted-foreground max-w-4xl mx-auto leading-relaxed">
-            جودة الحياة تتحقق بتكامل المجتمع والجهات في تقديم الخدمات وتطويرها.
-            كل منظمة تقدم خدمات للمجتمع بينما تستفيد من بيانات المواطنين
-            وملاحظاتهم لتحسين الأداء.
+            {language === "ar"
+              ? "جودة الحياة تتحقق بتكامل المجتمع والجهات في تقديم الخدمات وتطويرها. كل منظمة تقدم خدمات للمجتمع بينما تستفيد من بيانات المواطنين وملاحظاتهم لتحسين الأداء."
+              : "Quality of life is achieved through the integration of community and organizations in providing and developing services. Each organization provides services to the community while benefiting from citizen data and feedback to improve performance."}
           </p>
         </div>
 

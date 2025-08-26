@@ -17,16 +17,18 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
+import { useTheme } from "@/contexts/ThemeContext";
 
 const InteractiveMap = () => {
+  const { language } = useTheme();
   const [selectedLocation, setSelectedLocation] = useState(null);
   const [mapZoom, setMapZoom] = useState(100);
   const [visibleCategories, setVisibleCategories] = useState([
-    "حكومي",
-    "محلي",
-    "تعليمي",
-    "خدمي",
-    "أمني",
+    language === "ar" ? "حكومي" : "governmental",
+    language === "ar" ? "محلي" : "local",
+    language === "ar" ? "تعليمي" : "educational",
+    language === "ar" ? "خدمي" : "service",
+    language === "ar" ? "أمني" : "security",
   ]);
 
   const content = {
@@ -91,9 +93,71 @@ const InteractiveMap = () => {
         },
       ],
     },
+    en: {
+      title: "Interactive Harimlaa Province Map",
+      subtitle:
+        "Explore partner locations and health facilities in the province",
+      zoomIn: "Zoom In",
+      zoomOut: "Zoom Out",
+      reset: "Reset",
+      showDetails: "Show Details",
+      hideDetails: "Hide Details",
+      filterTitle: "Filter by Type",
+      categories: {
+        governmental: "Government Agencies",
+        local: "Local Organizations",
+        educational: "Educational Institutions",
+        service: "Public Services",
+        security: "Security Agencies",
+      },
+      locations: [
+        {
+          name: "Ministry of Health",
+          type: "governmental",
+          description: "Supervising agency for the Healthy Cities program",
+          icon: Heart,
+          position: { top: "20%", left: "30%" },
+        },
+        {
+          name: "Harimlaa Municipality",
+          type: "local",
+          description: "Local partner in implementing initiatives",
+          icon: Building,
+          position: { top: "45%", left: "50%" },
+        },
+        {
+          name: "Education Department",
+          type: "educational",
+          description: "Development of educational and awareness programs",
+          icon: GraduationCap,
+          position: { top: "35%", left: "70%" },
+        },
+        {
+          name: "National Water Company",
+          type: "service",
+          description: "Ensuring water quality and network safety",
+          icon: Droplets,
+          position: { top: "60%", left: "25%" },
+        },
+        {
+          name: "Traffic Department",
+          type: "security",
+          description: "Improving traffic safety and sustainable transport",
+          icon: Car,
+          position: { top: "65%", left: "65%" },
+        },
+        {
+          name: "Civil Defense",
+          type: "security",
+          description: "Ensuring public safety and risk management",
+          icon: Shield,
+          position: { top: "25%", left: "75%" },
+        },
+      ],
+    },
   };
 
-  const current = content.ar; // Default to Arabic
+  const current = content[language] || content.ar;
 
   const getTypeColor = (type) => {
     const colors = {

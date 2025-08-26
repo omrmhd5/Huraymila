@@ -8,17 +8,21 @@ import SuccessStories from "@/components/SuccessStories";
 import PartnersSection from "@/components/PartnersSection";
 import QuickLinksSection from "@/components/QuickLinksSection";
 import { useAuth } from "@/contexts/AuthContext";
+import { useTheme } from "@/contexts/ThemeContext";
 import HealthDashboard from "@/components/HealthDashboard";
 
 const Home = () => {
   const { loading } = useAuth();
+  const { language } = useTheme();
 
   if (loading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center">
           <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-muted-foreground">جاري التحميل...</p>
+          <p className="text-muted-foreground">
+            {language === "ar" ? "جاري التحميل..." : "Loading..."}
+          </p>
         </div>
       </div>
     );
