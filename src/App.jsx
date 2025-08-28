@@ -20,6 +20,8 @@ import AgencyDashboard from "./pages/AgencyDashboard";
 import AgencyManagement from "./pages/AgencyManagement";
 import AdminDashboard from "./pages/AdminDashboard";
 import AdminLayout from "./pages/AdminLayout";
+import StandardsManagement from "./pages/StandardsManagement";
+import SubmissionsView from "./pages/SubmissionsView";
 
 const queryClient = new QueryClient();
 
@@ -50,6 +52,11 @@ const App = () => (
 
               <Route path="/admin" element={<AdminLayout />}>
                 <Route index element={<AdminDashboard />} />
+                <Route path="standards" element={<StandardsManagement />} />
+                <Route
+                  path="standards/:standardId"
+                  element={<SubmissionsView />}
+                />
                 <Route
                   path="agency-management"
                   element={<AgencyManagement />}

@@ -71,6 +71,15 @@ const AdminLayout = () => {
         language === "ar" ? "نظرة عامة على النظام" : "System Overview",
     },
     {
+      value: "/admin/standards",
+      label: language === "ar" ? "إدارة المعايير" : "Standards Management",
+      icon: Database,
+      description:
+        language === "ar"
+          ? "إدارة المعايير الصحية الـ 80"
+          : "Manage the 80 Health Standards",
+    },
+    {
       value: "/admin/agency-management",
       label: language === "ar" ? "إدارة الوكالات" : "Agency Management",
       icon: Building2,
@@ -84,6 +93,7 @@ const AdminLayout = () => {
   const getCurrentTab = () => {
     const currentPath = location.pathname;
     if (currentPath === "/admin") return "/admin";
+    if (currentPath === "/admin/standards") return "/admin/standards";
     if (currentPath === "/admin/agency-management")
       return "/admin/agency-management";
     return "/admin";

@@ -81,7 +81,7 @@ const AdminDashboard = () => {
     }
   }, [userRole]);
 
-  const checkUserRole = async () => {
+  const checkUserRole = () => {
     if (user) {
       navigate("/auth");
       return;
@@ -89,7 +89,7 @@ const AdminDashboard = () => {
 
     try {
       // Mock implementation - simulate admin role check
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      // await new Promise((resolve) => setTimeout(resolve, 1000));
 
       // Check if user has admin role (for demo purposes, always grant access)
       // In production, this should check user.role === "admin"
@@ -100,12 +100,12 @@ const AdminDashboard = () => {
     }
   };
 
-  const fetchAllData = async () => {
+  const fetchAllData = () => {
     try {
       setLoading(true);
 
       // Mock implementation - simulate data fetching
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      // await new Promise((resolve) => setTimeout(resolve, 1000));
 
       // Mock data for demonstration
       const mockStats = {
@@ -344,6 +344,51 @@ const AdminDashboard = () => {
             </CardContent>
           </Card>
         ))}
+      </div>
+
+      {/* Quick Actions */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+        <Card className="hover:shadow-lg transition-shadow cursor-pointer">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Database className="w-5 h-5 text-green-600" />
+              {language === "ar" ? "إدارة المعايير" : "Standards Management"}
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-muted-foreground mb-4">
+              {language === "ar"
+                ? "مراقبة وإدارة المعايير الصحية الـ 80 مع متطلباتها والوكالات المسؤولة"
+                : "Monitor and manage the 80 health standards with their requirements and responsible agencies"}
+            </p>
+            <Button
+              className="w-full"
+              onClick={() => navigate("/admin/standards")}>
+              {language === "ar" ? "إدارة المعايير" : "Manage Standards"}
+            </Button>
+          </CardContent>
+        </Card>
+
+        <Card className="hover:shadow-lg transition-shadow cursor-pointer">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Building2 className="w-5 h-5 text-blue-600" />
+              {language === "ar" ? "إدارة الوكالات" : "Agency Management"}
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-muted-foreground mb-4">
+              {language === "ar"
+                ? "إدارة الشركاء والوكالات الحكومية والمنظمات المشاركة في المبادرة"
+                : "Manage partner government agencies and organizations participating in the initiative"}
+            </p>
+            <Button
+              className="w-full"
+              onClick={() => navigate("/admin/agency-management")}>
+              {language === "ar" ? "إدارة الوكالات" : "Manage Agencies"}
+            </Button>
+          </CardContent>
+        </Card>
       </div>
 
       {/* Data Tables */}
