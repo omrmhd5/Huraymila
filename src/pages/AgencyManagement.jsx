@@ -27,13 +27,20 @@ import {
   AlertCircle,
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
+import { useTheme } from "@/contexts/ThemeContext";
 import { toast } from "sonner";
 
 const AgencyManagement = () => {
   const { user, loading } = useAuth();
-  const [activeTab, setActiveTab] = useState("overview");
+  const { language } = useTheme();
   const [showAddForm, setShowAddForm] = useState(false);
   const [editingAgency, setEditingAgency] = useState(null);
+  const [agenciesList, setAgenciesList] = useState([]);
+  const [deleteConfirm, setDeleteConfirm] = useState({
+    show: false,
+    agencyId: null,
+    agencyName: "",
+  });
   const [formData, setFormData] = useState({
     name: "",
     description: "",
@@ -42,20 +49,31 @@ const AgencyManagement = () => {
     phone: "",
     address: "",
     type: "health",
-    status: "active",
+    agencyEmail: "",
+    agencyPassword: "",
   });
+
+  // Initialize agencies list
+  useEffect(() => {
+    setAgenciesList(agencies);
+  }, []);
 
   // Page title for better UX
   useEffect(() => {
-    document.title = "إدارة الوكالات - لوحة التحكم الإدارية";
-  }, []);
+    document.title =
+      language === "ar"
+        ? "إدارة الوكالات - لوحة التحكم الإدارية"
+        : "Agency Management - Admin Dashboard";
+  }, [language]);
 
   if (loading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center">
           <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-muted-foreground">جاري التحميل...</p>
+          <p className="text-muted-foreground">
+            {language === "ar" ? "جاري التحميل..." : "Loading..."}
+          </p>
         </div>
       </div>
     );
@@ -72,10 +90,10 @@ const AgencyManagement = () => {
       phone: "+966-11-123-4567",
       address: "شارع الملك فهد، حريملاء",
       type: "health",
-      status: "active",
+      agencyEmail: "health@harimlaa.gov.sa",
+      agencyPassword: "health123",
       initiatives: 12,
-      employees: 45,
-      createdAt: "2024-01-15",
+      volunteers: 45,
     },
     {
       id: 2,
@@ -86,10 +104,10 @@ const AgencyManagement = () => {
       phone: "+966-11-123-4568",
       address: "مبنى البلدية، حريملاء",
       type: "municipality",
-      status: "active",
+      agencyEmail: "municipality@harimlaa.gov.sa",
+      agencyPassword: "municipality123",
       initiatives: 8,
-      employees: 32,
-      createdAt: "2024-01-10",
+      volunteers: 32,
     },
     {
       id: 3,
@@ -100,10 +118,10 @@ const AgencyManagement = () => {
       phone: "+966-11-123-4569",
       address: "شارع المستشفى، حريملاء",
       type: "health",
-      status: "active",
+      agencyEmail: "hospital@harimlaa.gov.sa",
+      agencyPassword: "hospital123",
       initiatives: 15,
-      employees: 120,
-      createdAt: "2024-01-05",
+      volunteers: 120,
     },
   ];
 
@@ -118,19 +136,43 @@ const AgencyManagement = () => {
     e.preventDefault();
 
     if (!formData.name.trim() || !formData.description.trim()) {
-      toast.error("يرجى ملء جميع الحقول المطلوبة");
+      toast.error(
+        language === "ar"
+          ? "يرجى ملء جميع الحقول المطلوبة"
+          : "Please fill in all required fields"
+      );
       return;
     }
 
     try {
       if (editingAgency) {
-        // Mock update
+        // Update existing agency
         await new Promise((resolve) => setTimeout(resolve, 1000));
-        toast.success("تم تحديث بيانات الوكالة بنجاح");
+        setAgenciesList((prev) =>
+          prev.map((agency) =>
+            agency.id === editingAgency.id ? { ...agency, ...formData } : agency
+          )
+        );
+        toast.success(
+          language === "ar"
+            ? "تم تحديث بيانات الوكالة بنجاح"
+            : "Agency data updated successfully"
+        );
       } else {
-        // Mock create
+        // Create new agency
         await new Promise((resolve) => setTimeout(resolve, 1000));
-        toast.success("تم إضافة الوكالة الجديدة بنجاح");
+        const newAgency = {
+          id: Date.now(), // Simple ID generation
+          ...formData,
+          initiatives: Math.floor(Math.random() * 20) + 5,
+          volunteers: Math.floor(Math.random() * 50) + 10,
+        };
+        setAgenciesList((prev) => [...prev, newAgency]);
+        toast.success(
+          language === "ar"
+            ? "تم إضافة الوكالة الجديدة بنجاح"
+            : "New agency added successfully"
+        );
       }
 
       setFormData({
@@ -141,12 +183,17 @@ const AgencyManagement = () => {
         phone: "",
         address: "",
         type: "health",
-        status: "active",
+        agencyEmail: "",
+        agencyPassword: "",
       });
       setShowAddForm(false);
       setEditingAgency(null);
     } catch (error) {
-      toast.error("حدث خطأ في العملية");
+      toast.error(
+        language === "ar"
+          ? "حدث خطأ في العملية"
+          : "An error occurred during the operation"
+      );
     }
   };
 
@@ -160,37 +207,40 @@ const AgencyManagement = () => {
       phone: agency.phone,
       address: agency.address,
       type: agency.type,
-      status: agency.status,
+      agencyEmail: agency.agencyEmail,
+      agencyPassword: agency.agencyPassword,
     });
     setShowAddForm(true);
   };
 
   const handleDelete = async (agencyId) => {
-    if (confirm("هل أنت متأكد من حذف هذه الوكالة؟")) {
-      try {
-        await new Promise((resolve) => setTimeout(resolve, 1000));
-        toast.success("تم حذف الوكالة بنجاح");
-      } catch (error) {
-        toast.error("حدث خطأ في الحذف");
-      }
+    const agency = agenciesList.find((a) => a.id === agencyId);
+    setDeleteConfirm({ show: true, agencyId, agencyName: agency?.name || "" });
+  };
+
+  const confirmDelete = async () => {
+    try {
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      setAgenciesList((prev) =>
+        prev.filter((agency) => agency.id !== deleteConfirm.agencyId)
+      );
+      toast.success(
+        language === "ar"
+          ? "تم حذف الوكالة بنجاح"
+          : "Agency deleted successfully"
+      );
+      setDeleteConfirm({ show: false, agencyId: null, agencyName: "" });
+    } catch (error) {
+      toast.error(
+        language === "ar"
+          ? "حدث خطأ في الحذف"
+          : "An error occurred during deletion"
+      );
     }
   };
 
-  const getStatusBadge = (status) => {
-    switch (status) {
-      case "active":
-        return (
-          <Badge variant="default" className="bg-green-500">
-            نشط
-          </Badge>
-        );
-      case "inactive":
-        return <Badge variant="secondary">غير نشط</Badge>;
-      case "pending":
-        return <Badge variant="outline">في الانتظار</Badge>;
-      default:
-        return <Badge variant="outline">{status}</Badge>;
-    }
+  const cancelDelete = () => {
+    setDeleteConfirm({ show: false, agencyId: null, agencyName: "" });
   };
 
   const getTypeBadge = (type) => {
@@ -198,19 +248,19 @@ const AgencyManagement = () => {
       case "health":
         return (
           <Badge variant="outline" className="bg-blue-50 text-blue-700">
-            صحة
+            {language === "ar" ? "صحة" : "Health"}
           </Badge>
         );
       case "municipality":
         return (
           <Badge variant="outline" className="bg-green-50 text-green-700">
-            بلدية
+            {language === "ar" ? "بلدية" : "Municipality"}
           </Badge>
         );
       case "education":
         return (
           <Badge variant="outline" className="bg-purple-50 text-purple-700">
-            تعليم
+            {language === "ar" ? "تعليم" : "Education"}
           </Badge>
         );
       default:
@@ -224,183 +274,172 @@ const AgencyManagement = () => {
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-3xl font-bold text-foreground mb-2">
-            إدارة الوكالات
+            {language === "ar" ? "إدارة الوكالات " : "Agency Management"}
           </h1>
           <p className="text-muted-foreground">
-            إدارة الوكالات الحكومية المشاركة في مبادرة المدينة الصحية
+            {language === "ar"
+              ? "إدارة الوكالات الحكومية المشاركة في مبادرة المدينة الصحية"
+              : "Manage government agencies participating in the Healthy City initiative"}
           </p>
         </div>
         <Button
           onClick={() => setShowAddForm(true)}
           className="flex items-center gap-2">
           <Plus className="w-4 h-4" />
-          إضافة وكالة جديدة
+          {language === "ar" ? "إضافة وكالة جديدة" : "Add New Agency"}
         </Button>
       </div>
 
-      <Tabs
-        value={activeTab}
-        onValueChange={setActiveTab}
-        className="space-y-6">
-        <TabsList className="grid w-full grid-cols-4">
-          <TabsTrigger value="overview">نظرة عامة</TabsTrigger>
-          <TabsTrigger value="agencies">الوكالات</TabsTrigger>
-          <TabsTrigger value="initiatives">المبادرات</TabsTrigger>
-          <TabsTrigger value="reports">التقارير</TabsTrigger>
-        </TabsList>
-
-        {/* Overview Tab */}
-        <TabsContent value="overview">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-            <Card>
-              <CardContent className="p-6">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm font-medium text-muted-foreground">
-                      إجمالي الوكالات
-                    </p>
-                    <p className="text-2xl font-bold">{agencies.length}</p>
-                  </div>
-                  <Building2 className="w-8 h-8 text-blue-500" />
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardContent className="p-6">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm font-medium text-muted-foreground">
-                      المبادرات النشطة
-                    </p>
-                    <p className="text-2xl font-bold">35</p>
-                  </div>
-                  <Target className="w-8 h-8 text-green-500" />
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardContent className="p-6">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm font-medium text-muted-foreground">
-                      الموظفين
-                    </p>
-                    <p className="text-2xl font-bold">197</p>
-                  </div>
-                  <Users className="w-8 h-8 text-purple-500" />
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardContent className="p-6">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm font-medium text-muted-foreground">
-                      معدل النشاط
-                    </p>
-                    <p className="text-2xl font-bold">87%</p>
-                  </div>
-                  <CheckCircle className="w-8 h-8 text-orange-500" />
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-
-          <Card>
-            <CardHeader>
-              <CardTitle>أحدث النشاطات</CardTitle>
-              <CardDescription>آخر التحديثات والمبادرات</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                {agencies.slice(0, 3).map((agency) => (
-                  <div
-                    key={agency.id}
-                    className="flex items-center justify-between p-4 border rounded-lg">
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center">
-                        <Building2 className="w-5 h-5 text-primary" />
-                      </div>
-                      <div>
-                        <h4 className="font-medium">{agency.name}</h4>
-                        <p className="text-sm text-muted-foreground">
-                          {agency.initiatives} مبادرة نشطة
-                        </p>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      {getStatusBadge(agency.status)}
-                      {getTypeBadge(agency.type)}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-
+      <Tabs value="agencies" className="space-y-6">
         {/* Agencies Tab */}
         <TabsContent value="agencies">
           <Card>
             <CardHeader>
-              <CardTitle>قائمة الوكالات</CardTitle>
-              <CardDescription>إدارة جميع الوكالات المشاركة</CardDescription>
+              <CardTitle>
+                {language === "ar" ? "قائمة الوكالات" : "Agencies List"}
+              </CardTitle>
+              <CardDescription>
+                {language === "ar"
+                  ? "إدارة جميع الوكالات المشاركة"
+                  : "Manage all participating agencies"}
+              </CardDescription>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                {agencies.map((agency) => (
+                {agenciesList.map((agency) => (
                   <div key={agency.id} className="border rounded-lg p-4">
-                    <div className="flex items-start justify-between">
+                    <div
+                      className={`flex items-start justify-between ${
+                        language === "ar" ? "flex-row-reverse" : "flex-row"
+                      }`}>
                       <div className="flex-1">
-                        <div className="flex items-center gap-3 mb-2">
+                        <div
+                          className={`flex items-center gap-3 mb-2 ${
+                            language === "ar" ? "flex-row-reverse" : "flex-row"
+                          }`}>
                           <h3 className="text-lg font-semibold">
                             {agency.name}
                           </h3>
-                          {getStatusBadge(agency.status)}
                           {getTypeBadge(agency.type)}
                         </div>
                         <p className="text-muted-foreground mb-3">
                           {agency.description}
                         </p>
 
-                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
-                          <div>
-                            <span className="font-medium">الشخص المسؤول:</span>
-                            <p>{agency.contactPerson}</p>
-                          </div>
-                          <div>
-                            <span className="font-medium">
-                              البريد الإلكتروني:
-                            </span>
-                            <p>{agency.email}</p>
-                          </div>
-                          <div>
-                            <span className="font-medium">الهاتف:</span>
-                            <p>{agency.phone}</p>
-                          </div>
-                          <div>
-                            <span className="font-medium">العنوان:</span>
-                            <p>{agency.address}</p>
+                        {/* Agency Information Row */}
+                        <div
+                          className={`mb-4 w-1/2 ${
+                            language === "ar"
+                              ? "text-right justify-self-end"
+                              : "text-left"
+                          }`}>
+                          <div
+                            className={`grid grid-cols-1 md:grid-cols-2 text-sm ${
+                              language === "ar"
+                                ? "justify-items-end"
+                                : "justify-items-start"
+                            }`}>
+                            <div
+                              className={` mb-2
+                                language === "ar" ? "order-2" : "order-1"
+                              `}>
+                              <span className="font-medium">
+                                {language === "ar"
+                                  ? ":بريد الوكالة"
+                                  : "Agency Email:"}
+                              </span>
+                              <p>{agency.agencyEmail}</p>
+                            </div>
+                            <div
+                              className={
+                                language === "ar" ? "order-1" : "order-2"
+                              }>
+                              <span className="font-medium">
+                                {language === "ar"
+                                  ? ":كلمة مرور الوكالة"
+                                  : "Agency Password:"}
+                              </span>
+                              <p className="font-mono text-xs bg-muted p-1 rounded">
+                                {agency.agencyPassword ? "••••••••" : ""}
+                              </p>
+                            </div>
                           </div>
                         </div>
 
-                        <div className="flex items-center gap-4 mt-3 text-sm text-muted-foreground">
-                          <span className="flex items-center gap-1">
+                        {/* Contact Information Row */}
+                        <div
+                          className={`mb-4 ${
+                            language === "ar" ? "text-right" : "text-left"
+                          }`}>
+                          <div
+                            className={`grid grid-cols-2 md:grid-cols-4 gap-4 text-sm ${
+                              language === "ar"
+                                ? "justify-items-end"
+                                : "justify-items-start"
+                            }`}>
+                            <div
+                              className={
+                                language === "ar" ? "order-4" : "order-1"
+                              }>
+                              <span className="font-medium">
+                                {language === "ar"
+                                  ? "الشخص المسؤول:"
+                                  : "Contact Person:"}
+                              </span>
+                              <p>{agency.contactPerson}</p>
+                            </div>
+                            <div
+                              className={
+                                language === "ar" ? "order-3" : "order-2"
+                              }>
+                              <span className="font-medium">
+                                {language === "ar"
+                                  ? "البريد الشخص الإلكتروني:"
+                                  : "Person's Email:"}
+                              </span>
+                              <p>{agency.email}</p>
+                            </div>
+                            <div
+                              className={
+                                language === "ar" ? "order-2" : "order-3"
+                              }>
+                              <span className="font-medium">
+                                {language === "ar" ? "الهاتف:" : "Phone:"}
+                              </span>
+                              <p>{agency.phone}</p>
+                            </div>
+                            <div
+                              className={
+                                language === "ar" ? "order-1" : "order-4"
+                              }>
+                              <span className="font-medium">
+                                {language === "ar" ? "العنوان:" : "Address:"}
+                              </span>
+                              <p>{agency.address}</p>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div
+                          className={`flex items-center gap-4 mt-3 text-sm text-muted-foreground ${
+                            language === "ar" ? "justify-end" : "justify-start"
+                          }`}>
+                          <span
+                            className={`flex items-center gap-1 ${
+                              language === "ar" ? "order-2" : "order-1"
+                            }`}>
                             <Target className="w-4 h-4" />
-                            {agency.initiatives} مبادرة
+                            {agency.initiatives}{" "}
+                            {language === "ar" ? "مبادرة" : "initiatives"}
                           </span>
-                          <span className="flex items-center gap-1">
+                          <span
+                            className={`flex items-center gap-1 ${
+                              language === "ar" ? "order-1" : "order-2"
+                            }`}>
+                            {" "}
                             <Users className="w-4 h-4" />
-                            {agency.employees} موظف
-                          </span>
-                          <span className="flex items-center gap-1">
-                            <Calendar className="w-4 h-4" />
-                            {new Date(agency.createdAt).toLocaleDateString(
-                              "ar-SA"
-                            )}
+                            {agency.volunteers}{" "}
+                            {language === "ar" ? "متطوع" : "volunteers"}
                           </span>
                         </div>
                       </div>
@@ -434,27 +473,20 @@ const AgencyManagement = () => {
         <TabsContent value="initiatives">
           <Card>
             <CardHeader>
-              <CardTitle>مبادرات الوكالات</CardTitle>
-              <CardDescription>المبادرات النشطة لكل وكالة</CardDescription>
+              <CardTitle>
+                {language === "ar" ? "مبادرات الوكالات" : "Agency Initiatives"}
+              </CardTitle>
+              <CardDescription>
+                {language === "ar"
+                  ? "المبادرات النشطة لكل وكالة"
+                  : "Active initiatives for each agency"}
+              </CardDescription>
             </CardHeader>
             <CardContent>
               <p className="text-center text-muted-foreground py-8">
-                سيتم عرض المبادرات هنا قريباً
-              </p>
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        {/* Reports Tab */}
-        <TabsContent value="reports">
-          <Card>
-            <CardHeader>
-              <CardTitle>تقارير الأداء</CardTitle>
-              <CardDescription>تقارير دورية عن أداء الوكالات</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <p className="text-center text-muted-foreground py-8">
-                سيتم عرض التقارير هنا قريباً
+                {language === "ar"
+                  ? "سيتم عرض المبادرات هنا قريباً"
+                  : "Initiatives will be displayed here soon"}
               </p>
             </CardContent>
           </Card>
@@ -467,51 +499,83 @@ const AgencyManagement = () => {
           <Card className="w-full max-w-2xl max-h-[90vh] overflow-y-auto">
             <CardHeader>
               <CardTitle>
-                {editingAgency ? "تعديل الوكالة" : "إضافة وكالة جديدة"}
+                {editingAgency
+                  ? language === "ar"
+                    ? "تعديل الوكالة"
+                    : "Edit Agency"
+                  : language === "ar"
+                  ? "إضافة وكالة جديدة"
+                  : "Add New Agency"}
               </CardTitle>
               <CardDescription>
                 {editingAgency
-                  ? "تحديث بيانات الوكالة"
-                  : "إدخال بيانات الوكالة الجديدة"}
+                  ? language === "ar"
+                    ? "تحديث بيانات الوكالة"
+                    : "Update agency data"
+                  : language === "ar"
+                  ? "إدخال بيانات الوكالة الجديدة"
+                  : "Enter new agency data"}
               </CardDescription>
             </CardHeader>
             <CardContent>
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="name">اسم الوكالة *</Label>
+                    <Label htmlFor="name">
+                      {language === "ar" ? "اسم الوكالة *" : "Agency Name *"}
+                    </Label>
                     <Input
                       id="name"
                       name="name"
                       value={formData.name}
                       onChange={handleInputChange}
-                      placeholder="اسم الوكالة"
+                      placeholder={
+                        language === "ar" ? "اسم الوكالة" : "Agency name"
+                      }
                       required
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="type">نوع الوكالة</Label>
+                    <Label htmlFor="type">
+                      {language === "ar" ? "نوع الوكالة" : "Agency Type"}
+                    </Label>
                     <select
                       name="type"
                       value={formData.type}
                       onChange={handleInputChange}
                       className="w-full p-2 border rounded-md">
-                      <option value="health">صحة</option>
-                      <option value="municipality">بلدية</option>
-                      <option value="education">تعليم</option>
-                      <option value="other">أخرى</option>
+                      <option value="health">
+                        {language === "ar" ? "صحة" : "Health"}
+                      </option>
+                      <option value="municipality">
+                        {language === "ar" ? "بلدية" : "Municipality"}
+                      </option>
+                      <option value="education">
+                        {language === "ar" ? "تعليم" : "Education"}
+                      </option>
+                      <option value="other">
+                        {language === "ar" ? "أخرى" : "Other"}
+                      </option>
                     </select>
                   </div>
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="description">وصف الوكالة *</Label>
+                  <Label htmlFor="description">
+                    {language === "ar"
+                      ? "وصف الوكالة *"
+                      : "Agency Description *"}
+                  </Label>
                   <Textarea
                     id="description"
                     name="description"
                     value={formData.description}
                     onChange={handleInputChange}
-                    placeholder="وصف مختصر عن الوكالة ومهامها"
+                    placeholder={
+                      language === "ar"
+                        ? "وصف مختصر عن الوكالة ومهامها"
+                        : "Brief description of the agency and its tasks"
+                    }
                     rows={3}
                     required
                   />
@@ -519,17 +583,65 @@ const AgencyManagement = () => {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="contactPerson">الشخص المسؤول</Label>
+                    <Label htmlFor="agencyEmail">
+                      {language === "ar"
+                        ? "بريد الوكالة الإلكتروني"
+                        : "Agency Email"}
+                    </Label>
+                    <Input
+                      id="agencyEmail"
+                      name="agencyEmail"
+                      type="email"
+                      value={formData.agencyEmail}
+                      onChange={handleInputChange}
+                      placeholder={
+                        language === "ar"
+                          ? "agency@example.gov.sa"
+                          : "agency@example.gov.sa"
+                      }
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="agencyPassword">
+                      {language === "ar"
+                        ? "كلمة مرور الوكالة"
+                        : "Agency Password"}
+                    </Label>
+                    <Input
+                      id="agencyPassword"
+                      name="agencyPassword"
+                      value={formData.agencyPassword}
+                      onChange={handleInputChange}
+                      placeholder={
+                        language === "ar" ? "كلمة المرور" : "Password"
+                      }
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="contactPerson">
+                      {language === "ar" ? "الشخص المسؤول" : "Contact Person"}
+                    </Label>
                     <Input
                       id="contactPerson"
                       name="contactPerson"
                       value={formData.contactPerson}
                       onChange={handleInputChange}
-                      placeholder="اسم الشخص المسؤول"
+                      placeholder={
+                        language === "ar"
+                          ? "اسم الشخص المسؤول"
+                          : "Contact person name"
+                      }
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="email">البريد الإلكتروني</Label>
+                    <Label htmlFor="email">
+                      {language === "ar"
+                        ? "البريد الشخص الإلكتروني"
+                        : "Person's Email"}
+                    </Label>
                     <Input
                       id="email"
                       name="email"
@@ -541,45 +653,43 @@ const AgencyManagement = () => {
                   </div>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="phone">رقم الهاتف</Label>
-                    <Input
-                      id="phone"
-                      name="phone"
-                      value={formData.phone}
-                      onChange={handleInputChange}
-                      placeholder="+966-11-123-4567"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="status">الحالة</Label>
-                    <select
-                      name="status"
-                      value={formData.status}
-                      onChange={handleInputChange}
-                      className="w-full p-2 border rounded-md">
-                      <option value="active">نشط</option>
-                      <option value="inactive">غير نشط</option>
-                      <option value="pending">في الانتظار</option>
-                    </select>
-                  </div>
+                <div className="space-y-2">
+                  <Label htmlFor="phone">
+                    {language === "ar" ? "رقم الهاتف" : "Phone Number"}
+                  </Label>
+                  <Input
+                    id="phone"
+                    name="phone"
+                    value={formData.phone}
+                    onChange={handleInputChange}
+                    placeholder="+966-11-123-4567"
+                  />
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="address">العنوان</Label>
+                  <Label htmlFor="address">
+                    {language === "ar" ? "العنوان" : "Address"}
+                  </Label>
                   <Input
                     id="address"
                     name="address"
                     value={formData.address}
                     onChange={handleInputChange}
-                    placeholder="عنوان الوكالة"
+                    placeholder={
+                      language === "ar" ? "عنوان الوكالة" : "Agency address"
+                    }
                   />
                 </div>
 
                 <div className="flex gap-2 pt-4">
                   <Button type="submit" className="flex-1">
-                    {editingAgency ? "تحديث" : "إضافة"}
+                    {editingAgency
+                      ? language === "ar"
+                        ? "تحديث"
+                        : "Update"
+                      : language === "ar"
+                      ? "إضافة"
+                      : "Add"}
                   </Button>
                   <Button
                     type="button"
@@ -595,13 +705,58 @@ const AgencyManagement = () => {
                         phone: "",
                         address: "",
                         type: "health",
-                        status: "active",
+                        agencyEmail: "",
+                        agencyPassword: "",
                       });
                     }}>
-                    إلغاء
+                    {language === "ar" ? "إلغاء" : "Cancel"}
                   </Button>
                 </div>
               </form>
+            </CardContent>
+          </Card>
+        </div>
+      )}
+
+      {/* Delete Confirmation Modal */}
+      {deleteConfirm.show && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
+          <Card className="w-full max-w-md">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 text-destructive">
+                <AlertCircle className="w-5 h-5" />
+                {language === "ar" ? "تأكيد الحذف" : "Confirm Deletion"}
+              </CardTitle>
+              <CardDescription>
+                {language === "ar"
+                  ? "هل أنت متأكد من حذف هذه الوكالة؟"
+                  : "Are you sure you want to delete this agency?"}
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="mb-4 p-3 bg-muted rounded-lg">
+                <p className="font-medium">
+                  {language === "ar" ? "اسم الوكالة:" : "Agency Name:"}
+                </p>
+                <p className="text-muted-foreground">
+                  {deleteConfirm.agencyName}
+                </p>
+              </div>
+
+              <div className="flex gap-2">
+                <Button
+                  variant="destructive"
+                  onClick={confirmDelete}
+                  className="flex-1">
+                  {language === "ar" ? "حذف" : "Delete"}
+                </Button>
+                <Button
+                  variant="outline"
+                  onClick={cancelDelete}
+                  className="flex-1">
+                  {language === "ar" ? "إلغاء" : "Cancel"}
+                </Button>
+              </div>
             </CardContent>
           </Card>
         </div>

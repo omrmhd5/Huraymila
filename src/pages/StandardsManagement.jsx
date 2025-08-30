@@ -308,7 +308,7 @@ const StandardsManagement = () => {
                           <div
                             key={index}
                             className="flex items-baseline gap-2 text-xs">
-                            ● <span className="mt-1 line-clamp-2">{req}</span>
+                            ● <span className="mt-1">{req}</span>
                           </div>
                         ))}
                       </div>

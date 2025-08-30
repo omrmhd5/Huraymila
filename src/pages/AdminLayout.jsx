@@ -19,13 +19,16 @@ import {
   HandHeart,
   Bell,
   BarChart3,
+  Globe,
+  Moon,
+  Sun,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useTheme } from "@/contexts/ThemeContext";
 import { useAuth } from "@/contexts/AuthContext";
 
 const AdminLayout = () => {
-  const { language } = useTheme();
+  const { language, theme, setLanguage, setTheme } = useTheme();
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
@@ -103,6 +106,16 @@ const AdminLayout = () => {
     navigate(value);
   };
 
+  const handleLanguageChange = () => {
+    const newLanguage = language === "ar" ? "en" : "ar";
+    setLanguage(newLanguage);
+  };
+
+  const handleThemeChange = () => {
+    const newTheme = theme === "light" ? "dark" : "light";
+    setTheme(newTheme);
+  };
+
   // Show loading state while checking role
   if (loading || userRole === null) {
     return (
@@ -169,11 +182,28 @@ const AdminLayout = () => {
             </div>
 
             <div className="flex items-center gap-3">
-              <Button variant="ghost" size="sm" className="relative">
-                <Bell className="w-4 h-4" />
+              {/* Theme Toggle */}
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={handleThemeChange}
+                className="hidden sm:flex">
+                {theme === "light" ? (
+                  <Moon className="w-4 h-4" />
+                ) : (
+                  <Sun className="w-4 h-4" />
+                )}
               </Button>
-              <Button variant="ghost" size="sm">
-                <Settings className="w-4 h-4" />
+              {/* Language Toggle */}
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={handleLanguageChange}
+                className="hidden sm:flex">
+                <Globe className="w-4 h-4" />
+                <span className="ml-2 text-xs">
+                  {language === "ar" ? "EN" : "عربي"}
+                </span>
               </Button>
               <Button variant="ghost" size="sm" onClick={handleSignOut}>
                 <LogOut className="w-4 h-4" />
@@ -190,7 +220,7 @@ const AdminLayout = () => {
             value={getCurrentTab()}
             onValueChange={handleTabChange}
             className="w-full">
-            <TabsList className="grid w-full grid-cols-2 lg:w-auto lg:grid-cols-2 h-auto p-1 bg-transparent">
+            <TabsList className="grid w-full grid-cols-2 lg:w-auto lg:grid-cols-3 h-auto p-1 bg-transparent">
               {adminTabs.map((tab) => (
                 <TabsTrigger
                   key={tab.value}
