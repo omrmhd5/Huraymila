@@ -21,15 +21,7 @@ import {
 } from "@/components/ui/table";
 import { useTheme } from "@/contexts/ThemeContext";
 import Standards from "@/lib/standards";
-import {
-  Search,
-  Filter,
-  Eye,
-  FileText,
-  Image,
-  Video,
-  File,
-} from "lucide-react";
+import { Search, Filter, Eye, CheckCircle } from "lucide-react";
 
 const StandardsManagement = () => {
   const { language } = useTheme();
@@ -38,46 +30,71 @@ const StandardsManagement = () => {
   const [selectedAgency, setSelectedAgency] = useState("all");
   const [selectedStatus, setSelectedStatus] = useState("all");
   const standards = Standards();
+  const { records_for_follow_up } = standards;
+  const [standardsList, setStandardsList] = useState(records_for_follow_up);
 
   // Get unique agencies from standards
   const allAgencies = Array.from(
-    new Set(
-      standards.records_for_follow_up.flatMap(
-        (standard) => standard.assigned_agencies
-      )
-    )
+    new Set(standardsList.flatMap((standard) => standard.assigned_agencies))
   ).sort();
 
   // Filter standards based on search and filters
-  const filteredStandards = standards.records_for_follow_up.filter(
-    (standard) => {
-      const matchesSearch =
-        standard.standard.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        standard.requirements.some((req) =>
-          req.toLowerCase().includes(searchTerm.toLowerCase())
-        );
+  const filteredStandards = standardsList.filter((standard) => {
+    const matchesSearch =
+      standard.standard.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      standard.requirements.some((req) =>
+        req.toLowerCase().includes(searchTerm.toLowerCase())
+      );
 
-      const matchesAgency =
-        selectedAgency === "all" ||
-        standard.assigned_agencies.includes(selectedAgency);
+    const matchesAgency =
+      selectedAgency === "all" ||
+      standard.assigned_agencies.includes(selectedAgency);
 
-      // For now, all standards are considered "active" - you can add status logic later
-      const matchesStatus = selectedStatus === "all" || true;
+    // Status filtering logic
+    const matchesStatus =
+      selectedStatus === "all" || standard.status === selectedStatus;
 
-      return matchesSearch && matchesAgency && matchesStatus;
-    }
-  );
+    return matchesSearch && matchesAgency && matchesStatus;
+  });
 
   const getStatusBadge = (standard) => {
     // Mock status - you can implement real status logic based on submissions
-    const hasSubmissions = Math.random() > 0.7; // Random for demo
-    return hasSubmissions ? (
-      <Badge variant="default" className="bg-green-500">
-        {language === "ar" ? "تم التقديم" : "Submitted"}
-      </Badge>
-    ) : (
-      <Badge variant="secondary">
-        {language === "ar" ? "في الانتظار" : "Pending"}
+    const statuses = [
+      {
+        value: "approved",
+        label: { ar: "تمت الموافقة", en: "Approved" },
+        variant: "default",
+        className: "bg-green-500",
+      },
+      {
+        value: "pending_approval",
+        label: { ar: "في انتظار الموافقة", en: "Pending Approval" },
+        variant: "secondary",
+        className: "bg-yellow-500",
+      },
+      {
+        value: "didnt_submit",
+        label: { ar: "لم يتم التقديم", en: "Didn't Submit" },
+        variant: "outline",
+        className: "bg-gray-300 text-black",
+      },
+      {
+        value: "rejected",
+        label: { ar: "مرفوض", en: "Rejected" },
+        variant: "destructive",
+        className: "bg-red-500",
+      },
+    ];
+
+    // Get status from standard or use default
+    const status =
+      statuses.find((s) => s.value === standard.status) || statuses[2]; // Default to "didnt_submit"
+
+    return (
+      <Badge
+        variant={status.variant}
+        className={`text-center ${status.className}`}>
+        {language === "ar" ? status.label.ar : status.label.en}
       </Badge>
     );
   };
@@ -90,6 +107,19 @@ const StandardsManagement = () => {
   const viewSubmissions = (standardId) => {
     // Navigate to submissions view page
     navigate(`/admin/standards/${standardId}`);
+  };
+
+  const toggleStatus = (standard) => {
+    // Create a new standards list with the updated status
+    const updatedStandardsList = standardsList.map((s) =>
+      s.id === standard.id
+        ? {
+            ...s,
+            status: s.status === "approved" ? "rejected" : "approved",
+          }
+        : s
+    );
+    setStandardsList(updatedStandardsList);
   };
 
   return (
@@ -109,58 +139,54 @@ const StandardsManagement = () => {
       </div>
 
       {/* Summary Statistics */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <Card>
-          <CardContent className="p-4">
-            <div className="text-center">
-              <div className="text-2xl font-bold text-foreground">
-                {standards.records_for_follow_up.length}
-              </div>
-              <p className="text-sm text-muted-foreground">
-                {language === "ar" ? "إجمالي المعايير" : "Total Standards"}
-              </p>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardContent className="p-4">
-            <div className="text-center">
-              <div className="text-2xl font-bold text-green-600">
-                {Math.floor(Math.random() * 30) + 20}
-              </div>
-              <p className="text-sm text-muted-foreground">
-                {language === "ar" ? "تم التقديم" : "Submitted"}
-              </p>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardContent className="p-4">
-            <div className="text-center">
-              <div className="text-2xl font-bold text-yellow-600">
-                {Math.floor(Math.random() * 20) + 10}
-              </div>
-              <p className="text-sm text-muted-foreground">
-                {language === "ar" ? "قيد المراجعة" : "Under Review"}
-              </p>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardContent className="p-4">
-            <div className="text-center">
-              <div className="text-2xl font-bold text-red-600">
-                {Math.floor(Math.random() * 15) + 5}
-              </div>
-              <p className="text-sm text-muted-foreground">
-                {language === "ar" ? "في الانتظار" : "Pending"}
-              </p>
-            </div>
-          </CardContent>
-        </Card>
+      <div
+        className={`grid grid-cols-1 md:grid-cols-5 gap-4 
+    ${language === "ar" ? "flex-row-reverse" : ""}`}>
+        {[
+          {
+            value: standardsList.length,
+            label: { en: "Total Standards", ar: "إجمالي المعايير" },
+            color: "text-foreground",
+          },
+          {
+            value: standardsList.filter((s) => s.status === "approved").length,
+            label: { en: "Approved", ar: "تمت الموافقة" },
+            color: "text-green-600",
+          },
+          {
+            value: standardsList.filter((s) => s.status === "pending_approval")
+              .length,
+            label: { en: "Pending Approval", ar: "في انتظار الموافقة" },
+            color: "text-yellow-600",
+          },
+          {
+            value: standardsList.filter((s) => s.status === "rejected").length,
+            label: { en: "Rejected", ar: "مرفوض" },
+            color: "text-red-500",
+          },
+          {
+            value: standardsList.filter((s) => s.status === "didnt_submit")
+              .length,
+            label: { en: "Didn't Submit", ar: "لم يتم التقديم" },
+            color: "text-gray-400",
+          },
+        ]
+          // reverse order if Arabic
+          .sort(() => (language === "ar" ? -1 : 1))
+          .map((stat, index) => (
+            <Card key={index}>
+              <CardContent className="p-4">
+                <div className="text-center">
+                  <div className={`text-2xl font-bold ${stat.color}`}>
+                    {stat.value}
+                  </div>
+                  <p className="text-sm text-muted-foreground">
+                    {language === "ar" ? stat.label.ar : stat.label.en}
+                  </p>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
       </div>
 
       {/* Filters and Search */}
@@ -230,15 +256,25 @@ const StandardsManagement = () => {
                   />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">
-                    {language === "ar" ? "جميع الحالات" : "All Statuses"}
-                  </SelectItem>
-                  <SelectItem value="submitted">
-                    {language === "ar" ? "تم التقديم" : "Submitted"}
-                  </SelectItem>
-                  <SelectItem value="pending">
-                    {language === "ar" ? "في الانتظار" : "Pending"}
-                  </SelectItem>
+                  {[
+                    { value: "all", en: "All Statuses", ar: "جميع الحالات" },
+                    { value: "approved", en: "Approved", ar: "تمت الموافقة" },
+                    {
+                      value: "pending_approval",
+                      en: "Pending Approval",
+                      ar: "في انتظار الموافقة",
+                    },
+                    {
+                      value: "didnt_submit",
+                      en: "Didn't Submit",
+                      ar: "لم يتم التقديم",
+                    },
+                    { value: "rejected", en: "Rejected", ar: "مرفوض" },
+                  ].map((status) => (
+                    <SelectItem key={status.value} value={status.value}>
+                      {language === "ar" ? status.ar : status.en}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             </div>
@@ -266,29 +302,56 @@ const StandardsManagement = () => {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead className="w-16">
-                    {language === "ar" ? "الرقم" : "ID"}
-                  </TableHead>
-                  <TableHead className="min-w-[300px]">
-                    {language === "ar" ? "المعيار" : "Standard"}
-                  </TableHead>
-                  <TableHead className="min-w-[200px]">
-                    {language === "ar" ? "المتطلبات" : "Requirements"}
-                  </TableHead>
-                  <TableHead className="min-w-[200px]">
-                    {language === "ar"
-                      ? "الوكالات المسؤولة"
-                      : "Responsible Agencies"}
-                  </TableHead>
-                  <TableHead className="w-24">
-                    {language === "ar" ? "الحالة" : "Status"}
-                  </TableHead>
-                  <TableHead className="w-24">
-                    {language === "ar" ? "التقديمات" : "Submissions"}
-                  </TableHead>
-                  <TableHead className="w-32">
-                    {language === "ar" ? "الإجراءات" : "Actions"}
-                  </TableHead>
+                  {[
+                    { key: "id", en: "ID", ar: "الرقم", className: "w-16" },
+                    {
+                      key: "standard",
+                      en: "Standard",
+                      ar: "المعيار",
+                      className: "min-w-[300px]",
+                    },
+                    {
+                      key: "requirements",
+                      en: "Requirements",
+                      ar: "المتطلبات",
+                      className: "min-w-[200px]",
+                    },
+                    {
+                      key: "agencies",
+                      en: "Responsible Agencies",
+                      ar: "الوكالات المسؤولة",
+                      className: "min-w-[200px]",
+                    },
+                    {
+                      key: "status",
+                      en: "Status",
+                      ar: "الحالة",
+                      className: "w-24",
+                    },
+                    {
+                      key: "submissions",
+                      en: "Submissions",
+                      ar: "التقديمات",
+                      className: "w-24",
+                    },
+                    {
+                      key: "actions",
+                      en: "Actions",
+                      ar: "الإجراءات",
+                      className: "w-32",
+                    },
+                  ]
+                    // reverse order if Arabic
+                    .slice(language === "ar" ? 0 : undefined) // clone array
+                    .map((header) => (
+                      <TableHead
+                        key={header.key}
+                        className={`${header.className} ${
+                          language === "ar" ? "text-right" : ""
+                        }`}>
+                        {language === "ar" ? header.ar : header.en}
+                      </TableHead>
+                    ))}
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -327,27 +390,56 @@ const StandardsManagement = () => {
                     </TableCell>
                     <TableCell>{getStatusBadge(standard)}</TableCell>
                     <TableCell>
-                      <div className="flex items-center gap-1">
+                      <div className="flex justify-center gap-1">
                         <Badge variant="secondary" className="text-xs">
-                          {getSubmissionCount(standard)}
+                          {getSubmissionCount(standard)}/
+                          {standard.assigned_agencies.length}
                         </Badge>
-                        <div className="flex gap-1">
-                          <FileText className="w-3 h-3 text-blue-500" />
-                          <Image className="w-3 h-3 text-green-500" />
-                          <Video className="w-3 h-3 text-purple-500" />
-                          <File className="w-3 h-3 text-orange-500" />
-                        </div>
                       </div>
                     </TableCell>
                     <TableCell>
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        onClick={() => viewSubmissions(standard.id)}
-                        className="w-full">
-                        <Eye className="w-4 h-4 mr-1" />
-                        {language === "ar" ? "عرض" : "View"}
-                      </Button>
+                      <div className="flex flex-col gap-2">
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => viewSubmissions(standard.id)}
+                          className="w-full">
+                          <Eye className="w-4 h-4 mr-1" />
+                          {language === "ar" ? "عرض" : "View"}
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant={
+                            standard.status === "approved" ||
+                            standard.status === "rejected"
+                              ? "default"
+                              : "outlined"
+                          }
+                          disabled={standard.status === "didnt_submit"}
+                          onClick={() => toggleStatus(standard)}
+                          className={`w-full ${
+                            standard.status === "rejected" ||
+                            standard.status === "pending_approval"
+                              ? "bg-green-700 text-green-50 border-green-200 hover:bg-green-500"
+                              : standard.status === "approved"
+                              ? "bg-red-700 text-red-50 border-red-200 hover:bg-red-500"
+                              : "bg-gray-700 text-gray-50 border-gray-200"
+                          }`}>
+                          <CheckCircle className="w-4 h-4 mr-1" />
+                          {standard.status === "rejected" ||
+                          standard.status === "pending_approval"
+                            ? language === "ar"
+                              ? "موافقة"
+                              : "Approve"
+                            : standard.status === "approved"
+                            ? language === "ar"
+                              ? "رفض"
+                              : "Reject"
+                            : language === "ar"
+                            ? "لم يتم التقديم"
+                            : "No Submissions"}
+                        </Button>
+                      </div>
                     </TableCell>
                   </TableRow>
                 ))}

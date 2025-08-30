@@ -1,23 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { Outlet, useNavigate, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Building2,
-  Users,
-  Target,
-  Settings,
   LogOut,
   Database,
-  Shield,
-  Activity,
-  MessageCircle,
-  Heart,
-  Newspaper,
-  UserCheck,
-  HandHeart,
-  Bell,
   BarChart3,
   Globe,
   Moon,
@@ -74,15 +62,6 @@ const AdminLayout = () => {
         language === "ar" ? "نظرة عامة على النظام" : "System Overview",
     },
     {
-      value: "/admin/standards",
-      label: language === "ar" ? "إدارة المعايير" : "Standards Management",
-      icon: Database,
-      description:
-        language === "ar"
-          ? "إدارة المعايير الصحية الـ 80"
-          : "Manage the 80 Health Standards",
-    },
-    {
       value: "/admin/agency-management",
       label: language === "ar" ? "إدارة الوكالات" : "Agency Management",
       icon: Building2,
@@ -90,6 +69,15 @@ const AdminLayout = () => {
         language === "ar"
           ? "إدارة الشركاء والوكالات"
           : "Manage Partners & Agencies",
+    },
+    {
+      value: "/admin/standards",
+      label: language === "ar" ? "إدارة المعايير" : "Standards Management",
+      icon: Database,
+      description:
+        language === "ar"
+          ? "إدارة المعايير الصحية الـ 80"
+          : "Manage the 80 Health Standards",
     },
   ];
 

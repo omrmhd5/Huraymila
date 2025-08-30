@@ -12,18 +12,14 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Tabs, TabsContent } from "@/components/ui/tabs";
 import {
-  Building2,
   Users,
   Target,
-  Calendar,
   Plus,
   Edit,
   Trash2,
   Eye,
-  CheckCircle,
-  Clock,
   AlertCircle,
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
@@ -377,46 +373,55 @@ const AgencyManagement = () => {
                                 ? "justify-items-end"
                                 : "justify-items-start"
                             }`}>
-                            <div
-                              className={
-                                language === "ar" ? "order-4" : "order-1"
-                              }>
-                              <span className="font-medium">
-                                {language === "ar"
-                                  ? "الشخص المسؤول:"
-                                  : "Contact Person:"}
-                              </span>
-                              <p>{agency.contactPerson}</p>
-                            </div>
-                            <div
-                              className={
-                                language === "ar" ? "order-3" : "order-2"
-                              }>
-                              <span className="font-medium">
-                                {language === "ar"
-                                  ? "البريد الشخص الإلكتروني:"
-                                  : "Person's Email:"}
-                              </span>
-                              <p>{agency.email}</p>
-                            </div>
-                            <div
-                              className={
-                                language === "ar" ? "order-2" : "order-3"
-                              }>
-                              <span className="font-medium">
-                                {language === "ar" ? "الهاتف:" : "Phone:"}
-                              </span>
-                              <p>{agency.phone}</p>
-                            </div>
-                            <div
-                              className={
-                                language === "ar" ? "order-1" : "order-4"
-                              }>
-                              <span className="font-medium">
-                                {language === "ar" ? "العنوان:" : "Address:"}
-                              </span>
-                              <p>{agency.address}</p>
-                            </div>
+                            {[
+                              {
+                                key: "contactPerson",
+                                label: {
+                                  en: "Contact Person:",
+                                  ar: "الشخص المسؤول:",
+                                },
+                                value: agency.contactPerson,
+                                order: 1,
+                              },
+                              {
+                                key: "email",
+                                label: {
+                                  en: "Person's Email:",
+                                  ar: "البريد الشخص الإلكتروني:",
+                                },
+                                value: agency.email,
+                                order: 2,
+                              },
+                              {
+                                key: "phone",
+                                label: { en: "Phone:", ar: "الهاتف:" },
+                                value: agency.phone,
+                                order: 3,
+                              },
+                              {
+                                key: "address",
+                                label: { en: "Address:", ar: "العنوان:" },
+                                value: agency.address,
+                                order: 4,
+                              },
+                            ].map((field) => {
+                              const order =
+                                language === "ar"
+                                  ? 5 - field.order
+                                  : field.order;
+                              return (
+                                <div
+                                  key={field.key}
+                                  className={`order-${order}`}>
+                                  <span className="font-medium">
+                                    {language === "ar"
+                                      ? field.label.ar
+                                      : field.label.en}
+                                  </span>
+                                  <p>{field.value}</p>
+                                </div>
+                              );
+                            })}
                           </div>
                         </div>
 
@@ -465,29 +470,6 @@ const AgencyManagement = () => {
                   </div>
                 ))}
               </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        {/* Initiatives Tab */}
-        <TabsContent value="initiatives">
-          <Card>
-            <CardHeader>
-              <CardTitle>
-                {language === "ar" ? "مبادرات الوكالات" : "Agency Initiatives"}
-              </CardTitle>
-              <CardDescription>
-                {language === "ar"
-                  ? "المبادرات النشطة لكل وكالة"
-                  : "Active initiatives for each agency"}
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <p className="text-center text-muted-foreground py-8">
-                {language === "ar"
-                  ? "سيتم عرض المبادرات هنا قريباً"
-                  : "Initiatives will be displayed here soon"}
-              </p>
             </CardContent>
           </Card>
         </TabsContent>

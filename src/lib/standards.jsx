@@ -15,6 +15,7 @@ export default function Standards() {
                 "بيان بأسماء المتطوعين",
                 "بيان بالدورات التدريبيه وعددها والتقارير الخاصه بكل دوره",
               ],
+              status: "approved",
             },
             {
               id: 2,
@@ -25,6 +26,7 @@ export default function Standards() {
                 "قرار تأسيس لجنة التنسيق و أدوار ومهام أعضائها",
                 "بيان الجان فرعية لتنسيق المبادرات الخاصه بالمدينه الصحيه",
               ],
+              status: "rejected",
             },
             {
               id: 3,
@@ -35,6 +37,7 @@ export default function Standards() {
                 "ما يفيد بآليات التواصل مع المتطوعين",
                 "تقارير الأنشطه التي قاموا بها في المجالات المختلفه",
               ],
+              status: "approved",
             },
             {
               id: 4,
@@ -45,6 +48,7 @@ export default function Standards() {
                 "بيان بالخطط التشغيلية من قبل المنسقين من مختلف القطاعات",
                 "تقارير الرصد والتقارير الدوريه",
               ],
+              status: "pending_approval",
             },
             {
               id: 5,
@@ -55,6 +59,7 @@ export default function Standards() {
                 "بيان بالشركاء المحليين",
                 "الاتفاقيات المختلفه. مع الشركاء",
               ],
+              status: "didnt_submit",
             },
             {
               id: 6,
@@ -65,6 +70,7 @@ export default function Standards() {
                 "معلومات عن المركز المجتمعي وامكانياته",
                 "زيارات ميدانيه",
               ],
+              status: "pending_approval",
             },
             {
               id: 7,
@@ -75,6 +81,7 @@ export default function Standards() {
                 "بيان بجماعات المرأه والمجموعات الشبابية المساهمه في أنشطه المدينه الصحيه",
                 "تقارير الأنشطه التي تم المشاركه فيها أو تنفيذها",
               ],
+              status: "approved",
             },
             {
               id: 8,
@@ -82,6 +89,7 @@ export default function Standards() {
                 "تم ترشيح أعضاء لجنة تنسيق المدينة الصحية رسمياً من قبل مختلف القطاعات ذات الصلة بالمعايير.",
               assigned_agencies: ["مكتب تنسيق برنامج المدينة الصحية"],
               requirements: ["بيان بالمنسقين رسمياً من مختلف القطاعات"],
+              status: "approved",
             },
             {
               id: 9,
@@ -91,6 +99,7 @@ export default function Standards() {
               requirements: [
                 "صياغة عضوية اللجنة العليا من قبل جميع مديري القطاعات المختلفة",
               ],
+              status: "approved",
             },
             {
               id: 10,
@@ -101,6 +110,7 @@ export default function Standards() {
                 "قرار تعيين منسق برنامج المدينة الصحية",
                 "زياره مكتب التنسيق للإطلاع علي المكتب وتجهيزاته",
               ],
+              status: "pending_approval",
             },
             {
               id: 11,
@@ -108,6 +118,7 @@ export default function Standards() {
                 "يجتمع أعضاء فريق القطاعات المشتركة مع لجنة تنسيق المدينة الصحية وتقديم المشورة الفنية والدعم للمجتمع.",
               assigned_agencies: ["مكتب تنسيق برنامج المدينة الصحية"],
               requirements: ["تقارير الاجتماعات"],
+              status: "pending_approval",
             },
             {
               id: 12,
@@ -118,6 +129,7 @@ export default function Standards() {
                 "بيان بشركاء برنامج المدينة الصحية",
                 "بيان بالبرامج المختلفه التي تم تنفيذها من قبل الشركاء في إطار برنامج المدينه الصحيه",
               ],
+              status: "approved",
             },
             {
               id: 13,
@@ -127,6 +139,7 @@ export default function Standards() {
               requirements: [
                 "بيان تعيين منسق مالي لمتابعة جميع الإجراءات المالية ذات الصلة بالمكتب التنفيذي.",
               ],
+              status: "approved",
             },
             {
               id: 14,
@@ -134,6 +147,7 @@ export default function Standards() {
                 "تم توثيق قصص النجاح ونشرها واستخدامها من أجل وضع استراتيجية وأدوات شاملة للدعوة مع الأخذ بعين الاعتبار للثقافة المحلية ويجري تنفيذها من قبل لجنة تنمية المجتمع المحلي.",
               assigned_agencies: ["مكتب تنسيق برنامج المدينة الصحية"],
               requirements: ["بيان بقصص النجاح", "خطه الدعاية والإعلان"],
+              status: "approved",
             },
             {
               id: 15,
@@ -151,6 +165,7 @@ export default function Standards() {
                 "بيان بذوي الاحتياج الذين يمكن أن يستفيدوا من الدعم المالي",
                 "بيان بما تم عمله لدعم محدودي الدخل",
               ],
+              status: "approved",
             },
             {
               id: 16,
@@ -169,6 +184,7 @@ export default function Standards() {
                 "بيان بقصص النجاح وبناء الشراكات",
                 "زيارات ميدانيه",
               ],
+              status: "pending_approval",
             },
             {
               id: 17,
@@ -185,6 +201,7 @@ export default function Standards() {
               requirements: [
                 "سجلات القضايا المالية لتوضيح المتابعه من قبل المنسق المالي للجنة المدينة الصحية.",
               ],
+              status: "pending_approval",
             },
             {
               id: 18,
@@ -199,6 +216,7 @@ export default function Standards() {
                 "الدفاع المدني",
               ],
               requirements: ["بيان بآليات المتابعه"],
+              status: "didnt_submit",
             },
             {
               id: 19,
@@ -216,6 +234,7 @@ export default function Standards() {
                 "بيانات الحساب المصرفي لمكتب تنسيق برنامج المدينة الصحية وشفاف لكافة اللجان.",
                 "الاتفاقيات التي تم التوقيع عليها مع بعض الشركات التجارية لرعاية ودعم المشاريع (إن وجد)",
               ],
+              status: "approved",
             },
             {
               id: 20,
@@ -226,6 +245,7 @@ export default function Standards() {
                 "الجمعيات البيئية",
               ],
               requirements: ["بيان بما يفيد (إن وجد)"],
+              status: "didnt_submit",
             },
             {
               id: 21,
@@ -233,6 +253,7 @@ export default function Standards() {
                 "يضمن ممثلو المجتمع الإيداع لأقساط شهرية في الوقت المناسب من المستفيدين ضمن مجموعاتهم الخاصة والإبقاء على المال المسدد متجدد للأنشطة المستقبلية.",
               assigned_agencies: ["وزارة الشؤون البلدية والقروية"],
               requirements: ["بيان بما يفيد (إن وجد)"],
+              status: "didnt_submit",
             },
             {
               id: 22,
@@ -240,6 +261,7 @@ export default function Standards() {
                 "يلتحق جميع الأطفال المستحقين (بنات وبنين) في المدرسة ولم ينقطع أي طالب",
               assigned_agencies: ["شركة المياه الوطنية"],
               requirements: ["بيان بما يفيد"],
+              status: "approved",
             },
             {
               id: 23,
@@ -250,6 +272,7 @@ export default function Standards() {
                 "محاضر الاجتماعات مع قادة المجتمع المحلي وأولياء الأمور",
                 "بيان بالاحتياجات والمشاكل الرئيسية المتعلقة بالتعليم والمدارس وما تم عمله من تدخلات ومبادرات",
               ],
+              status: "pending_approval",
             },
             {
               id: 24,
@@ -264,6 +287,7 @@ export default function Standards() {
                 "بيان بمعايير الجودة المتعلقة بالتعليم في المدارس في أنحاء المدينه",
                 "بيان بهيئات الاعتماد والمدارس الحاصلة علي الاعتماد في مواقع تنفيذ برنامج المدينة الصحية",
               ],
+              status: "pending_approval",
             },
             {
               id: 25,
@@ -279,6 +303,7 @@ export default function Standards() {
                 "قرار تشكيل اللجنة وما تم عمله",
                 "محاضر الاجتماعات مع مكتب تنسيق برنامج المدينة الصحية.",
               ],
+              status: "rejected",
             },
             {
               id: 26,
@@ -290,6 +315,7 @@ export default function Standards() {
                 "الهيئة العامة للغذاء والدواء",
               ],
               requirements: ["ما يفيد التنفيذ", "زيارات ميدانيه"],
+              status: "rejected",
             },
             {
               id: 27,
@@ -304,6 +330,7 @@ export default function Standards() {
                 "بيان ببرامج التدريب المستمرة للعاملين في مجال الصحة",
                 "تقارير التنفيذ",
               ],
+              status: "rejected",
             },
             {
               id: 28,
@@ -313,6 +340,7 @@ export default function Standards() {
               requirements: [
                 "تفاصيل نظام تسجيل والإبلاغ عن المواليد والوفيات والإحصاءات الحيوية.",
               ],
+              status: "didnt_submit",
             },
             {
               id: 29,
@@ -325,6 +353,7 @@ export default function Standards() {
               requirements: [
                 "تفاصيل نظام الإحالة في القطاع العام وبين القطاعين العام والخاص.",
               ],
+              status: "pending_approval",
             },
             {
               id: 30,
@@ -335,6 +364,7 @@ export default function Standards() {
                 "وزارة البيئة والمياه والزراعة",
               ],
               requirements: ["تفاصيل إجراء البحوث المجتمعية المشتركة ونتائجها"],
+              status: "pending_approval",
             },
             {
               id: 31,
@@ -346,6 +376,7 @@ export default function Standards() {
               requirements: [
                 "قرار تشكيل اللجنة الفرعية التابعة للجنة تنسيق المدينة الصحية لإدارة والإشراف على خدمات الرعاية الصحية المحلية",
               ],
+              status: "didnt_submit",
             },
             {
               id: 32,
@@ -357,6 +388,7 @@ export default function Standards() {
               requirements: [
                 "تفاصيل النظام وآلية تتفيذه لضمان توافر الأدوية الأساسية واللقاحات على أساس مستمر.",
               ],
+              status: "approved",
             },
             {
               id: 33,
@@ -370,6 +402,7 @@ export default function Standards() {
                 "بيان بأنشطه عمليات المسح الدورية لقياس الجودة ورضا العملاء.",
                 "زيارات ميدانيه",
               ],
+              status: "didnt_submit",
             },
             {
               id: 34,
@@ -379,6 +412,7 @@ export default function Standards() {
                 "وزارة الصحة ( الشؤون الصحية - المستشفيات - القطاع الصحي – مراكز الرعاية الصحية )",
               ],
               requirements: ["بيان بما يفيد", "زيارات ميدانيه"],
+              status: "rejected",
             },
             {
               id: 35,
@@ -388,6 +422,7 @@ export default function Standards() {
                 "وزارة الصحة ( الشؤون الصحية - المستشفيات - القطاع الصحي – مراكز الرعاية الصحية )",
               ],
               requirements: ["بيان بما يفيد"],
+              status: "rejected",
             },
             {
               id: 36,
@@ -397,6 +432,7 @@ export default function Standards() {
                 "وزارة الصحة ( الشؤون الصحية - المستشفيات - القطاع الصحي – مراكز الرعاية الصحية )",
               ],
               requirements: ["بيان بما يفيد"],
+              status: "approved",
             },
             {
               id: 37,
@@ -406,6 +442,7 @@ export default function Standards() {
                 "وزارة الصحة ( الشؤون الصحية - المستشفيات - القطاع الصحي – مراكز الرعاية الصحية )",
               ],
               requirements: ["بيان بما يفيد"],
+              status: "didnt_submit",
             },
             {
               id: 38,
@@ -415,6 +452,7 @@ export default function Standards() {
                 "وزارة الصحة ( الشؤون الصحية - المستشفيات - القطاع الصحي – مراكز الرعاية الصحية )",
               ],
               requirements: ["بيان بما يفيد"],
+              status: "pending_approval",
             },
             {
               id: 39,
@@ -424,6 +462,7 @@ export default function Standards() {
                 "وزارة الصحة ( الشؤون الصحية - المستشفيات - القطاع الصحي – مراكز الرعاية الصحية )",
               ],
               requirements: ["بيان بما يفيد", "زيارات ميدانيه"],
+              status: "rejected",
             },
             {
               id: 40,
@@ -433,6 +472,7 @@ export default function Standards() {
                 "وزارة الصحة ( الشؤون الصحية - المستشفيات - القطاع الصحي – مراكز الرعاية الصحية )",
               ],
               requirements: ["بيان بما يفيد"],
+              status: "approved",
             },
             {
               id: 41,
@@ -442,6 +482,7 @@ export default function Standards() {
                 "وزارة الصحة ( الشؤون الصحية - المستشفيات - القطاع الصحي – مراكز الرعاية الصحية )",
               ],
               requirements: ["بيان بما يفيد"],
+              status: "approved",
             },
             {
               id: 42,
@@ -451,6 +492,7 @@ export default function Standards() {
                 "وزارة الصحة ( الشؤون الصحية - المستشفيات - القطاع الصحي – مراكز الرعاية الصحية )",
               ],
               requirements: ["بيان بما يفيد"],
+              status: "pending_approval",
             },
             {
               id: 43,
@@ -460,6 +502,7 @@ export default function Standards() {
                 "وزارة الصحة ( الشؤون الصحية - المستشفيات - القطاع الصحي – مراكز الرعاية الصحية )",
               ],
               requirements: ["بيان بما يفيد"],
+              status: "didnt_submit",
             },
             {
               id: 44,
@@ -469,6 +512,7 @@ export default function Standards() {
                 "وزارة الصحة ( الشؤون الصحية - المستشفيات - القطاع الصحي – مراكز الرعاية الصحية )",
               ],
               requirements: ["بيان بأنشطه التوعيه"],
+              status: "approved",
             },
             {
               id: 45,
@@ -481,6 +525,7 @@ export default function Standards() {
                 "تفاصيل برنامج الفحص للكشف المبكر عن األمراض غير المعدية",
                 "تفاصيل برامج الرعاية الصحية لكبار السن",
               ],
+              status: "didnt_submit",
             },
             {
               id: 46,
@@ -493,6 +538,7 @@ export default function Standards() {
                 "بيان بما يفيد مثل الخط الساخن لتقديم المساعدة الالزمة وإحالة قضايا تعاطي المخدرات.",
                 "الرعاية االجتماعية للحد من االدمان",
               ],
+              status: "didnt_submit",
             },
             {
               id: 47,
@@ -505,6 +551,7 @@ export default function Standards() {
                 "بيان تلقي الدعم لذوي اإلعاقة العقلية والبدنية",
                 "أنشطه التدريب المهني ة توفير فرص العمل ذات الصلة لهم.",
               ],
+              status: "approved",
             },
             {
               id: 48,
@@ -514,6 +561,7 @@ export default function Standards() {
                 "وزارة الصحة ( الشؤون الصحية - المستشفيات - القطاع الصحي – مراكز الرعاية الصحية )",
               ],
               requirements: ["بيان بما يفيد"],
+              status: "pending_approval",
             },
             {
               id: 49,
@@ -523,6 +571,7 @@ export default function Standards() {
                 "وزارة الصحة ( الشؤون الصحية - المستشفيات - القطاع الصحي – مراكز الرعاية الصحية )",
               ],
               requirements: ["بيان بما يفيد"],
+              status: "pending_approval",
             },
             {
               id: 50,
@@ -534,6 +583,7 @@ export default function Standards() {
               requirements: [
                 "بيان بالمبادرات واألنشطة في هذا الصدد والمبادرات والبرامج المختلفة من قبل الشؤون االجتماعية.",
               ],
+              status: "rejected",
             },
             {
               id: 51,
@@ -548,6 +598,7 @@ export default function Standards() {
                 "برامج الصحه المدرسيه",
                 "زيارات ميدانيه",
               ],
+              status: "didnt_submit",
             },
             {
               id: 52,
@@ -557,6 +608,7 @@ export default function Standards() {
                 "وزارة الصحة ( الشؤون الصحية - المستشفيات - القطاع الصحي – مراكز الرعاية الصحية )",
               ],
               requirements: ["بيان بما يفيد", "زيارات ميدانيه"],
+              status: "approved",
             },
             {
               id: 53,
@@ -566,6 +618,7 @@ export default function Standards() {
                 "وزارة الصحة ( الشؤون الصحية - المستشفيات - القطاع الصحي – مراكز الرعاية الصحية )",
               ],
               requirements: ["زيارات ميدانيه"],
+              status: "rejected",
             },
             {
               id: 54,
@@ -575,6 +628,7 @@ export default function Standards() {
                 "وزارة الصحة ( الشؤون الصحية - المستشفيات - القطاع الصحي – مراكز الرعاية الصحية )",
               ],
               requirements: ["بيان بما يفيد", "زيارات ميدانيه"],
+              status: "pending_approval",
             },
             {
               id: 55,
@@ -585,6 +639,7 @@ export default function Standards() {
                 "إدارة التعليم",
               ],
               requirements: ["بيان بما يفيد"],
+              status: "rejected",
             },
             {
               id: 56,
@@ -595,6 +650,7 @@ export default function Standards() {
                 "وزارة الموارد البشرية والتنمية الاجتماعية",
               ],
               requirements: ["بيان بما يفيد"],
+              status: "pending_approval",
             },
             {
               id: 57,
@@ -605,6 +661,7 @@ export default function Standards() {
                 "بيان بما يفيد",
                 "زيارات ميدانيه للمبادرات ذات الصله",
               ],
+              status: "didnt_submit",
             },
             {
               id: 58,
@@ -615,6 +672,7 @@ export default function Standards() {
                 "بيان بما يفيد",
                 "زيارات ميدانيه للمبادرات ذات الصله",
               ],
+              status: "didnt_submit",
             },
             {
               id: 59,
@@ -622,6 +680,7 @@ export default function Standards() {
                 "أسواق الغذاء الصحي سهلة الوصول لبيع المنتجات األساسية مثل الملح المعالج باليود.",
               assigned_agencies: ["إدارة الدفاع المدني", "الهلال الأحمر"],
               requirements: ["بيان بما يفيد", "زيارات ميدانيه"],
+              status: "pending_approval",
             },
             {
               id: 60,
@@ -633,6 +692,7 @@ export default function Standards() {
                 "بيان بآليات التنفيذ واألنشطه ذات الصله",
                 "زيارات ميدانيه",
               ],
+              status: "didnt_submit",
             },
             {
               id: 61,
@@ -640,6 +700,7 @@ export default function Standards() {
                 "تم تأسيس مركز إلدارة نوعية على األساس المجتمعي في موقع تنفيذ برنامج المدينة الصحية (يشمل البلدية) لضمان أن يتم الرصد المنظم لتلوث الهواء. يدرك المجتمع مخاطر تلوث الهواء.",
               assigned_agencies: ["إدارة الدفاع المدني", "الهلال الأحمر"],
               requirements: ["خطة رصد تلوث الهواء", "بيان باألنشطه ذات الصله"],
+              status: "approved",
             },
             {
               id: 62,
@@ -647,6 +708,7 @@ export default function Standards() {
                 "يقوم مخططو المدن بتنفيذ التدابير التي تمنع تلوث الهواء.",
               assigned_agencies: ["إدارة الدفاع المدني", "الهلال الأحمر"],
               requirements: ["بيان بالقرارات الداعمه"],
+              status: "didnt_submit",
             },
             {
               id: 63,
@@ -654,6 +716,7 @@ export default function Standards() {
                 "يجري تقييم ألثر مخططات تقسيم المناطق الحضرية واإلسكان على تلوث الهواء قبل اعتمادها. تضم مشاريع اإلسكان هذه، على سبيل المثال، وصول األسر إلى وقود نظيف وتهوية وتحسين مواقد المطبخ وأجهزة التدفئة.",
               assigned_agencies: ["إدارة التعليم", "نادي الحي"],
               requirements: ["بيان بالقرارات الداعمه"],
+              status: "rejected",
             },
             {
               id: 64,
@@ -664,6 +727,7 @@ export default function Standards() {
                 "بيان بالمركز المسئول عن اإلحصاء والمعلومات",
                 "آليه جمع البيانات والتحليل والنشر الستخدامها في التخطيط على المستوى المحلي.",
               ],
+              status: "rejected",
             },
             {
               id: 65,
@@ -673,6 +737,7 @@ export default function Standards() {
               requirements: [
                 "آليه توزيع البيانات لإلستفاده منها في التخطيط ودعم القرار بالقطاعات المختلفة.",
               ],
+              status: "rejected",
             },
             {
               id: 66,
@@ -682,6 +747,7 @@ export default function Standards() {
               requirements: [
                 "آليه التواصل بين المركز ومختلف القطاعات لتبادل اإلحصاءات الالزمة لمشاريع التنمية.",
               ],
+              status: "didnt_submit",
             },
             {
               id: 67,
@@ -689,6 +755,7 @@ export default function Standards() {
                 "أشكال ونتائج المسح األساسي والمعلومات بشأن المشاريع الحالية موثقة توثيقا ً جيداً حتى اآلن ومتوفرة لدى لجنة تنمية المجتمع المحلي ومركز تنسيق المدينة الصحية.",
               assigned_agencies: ["إدارة التعليم", "نادي الحي"],
               requirements: ["التقارير ذات الصلة"],
+              status: "pending_approval",
             },
             {
               id: 68,
@@ -700,6 +767,7 @@ export default function Standards() {
                 "وزارة التعليم (الجامعات – المدارس – نادي الحي – المنصات التعليمية)",
               ],
               requirements: ["صوره من الملف التعريفي للمدينه"],
+              status: "didnt_submit",
             },
             {
               id: 69,
@@ -711,6 +779,7 @@ export default function Standards() {
                 "وزارة التعليم (الجامعات – المدارس – نادي الحي – المنصات التعليمية)",
               ],
               requirements: ["التقارير ذات الصله."],
+              status: "pending_approval",
             },
             {
               id: 70,
@@ -722,6 +791,7 @@ export default function Standards() {
                 "وزارة التعليم (الجامعات – المدارس – نادي الحي – المنصات التعليمية)",
               ],
               requirements: ["بيان بما يفيد", "زيارات ميدانيه"],
+              status: "pending_approval",
             },
             {
               id: 71,
@@ -733,6 +803,7 @@ export default function Standards() {
                 "وزارة التعليم (الجامعات – المدارس – نادي الحي – المنصات التعليمية)",
               ],
               requirements: ["بيان بما يفيد"],
+              status: "approved",
             },
             {
               id: 72,
@@ -744,6 +815,7 @@ export default function Standards() {
                 "وزارة التعليم (الجامعات – المدارس – نادي الحي – المنصات التعليمية)",
               ],
               requirements: ["بيان بما يفيد"],
+              status: "approved",
             },
             {
               id: 73,
@@ -755,6 +827,7 @@ export default function Standards() {
                 "وزارة التعليم (الجامعات – المدارس – نادي الحي – المنصات التعليمية)",
               ],
               requirements: ["بيان بما يفيد", "زيارات ميدانيه"],
+              status: "pending_approval",
             },
             {
               id: 74,
@@ -763,6 +836,7 @@ export default function Standards() {
                 "وزارة الموارد البشرية والتنمية الاجتماعية (الضمان الاجتماعي – الجمعيات الخيرية – الجمعيات الأهلية)",
               ],
               requirements: ["بيان بقصص النجاح"],
+              status: "didnt_submit",
             },
             {
               id: 75,
@@ -772,6 +846,7 @@ export default function Standards() {
                 "وزارة الموارد البشرية والتنمية الاجتماعية (الضمان الاجتماعي – الجمعيات الخيرية – الجمعيات الأهلية)",
               ],
               requirements: ["ملفات التوثيق"],
+              status: "didnt_submit",
             },
             {
               id: 76,
@@ -781,6 +856,7 @@ export default function Standards() {
                 "وزارة الموارد البشرية والتنمية الاجتماعية (الضمان الاجتماعي – الجمعيات الخيرية – الجمعيات الأهلية)",
               ],
               requirements: ["بيان بتشكيل اللجنة وعضويتها"],
+              status: "approved",
             },
             {
               id: 77,
@@ -790,6 +866,7 @@ export default function Standards() {
                 "وزارة الموارد البشرية والتنمية الاجتماعية (الضمان الاجتماعي – الجمعيات الخيرية – الجمعيات الأهلية)",
               ],
               requirements: ["الملف المطور"],
+              status: "pending_approval",
             },
             {
               id: 78,
@@ -799,6 +876,7 @@ export default function Standards() {
                 "وزارة الموارد البشرية والتنمية الاجتماعية (الضمان الاجتماعي – الجمعيات الخيرية – الجمعيات الأهلية)",
               ],
               requirements: ["تقارير الدورات التدريبيه"],
+              status: "approved",
             },
             {
               id: 79,
@@ -808,6 +886,7 @@ export default function Standards() {
                 "وزارة الموارد البشرية والتنمية الاجتماعية (الضمان الاجتماعي – الجمعيات الخيرية – الجمعيات الأهلية)",
               ],
               requirements: ["بيان بالخطة التفصيليه"],
+              status: "rejected",
             },
             {
               id: 80,
@@ -817,6 +896,7 @@ export default function Standards() {
                 "وزارة الموارد البشرية والتنمية الاجتماعية (الضمان الاجتماعي – الجمعيات الخيرية – الجمعيات الأهلية)",
               ],
               requirements: ["نسخه من البيانات"],
+              status: "approved",
             },
           ],
         }
@@ -831,6 +911,7 @@ export default function Standards() {
                 "Statement of volunteers' names",
                 "Statement of training courses, their number and the reports for each course",
               ],
+              status: "rejected",
             },
             {
               id: 2,
@@ -841,6 +922,7 @@ export default function Standards() {
                 "Decision to establish the Coordination Committee and the roles and responsibilities of its members",
                 "Statement of subcommittees to coordinate initiatives specific to the healthy city",
               ],
+              status: "didnt_submit",
             },
             {
               id: 3,
@@ -851,6 +933,7 @@ export default function Standards() {
                 "Proof of communication mechanisms with volunteers",
                 "Reports of activities they have carried out in different fields",
               ],
+              status: "rejected",
             },
             {
               id: 4,
@@ -861,6 +944,7 @@ export default function Standards() {
                 "Statement of operational plans from coordinators from various sectors",
                 "Monitoring and periodic reports",
               ],
+              status: "pending_approval",
             },
             {
               id: 5,
@@ -871,6 +955,7 @@ export default function Standards() {
                 "Statement of local partners",
                 "Various agreements with partners",
               ],
+              status: "rejected",
             },
             {
               id: 6,
@@ -881,6 +966,7 @@ export default function Standards() {
                 "Information about the community center and its capabilities",
                 "Field visits",
               ],
+              status: "didnt_submit",
             },
             {
               id: 7,
@@ -891,6 +977,7 @@ export default function Standards() {
                 "Statement of women's groups and youth groups contributing to healthy city activities",
                 "Reports of activities participated in or implemented",
               ],
+              status: "pending_approval",
             },
             {
               id: 8,
@@ -900,6 +987,7 @@ export default function Standards() {
               requirements: [
                 "Statement of coordinators officially from various sectors",
               ],
+              status: "didnt_submit",
             },
             {
               id: 9,
@@ -909,6 +997,7 @@ export default function Standards() {
               requirements: [
                 "Drafting of the membership of the Higher Committee by all directors of the different sectors",
               ],
+              status: "pending_approval",
             },
             {
               id: 10,
@@ -919,6 +1008,7 @@ export default function Standards() {
                 "Decision to appoint the Healthy City program coordinator",
                 "Visit to the coordination office to view the office and its equipment",
               ],
+              status: "approved",
             },
             {
               id: 11,
@@ -926,6 +1016,7 @@ export default function Standards() {
                 "Members of the inter-sectoral team meet with the Healthy City Coordination Committee and provide technical advice and support to the community.",
               assigned_agencies: ["Healthy City Program Coordination Office"],
               requirements: ["Meeting reports"],
+              status: "approved",
             },
             {
               id: 12,
@@ -936,6 +1027,7 @@ export default function Standards() {
                 "Statement of Healthy City program partners",
                 "Statement of the different programs that have been implemented by the partners within the framework of the Healthy City program",
               ],
+              status: "pending_approval",
             },
             {
               id: 13,
@@ -945,6 +1037,7 @@ export default function Standards() {
               requirements: [
                 "Statement appointing a financial coordinator to follow up on all financial procedures related to the Executive Office.",
               ],
+              status: "approved",
             },
             {
               id: 14,
@@ -955,6 +1048,7 @@ export default function Standards() {
                 "Statement of success stories",
                 "Advertising and publicity plan",
               ],
+              status: "pending_approval",
             },
             {
               id: 15,
@@ -972,6 +1066,7 @@ export default function Standards() {
                 "Statement of needy people who can benefit from financial support",
                 "Statement of what has been done to support low-income individuals",
               ],
+              status: "rejected",
             },
             {
               id: 16,
@@ -990,6 +1085,7 @@ export default function Standards() {
                 "Statement of success stories and building partnerships",
                 "Field visits",
               ],
+              status: "pending_approval",
             },
             {
               id: 17,
@@ -1006,6 +1102,7 @@ export default function Standards() {
               requirements: [
                 "Records of financial issues to clarify follow-up by the financial coordinator of the Healthy City Committee.",
               ],
+              status: "didnt_submit",
             },
             {
               id: 18,
@@ -1020,6 +1117,7 @@ export default function Standards() {
                 "Civil Defense",
               ],
               requirements: ["Statement of follow-up mechanisms"],
+              status: "pending_approval",
             },
             {
               id: 19,
@@ -1037,6 +1135,7 @@ export default function Standards() {
                 "Bank account details of the Healthy City program coordination office and transparent to all committees.",
                 "Agreements signed with some commercial companies to sponsor and support projects (if any)",
               ],
+              status: "didnt_submit",
             },
             {
               id: 20,
@@ -1047,6 +1146,7 @@ export default function Standards() {
                 "Environmental Associations",
               ],
               requirements: ["Statement proving this (if any)"],
+              status: "pending_approval",
             },
             {
               id: 21,
@@ -1054,6 +1154,7 @@ export default function Standards() {
                 "Community representatives ensure timely monthly installment deposits from beneficiaries within their own groups and keep the repaid money renewed for future activities.",
               assigned_agencies: ["Ministry of Municipal and Rural Affairs"],
               requirements: ["Statement proving this (if any)"],
+              status: "approved",
             },
             {
               id: 22,
@@ -1061,6 +1162,7 @@ export default function Standards() {
                 "All eligible children (girls and boys) are enrolled in school and no student has dropped out.",
               assigned_agencies: ["National Water Company"],
               requirements: ["Statement proving this"],
+              status: "approved",
             },
             {
               id: 23,
@@ -1071,6 +1173,7 @@ export default function Standards() {
                 "Minutes of meetings with local community leaders and parents",
                 "Statement of key needs and problems related to education and schools and what interventions and initiatives have been done",
               ],
+              status: "didnt_submit",
             },
             {
               id: 24,
@@ -1085,6 +1188,7 @@ export default function Standards() {
                 "Statement of quality standards related to education in schools throughout the city",
                 "Statement of accreditation bodies and schools that have received accreditation in the Healthy City program implementation sites",
               ],
+              status: "didnt_submit",
             },
             {
               id: 25,
@@ -1100,6 +1204,7 @@ export default function Standards() {
                 "Decision to form the committee and what has been done",
                 "Minutes of meetings with the Healthy City program coordination office.",
               ],
+              status: "rejected",
             },
             {
               id: 26,
@@ -1111,6 +1216,7 @@ export default function Standards() {
                 "General Food and Drug Authority",
               ],
               requirements: ["Proof of implementation", "Field visits"],
+              status: "pending_approval",
             },
             {
               id: 27,
@@ -1125,6 +1231,7 @@ export default function Standards() {
                 "Statement of continuous training programs for health workers",
                 "Implementation reports",
               ],
+              status: "rejected",
             },
             {
               id: 28,
@@ -1136,6 +1243,7 @@ export default function Standards() {
               requirements: [
                 "Details of the system for recording and reporting births, deaths, and vital statistics.",
               ],
+              status: "pending_approval",
             },
             {
               id: 29,
@@ -1148,6 +1256,7 @@ export default function Standards() {
               requirements: [
                 "Details of the referral system in the public sector and between the public and private sectors.",
               ],
+              status: "rejected",
             },
             {
               id: 30,
@@ -1160,6 +1269,7 @@ export default function Standards() {
               requirements: [
                 "Details of the joint community research and its results",
               ],
+              status: "approved",
             },
             {
               id: 31,
@@ -1171,6 +1281,7 @@ export default function Standards() {
               requirements: [
                 "Decision to form the subcommittee of the Healthy City Coordination Committee to manage and supervise local health care services",
               ],
+              status: "pending_approval",
             },
             {
               id: 32,
@@ -1182,6 +1293,7 @@ export default function Standards() {
               requirements: [
                 "Details of the system and its implementation mechanism to ensure the continuous availability of essential medicines and vaccines.",
               ],
+              status: "rejected",
             },
             {
               id: 33,
@@ -1195,6 +1307,7 @@ export default function Standards() {
                 "Statement of periodic survey activities to measure quality and customer satisfaction.",
                 "Field visits",
               ],
+              status: "didnt_submit",
             },
             {
               id: 34,
@@ -1204,6 +1317,7 @@ export default function Standards() {
                 "Ministry of Health (Health Affairs - Hospitals - Health Sector - Health Care Centers)",
               ],
               requirements: ["Statement proving this", "Field visits"],
+              status: "rejected",
             },
             {
               id: 35,
@@ -1213,6 +1327,7 @@ export default function Standards() {
                 "Ministry of Health (Health Affairs - Hospitals - Health Sector - Health Care Centers)",
               ],
               requirements: ["Statement proving this"],
+              status: "rejected",
             },
             {
               id: 36,
@@ -1222,6 +1337,7 @@ export default function Standards() {
                 "Ministry of Health (Health Affairs - Hospitals - Health Sector - Health Care Centers)",
               ],
               requirements: ["Statement proving this"],
+              status: "approved",
             },
             {
               id: 37,
@@ -1231,6 +1347,7 @@ export default function Standards() {
                 "Ministry of Health (Health Affairs - Hospitals - Health Sector - Health Care Centers)",
               ],
               requirements: ["Statement proving this"],
+              status: "pending_approval",
             },
             {
               id: 38,
@@ -1240,6 +1357,7 @@ export default function Standards() {
                 "Ministry of Health (Health Affairs - Hospitals - Health Sector - Health Care Centers)",
               ],
               requirements: ["Statement proving this"],
+              status: "pending_approval",
             },
             {
               id: 39,
@@ -1249,6 +1367,7 @@ export default function Standards() {
                 "Ministry of Health (Health Affairs - Hospitals - Health Sector - Health Care Centers)",
               ],
               requirements: ["Statement proving this", "Field visits"],
+              status: "rejected",
             },
             {
               id: 40,
@@ -1258,6 +1377,7 @@ export default function Standards() {
                 "Ministry of Health (Health Affairs - Hospitals - Health Sector - Health Care Centers)",
               ],
               requirements: ["Statement proving this"],
+              status: "didnt_submit",
             },
             {
               id: 41,
@@ -1267,6 +1387,7 @@ export default function Standards() {
                 "Ministry of Health (Health Affairs - Hospitals - Health Sector - Health Care Centers)",
               ],
               requirements: ["Statement proving this"],
+              status: "pending_approval",
             },
             {
               id: 42,
@@ -1276,6 +1397,7 @@ export default function Standards() {
                 "Ministry of Health (Health Affairs - Hospitals - Health Sector - Health Care Centers)",
               ],
               requirements: ["Statement proving this"],
+              status: "approved",
             },
             {
               id: 43,
@@ -1285,6 +1407,7 @@ export default function Standards() {
                 "Ministry of Health (Health Affairs - Hospitals - Health Sector - Health Care Centers)",
               ],
               requirements: ["Statement proving this"],
+              status: "didnt_submit",
             },
             {
               id: 44,
@@ -1294,6 +1417,7 @@ export default function Standards() {
                 "Ministry of Health (Health Affairs - Hospitals - Health Sector - Health Care Centers)",
               ],
               requirements: ["Statement of awareness activities"],
+              status: "didnt_submit",
             },
             {
               id: 45,
@@ -1306,6 +1430,7 @@ export default function Standards() {
                 "Details of the screening program for the early detection of non-communicable diseases",
                 "Details of health care programs for the elderly",
               ],
+              status: "approved",
             },
             {
               id: 46,
@@ -1318,6 +1443,7 @@ export default function Standards() {
                 "Statement proving this, such as a hotline for providing necessary assistance and referring drug abuse issues.",
                 "Social care to reduce addiction",
               ],
+              status: "rejected",
             },
             {
               id: 47,
@@ -1330,6 +1456,7 @@ export default function Standards() {
                 "Statement of receiving support for people with intellectual and physical disabilities",
                 "Vocational training activities and providing relevant employment opportunities for them.",
               ],
+              status: "pending_approval",
             },
             {
               id: 48,
@@ -1339,6 +1466,7 @@ export default function Standards() {
                 "Ministry of Health (Health Affairs - Hospitals - Health Sector - Health Care Centers)",
               ],
               requirements: ["Statement proving this"],
+              status: "rejected",
             },
             {
               id: 49,
@@ -1348,6 +1476,7 @@ export default function Standards() {
                 "Ministry of Health (Health Affairs - Hospitals - Health Sector - Health Care Centers)",
               ],
               requirements: ["Statement proving this"],
+              status: "rejected",
             },
             {
               id: 50,
@@ -1359,6 +1488,7 @@ export default function Standards() {
               requirements: [
                 "Statement of initiatives and activities in this regard and the various initiatives and programs by Social Affairs.",
               ],
+              status: "pending_approval",
             },
             {
               id: 51,
@@ -1373,6 +1503,7 @@ export default function Standards() {
                 "School health programs",
                 "Field visits",
               ],
+              status: "didnt_submit",
             },
             {
               id: 52,
@@ -1382,6 +1513,7 @@ export default function Standards() {
                 "Ministry of Health (Health Affairs - Hospitals - Health Sector - Health Care Centers)",
               ],
               requirements: ["Statement proving this", "Field visits"],
+              status: "pending_approval",
             },
             {
               id: 53,
@@ -1391,6 +1523,7 @@ export default function Standards() {
                 "Ministry of Health (Health Affairs - Hospitals - Health Sector - Health Care Centers)",
               ],
               requirements: ["Field visits"],
+              status: "rejected",
             },
             {
               id: 54,
@@ -1400,6 +1533,7 @@ export default function Standards() {
                 "Ministry of Health (Health Affairs - Hospitals - Health Sector - Health Care Centers)",
               ],
               requirements: ["Statement proving this", "Field visits"],
+              status: "didnt_submit",
             },
             {
               id: 55,
@@ -1410,6 +1544,7 @@ export default function Standards() {
                 "Directorate of Education",
               ],
               requirements: ["Statement proving this"],
+              status: "approved",
             },
             {
               id: 56,
@@ -1420,6 +1555,7 @@ export default function Standards() {
                 "Ministry of Human Resources and Social Development",
               ],
               requirements: ["Statement proving this"],
+              status: "approved",
             },
             {
               id: 57,
@@ -1430,6 +1566,7 @@ export default function Standards() {
                 "Statement proving this",
                 "Field visits for related initiatives",
               ],
+              status: "pending_approval",
             },
             {
               id: 58,
@@ -1440,6 +1577,7 @@ export default function Standards() {
                 "Statement proving this",
                 "Field visits for related initiatives",
               ],
+              status: "rejected",
             },
             {
               id: 59,
@@ -1447,6 +1585,7 @@ export default function Standards() {
                 "Healthy food markets are easily accessible for selling basic products such as iodized salt.",
               assigned_agencies: ["Civil Defense", "Red Crescent"],
               requirements: ["Statement proving this", "Field visits"],
+              status: "pending_approval",
             },
             {
               id: 60,
@@ -1458,6 +1597,7 @@ export default function Standards() {
                 "Statement of implementation mechanisms and related activities",
                 "Field visits",
               ],
+              status: "didnt_submit",
             },
             {
               id: 61,
@@ -1468,6 +1608,7 @@ export default function Standards() {
                 "Air pollution monitoring plan",
                 "Statement of related activities",
               ],
+              status: "pending_approval",
             },
             {
               id: 62,
@@ -1475,6 +1616,7 @@ export default function Standards() {
                 "City planners implement measures that prevent air pollution.",
               assigned_agencies: ["Civil Defense", "Red Crescent"],
               requirements: ["Statement of supporting decisions"],
+              status: "didnt_submit",
             },
             {
               id: 63,
@@ -1485,6 +1627,7 @@ export default function Standards() {
                 "Neighborhood Club",
               ],
               requirements: ["Statement of supporting decisions"],
+              status: "rejected",
             },
             {
               id: 64,
@@ -1498,6 +1641,7 @@ export default function Standards() {
                 "Statement of the center responsible for statistics and information",
                 "Mechanism for data collection, analysis, and dissemination for use in local-level planning.",
               ],
+              status: "didnt_submit",
             },
             {
               id: 65,
@@ -1510,6 +1654,7 @@ export default function Standards() {
               requirements: [
                 "Mechanism for distributing data to benefit from it in planning and decision-making in different sectors.",
               ],
+              status: "didnt_submit",
             },
             {
               id: 66,
@@ -1522,6 +1667,7 @@ export default function Standards() {
               requirements: [
                 "Mechanism for communication between the center and different sectors to exchange the necessary statistics for development projects.",
               ],
+              status: "rejected",
             },
             {
               id: 67,
@@ -1532,6 +1678,7 @@ export default function Standards() {
                 "Neighborhood Club",
               ],
               requirements: ["Relevant reports"],
+              status: "didnt_submit",
             },
             {
               id: 68,
@@ -1543,6 +1690,7 @@ export default function Standards() {
                 "Ministry of Education (Universities - Schools - Neighborhood Club - Educational Platforms)",
               ],
               requirements: ["A copy of the city profile"],
+              status: "pending_approval",
             },
             {
               id: 69,
@@ -1554,6 +1702,7 @@ export default function Standards() {
                 "Ministry of Education (Universities - Schools - Neighborhood Club - Educational Platforms)",
               ],
               requirements: ["Relevant reports."],
+              status: "approved",
             },
             {
               id: 70,
@@ -1565,6 +1714,7 @@ export default function Standards() {
                 "Ministry of Education (Universities - Schools - Neighborhood Club - Educational Platforms)",
               ],
               requirements: ["Statement proving this", "Field visits"],
+              status: "didnt_submit",
             },
             {
               id: 71,
@@ -1576,6 +1726,7 @@ export default function Standards() {
                 "Ministry of Education (Universities - Schools - Neighborhood Club - Educational Platforms)",
               ],
               requirements: ["Statement proving this"],
+              status: "didnt_submit",
             },
             {
               id: 72,
@@ -1587,6 +1738,7 @@ export default function Standards() {
                 "Ministry of Education (Universities - Schools - Neighborhood Club - Educational Platforms)",
               ],
               requirements: ["Statement proving this"],
+              status: "pending_approval",
             },
             {
               id: 73,
@@ -1598,6 +1750,7 @@ export default function Standards() {
                 "Ministry of Education (Universities - Schools - Neighborhood Club - Educational Platforms)",
               ],
               requirements: ["Statement proving this", "Field visits"],
+              status: "rejected",
             },
             {
               id: 74,
@@ -1607,6 +1760,7 @@ export default function Standards() {
                 "Ministry of Human Resources and Social Development (Social Security - Charitable Societies - Civil Societies)",
               ],
               requirements: ["Statement of success stories"],
+              status: "pending_approval",
             },
             {
               id: 75,
@@ -1616,6 +1770,7 @@ export default function Standards() {
                 "Ministry of Human Resources and Social Development (Social Security - Charitable Societies - Civil Societies)",
               ],
               requirements: ["Documentation files"],
+              status: "rejected",
             },
             {
               id: 76,
@@ -1627,6 +1782,7 @@ export default function Standards() {
               requirements: [
                 "Statement of the formation of the committee and its membership",
               ],
+              status: "approved",
             },
             {
               id: 77,
@@ -1636,6 +1792,7 @@ export default function Standards() {
                 "Ministry of Human Resources and Social Development (Social Security - Charitable Societies - Civil Societies)",
               ],
               requirements: ["The developed file"],
+              status: "didnt_submit",
             },
             {
               id: 78,
@@ -1645,6 +1802,7 @@ export default function Standards() {
                 "Ministry of Human Resources and Social Development (Social Security - Charitable Societies - Civil Societies)",
               ],
               requirements: ["Reports of the training courses"],
+              status: "didnt_submit",
             },
             {
               id: 79,
@@ -1654,6 +1812,7 @@ export default function Standards() {
                 "Ministry of Human Resources and Social Development (Social Security - Charitable Societies - Civil Societies)",
               ],
               requirements: ["Statement of the detailed plan"],
+              status: "rejected",
             },
             {
               id: 80,
@@ -1663,6 +1822,7 @@ export default function Standards() {
                 "Ministry of Human Resources and Social Development (Social Security - Charitable Societies - Civil Societies)",
               ],
               requirements: ["A copy of the data"],
+              status: "rejected",
             },
           ],
         };
