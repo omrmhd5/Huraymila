@@ -4,6 +4,12 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { useTheme } from "@/contexts/ThemeContext";
 import Standards from "@/lib/standards";
 import {
@@ -20,6 +26,8 @@ import {
   CheckCircle,
   Clock,
   AlertCircle,
+  XCircle,
+  X,
 } from "lucide-react";
 
 const SubmissionsView = () => {
@@ -27,6 +35,8 @@ const SubmissionsView = () => {
   const navigate = useNavigate();
   const { language } = useTheme();
   const [activeTab, setActiveTab] = useState("all");
+  const [selectedSubmission, setSelectedSubmission] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const standards = Standards();
 
   // Find the standard by ID
@@ -57,7 +67,9 @@ const SubmissionsView = () => {
       const type =
         submissionTypes[Math.floor(Math.random() * submissionTypes.length)];
       const agency = agencies[Math.floor(Math.random() * agencies.length)];
-      const status = Math.random() > 0.3 ? "approved" : "pending";
+      // Initialize with random status from the 3 possible statuses
+      const statuses = ["approved", "pending_approval", "rejected"];
+      const status = statuses[Math.floor(Math.random() * statuses.length)];
 
       mockSubmissions.push({
         id: i + 1,
@@ -69,10 +81,42 @@ const SubmissionsView = () => {
         ),
         fileName: generateFileName(type, i + 1),
         description: generateDescription(type, standard),
+        content: generateMockContent(type, i + 1),
       });
     }
 
     return mockSubmissions.sort((a, b) => b.submittedAt - a.submittedAt);
+  };
+
+  const generateMockContent = (type, index) => {
+    switch (type) {
+      case "text":
+        return `هذا هو محتوى النص للمعيار رقم ${index}. يحتوي على تفاصيل شاملة حول تنفيذ المعيار والمتطلبات المطلوبة. يتم تقديم هذا التقرير من قبل الوكالة المسؤولة لتوثيق التقدم المحرز في تطبيق المعايير الصحية للمدينة.
+
+This is the text content for standard number ${index}. It contains comprehensive details about the implementation of the standard and the required requirements. This report is submitted by the responsible agency to document the progress made in applying the health standards for the city.`;
+
+      case "pdf":
+        return `محتوى PDF للمعيار ${index} - يحتوي على:
+• تقرير مفصل عن التنفيذ
+• صور توضيحية للمشروع
+• جداول البيانات والإحصائيات
+• الملاحظات والتوصيات
+
+PDF content for standard ${index} - contains:
+• Detailed implementation report
+• Illustrative project photos
+• Data tables and statistics
+• Notes and recommendations`;
+
+      case "image":
+        return `https://picsum.photos/800/600?random=${index}`;
+
+      case "video":
+        return `https://sample-videos.com/zip/10/mp4/SampleVideo_1280x720_1mb.mp4`;
+
+      default:
+        return "";
+    }
   };
 
   const generateFileName = (type, index) => {
@@ -122,22 +166,66 @@ const SubmissionsView = () => {
     return descriptions[type];
   };
 
-  const getStatusBadge = (status) => {
-    if (status === "approved") {
-      return (
-        <Badge variant="default" className="bg-green-500">
-          <CheckCircle className="w-3 h-3 mr-1" />
-          {language === "ar" ? "تمت الموافقة" : "Approved"}
-        </Badge>
-      );
-    } else {
-      return (
-        <Badge variant="secondary">
-          <Clock className="w-3 h-3 mr-1" />
-          {language === "ar" ? "في الانتظار" : "Pending"}
-        </Badge>
-      );
-    }
+  const getStatusBadge = (submission) => {
+    const statuses = [
+      {
+        value: "approved",
+        label: { ar: "تمت الموافقة", en: "Approved" },
+        variant: "default",
+        className: "bg-green-500",
+        icon: <CheckCircle className="w-3 h-3 mr-1" />,
+      },
+      {
+        value: "pending_approval",
+        label: { ar: "في انتظار الموافقة", en: "Pending Approval" },
+        variant: "secondary",
+        className: "bg-yellow-500",
+        icon: <Clock className="w-3 h-3 mr-1" />,
+      },
+      {
+        value: "rejected",
+        label: { ar: "مرفوض", en: "Rejected" },
+        variant: "destructive",
+        className: "bg-red-500",
+        icon: <XCircle className="w-3 h-3 mr-1" />,
+      },
+    ];
+
+    // Get status from submission or use default
+    const status =
+      statuses.find((s) => s.value === submission.status) || statuses[1]; // Default to "pending_approval"
+
+    return (
+      <Badge
+        variant={status.variant}
+        className={`text-center ${status.className}`}>
+        {status.icon}
+        {language === "ar" ? status.label.ar : status.label.en}
+      </Badge>
+    );
+  };
+
+  const toggleSubmissionStatus = (submission) => {
+    // Create a new submissions list with the updated status
+    const updatedSubmissions = submissions.map((s) =>
+      s.id === submission.id
+        ? {
+            ...s,
+            status: s.status === "approved" ? "rejected" : "approved",
+          }
+        : s
+    );
+    setSubmissions(updatedSubmissions);
+  };
+
+  const openModal = (submission) => {
+    setSelectedSubmission(submission);
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+    setSelectedSubmission(null);
   };
 
   const getTypeIcon = (type) => {
@@ -148,6 +236,53 @@ const SubmissionsView = () => {
       video: <Video className="w-5 h-5 text-purple-500" />,
     };
     return icons[type];
+  };
+
+  const renderModalContent = () => {
+    if (!selectedSubmission) return null;
+
+    switch (selectedSubmission.type) {
+      case "video":
+        return (
+          <div className="w-full max-w-4xl">
+            <video
+              controls
+              autoPlay
+              className="w-full h-auto max-h-[80vh] rounded-lg"
+              src={selectedSubmission.content}>
+              {language === "ar"
+                ? "متصفحك لا يدعم تشغيل الفيديو"
+                : "Your browser does not support video playback"}
+            </video>
+          </div>
+        );
+
+      case "image":
+        return (
+          <div className="w-full max-w-4xl">
+            <img
+              src={selectedSubmission.content}
+              alt={selectedSubmission.fileName}
+              className="w-full h-auto max-h-[80vh] object-contain rounded-lg"
+            />
+          </div>
+        );
+
+      case "text":
+      case "pdf":
+        return (
+          <div className="w-full max-w-4xl max-h-[80vh] overflow-y-auto">
+            <div className="prose prose-sm max-w-none">
+              <pre className="whitespace-pre-wrap text-sm leading-relaxed p-4 bg-gray-50 rounded-lg">
+                {selectedSubmission.content}
+              </pre>
+            </div>
+          </div>
+        );
+
+      default:
+        return null;
+    }
   };
 
   const filteredSubmissions =
@@ -254,7 +389,7 @@ const SubmissionsView = () => {
       </Card>
 
       {/* Summary Statistics */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
         {[
           {
             type: "text",
@@ -276,12 +411,53 @@ const SubmissionsView = () => {
             color: "text-purple-600",
             label: { ar: "فيديوهات", en: "Videos" },
           },
+          {
+            type: "total",
+            color: "text-foreground",
+            label: { ar: "إجمالي التقديمات", en: "Total Submissions" },
+          },
         ].map(({ type, color, label }) => (
           <Card key={type}>
             <CardContent className="p-4">
               <div className="text-center">
                 <div className={`text-2xl font-bold ${color}`}>
-                  {submissions.filter((s) => s.type === type).length}
+                  {type === "total"
+                    ? submissions.length
+                    : submissions.filter((s) => s.type === type).length}
+                </div>
+                <p className="text-sm text-muted-foreground">
+                  {language === "ar" ? label.ar : label.en}
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+
+      {/* Status Summary */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        {[
+          {
+            status: "approved",
+            color: "text-green-600",
+            label: { ar: "تمت الموافقة", en: "Approved" },
+          },
+          {
+            status: "pending_approval",
+            color: "text-yellow-600",
+            label: { ar: "في انتظار الموافقة", en: "Pending Approval" },
+          },
+          {
+            status: "rejected",
+            color: "text-red-600",
+            label: { ar: "مرفوض", en: "Rejected" },
+          },
+        ].map(({ status, color, label }) => (
+          <Card key={status}>
+            <CardContent className="p-4">
+              <div className="text-center">
+                <div className={`text-2xl font-bold ${color}`}>
+                  {submissions.filter((s) => s.status === status).length}
                 </div>
                 <p className="text-sm text-muted-foreground">
                   {language === "ar" ? label.ar : label.en}
@@ -354,7 +530,7 @@ const SubmissionsView = () => {
                       <CardHeader className="pb-3">
                         <div className="flex items-center justify-between">
                           {getTypeIcon(submission.type)}
-                          {getStatusBadge(submission.status)}
+                          {getStatusBadge(submission)}
                         </div>
                         <CardTitle className="text-lg">
                           {submission.fileName}
@@ -384,7 +560,8 @@ const SubmissionsView = () => {
                           <Button
                             size="sm"
                             variant="outline"
-                            className="flex-1">
+                            className="flex-1"
+                            onClick={() => openModal(submission)}>
                             <Eye className="w-4 h-4 mr-1" />
                             {language === "ar" ? "عرض" : "View"}
                           </Button>
@@ -392,6 +569,41 @@ const SubmissionsView = () => {
                             <Download className="w-4 h-4" />
                           </Button>
                         </div>
+
+                        {/* Status Toggle Button */}
+                        <Button
+                          size="sm"
+                          variant={
+                            submission.status === "approved" ||
+                            submission.status === "rejected"
+                              ? "default"
+                              : "outlined"
+                          }
+                          onClick={() => toggleSubmissionStatus(submission)}
+                          className={`w-full ${
+                            submission.status === "rejected" ||
+                            submission.status === "pending_approval"
+                              ? "bg-green-700 text-green-50 border-green-200 hover:bg-green-500"
+                              : submission.status === "approved"
+                              ? "bg-red-700 text-red-50 border-red-200 hover:bg-red-500"
+                              : "bg-gray-700 text-gray-50 border-gray-200"
+                          }`}>
+                          {submission.status === "approved" ? (
+                            <XCircle className="w-4 h-4 mr-1" />
+                          ) : (
+                            <CheckCircle className="w-4 h-4 mr-1" />
+                          )}
+                          {submission.status === "rejected" ||
+                          submission.status === "pending_approval"
+                            ? language === "ar"
+                              ? "موافقة"
+                              : "Approve"
+                            : submission.status === "approved"
+                            ? language === "ar"
+                              ? "رفض"
+                              : "Reject"
+                            : ""}
+                        </Button>
                       </CardContent>
                     </Card>
                   ))}
@@ -401,6 +613,30 @@ const SubmissionsView = () => {
           </Tabs>
         </CardContent>
       </Card>
+
+      {/* Modal for viewing submissions */}
+      <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
+        <DialogContent className="max-w-6xl max-h-[90vh] overflow-hidden">
+          <DialogHeader>
+            <div className="flex items-center justify-between">
+              <DialogTitle className="flex items-center gap-2">
+                {getTypeIcon(selectedSubmission?.type)}
+                {selectedSubmission?.fileName}
+              </DialogTitle>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={closeModal}
+                className="h-8 w-8 p-0">
+                <X className="h-4 w-4" />
+              </Button>
+            </div>
+          </DialogHeader>
+          <div className="flex justify-center items-center py-4">
+            {renderModalContent()}
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

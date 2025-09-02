@@ -22,6 +22,7 @@ import {
   Globe,
   Moon,
   Sun,
+  Home,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useTheme } from "@/contexts/ThemeContext";
@@ -181,7 +182,20 @@ const AdminLayout = () => {
               </div>
             </div>
 
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2">
+              {/* Home Button */}
+              <Button variant="ghost" size="sm" onClick={() => navigate("/")}>
+                <Home className="w-4 h-4" />
+              </Button>
+              {/* Language Toggle */}
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={handleLanguageChange}
+                className="hidden sm:flex">
+                <Globe className="w-4 h-4" />
+                {language === "ar" ? "EN" : "عربي"}
+              </Button>
               {/* Theme Toggle */}
               <Button
                 variant="ghost"
@@ -193,17 +207,6 @@ const AdminLayout = () => {
                 ) : (
                   <Sun className="w-4 h-4" />
                 )}
-              </Button>
-              {/* Language Toggle */}
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={handleLanguageChange}
-                className="hidden sm:flex">
-                <Globe className="w-4 h-4" />
-                <span className="ml-2 text-xs">
-                  {language === "ar" ? "EN" : "عربي"}
-                </span>
               </Button>
               <Button variant="ghost" size="sm" onClick={handleSignOut}>
                 <LogOut className="w-4 h-4" />

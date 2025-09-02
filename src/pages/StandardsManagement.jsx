@@ -21,7 +21,14 @@ import {
 } from "@/components/ui/table";
 import { useTheme } from "@/contexts/ThemeContext";
 import Standards from "@/lib/standards";
-import { Search, Filter, Eye, CheckCircle } from "lucide-react";
+import {
+  Search,
+  Filter,
+  Eye,
+  CheckCircle,
+  XCircle,
+  AlertCircle,
+} from "lucide-react";
 
 const StandardsManagement = () => {
   const { language } = useTheme();
@@ -111,16 +118,14 @@ const StandardsManagement = () => {
 
   const toggleStatus = (standard) => {
     // Create a new standards list with the updated status
-    const updatedStandardsList = [
-      standardsList.map((s) =>
-        s.id === standard.id
-          ? {
-              ...s,
-              status: s.status === "approved" ? "rejected" : "approved",
-            }
-          : s
-      ),
-    ];
+    const updatedStandardsList = standardsList.map((s) =>
+      s.id === standard.id
+        ? {
+            ...s,
+            status: s.status === "approved" ? "rejected" : "approved",
+          }
+        : s
+    );
     setStandardsList(updatedStandardsList);
   };
 
@@ -436,7 +441,13 @@ const StandardsManagement = () => {
                               ? "bg-red-700 text-red-50 border-red-200 hover:bg-red-500"
                               : "bg-gray-700 text-gray-50 border-gray-200"
                           }`}>
-                          <CheckCircle className="w-4 h-4 mr-1" />
+                          {standard.status === "approved" ? (
+                            <XCircle className="w-4 h-4 mr-1" />
+                          ) : standard.status === "didnt_submit" ? (
+                            <AlertCircle className="w-4 h-4 mr-1" />
+                          ) : (
+                            <CheckCircle className="w-4 h-4 mr-1" />
+                          )}
                           {standard.status === "rejected" ||
                           standard.status === "pending_approval"
                             ? language === "ar"
