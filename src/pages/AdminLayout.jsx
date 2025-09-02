@@ -1,11 +1,23 @@
 import React, { useState, useEffect } from "react";
 import { Outlet, useNavigate, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Building2,
+  Users,
+  Target,
+  Settings,
   LogOut,
   Database,
+  Shield,
+  Activity,
+  MessageCircle,
+  Heart,
+  Newspaper,
+  UserCheck,
+  HandHeart,
+  Bell,
   BarChart3,
   Globe,
   Moon,

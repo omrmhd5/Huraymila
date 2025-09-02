@@ -111,14 +111,16 @@ const StandardsManagement = () => {
 
   const toggleStatus = (standard) => {
     // Create a new standards list with the updated status
-    const updatedStandardsList = standardsList.map((s) =>
-      s.id === standard.id
-        ? {
-            ...s,
-            status: s.status === "approved" ? "rejected" : "approved",
-          }
-        : s
-    );
+    const updatedStandardsList = [
+      standardsList.map((s) =>
+        s.id === standard.id
+          ? {
+              ...s,
+              status: s.status === "approved" ? "rejected" : "approved",
+            }
+          : s
+      ),
+    ];
     setStandardsList(updatedStandardsList);
   };
 
@@ -392,8 +394,17 @@ const StandardsManagement = () => {
                     <TableCell>
                       <div className="flex justify-center gap-1">
                         <Badge variant="secondary" className="text-xs">
-                          {getSubmissionCount(standard)}/
-                          {standard.assigned_agencies.length}
+                          {language === "ar" ? (
+                            <>
+                              {getSubmissionCount(standard)} /{" "}
+                              {standard.assigned_agencies.length}
+                            </>
+                          ) : (
+                            <>
+                              {standard.assigned_agencies.length} /{" "}
+                              {getSubmissionCount(standard)}
+                            </>
+                          )}
                         </Badge>
                       </div>
                     </TableCell>

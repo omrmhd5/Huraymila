@@ -12,14 +12,18 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
-import { Tabs, TabsContent } from "@/components/ui/tabs";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
+  Building2,
   Users,
   Target,
+  Calendar,
   Plus,
   Edit,
   Trash2,
   Eye,
+  CheckCircle,
+  Clock,
   AlertCircle,
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
@@ -336,8 +340,9 @@ const AgencyManagement = () => {
                                 : "justify-items-start"
                             }`}>
                             <div
-                              className={` mb-2
+                              className={` mb-2 ${
                                 language === "ar" ? "order-2" : "order-1"
+                              }
                               `}>
                               <span className="font-medium">
                                 {language === "ar"
@@ -347,9 +352,10 @@ const AgencyManagement = () => {
                               <p>{agency.agencyEmail}</p>
                             </div>
                             <div
-                              className={
+                              className={` mb-2 ${
                                 language === "ar" ? "order-1" : "order-2"
-                              }>
+                              }
+                              `}>
                               <span className="font-medium">
                                 {language === "ar"
                                   ? ":كلمة مرور الوكالة"

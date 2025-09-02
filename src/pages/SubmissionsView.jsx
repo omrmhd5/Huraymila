@@ -43,7 +43,7 @@ const SubmissionsView = () => {
       const mockSubmissions = generateMockSubmissions(standard);
       setSubmissions(mockSubmissions);
     }
-  }, [standard]);
+  }, []);
 
   const generateMockSubmissions = (standard) => {
     const submissionTypes = ["text", "pdf", "image", "video"];
@@ -68,10 +68,7 @@ const SubmissionsView = () => {
           Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000
         ),
         fileName: generateFileName(type, i + 1),
-        fileSize: generateFileSize(type),
         description: generateDescription(type, standard),
-        submittedBy: generateSubmitterName(agency),
-        reviewNotes: status === "approved" ? generateReviewNotes() : null,
       });
     }
 
@@ -112,16 +109,6 @@ const SubmissionsView = () => {
     return `${baseName}_${index}.${extensions[type]}`;
   };
 
-  const generateFileSize = (type) => {
-    const sizes = {
-      text: "2-5 KB",
-      pdf: "500-2 MB",
-      image: "1-5 MB",
-      video: "10-50 MB",
-    };
-    return sizes[type];
-  };
-
   const generateDescription = (type, standard) => {
     const descriptions = {
       text: `تقرير تنفيذ المعيار ${standard.id}: ${standard.standard.substring(
@@ -133,27 +120,6 @@ const SubmissionsView = () => {
       video: `تسجيل مرئي لعملية تنفيذ المعيار ${standard.id} والنتائج المحققة`,
     };
     return descriptions[type];
-  };
-
-  const generateSubmitterName = (agency) => {
-    const names = [
-      "أحمد محمد",
-      "فاطمة علي",
-      "محمد عبدالله",
-      "سارة أحمد",
-      "علي حسن",
-    ];
-    return names[Math.floor(Math.random() * names.length)];
-  };
-
-  const generateReviewNotes = () => {
-    const notes = [
-      "تم مراجعة الملف وتم الموافقة عليه",
-      "الملف يلبي جميع المتطلبات المطلوبة",
-      "محتوى ممتاز ومعلومات شاملة",
-      "تم التحقق من صحة المعلومات المقدمة",
-    ];
-    return notes[Math.floor(Math.random() * notes.length)];
   };
 
   const getStatusBadge = (status) => {
@@ -182,16 +148,6 @@ const SubmissionsView = () => {
       video: <Video className="w-5 h-5 text-purple-500" />,
     };
     return icons[type];
-  };
-
-  const getTypeLabel = (type) => {
-    const labels = {
-      text: language === "ar" ? "نص" : "Text",
-      pdf: "PDF",
-      image: language === "ar" ? "صورة" : "Image",
-      video: language === "ar" ? "فيديو" : "Video",
-    };
-    return labels[type];
   };
 
   const filteredSubmissions =
@@ -236,16 +192,13 @@ const SubmissionsView = () => {
           <h1 className="text-3xl font-bold text-foreground">
             {language === "ar" ? "عرض التقديمات" : "View Submissions"}
           </h1>
-          <p className="text-muted-foreground">
-            {language === "ar"
-              ? `المعيار ${standard.id}: ${standard.standard}`
-              : `Standard ${standard.id}: ${standard.standard}`}
-          </p>
         </div>
 
         <div className="text-right">
-          <Badge variant="outline" className="text-lg px-4 py-2">
-            {submissions.length} {language === "ar" ? "تقديم" : "Submissions"}
+          <Badge
+            variant="outline"
+            className="text-lg px-4 py-2 whitespace-nowrap">
+            {submissions.length} {language === "ar" ? "تقديمات" : "Submissions"}
           </Badge>
         </div>
       </div>
@@ -262,7 +215,9 @@ const SubmissionsView = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
               <h4 className="font-semibold mb-2">
-                {language === "ar" ? "المعيار:" : "Standard:"}
+                {language === "ar"
+                  ? `معيار ${standard.id}:`
+                  : `Standard ${standard.id}:`}
               </h4>
               <p className="text-sm text-muted-foreground leading-relaxed">
                 {standard.standard}
@@ -300,55 +255,41 @@ const SubmissionsView = () => {
 
       {/* Summary Statistics */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <Card>
-          <CardContent className="p-4">
-            <div className="text-center">
-              <div className="text-2xl font-bold text-blue-600">
-                {submissions.filter((s) => s.type === "text").length}
+        {[
+          {
+            type: "text",
+            color: "text-blue-600",
+            label: { ar: "ملفات نصية", en: "Text Files" },
+          },
+          {
+            type: "pdf",
+            color: "text-red-600",
+            label: { ar: "ملفات PDF", en: "PDF Files" },
+          },
+          {
+            type: "image",
+            color: "text-green-600",
+            label: { ar: "صور", en: "Images" },
+          },
+          {
+            type: "video",
+            color: "text-purple-600",
+            label: { ar: "فيديوهات", en: "Videos" },
+          },
+        ].map(({ type, color, label }) => (
+          <Card key={type}>
+            <CardContent className="p-4">
+              <div className="text-center">
+                <div className={`text-2xl font-bold ${color}`}>
+                  {submissions.filter((s) => s.type === type).length}
+                </div>
+                <p className="text-sm text-muted-foreground">
+                  {language === "ar" ? label.ar : label.en}
+                </p>
               </div>
-              <p className="text-sm text-muted-foreground">
-                {language === "ar" ? "ملفات نصية" : "Text Files"}
-              </p>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardContent className="p-4">
-            <div className="text-center">
-              <div className="text-2xl font-bold text-red-600">
-                {submissions.filter((s) => s.type === "pdf").length}
-              </div>
-              <p className="text-sm text-muted-foreground">PDF Files</p>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardContent className="p-4">
-            <div className="text-center">
-              <div className="text-2xl font-bold text-green-600">
-                {submissions.filter((s) => s.type === "image").length}
-              </div>
-              <p className="text-sm text-muted-foreground">
-                {language === "ar" ? "صور" : "Images"}
-              </p>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardContent className="p-4">
-            <div className="text-center">
-              <div className="text-2xl font-bold text-purple-600">
-                {submissions.filter((s) => s.type === "video").length}
-              </div>
-              <p className="text-sm text-muted-foreground">
-                {language === "ar" ? "فيديوهات" : "Videos"}
-              </p>
-            </div>
-          </CardContent>
-        </Card>
+            </CardContent>
+          </Card>
+        ))}
       </div>
 
       {/* Submissions Tabs */}
@@ -361,24 +302,37 @@ const SubmissionsView = () => {
         <CardContent>
           <Tabs value={activeTab} onValueChange={setActiveTab}>
             <TabsList className="grid w-full grid-cols-5">
-              <TabsTrigger value="all">
-                {language === "ar" ? "الكل" : "All"} ({submissions.length})
-              </TabsTrigger>
-              <TabsTrigger value="text">
-                {language === "ar" ? "نصوص" : "Text"} (
-                {submissions.filter((s) => s.type === "text").length})
-              </TabsTrigger>
-              <TabsTrigger value="pdf">
-                PDF ({submissions.filter((s) => s.type === "pdf").length})
-              </TabsTrigger>
-              <TabsTrigger value="image">
-                {language === "ar" ? "صور" : "Images"} (
-                {submissions.filter((s) => s.type === "image").length})
-              </TabsTrigger>
-              <TabsTrigger value="video">
-                {language === "ar" ? "فيديوهات" : "Videos"} (
-                {submissions.filter((s) => s.type === "video").length})
-              </TabsTrigger>
+              {[
+                {
+                  value: "all",
+                  label: { ar: "الكل", en: "All" },
+                  count: submissions.length,
+                },
+                {
+                  value: "text",
+                  label: { ar: "نصوص", en: "Text" },
+                  count: submissions.filter((s) => s.type === "text").length,
+                },
+                {
+                  value: "pdf",
+                  label: { ar: "ملفات PDF", en: "PDF" },
+                  count: submissions.filter((s) => s.type === "pdf").length,
+                },
+                {
+                  value: "image",
+                  label: { ar: "صور", en: "Images" },
+                  count: submissions.filter((s) => s.type === "image").length,
+                },
+                {
+                  value: "video",
+                  label: { ar: "فيديوهات", en: "Videos" },
+                  count: submissions.filter((s) => s.type === "video").length,
+                },
+              ].map(({ value, label, count }) => (
+                <TabsTrigger key={value} value={value}>
+                  {language === "ar" ? label.ar : label.en} ({count})
+                </TabsTrigger>
+              ))}
             </TabsList>
 
             <TabsContent value={activeTab} className="mt-6">
@@ -419,33 +373,12 @@ const SubmissionsView = () => {
                           </div>
 
                           <div className="flex items-center gap-2">
-                            <User className="w-3 h-3 text-muted-foreground" />
-                            <span>{submission.submittedBy}</span>
-                          </div>
-
-                          <div className="flex items-center gap-2">
                             <Calendar className="w-3 h-3 text-muted-foreground" />
                             <span>
                               {submission.submittedAt.toLocaleDateString()}
                             </span>
                           </div>
-
-                          <div className="flex items-center gap-2">
-                            <File className="w-3 h-3 text-muted-foreground" />
-                            <span>{submission.fileSize}</span>
-                          </div>
                         </div>
-
-                        {submission.reviewNotes && (
-                          <div className="bg-green-50 p-2 rounded text-xs text-green-700">
-                            <strong>
-                              {language === "ar"
-                                ? "ملاحظات المراجعة:"
-                                : "Review Notes:"}
-                            </strong>{" "}
-                            {submission.reviewNotes}
-                          </div>
-                        )}
 
                         <div className="flex gap-2">
                           <Button

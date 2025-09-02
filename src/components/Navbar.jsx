@@ -65,7 +65,7 @@ const Navbar = () => {
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <div className="flex items-center gap-3">
-            <div className="w-7 rounded-lg flex items-center justify-center">
+            <div className="w-10 rounded-lg flex items-center justify-center">
               <img src="assets/Logo.png" alt="Logo" />
             </div>
             <div className="hidden sm:block">
