@@ -172,8 +172,8 @@ const AdminLayout = () => {
         "min-h-screen bg-gradient-to-br from-background via-background to-muted/30",
         language === "ar" ? "font-arabic" : "font-english"
       )}>
-      {/* Header */}
-      <header className="bg-card/95 backdrop-blur-sm border-b border-border shadow-sm">
+      {/* Navbar */}
+      <nav className="bg-card/95 backdrop-blur-sm border-b border-border shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center gap-3">
@@ -226,7 +226,7 @@ const AdminLayout = () => {
             </div>
           </div>
         </div>
-      </header>
+      </nav>
 
       {/* Navigation Tabs */}
       <div className="bg-card/50 border-b border-border">

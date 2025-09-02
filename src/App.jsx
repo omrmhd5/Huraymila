@@ -46,7 +46,6 @@ const App = () => (
                 <Route path="/feedback" element={<Feedback />} />
                 <Route path="/contact" element={<Contact />} />
                 <Route path="/auth" element={<Auth />} />
-                <Route path="/agency-dashboard" element={<AgencyDashboard />} />
                 <Route path="/test-accounts" element={<TestAccounts />} />
               </Route>
 
@@ -61,6 +60,10 @@ const App = () => (
                   path="agency-management"
                   element={<AgencyManagement />}
                 />
+              </Route>
+
+              <Route path="/agency-dashboard" element={<AgencyDashboard />}>
+                {" "}
               </Route>
 
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}

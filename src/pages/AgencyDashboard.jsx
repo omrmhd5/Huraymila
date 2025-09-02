@@ -23,44 +23,57 @@ import {
   Eye,
   Edit,
   Trash2,
+  Home,
+  Globe,
+  Moon,
+  Sun,
+  LogOut,
+  Database,
 } from "lucide-react";
-import { useAuth } from "@/contexts/AuthContext";
+// Commented out useAuth for development
+// import { useAuth } from "@/contexts/AuthContext";
 import { useTheme } from "@/contexts/ThemeContext";
 import { toast } from "sonner";
+import { useNavigate } from "react-router-dom";
 
 const AgencyDashboard = () => {
-  const { user, loading } = useAuth();
-  const { language } = useTheme();
+  // Commented out useAuth for development
+  // const { user, loading } = useAuth();
+  const { language, theme, setLanguage, setTheme } = useTheme();
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("overview");
   const [showAddForm, setShowAddForm] = useState(false);
 
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="text-center">
-          <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-muted-foreground">
-            {language === "ar" ? "جاري التحميل..." : "Loading..."}
-          </p>
-        </div>
-      </div>
-    );
-  }
+  // Commented out loading check for development
+  // if (loading) {
+  //   return (
+  //     <div className="min-h-screen bg-background flex items-center justify-center">
+  //       <div className="text-center">
+  //         <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+  //         <p className="text-muted-foreground">
+  //           {language === "ar" ? "جاري التحميل..." : "Loading..."}
+  //         </p>
+  //       </div>
+  //     </div>
+  //   );
+  // }
 
-  // Mock data
+  // Mock data - matching AgencyManagement structure
   const agencyData = {
     name:
       language === "ar"
         ? "وزارة الصحة - حريملاء"
         : "Ministry of Health - Harimlaa",
+    description: "الجهة المسؤولة عن الصحة العامة في المدينة",
+    contactPerson: "د. أحمد محمد",
+    email: "ahmed@moh.gov.sa",
+    phone: "+966-11-123-4567",
+    address: "شارع الملك فهد، حريملاء",
     type: language === "ar" ? "صحة" : "Health",
-    status: language === "ar" ? "نشط" : "Active",
-    employees: 45,
+    agencyEmail: "health@harimlaa.gov.sa",
+    agencyPassword: "health123",
     initiatives: 12,
-    completedInitiatives: 8,
-    activeInitiatives: 4,
-    totalBudget: 2500000,
-    spentBudget: 1800000,
+    volunteers: 45,
   };
 
   const initiatives = [
@@ -118,36 +131,105 @@ const AgencyDashboard = () => {
     },
   ];
 
-  const employees = [
+  const volunteers = [
     {
       id: 1,
       name: "أحمد محمد الصالح",
-      position: "مدير عام",
-      department: "الإدارة العامة",
-      email: "ahmed@moh.gov.sa",
+      position: "متطوع صحي",
+      department: "الصحة العامة",
+      email: "ahmed@volunteer.com",
       phone: "+966-50-123-4567",
       status: "نشط",
-      joinDate: "2020-01-15",
+      joinDate: "2024-01-15",
+      hours: 120,
+      initiatives: 3,
     },
     {
       id: 2,
       name: "فاطمة العتيبي",
-      position: "مدير الصحة العامة",
-      department: "الصحة العامة",
-      email: "fatima@moh.gov.sa",
+      position: "متطوعة تعليمية",
+      department: "التوعية الصحية",
+      email: "fatima@volunteer.com",
       phone: "+966-50-234-5678",
       status: "نشط",
-      joinDate: "2021-03-20",
+      joinDate: "2024-02-20",
+      hours: 95,
+      initiatives: 2,
     },
     {
       id: 3,
       name: "سعد القحطاني",
-      position: "مشرف صحي",
-      department: "الرعاية الصحية",
-      email: "saad@moh.gov.sa",
+      position: "متطوع بيئي",
+      department: "البيئة والصحة",
+      email: "saad@volunteer.com",
       phone: "+966-50-345-6789",
       status: "نشط",
-      joinDate: "2022-07-10",
+      joinDate: "2024-03-10",
+      hours: 75,
+      initiatives: 1,
+    },
+    {
+      id: 4,
+      name: "ريم العلي",
+      position: "متطوعة إدارية",
+      department: "الإدارة والتنسيق",
+      email: "reem@volunteer.com",
+      phone: "+966-50-456-7890",
+      status: "إجازة",
+      joinDate: "2024-01-05",
+      hours: 60,
+      initiatives: 2,
+    },
+  ];
+
+  // Standards assigned to this agency (Ministry of Health)
+  const assignedStandards = [
+    {
+      id: 1,
+      standard: "معيار الصحة العامة 1",
+      requirement: "توفير مرافق صحية أساسية في جميع الأحياء",
+      status: "pending",
+      submissionType: "text",
+      dueDate: "2024-12-31",
+      description:
+        "يجب على كل حي أن يحتوي على عيادة صحية أو مركز صحي يقدم الخدمات الأساسية",
+    },
+    {
+      id: 2,
+      standard: "معيار التوعية الصحية 2",
+      requirement: "تنفيذ برامج توعية صحية شهرية",
+      status: "completed",
+      submissionType: "pdf",
+      dueDate: "2024-11-30",
+      description: "إعداد وتنفيذ برامج توعية صحية تغطي مواضيع مختلفة كل شهر",
+    },
+    {
+      id: 3,
+      standard: "معيار البيئة الصحية 3",
+      requirement: "فحص جودة الهواء والماء سنوياً",
+      status: "in_progress",
+      submissionType: "photo",
+      dueDate: "2024-12-15",
+      description: "إجراء فحوصات دورية لجودة الهواء والماء في المدينة",
+    },
+    {
+      id: 4,
+      standard: "معيار الرعاية الوقائية 4",
+      requirement: "توفير خدمات الفحص المبكر للأمراض",
+      status: "not_started",
+      submissionType: "video",
+      dueDate: "2025-01-31",
+      description: "إطلاق حملات فحص مبكر للأمراض المزمنة والشائعة",
+    },
+    {
+      id: 5,
+      standard: "معيار الطوارئ الصحية 5",
+      requirement: "تجهيز غرف طوارئ في المستشفيات",
+      status: "completed",
+      submissionType: "photo",
+      dueDate: "2024-10-31",
+      description:
+        "تجهيز وتأهيل غرف الطوارئ في جميع المستشفيات والمراكز الصحية",
     },
   ];
 
@@ -174,7 +256,7 @@ const AgencyDashboard = () => {
     }
   };
 
-  const getEmployeeStatusBadge = (status) => {
+  const getVolunteerStatusBadge = (status) => {
     switch (status) {
       case "نشط":
         return (
@@ -184,10 +266,48 @@ const AgencyDashboard = () => {
         );
       case "إجازة":
         return <Badge variant="secondary">إجازة</Badge>;
-      case "متقاعد":
-        return <Badge variant="outline">متقاعد</Badge>;
+      case "متوقف":
+        return <Badge variant="outline">متوقف</Badge>;
       default:
         return <Badge variant="outline">{status}</Badge>;
+    }
+  };
+
+  const getStandardStatusBadge = (status) => {
+    switch (status) {
+      case "completed":
+        return (
+          <Badge variant="default" className="bg-green-500">
+            مكتمل
+          </Badge>
+        );
+      case "in_progress":
+        return (
+          <Badge variant="default" className="bg-blue-500">
+            قيد التنفيذ
+          </Badge>
+        );
+      case "pending":
+        return <Badge variant="secondary">في الانتظار</Badge>;
+      case "not_started":
+        return <Badge variant="outline">لم يبدأ</Badge>;
+      default:
+        return <Badge variant="outline">{status}</Badge>;
+    }
+  };
+
+  const getSubmissionTypeIcon = (type) => {
+    switch (type) {
+      case "text":
+        return "📝";
+      case "pdf":
+        return "📄";
+      case "photo":
+        return "📷";
+      case "video":
+        return "🎥";
+      default:
+        return "📋";
     }
   };
 
@@ -202,8 +322,80 @@ const AgencyDashboard = () => {
     return new Date(dateString).toLocaleDateString("ar-SA");
   };
 
+  const handleLanguageChange = () => {
+    const newLanguage = language === "ar" ? "en" : "ar";
+    setLanguage(newLanguage);
+  };
+
+  const handleThemeChange = () => {
+    const newTheme = theme === "light" ? "dark" : "light";
+    setTheme(newTheme);
+  };
+
+  const handleSignOut = async () => {
+    // Commented out signOut for development
+    // await signOut();
+    navigate("/");
+  };
+
   return (
     <div className="min-h-screen bg-background flex flex-col">
+      {/* Navbar */}
+      <nav className="bg-card/95 backdrop-blur-sm border-b border-border shadow-sm">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center h-16">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
+                <Building2 className="w-6 h-6 text-white" />
+              </div>
+              <div>
+                <h1 className="text-xl font-bold text-foreground font-arabic">
+                  {language === "ar"
+                    ? "لوحة التحكم للوكالة"
+                    : "Agency Dashboard"}
+                </h1>
+                <p className="text-sm text-muted-foreground font-arabic">
+                  {language === "ar"
+                    ? "إدارة جميع بيانات الخاصة بالوكالة"
+                    : "Manage all data related to the agency"}
+                </p>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-2">
+              {/* Home Button */}
+              <Button variant="ghost" size="sm" onClick={() => navigate("/")}>
+                <Home className="w-4 h-4" />
+              </Button>
+              {/* Language Toggle */}
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={handleLanguageChange}
+                className="hidden sm:flex">
+                <Globe className="w-4 h-4" />
+                {language === "ar" ? "EN" : "عربي"}
+              </Button>
+              {/* Theme Toggle */}
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={handleThemeChange}
+                className="hidden sm:flex">
+                {theme === "light" ? (
+                  <Moon className="w-4 h-4" />
+                ) : (
+                  <Sun className="w-4 h-4" />
+                )}
+              </Button>
+              <Button variant="ghost" size="sm" onClick={handleSignOut}>
+                <LogOut className="w-4 h-4" />
+              </Button>
+            </div>
+          </div>
+        </div>
+      </nav>
+
       <main className="flex-1 container mx-auto px-4 py-8">
         {/* Agency Header */}
         <div className="bg-gradient-to-r from-primary/10 to-primary/5 rounded-lg p-6 mb-8">
@@ -216,9 +408,27 @@ const AgencyDashboard = () => {
                 <h1 className="text-3xl font-bold text-primary">
                   {agencyData.name}
                 </h1>
-                <p className="text-lg text-muted-foreground">
-                  نوع الوكالة: {agencyData.type} | الحالة: {agencyData.status}
+                <p className="text-lg text-muted-foreground mb-2">
+                  {agencyData.description}
                 </p>
+                <div className="grid grid-cols-2 gap-4 text-sm">
+                  <div>
+                    <span className="font-medium">الشخص المسؤول:</span>{" "}
+                    {agencyData.contactPerson}
+                  </div>
+                  <div>
+                    <span className="font-medium">البريد الإلكتروني:</span>{" "}
+                    {agencyData.email}
+                  </div>
+                  <div>
+                    <span className="font-medium">الهاتف:</span>{" "}
+                    {agencyData.phone}
+                  </div>
+                  <div>
+                    <span className="font-medium">العنوان:</span>{" "}
+                    {agencyData.address}
+                  </div>
+                </div>
               </div>
             </div>
             <Button
@@ -232,149 +442,195 @@ const AgencyDashboard = () => {
 
         {/* Stats Overview */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-muted-foreground">
-                    إجمالي المبادرات
-                  </p>
-                  <p className="text-2xl font-bold">{agencyData.initiatives}</p>
+          {[
+            {
+              label: "إجمالي المبادرات",
+              value: agencyData.initiatives,
+              color: "text-blue-500",
+              Icon: Target,
+            },
+            {
+              label: "المتطوعين",
+              value: agencyData.volunteers,
+              color: "text-green-500",
+              valueClass: "text-green-600",
+              Icon: Users,
+            },
+            {
+              label: "نوع الوكالة",
+              value: agencyData.type,
+              color: "text-purple-500",
+              Icon: Building2,
+            },
+          ].map(({ label, value, color, Icon, valueClass }) => (
+            <Card key={label}>
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm font-medium text-muted-foreground">
+                      {label}
+                    </p>
+                    <p className={`text-2xl font-bold ${valueClass ?? ""}`}>
+                      {value}
+                    </p>
+                  </div>
+                  <Icon className={`w-8 h-8 ${color}`} />
                 </div>
-                <Target className="w-8 h-8 text-blue-500" />
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-muted-foreground">
-                    المبادرات المكتملة
-                  </p>
-                  <p className="text-2xl font-bold text-green-600">
-                    {agencyData.completedInitiatives}
-                  </p>
-                </div>
-                <CheckCircle className="w-8 h-8 text-green-500" />
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-muted-foreground">
-                    الموظفين
-                  </p>
-                  <p className="text-2xl font-bold">{agencyData.employees}</p>
-                </div>
-                <Users className="w-8 h-8 text-purple-500" />
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-muted-foreground">
-                    الميزانية المستهلكة
-                  </p>
-                  <p className="text-2xl font-bold text-orange-600">
-                    {Math.round(
-                      (agencyData.spentBudget / agencyData.totalBudget) * 100
-                    )}
-                    %
-                  </p>
-                </div>
-                <TrendingUp className="w-8 h-8 text-orange-500" />
-              </div>
-            </CardContent>
-          </Card>
+              </CardContent>
+            </Card>
+          ))}
         </div>
 
         <Tabs
           value={activeTab}
           onValueChange={setActiveTab}
           className="space-y-6">
-          <TabsList className="grid w-full grid-cols-3">
-            <TabsTrigger value="overview">نظرة عامة</TabsTrigger>
+          <TabsList className="grid w-full grid-cols-4">
+            <TabsTrigger value="overview">المعايير المطلوبة</TabsTrigger>
             <TabsTrigger value="initiatives">المبادرات</TabsTrigger>
-            <TabsTrigger value="employees">الموظفين</TabsTrigger>
+            <TabsTrigger value="volunteers">المتطوعين</TabsTrigger>
+            <TabsTrigger value="agency-info">معلومات الوكالة</TabsTrigger>
           </TabsList>
 
           {/* Overview Tab */}
           <TabsContent value="overview">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              {/* Budget Overview */}
+            <div className="space-y-6">
+              {/* Standards Summary */}
               <Card>
                 <CardHeader>
-                  <CardTitle>نظرة عامة على الميزانية</CardTitle>
-                  <CardDescription>توزيع الميزانية والمصروفات</CardDescription>
+                  <CardTitle>ملخص المعايير المطلوبة</CardTitle>
+                  <CardDescription>
+                    المعايير المخصصة للوكالة وحالة التنفيذ
+                  </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <div className="space-y-4">
-                    <div className="flex justify-between items-center">
-                      <span>الميزانية الإجمالية</span>
-                      <span className="font-semibold">
-                        {formatCurrency(agencyData.totalBudget)}
-                      </span>
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                    <div className="text-center p-4 bg-green-50 rounded-lg">
+                      <div className="text-2xl font-bold text-green-600">
+                        {
+                          assignedStandards.filter(
+                            (s) => s.status === "completed"
+                          ).length
+                        }
+                      </div>
+                      <div className="text-sm text-green-600">مكتمل</div>
                     </div>
-                    <div className="flex justify-between items-center">
-                      <span>المصروفات</span>
-                      <span className="font-semibold text-orange-600">
-                        {formatCurrency(agencyData.spentBudget)}
-                      </span>
+                    <div className="text-center p-4 bg-blue-50 rounded-lg">
+                      <div className="text-2xl font-bold text-blue-600">
+                        {
+                          assignedStandards.filter(
+                            (s) => s.status === "in_progress"
+                          ).length
+                        }
+                      </div>
+                      <div className="text-sm text-blue-600">قيد التنفيذ</div>
                     </div>
-                    <div className="flex justify-between items-center">
-                      <span>المتبقي</span>
-                      <span className="font-semibold text-green-600">
-                        {formatCurrency(
-                          agencyData.totalBudget - agencyData.spentBudget
-                        )}
-                      </span>
+                    <div className="text-center p-4 bg-yellow-50 rounded-lg">
+                      <div className="text-2xl font-bold text-yellow-600">
+                        {
+                          assignedStandards.filter(
+                            (s) => s.status === "pending"
+                          ).length
+                        }
+                      </div>
+                      <div className="text-sm text-yellow-600">في الانتظار</div>
                     </div>
-                    <div className="w-full bg-muted rounded-full h-2">
-                      <div
-                        className="bg-primary h-2 rounded-full transition-all duration-300"
-                        style={{
-                          width: `${
-                            (agencyData.spentBudget / agencyData.totalBudget) *
-                            100
-                          }%`,
-                        }}></div>
+                    <div className="text-center p-4 bg-gray-50 rounded-lg">
+                      <div className="text-2xl font-bold text-gray-600">
+                        {
+                          assignedStandards.filter(
+                            (s) => s.status === "not_started"
+                          ).length
+                        }
+                      </div>
+                      <div className="text-sm text-gray-600">لم يبدأ</div>
                     </div>
                   </div>
                 </CardContent>
               </Card>
 
-              {/* Recent Activity */}
+              {/* Assigned Standards List */}
               <Card>
                 <CardHeader>
-                  <CardTitle>أحدث النشاطات</CardTitle>
-                  <CardDescription>آخر التحديثات والمبادرات</CardDescription>
+                  <CardTitle>المعايير المخصصة للوكالة</CardTitle>
+                  <CardDescription>
+                    قائمة المعايير التي يجب على الوكالة تنفيذها
+                  </CardDescription>
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-4">
-                    {initiatives.slice(0, 3).map((initiative) => (
-                      <div
-                        key={initiative.id}
-                        className="flex items-center gap-3 p-3 border rounded-lg">
-                        <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center">
-                          <Target className="w-5 h-5 text-primary" />
+                    {assignedStandards.map((standard) => (
+                      <div key={standard.id} className="border rounded-lg p-4">
+                        <div className="flex items-start justify-between mb-3">
+                          <div className="flex items-center gap-3">
+                            <span className="text-2xl">
+                              {getSubmissionTypeIcon(standard.submissionType)}
+                            </span>
+                            <div>
+                              <h3 className="text-lg font-semibold">
+                                {standard.standard}
+                              </h3>
+                              <p className="text-sm text-muted-foreground">
+                                {standard.requirement}
+                              </p>
+                            </div>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            {getStandardStatusBadge(standard.status)}
+                            <Button variant="outline" size="sm">
+                              <Eye className="w-4 h-4" />
+                            </Button>
+                          </div>
                         </div>
-                        <div className="flex-1">
-                          <h4 className="font-medium text-sm">
-                            {initiative.title}
-                          </h4>
-                          <p className="text-xs text-muted-foreground">
-                            {initiative.progress}% مكتمل
-                          </p>
+
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm mb-3">
+                          <div>
+                            <span className="font-medium">نوع التقديم:</span>
+                            <p className="text-muted-foreground">
+                              {standard.submissionType === "text" && "نص"}
+                              {standard.submissionType === "pdf" && "ملف PDF"}
+                              {standard.submissionType === "photo" && "صورة"}
+                              {standard.submissionType === "video" && "فيديو"}
+                            </p>
+                          </div>
+                          <div>
+                            <span className="font-medium">
+                              تاريخ الاستحقاق:
+                            </span>
+                            <p className="text-muted-foreground">
+                              {formatDate(standard.dueDate)}
+                            </p>
+                          </div>
+                          <div>
+                            <span className="font-medium">الحالة:</span>
+                            <p className="text-muted-foreground">
+                              {standard.status === "completed" && "مكتمل"}
+                              {standard.status === "in_progress" &&
+                                "قيد التنفيذ"}
+                              {standard.status === "pending" && "في الانتظار"}
+                              {standard.status === "not_started" && "لم يبدأ"}
+                            </p>
+                          </div>
                         </div>
-                        {getStatusBadge(initiative.status)}
+
+                        <p className="text-sm text-muted-foreground mb-3">
+                          {standard.description}
+                        </p>
+
+                        <div className="flex items-center gap-2">
+                          <Button variant="outline" size="sm">
+                            <Edit className="w-4 h-4" />
+                            تعديل
+                          </Button>
+                          <Button variant="outline" size="sm">
+                            <Plus className="w-4 h-4" />
+                            إضافة تقديم
+                          </Button>
+                          <Button variant="outline" size="sm">
+                            <Eye className="w-4 h-4" />
+                            عرض التقديمات
+                          </Button>
+                        </div>
                       </div>
                     ))}
                   </div>
@@ -481,50 +737,64 @@ const AgencyDashboard = () => {
             </Card>
           </TabsContent>
 
-          {/* Employees Tab */}
-          <TabsContent value="employees">
+          {/* Volunteers Tab */}
+          <TabsContent value="volunteers">
             <Card>
               <CardHeader>
-                <CardTitle>الموظفين</CardTitle>
-                <CardDescription>إدارة فريق العمل</CardDescription>
+                <CardTitle>المتطوعين</CardTitle>
+                <CardDescription>إدارة المتطوعين والمتطوعات</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
-                  {employees.map((employee) => (
-                    <div key={employee.id} className="border rounded-lg p-4">
+                  {volunteers.map((volunteer) => (
+                    <div key={volunteer.id} className="border rounded-lg p-4">
                       <div className="flex items-start justify-between">
                         <div className="flex-1">
                           <div className="flex items-center gap-3 mb-2">
                             <h3 className="text-lg font-semibold">
-                              {employee.name}
+                              {volunteer.name}
                             </h3>
-                            {getEmployeeStatusBadge(employee.status)}
+                            {getVolunteerStatusBadge(volunteer.status)}
                           </div>
 
                           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
                             <div>
                               <span className="font-medium">المنصب:</span>
-                              <p>{employee.position}</p>
+                              <p>{volunteer.position}</p>
                             </div>
                             <div>
                               <span className="font-medium">القسم:</span>
-                              <p>{employee.department}</p>
+                              <p>{volunteer.department}</p>
                             </div>
                             <div>
                               <span className="font-medium">
                                 البريد الإلكتروني:
                               </span>
-                              <p>{employee.email}</p>
+                              <p>{volunteer.email}</p>
                             </div>
                             <div>
                               <span className="font-medium">الهاتف:</span>
-                              <p>{employee.phone}</p>
+                              <p>{volunteer.phone}</p>
                             </div>
                           </div>
 
-                          <div className="mt-3 text-sm text-muted-foreground">
-                            <span className="font-medium">تاريخ الانضمام:</span>{" "}
-                            {formatDate(employee.joinDate)}
+                          <div className="grid grid-cols-2 md:grid-cols-3 gap-4 text-sm mt-3">
+                            <div>
+                              <span className="font-medium">
+                                تاريخ الانضمام:
+                              </span>
+                              <p>{formatDate(volunteer.joinDate)}</p>
+                            </div>
+                            <div>
+                              <span className="font-medium">ساعات التطوع:</span>
+                              <p>{volunteer.hours} ساعة</p>
+                            </div>
+                            <div>
+                              <span className="font-medium">
+                                المبادرات المشاركة:
+                              </span>
+                              <p>{volunteer.initiatives} مبادرة</p>
+                            </div>
                           </div>
                         </div>
 
@@ -542,6 +812,107 @@ const AgencyDashboard = () => {
                       </div>
                     </div>
                   ))}
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* Agency Info Tab */}
+          <TabsContent value="agency-info">
+            <Card>
+              <CardHeader>
+                <CardTitle>معلومات الوكالة</CardTitle>
+                <CardDescription>تفاصيل الوكالة وبيانات الدخول</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {/* Agency Information */}
+                  <div className="space-y-4">
+                    <h3 className="text-lg font-semibold border-b pb-2">
+                      معلومات الوكالة
+                    </h3>
+                    <div className="space-y-3">
+                      <div>
+                        <span className="font-medium">اسم الوكالة:</span>
+                        <p className="text-muted-foreground">
+                          {agencyData.name}
+                        </p>
+                      </div>
+                      <div>
+                        <span className="font-medium">الوصف:</span>
+                        <p className="text-muted-foreground">
+                          {agencyData.description}
+                        </p>
+                      </div>
+                      <div>
+                        <span className="font-medium">نوع الوكالة:</span>
+                        <p className="text-muted-foreground">
+                          {agencyData.type}
+                        </p>
+                      </div>
+                      <div>
+                        <span className="font-medium">الحالة:</span>
+                        <p className="text-muted-foreground">
+                          {agencyData.status}
+                        </p>
+                      </div>
+                      <div>
+                        <span className="font-medium">عدد المبادرات:</span>
+                        <p className="text-muted-foreground">
+                          {agencyData.initiatives}
+                        </p>
+                      </div>
+                      <div>
+                        <span className="font-medium">عدد المتطوعين:</span>
+                        <p className="text-muted-foreground">
+                          {agencyData.volunteers}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Contact Information */}
+                  <div className="space-y-4">
+                    <h3 className="text-lg font-semibold border-b pb-2">
+                      معلومات الاتصال
+                    </h3>
+                    <div className="space-y-3">
+                      <div>
+                        <span className="font-medium">الشخص المسؤول:</span>
+                        <p className="text-muted-foreground">
+                          {agencyData.contactPerson}
+                        </p>
+                      </div>
+                      <div>
+                        <span className="font-medium">البريد الإلكتروني:</span>
+                        <p className="text-muted-foreground">
+                          {agencyData.email}
+                        </p>
+                      </div>
+                      <div>
+                        <span className="font-medium">الهاتف:</span>
+                        <p className="text-muted-foreground">
+                          {agencyData.phone}
+                        </p>
+                      </div>
+                      <div>
+                        <span className="font-medium">العنوان:</span>
+                        <p className="text-muted-foreground">
+                          {agencyData.address}
+                        </p>
+                      </div>
+                      <div>
+                        <span className="font-medium">بريد الوكالة:</span>
+                        <p className="text-muted-foreground">
+                          {agencyData.agencyEmail}
+                        </p>
+                      </div>
+                      <div>
+                        <span className="font-medium">كلمة مرور الوكالة:</span>
+                        <p className="text-muted-foreground">••••••••</p>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </CardContent>
             </Card>
