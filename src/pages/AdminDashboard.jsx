@@ -33,7 +33,8 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useTheme } from "@/contexts/ThemeContext";
-import { useAuth } from "@/contexts/AuthContext";
+// Commented out useAuth for development
+// import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
 import {
   Table,
@@ -46,10 +47,12 @@ import {
 
 const AdminDashboard = () => {
   const { language } = useTheme();
-  const { user, signOut } = useAuth();
+  // Commented out useAuth for development
+  // const { user, signOut } = useAuth();
   const navigate = useNavigate();
-  const [userRole, setUserRole] = useState(null);
-  const [loading, setLoading] = useState(true);
+  // Commented out user role state for development
+  // const [userRole, setUserRole] = useState(null);
+  // const [loading, setLoading] = useState(true);
   const [stats, setStats] = useState({
     profiles: 0,
     initiatives: 0,
@@ -71,38 +74,45 @@ const AdminDashboard = () => {
     health_metrics: [],
   });
 
+  // Commented out useEffects for development
+  // useEffect(() => {
+  //   checkUserRole();
+  // }, []);
+
+  // useEffect(() => {
+  //   if (userRole === "admin") {
+  //     fetchAllData();
+  // }, [userRole]);
+
+  // For development: immediately fetch data
   useEffect(() => {
-    checkUserRole();
-  }, [user]);
+    fetchAllData();
+  }, []);
 
-  useEffect(() => {
-    if (userRole === "admin") {
-      fetchAllData();
-    }
-  }, [userRole]);
+  // Commented out checkUserRole function for development
+  // const checkUserRole = () => {
+  //   if (user) {
+  //     navigate("/auth");
+  //     return;
+  //   }
 
-  const checkUserRole = () => {
-    if (user) {
-      navigate("/auth");
-      return;
-    }
+  //   try {
+  //     // Mock implementation - simulate admin role check
+  //     // await new Promise((resolve) => setTimeout(resolve, 1000));
 
-    try {
-      // Mock implementation - simulate admin role check
-      // await new Promise((resolve) => setTimeout(resolve, 1000));
-
-      // Check if user has admin role (for demo purposes, always grant access)
-      // In production, this should check user.role === "admin"
-      setUserRole("admin");
-    } catch (error) {
-      console.error("Error checking user role:", error);
-      navigate("/");
-    }
-  };
+  //     // Check if user has admin role (for demo purposes, always grant access)
+  //     // In production, this should check user.role === "admin"
+  //     setUserRole("admin");
+  //   } catch (error) {
+  //     console.error("Error checking user role:", error);
+  //     navigate("/");
+  //   }
+  // };
 
   const fetchAllData = () => {
     try {
-      setLoading(true);
+      // Commented out loading logic for development
+      // setLoading(true);
 
       // Mock implementation - simulate data fetching
       // await new Promise((resolve) => setTimeout(resolve, 1000));
@@ -186,13 +196,16 @@ const AdminDashboard = () => {
       setData(mockData);
     } catch (error) {
       console.error("Error fetching data:", error);
-    } finally {
-      setLoading(false);
     }
+    // Commented out finally block for development
+    // finally {
+    //   setLoading(false);
+    // }
   };
 
   const handleSignOut = async () => {
-    await signOut();
+    // Commented out signOut for development
+    // await signOut();
     navigate("/");
   };
 
@@ -263,45 +276,46 @@ const AdminDashboard = () => {
     },
   ];
 
-  // Show loading state while checking role
-  if (loading || userRole === null) {
-    return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="text-center">
-          <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-muted-foreground font-arabic">
-            جاري التحقق من الصلاحيات...
-          </p>
-        </div>
-      </div>
-    );
-  }
+  // Commented out loading and role checks for development
+  // // Show loading state while checking role
+  // if (loading || userRole === null) {
+  //   return (
+  //     <div className="min-h-screen bg-background flex items-center justify-center">
+  //       <div className="text-center">
+  //         <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+  //         <p className="text-muted-foreground font-arabic">
+  //           جاري التحقق من الصلاحيات...
+  //         </p>
+  //       </div>
+  //     </div>
+  //   );
+  // }
 
-  // Show unauthorized message if not admin
-  if (userRole !== "admin") {
-    return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <Card className="max-w-md mx-auto">
-          <CardHeader>
-            <CardTitle className="text-center text-destructive font-arabic">
-              غير مصرح لك بالوصول
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="text-center">
-            <Alert className="mb-4">
-              <AlertTriangle className="h-4 w-4" />
-              <AlertDescription className="font-arabic">
-                هذه الصفحة مخصصة للمسؤولين فقط
-              </AlertDescription>
-            </Alert>
-            <Button onClick={() => navigate("/")} className="font-arabic">
-              العودة للصفحة الرئيسية
-            </Button>
-          </CardContent>
-        </Card>
-      </div>
-    );
-  }
+  // // Show unauthorized message if not admin
+  // if (userRole !== "admin") {
+  //   return (
+  //     <div className="min-h-screen bg-background flex items-center justify-center">
+  //       <div className="div className="max-w-md mx-auto">
+  //         <CardHeader>
+  //           <CardTitle className="text-center text-destructive font-arabic">
+  //             غير مصرح لك بالوصول
+  //           </CardTitle>
+  //         </CardHeader>
+  //         <CardContent className="text-center">
+  //           <Alert className="mb-4">
+  //             <AlertTriangle className="h-4 w-4" />
+  //             <AlertDescription className="font-arabic">
+  //               هذه الصفحة مخصصة للمسؤولين فقط
+  //             </AlertDescription>
+  //           </Alert>
+  //           <Button onClick={() => navigate("/")} className="font-arabetic">
+  //             العودة للصفحة الرئيسية
+  //           </Button>
+  //         </CardContent>
+  //       </Card>
+  //     </div>
+  //   );
+  // }
 
   return (
     <div className="space-y-6">
@@ -330,7 +344,7 @@ const AdminDashboard = () => {
                     {stat.title}
                   </p>
                   <p className="text-2xl font-bold text-foreground">
-                    {loading ? "..." : stat.value}
+                    {stat.value}
                   </p>
                 </div>
                 <div

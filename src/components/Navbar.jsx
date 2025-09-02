@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Profiler } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -148,8 +148,8 @@ const Navbar = () => {
                       to="/admin"
                       className="flex items-center gap-2 px-4 py-2 text-sm hover:bg-muted transition-colors"
                       onClick={() => setIsUserMenuOpen(false)}>
-                      <Settings className="w-4 h-4" />
-                      {language === "ar" ? "الإعدادات" : "Settings"}
+                      <User className="w-4 h-4" />
+                      {language === "ar" ? "لوحة التحكم" : "Dashboard"}
                     </Link>
 
                     <button
