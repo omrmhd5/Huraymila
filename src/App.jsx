@@ -51,14 +51,14 @@ const App = () => (
 
               <Route path="/admin" element={<AdminLayout />}>
                 <Route index element={<AdminDashboard />} />
+                <Route
+                  path="agency-management"
+                  element={<AgencyManagement />}
+                />
                 <Route path="standards" element={<StandardsManagement />} />
                 <Route
                   path="standards/:standardId"
                   element={<SubmissionsView />}
-                />
-                <Route
-                  path="agency-management"
-                  element={<AgencyManagement />}
                 />
               </Route>
 

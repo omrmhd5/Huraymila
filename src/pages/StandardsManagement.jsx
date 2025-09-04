@@ -147,7 +147,7 @@ const StandardsManagement = () => {
 
       {/* Summary Statistics */}
       <div
-        className={`grid grid-cols-1 md:grid-cols-5 gap-4 
+        className={`grid grid-cols-1 md:grid-cols-5 gap-4
     ${language === "ar" ? "flex-row-reverse" : ""}`}>
         {[
           {
