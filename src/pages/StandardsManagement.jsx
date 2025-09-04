@@ -100,7 +100,8 @@ const StandardsManagement = () => {
     return (
       <Badge
         variant={status.variant}
-        className={`text-center ${status.className}`}>
+        className={`text-center ${status.className}`}
+      >
         {language === "ar" ? status.label.ar : status.label.en}
       </Badge>
     );
@@ -148,7 +149,8 @@ const StandardsManagement = () => {
       {/* Summary Statistics */}
       <div
         className={`grid grid-cols-1 md:grid-cols-5 gap-4
-    ${language === "ar" ? "flex-row-reverse" : ""}`}>
+    ${language === "ar" ? "flex-row-reverse" : ""}`}
+      >
         {[
           {
             value: standardsList.length,
@@ -355,7 +357,8 @@ const StandardsManagement = () => {
                         key={header.key}
                         className={`${header.className} ${
                           language === "ar" ? "text-right" : ""
-                        }`}>
+                        }`}
+                      >
                         {language === "ar" ? header.ar : header.en}
                       </TableHead>
                     ))}
@@ -377,7 +380,8 @@ const StandardsManagement = () => {
                         {standard.requirements.map((req, index) => (
                           <div
                             key={index}
-                            className="flex items-baseline gap-2 text-xs">
+                            className="flex items-baseline gap-2 text-xs"
+                          >
                             ● <span className="mt-1">{req}</span>
                           </div>
                         ))}
@@ -389,7 +393,8 @@ const StandardsManagement = () => {
                           <Badge
                             key={index}
                             variant="outline"
-                            className="text-xs">
+                            className="text-xs"
+                          >
                             {agency}
                           </Badge>
                         ))}
@@ -399,17 +404,24 @@ const StandardsManagement = () => {
                     <TableCell>
                       <div className="flex justify-center gap-1">
                         <Badge variant="secondary" className="text-xs">
-                          {language === "ar" ? (
-                            <>
-                              {getSubmissionCount(standard)} /{" "}
-                              {standard.assigned_agencies.length}
-                            </>
-                          ) : (
-                            <>
-                              {standard.assigned_agencies.length} /{" "}
-                              {getSubmissionCount(standard)}
-                            </>
-                          )}
+                          {(() => {
+                            const totalAgencies =
+                              standard.assigned_agencies.length;
+
+                            if (totalAgencies === 0) return "0%";
+
+                            // Count only approved submissions
+                            const approvedCount =
+                              standard.status === "approved" ? 1 : 0;
+
+                            const rawPercentage =
+                              (approvedCount / totalAgencies) * 100;
+                            const percentage = Math.max(
+                              0,
+                              Math.min(100, Math.round(rawPercentage))
+                            );
+                            return `${percentage}%`;
+                          })()}
                         </Badge>
                       </div>
                     </TableCell>
@@ -419,7 +431,8 @@ const StandardsManagement = () => {
                           size="sm"
                           variant="outline"
                           onClick={() => viewSubmissions(standard.id)}
-                          className="w-full">
+                          className="w-full"
+                        >
                           <Eye className="w-4 h-4 mr-1" />
                           {language === "ar" ? "عرض" : "View"}
                         </Button>
@@ -440,7 +453,8 @@ const StandardsManagement = () => {
                               : standard.status === "approved"
                               ? "bg-red-700 text-red-50 border-red-200 hover:bg-red-500"
                               : "bg-gray-700 text-gray-50 border-gray-200"
-                          }`}>
+                          }`}
+                        >
                           {standard.status === "approved" ? (
                             <XCircle className="w-4 h-4 mr-1" />
                           ) : standard.status === "didnt_submit" ? (
