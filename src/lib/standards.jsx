@@ -5,7 +5,7 @@ export default function Standards() {
   const standards =
     language === "ar"
       ? {
-          records_for_follow_up: [
+          records: [
             {
               id: 1,
               standard:
@@ -901,7 +901,7 @@ export default function Standards() {
           ],
         }
       : {
-          records_for_follow_up: [
+          records: [
             {
               id: 1,
               standard:
@@ -1826,5 +1826,82 @@ export default function Standards() {
             },
           ],
         };
-  return standards;
+
+  const agencyToStandardsMap =
+    language === "ar"
+      ? {
+          "مكتب تنسيق برنامج المدينة الصحية": [
+            1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19,
+          ],
+          "المرصد الحضري": [15, 16, 17, 18, 19],
+          "وزارة الشؤون البلدية والقروية": [
+            15, 16, 17, 18, 19, 21, 24, 25, 26, 27, 29, 30,
+          ],
+          "الهيئة العامة للاحصاء": [15, 16, 17, 18, 19],
+          "المراكز الثقافية": [15, 16, 17, 18, 19],
+          "الدفاع المدني": [15, 16, 17, 18, 19],
+          "الجمعيات البيئية": [20],
+          "شركة المياه الوطنية": [22, 23],
+          "وزارة البيئة والمياه والزراعة": [24, 25, 26, 27, 29, 30],
+          "الهيئة العامة للغذاء والدواء": [24, 25, 26, 27],
+          "الهيئة العامة للأرصاد وحماية البيئة": [28],
+          "وزارة الصحة ( الشؤون الصحية - المستشفيات - القطاع الصحي – مراكز الرعاية الصحية )":
+            [
+              31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46,
+              47, 48, 49, 50, 51, 52, 53, 54, 55, 56,
+            ],
+          "إدارة التعليم": [55, 63, 64, 65, 66, 67],
+          "وزارة الموارد البشرية والتنمية الاجتماعية": [56],
+          "إدارة الدفاع المدني": [57, 58, 59, 60, 61, 62],
+          "الهلال الأحمر": [57, 58, 59, 60, 61, 62],
+          "نادي الحي": [63, 64, 65, 66, 67],
+          "وزارة الموارد البشرية والتنمية الاجتماعية (الجمعيات الخيرية – الجمعيات الأهلية)":
+            [68, 69, 70, 71, 72, 73],
+          "المؤسسة العامة للتدريب التقني والمهني": [69, 70, 71, 72, 73],
+          "وزارة التعليم (الجامعات – المدارس – نادي الحي – المنصات التعليمية)":
+            [69, 70, 71, 72, 73],
+          "وزارة الموارد البشرية والتنمية الاجتماعية (الضمان الاجتماعي – الجمعيات الخيرية – الجمعيات الأهلية)":
+            [74, 75, 76, 77, 78, 79, 80],
+        }
+      : {
+          "Healthy City Program Coordination Office": [
+            1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19,
+          ],
+          "Urban Observatory": [15, 16, 17, 18, 19],
+          "Ministry of Municipal and Rural Affairs": [
+            15, 16, 17, 18, 19, 20, 21, 24, 25, 26, 27, 29, 30,
+          ],
+          "General Authority for Statistics": [15, 16, 17, 18, 19],
+          "Cultural Centers": [15, 16, 17, 18, 19],
+          "Civil Defense": [15, 16, 17, 18, 19, 57, 58, 59, 60, 61, 62],
+          "Environmental Associations": [20],
+          "National Water Company": [22, 23],
+          "Ministry of Environment, Water and Agriculture": [
+            24, 25, 26, 27, 29, 30,
+          ],
+          "General Food and Drug Authority": [24, 25, 26, 27],
+          "General Authority for Meteorology and Environmental Protection": [
+            28,
+          ],
+          "Ministry of Health (Health Affairs - Hospitals - Health Sector - Health Care Centers)":
+            [
+              31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46,
+              47, 48, 49, 50, 51, 52, 53, 54, 55, 56,
+            ],
+          "Directorate of Education": [55, 63, 64, 65, 66, 67],
+          "Ministry of Human Resources and Social Development": [56],
+          "Red Crescent": [57, 58, 59, 60, 61, 62],
+          "Neighborhood Club": [63, 64, 65, 66, 67],
+          "Ministry of Human Resources and Social Development (Charitable Societies - Civil Societies)":
+            [68, 69, 70, 71, 72, 73],
+          "General Organization for Technical and Vocational Training": [
+            69, 70, 71, 72, 73,
+          ],
+          "Ministry of Education (Universities - Schools - Neighborhood Club - Educational Platforms)":
+            [69, 70, 71, 72, 73],
+          "Ministry of Human Resources and Social Development (Social Security - Charitable Societies - Civil Societies)":
+            [74, 75, 76, 77, 78, 79, 80],
+        };
+
+  return [standards, agencyToStandardsMap];
 }

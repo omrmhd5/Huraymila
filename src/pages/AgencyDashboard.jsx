@@ -35,6 +35,7 @@ import {
 import { useTheme } from "@/contexts/ThemeContext";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
+import Standards from "@/lib/standards";
 
 const AgencyDashboard = () => {
   // Commented out useAuth for development
@@ -62,8 +63,8 @@ const AgencyDashboard = () => {
   const agencyData = {
     name:
       language === "ar"
-        ? "وزارة الصحة - حريملاء"
-        : "Ministry of Health - Harimlaa",
+        ? "مكتب تنسيق برنامج المدينة الصحية"
+        : "Healthy City Program Coordination Office",
     description: "الجهة المسؤولة عن الصحة العامة في المدينة",
     contactPerson: "د. أحمد محمد",
     email: "ahmed@moh.gov.sa",
@@ -182,56 +183,72 @@ const AgencyDashboard = () => {
     },
   ];
 
-  // Standards assigned to this agency (Ministry of Health)
-  const assignedStandards = [
-    {
-      id: 1,
-      standard: "معيار الصحة العامة 1",
-      requirement: "توفير مرافق صحية أساسية في جميع الأحياء",
-      status: "pending",
-      submissionType: "text",
-      dueDate: "2024-12-31",
-      description:
-        "يجب على كل حي أن يحتوي على عيادة صحية أو مركز صحي يقدم الخدمات الأساسية",
-    },
-    {
-      id: 2,
-      standard: "معيار التوعية الصحية 2",
-      requirement: "تنفيذ برامج توعية صحية شهرية",
-      status: "completed",
-      submissionType: "pdf",
-      dueDate: "2024-11-30",
-      description: "إعداد وتنفيذ برامج توعية صحية تغطي مواضيع مختلفة كل شهر",
-    },
-    {
-      id: 3,
-      standard: "معيار البيئة الصحية 3",
-      requirement: "فحص جودة الهواء والماء سنوياً",
-      status: "in_progress",
-      submissionType: "photo",
-      dueDate: "2024-12-15",
-      description: "إجراء فحوصات دورية لجودة الهواء والماء في المدينة",
-    },
-    {
-      id: 4,
-      standard: "معيار الرعاية الوقائية 4",
-      requirement: "توفير خدمات الفحص المبكر للأمراض",
-      status: "not_started",
-      submissionType: "video",
-      dueDate: "2025-01-31",
-      description: "إطلاق حملات فحص مبكر للأمراض المزمنة والشائعة",
-    },
-    {
-      id: 5,
-      standard: "معيار الطوارئ الصحية 5",
-      requirement: "تجهيز غرف طوارئ في المستشفيات",
-      status: "completed",
-      submissionType: "photo",
-      dueDate: "2024-10-31",
-      description:
-        "تجهيز وتأهيل غرف الطوارئ في جميع المستشفيات والمراكز الصحية",
-    },
-  ];
+  // Get standards data and filter by agency name
+  const agencyName = agencyData.name;
+
+  // Get standards data dynamically
+  const [standards, agencyToStandardsMap] = Standards();
+
+  // Get assigned standards based on agency name
+  const getAssignedStandards = (agencyName) => {
+    // Find the agency key that matches the agency name
+    const agencyKey = Object.keys(agencyToStandardsMap).find(
+      (key) => key.includes(agencyName) || agencyName.includes(key)
+    );
+
+    if (!agencyKey) return [];
+
+    // Get the array of standard IDs for this agency
+    const standardIds = agencyToStandardsMap[agencyKey];
+
+    // Find the actual standard objects from records using the IDs
+    return standardIds
+      .map((id) => standards.records.find((standard) => standard.id === id))
+      .filter(Boolean); // Remove any undefined values
+  };
+
+  const assignedStandards = getAssignedStandards(agencyName).map(
+    (standard, index) => ({
+      id: standard.id,
+      standard: standard.standard,
+      requirement: standard.requirements?.[0] || "متطلب غير محدد",
+      status: standard.status || "pending",
+      submissionType: getSubmissionTypeFromRequirements(standard.requirements),
+      dueDate: generateDueDate(),
+      description: standard.standard,
+      requirements: standard.requirements || [],
+    })
+  );
+
+  // Helper function to determine submission type based on requirements
+  function getSubmissionTypeFromRequirements(requirements) {
+    if (!requirements || requirements.length === 0) return "text";
+
+    const reqText = requirements.join(" ").toLowerCase();
+    if (
+      reqText.includes("صورة") ||
+      reqText.includes("صور") ||
+      reqText.includes("photo")
+    )
+      return "photo";
+    if (reqText.includes("فيديو") || reqText.includes("video")) return "video";
+    if (
+      reqText.includes("ملف") ||
+      reqText.includes("pdf") ||
+      reqText.includes("وثيقة")
+    )
+      return "pdf";
+    return "text";
+  }
+
+  // Helper function to generate due dates
+  function generateDueDate() {
+    const now = new Date();
+    const futureDate = new Date(
+      now.getTime() + (Math.random() * 90 + 30) * 24 * 60 * 60 * 1000
+    );
+    return futureDate.toISOString().split("T")[0];
+  }
 
   const getStatusBadge = (status) => {
     switch (status) {
@@ -275,18 +292,14 @@ const AgencyDashboard = () => {
 
   const getStandardStatusBadge = (status) => {
     switch (status) {
-      case "completed":
+      case "approved":
         return (
           <Badge variant="default" className="bg-green-500">
-            مكتمل
+            موافق عليه
           </Badge>
         );
-      case "in_progress":
-        return (
-          <Badge variant="default" className="bg-blue-500">
-            قيد التنفيذ
-          </Badge>
-        );
+      case "rejected":
+        return <Badge variant="destructive">مرفوض</Badge>;
       case "pending":
         return <Badge variant="secondary">في الانتظار</Badge>;
       case "not_started":
@@ -509,21 +522,21 @@ const AgencyDashboard = () => {
                       <div className="text-2xl font-bold text-green-600">
                         {
                           assignedStandards.filter(
-                            (s) => s.status === "completed"
+                            (s) => s.status === "approved"
                           ).length
                         }
                       </div>
-                      <div className="text-sm text-green-600">مكتمل</div>
+                      <div className="text-sm text-green-600">موافق عليه</div>
                     </div>
-                    <div className="text-center p-4 bg-blue-50 rounded-lg">
-                      <div className="text-2xl font-bold text-blue-600">
+                    <div className="text-center p-4 bg-red-50 rounded-lg">
+                      <div className="text-2xl font-bold text-red-600">
                         {
                           assignedStandards.filter(
-                            (s) => s.status === "in_progress"
+                            (s) => s.status === "rejected"
                           ).length
                         }
                       </div>
-                      <div className="text-sm text-blue-600">قيد التنفيذ</div>
+                      <div className="text-sm text-red-600">مرفوض</div>
                     </div>
                     <div className="text-center p-4 bg-yellow-50 rounded-lg">
                       <div className="text-2xl font-bold text-yellow-600">
@@ -604,13 +617,23 @@ const AgencyDashboard = () => {
                           <div>
                             <span className="font-medium">الحالة:</span>
                             <p className="text-muted-foreground">
-                              {standard.status === "completed" && "مكتمل"}
-                              {standard.status === "in_progress" &&
-                                "قيد التنفيذ"}
+                              {standard.status === "approved" && "موافق عليه"}
+                              {standard.status === "rejected" && "مرفوض"}
                               {standard.status === "pending" && "في الانتظار"}
                               {standard.status === "not_started" && "لم يبدأ"}
                             </p>
                           </div>
+                        </div>
+
+                        <div className="mb-3">
+                          <span className="font-medium text-sm">
+                            المتطلبات:
+                          </span>
+                          <ul className="list-disc list-inside text-sm text-muted-foreground mt-1">
+                            {standard.requirements.map((req, index) => (
+                              <li key={index}>{req}</li>
+                            ))}
+                          </ul>
                         </div>
 
                         <p className="text-sm text-muted-foreground mb-3">
