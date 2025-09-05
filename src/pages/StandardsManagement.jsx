@@ -121,6 +121,19 @@ const StandardsManagement = () => {
     return Math.floor(Math.random() * 5);
   };
 
+  const getAgencySubmissionStatus = (standard) => {
+    // Mock submission status for each agency
+    // In real implementation, this would come from your data
+    const agencyStatuses = {};
+    standard.assigned_agencies.forEach((agency) => {
+      // Randomly assign submission status for demo purposes
+      // In real app, this would be based on actual submission data
+      agencyStatuses[agency] =
+        Math.random() > 0.5 ? "submitted" : "not_submitted";
+    });
+    return agencyStatuses;
+  };
+
   const viewSubmissions = (standardId) => {
     // Find the standard and show it in dialog
     const standard = standardsList.find((s) => s.id === standardId);
@@ -504,12 +517,53 @@ const StandardsManagement = () => {
                       ? "الوكالات المسؤولة"
                       : "Responsible Agencies"}
                   </h3>
-                  <div className="flex flex-wrap gap-2">
-                    {selectedStandard.assigned_agencies.map((agency, index) => (
-                      <Badge key={index} variant="outline">
-                        {agency}
-                      </Badge>
-                    ))}
+                  <div className="space-y-4">
+                    {/* Agencies with color coding */}
+                    <div className="flex flex-wrap gap-2">
+                      {(() => {
+                        const agencyStatuses =
+                          getAgencySubmissionStatus(selectedStandard);
+                        return selectedStandard.assigned_agencies.map(
+                          (agency, index) => (
+                            <Badge
+                              key={index}
+                              variant="outline"
+                              className={`${
+                                agencyStatuses[agency] === "submitted"
+                                  ? "bg-green-100 text-green-800 border-green-300"
+                                  : "bg-red-100 text-red-800 border-red-300"
+                              }`}
+                            >
+                              {agency}
+                            </Badge>
+                          )
+                        );
+                      })()}
+                    </div>
+
+                    {/* Inline Legend */}
+                    <div className="flex flex-wrap gap-4 text-sm">
+                      <div className="flex items-center gap-2">
+                        <Badge
+                          variant="outline"
+                          className="bg-green-100 text-green-800 border-green-300"
+                        ></Badge>
+                        <span className="text-green-700">
+                          {language === "ar" ? "قدمت التقديم" : "Submitted"}
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Badge
+                          variant="outline"
+                          className="bg-red-100 text-red-800 border-red-300"
+                        ></Badge>
+                        <span className="text-red-700">
+                          {language === "ar"
+                            ? "لم تقدم التقديم"
+                            : "Not Submitted"}
+                        </span>
+                      </div>
+                    </div>
                   </div>
                 </div>
 
@@ -548,60 +602,14 @@ const StandardsManagement = () => {
 
               {/* Actions Section */}
               <div className="border-t pt-6">
-                <h3 className="text-lg font-semibold mb-4">
-                  {language === "ar" ? "الإجراءات" : "Actions"}
-                </h3>
                 <div className="flex flex-col gap-3">
-                  <Button
-                    size="lg"
-                    variant={
-                      selectedStandard.status === "approved" ||
-                      selectedStandard.status === "rejected"
-                        ? "default"
-                        : "outlined"
-                    }
-                    disabled={selectedStandard.status === "didnt_submit"}
-                    onClick={() => {
-                      toggleStatus(selectedStandard);
-                      setIsDialogOpen(false);
-                    }}
-                    className={`w-full ${
-                      selectedStandard.status === "rejected" ||
-                      selectedStandard.status === "pending_approval"
-                        ? "bg-green-700 text-green-50 border-green-200 hover:bg-green-500"
-                        : selectedStandard.status === "approved"
-                        ? "bg-red-700 text-red-50 border-red-200 hover:bg-red-500"
-                        : "bg-gray-700 text-gray-50 border-gray-200"
-                    }`}
-                  >
-                    {selectedStandard.status === "approved" ? (
-                      <XCircle className="w-5 h-5 mr-2" />
-                    ) : selectedStandard.status === "didnt_submit" ? (
-                      <AlertCircle className="w-5 h-5 mr-2" />
-                    ) : (
-                      <CheckCircle className="w-5 h-5 mr-2" />
-                    )}
-                    {selectedStandard.status === "rejected" ||
-                    selectedStandard.status === "pending_approval"
-                      ? language === "ar"
-                        ? "موافقة"
-                        : "Approve"
-                      : selectedStandard.status === "approved"
-                      ? language === "ar"
-                        ? "رفض"
-                        : "Reject"
-                      : language === "ar"
-                      ? "لم يتم التقديم"
-                      : "No Submissions"}
-                  </Button>
-
                   <Button
                     size="lg"
                     variant="outline"
                     onClick={() =>
                       navigate(`/admin/standards/${selectedStandard.id}`)
                     }
-                    className="w-full"
+                    className="w-full bg-blue-50 hover:bg-blue-100 border-blue-200 text-blue-700 hover:text-blue-800 transition-colors duration-200"
                   >
                     <Eye className="w-5 h-5 mr-2" />
                     {language === "ar"
