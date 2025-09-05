@@ -208,7 +208,6 @@ const AgencyDashboard = () => {
       requirement: standard.requirements?.[0] || "متطلب غير محدد",
       status: standard.status || "pending",
       submissionType: getSubmissionTypeFromRequirements(standard.requirements),
-      dueDate: generateDueDate(),
       description: standard.standard,
       requirements: standard.requirements || [],
     })
@@ -233,15 +232,6 @@ const AgencyDashboard = () => {
     )
       return "pdf";
     return "text";
-  }
-
-  // Helper function to generate due dates
-  function generateDueDate() {
-    const now = new Date();
-    const futureDate = new Date(
-      now.getTime() + (Math.random() * 90 + 30) * 24 * 60 * 60 * 1000
-    );
-    return futureDate.toISOString().split("T")[0];
   }
 
   const getStatusBadge = (status) => {
@@ -305,19 +295,25 @@ const AgencyDashboard = () => {
           </Badge>
         );
       case "pending":
+      case "pending_approval":
         return (
           <Badge
             variant="secondary"
-            className={language === "ar" ? "font-arabic" : "font-sans"}>
-            {language === "ar" ? "في الانتظار" : "Pending"}
+            className={`bg-yellow-100 text-yellow-800 border-yellow-200 ${
+              language === "ar" ? "font-arabic" : "font-sans"
+            }`}>
+            {language === "ar" ? "في انتظار الموافقة" : "Pending Approval"}
           </Badge>
         );
       case "not_started":
+      case "didnt_submit":
         return (
           <Badge
             variant="outline"
-            className={language === "ar" ? "font-arabic" : "font-sans"}>
-            {language === "ar" ? "لم يبدأ" : "Not Started"}
+            className={`bg-gray-100 text-gray-700 border-gray-300 ${
+              language === "ar" ? "font-arabic" : "font-sans"
+            }`}>
+            {language === "ar" ? "لم يقدم" : "Didn't Submit"}
           </Badge>
         );
       default:
@@ -343,6 +339,21 @@ const AgencyDashboard = () => {
         return "🎥";
       default:
         return "📋";
+    }
+  };
+
+  const getSubmissionTypeText = (type) => {
+    switch (type) {
+      case "text":
+        return language === "ar" ? "نص" : "Text";
+      case "pdf":
+        return language === "ar" ? "ملف PDF" : "PDF File";
+      case "photo":
+        return language === "ar" ? "صورة" : "Photo";
+      case "video":
+        return language === "ar" ? "فيديو" : "Video";
+      default:
+        return language === "ar" ? "غير محدد" : "Undefined";
     }
   };
 
@@ -742,9 +753,7 @@ const AgencyDashboard = () => {
                             className={`flex items-center gap-3 ${
                               language === "ar" ? "flex-row-reverse" : ""
                             }`}>
-                            <span className="text-2xl">
-                              {getSubmissionTypeIcon(standard.submissionType)}
-                            </span>
+                            <span> </span>
                             <div
                               className={
                                 language === "ar" ? "text-right" : "text-left"
@@ -755,102 +764,115 @@ const AgencyDashboard = () => {
                                     ? "font-arabic"
                                     : "font-sans"
                                 }`}>
-                                {standard.standard}
+                                {language === "ar" ? (
+                                  <>
+                                    {standard.standard} {standard.id}
+                                  </>
+                                ) : (
+                                  <>
+                                    {standard.id}. {standard.standard}
+                                  </>
+                                )}
                               </h3>
-                              <p
-                                className={`text-sm text-muted-foreground ${
-                                  language === "ar"
-                                    ? "font-arabic"
-                                    : "font-sans"
-                                }`}>
-                                {standard.requirement}
-                              </p>
                             </div>
                           </div>
-                          <div
-                            className={`flex items-center gap-2 ${
-                              language === "ar" ? "flex-row-reverse" : ""
-                            }`}>
-                            {getStandardStatusBadge(standard.status)}
-                            <Button variant="outline" size="sm">
-                              <Eye className="w-4 h-4" />
-                            </Button>
-                          </div>
                         </div>
 
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm mb-3">
-                          <div
-                            className={
-                              language === "ar" ? "text-right" : "text-left"
-                            }>
-                            <span
-                              className={`font-medium ${
-                                language === "ar" ? "font-arabic" : "font-sans"
-                              }`}>
-                              {language === "ar"
-                                ? "نوع التقديم:"
-                                : "Submission Type:"}
-                            </span>
-                            <p
-                              className={`text-muted-foreground ${
-                                language === "ar" ? "font-arabic" : "font-sans"
-                              }`}>
-                              {standard.submissionType === "text" &&
-                                (language === "ar" ? "نص" : "Text")}
-                              {standard.submissionType === "pdf" &&
-                                (language === "ar" ? "ملف PDF" : "PDF File")}
-                              {standard.submissionType === "photo" &&
-                                (language === "ar" ? "صورة" : "Photo")}
-                              {standard.submissionType === "video" &&
-                                (language === "ar" ? "فيديو" : "Video")}
-                            </p>
-                          </div>
-                          <div
-                            className={
-                              language === "ar" ? "text-right" : "text-left"
-                            }>
-                            <span
-                              className={`font-medium ${
-                                language === "ar" ? "font-arabic" : "font-sans"
-                              }`}>
-                              {language === "ar"
-                                ? "تاريخ الاستحقاق:"
-                                : "Due Date:"}
-                            </span>
-                            <p
-                              className={`text-muted-foreground ${
-                                language === "ar" ? "font-arabic" : "font-sans"
-                              }`}>
-                              {formatDate(standard.dueDate)}
-                            </p>
-                          </div>
-                          <div
-                            className={
-                              language === "ar" ? "text-right" : "text-left"
-                            }>
-                            <span
-                              className={`font-medium ${
-                                language === "ar" ? "font-arabic" : "font-sans"
-                              }`}>
-                              {language === "ar" ? "الحالة:" : "Status:"}
-                            </span>
-                            <p
-                              className={`text-muted-foreground ${
-                                language === "ar" ? "font-arabic" : "font-sans"
-                              }`}>
-                              {standard.status === "approved" &&
-                                (language === "ar" ? "موافق عليه" : "Approved")}
-                              {standard.status === "rejected" &&
-                                (language === "ar" ? "مرفوض" : "Rejected")}
-                              {standard.status === "pending" &&
-                                (language === "ar" ? "في الانتظار" : "Pending")}
-                              {standard.status === "not_started" &&
-                                (language === "ar" ? "لم يبدأ" : "Not Started")}
-                            </p>
-                          </div>
+                        <div
+                          className={`grid grid-cols-1 md:grid-cols-2 gap-4 text-sm mb-3 ${
+                            language === "ar" ? "rtl" : "ltr"
+                          }`}>
+                          {language === "ar" ? (
+                            <>
+                              <div
+                                className={`flex items-center gap-2 ${
+                                  language === "ar" ? "flex-row-reverse" : ""
+                                }`}>
+                                <span
+                                  className={`font-medium ${
+                                    language === "ar"
+                                      ? "font-arabic"
+                                      : "font-sans"
+                                  }`}>
+                                  {language === "ar" ? "الحالة:" : "Status:"}
+                                </span>
+                                {getStandardStatusBadge(standard.status)}
+                              </div>
+                              <div
+                                className={`flex items-center gap-2 ${
+                                  language === "ar" ? "flex-row-reverse" : ""
+                                }`}>
+                                <span
+                                  className={`font-medium ${
+                                    language === "ar"
+                                      ? "font-arabic"
+                                      : "font-sans"
+                                  }`}>
+                                  {language === "ar"
+                                    ? "نوع التقديم:"
+                                    : "Submission Type:"}
+                                </span>
+                                <span
+                                  className={`text-muted-foreground ${
+                                    language === "ar"
+                                      ? "font-arabic"
+                                      : "font-sans"
+                                  }`}>
+                                  {getSubmissionTypeText(
+                                    standard.submissionType
+                                  )}
+                                </span>
+                              </div>
+                            </>
+                          ) : (
+                            <>
+                              <div
+                                className={`flex items-center gap-2 ${
+                                  language === "ar" ? "flex-row-reverse" : ""
+                                }`}>
+                                <span
+                                  className={`font-medium ${
+                                    language === "ar"
+                                      ? "font-arabic"
+                                      : "font-sans"
+                                  }`}>
+                                  {language === "ar"
+                                    ? "نوع التقديم:"
+                                    : "Submission Type:"}
+                                </span>
+                                <span
+                                  className={`text-muted-foreground ${
+                                    language === "ar"
+                                      ? "font-arabic"
+                                      : "font-sans"
+                                  }`}>
+                                  {getSubmissionTypeText(
+                                    standard.submissionType
+                                  )}
+                                </span>
+                              </div>
+                              <div
+                                className={`flex items-center gap-2 ${
+                                  language === "ar" ? "flex-row-reverse" : ""
+                                }`}>
+                                <span
+                                  className={`font-medium ${
+                                    language === "ar"
+                                      ? "font-arabic"
+                                      : "font-sans"
+                                  }`}>
+                                  {language === "ar" ? "الحالة:" : "Status:"}
+                                </span>
+                                {getStandardStatusBadge(standard.status)}
+                              </div>
+                            </>
+                          )}
                         </div>
 
-                        <div className="mb-3">
+                        <div
+                          className={`mb-3 ${
+                            language === "ar" ? "rtl" : "ltr"
+                          }`}>
                           <span
                             className={`font-medium text-sm ${
                               language === "ar" ? "font-arabic" : "font-sans"
@@ -858,25 +880,23 @@ const AgencyDashboard = () => {
                             {language === "ar" ? "المتطلبات:" : "Requirements:"}
                           </span>
                           <ul
-                            className={`list-disc list-inside text-sm text-muted-foreground mt-1 ${
+                            className={`text-sm text-muted-foreground mt-1 ${
                               language === "ar"
-                                ? "text-right font-arabic"
-                                : "text-left font-sans"
-                            }`}>
+                                ? "text-right font-arabic list-disc list-inside"
+                                : "text-left font-sans list-disc list-inside"
+                            }`}
+                            dir={language === "ar" ? "rtl" : "ltr"}>
                             {standard.requirements.map((req, index) => (
-                              <li key={index}>{req}</li>
+                              <li
+                                key={index}
+                                className={
+                                  language === "ar" ? "text-right" : "text-left"
+                                }>
+                                {req}
+                              </li>
                             ))}
                           </ul>
                         </div>
-
-                        <p
-                          className={`text-sm text-muted-foreground mb-3 ${
-                            language === "ar"
-                              ? "text-right font-arabic"
-                              : "text-left font-sans"
-                          }`}>
-                          {standard.description}
-                        </p>
 
                         <div
                           className={`flex items-center gap-2 ${
