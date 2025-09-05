@@ -489,7 +489,7 @@ PDF content for standard ${index} - contains:
       </div>
 
       {/* Status Summary */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         {[
           {
             status: "approved",
@@ -520,6 +520,30 @@ PDF content for standard ${index} - contains:
             </CardContent>
           </Card>
         ))}
+
+        {/* Acceptance Percentage Card */}
+        <Card>
+          <CardContent className="p-4">
+            <div className="text-center">
+              <div className="text-2xl font-bold text-blue-600">
+                {(() => {
+                  const approvedCount = submissions.filter(
+                    (s) => s.status === "approved"
+                  ).length;
+                  const totalCount = submissions.length;
+                  const percentage =
+                    totalCount > 0
+                      ? Math.round((approvedCount / totalCount) * 100)
+                      : 0;
+                  return `${percentage}%`;
+                })()}
+              </div>
+              <p className="text-sm text-muted-foreground">
+                {language === "ar" ? "نسبة القبول" : "Acceptance Rate"}
+              </p>
+            </div>
+          </CardContent>
+        </Card>
       </div>
 
       {/* Submissions Tabs */}
