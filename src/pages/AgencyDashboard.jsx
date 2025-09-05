@@ -14,11 +14,6 @@ import {
   Building2,
   Users,
   Target,
-  Calendar,
-  TrendingUp,
-  CheckCircle,
-  Clock,
-  AlertCircle,
   Plus,
   Eye,
   Edit,
@@ -28,7 +23,6 @@ import {
   Moon,
   Sun,
   LogOut,
-  Database,
 } from "lucide-react";
 // Commented out useAuth for development
 // import { useAuth } from "@/contexts/AuthContext";
@@ -70,7 +64,7 @@ const AgencyDashboard = () => {
     email: "ahmed@moh.gov.sa",
     phone: "+966-11-123-4567",
     address: "شارع الملك فهد، حريملاء",
-    type: language === "ar" ? "صحة" : "Health",
+    type: "Health",
     agencyEmail: "health@harimlaa.gov.sa",
     agencyPassword: "health123",
     initiatives: 12,
@@ -294,18 +288,46 @@ const AgencyDashboard = () => {
     switch (status) {
       case "approved":
         return (
-          <Badge variant="default" className="bg-green-500">
-            موافق عليه
+          <Badge
+            variant="default"
+            className={`bg-green-500 ${
+              language === "ar" ? "font-arabic" : "font-sans"
+            }`}>
+            {language === "ar" ? "موافق عليه" : "Approved"}
           </Badge>
         );
       case "rejected":
-        return <Badge variant="destructive">مرفوض</Badge>;
+        return (
+          <Badge
+            variant="destructive"
+            className={language === "ar" ? "font-arabic" : "font-sans"}>
+            {language === "ar" ? "مرفوض" : "Rejected"}
+          </Badge>
+        );
       case "pending":
-        return <Badge variant="secondary">في الانتظار</Badge>;
+        return (
+          <Badge
+            variant="secondary"
+            className={language === "ar" ? "font-arabic" : "font-sans"}>
+            {language === "ar" ? "في الانتظار" : "Pending"}
+          </Badge>
+        );
       case "not_started":
-        return <Badge variant="outline">لم يبدأ</Badge>;
+        return (
+          <Badge
+            variant="outline"
+            className={language === "ar" ? "font-arabic" : "font-sans"}>
+            {language === "ar" ? "لم يبدأ" : "Not Started"}
+          </Badge>
+        );
       default:
-        return <Badge variant="outline">{status}</Badge>;
+        return (
+          <Badge
+            variant="outline"
+            className={language === "ar" ? "font-arabic" : "font-sans"}>
+            {status}
+          </Badge>
+        );
     }
   };
 
@@ -325,14 +347,16 @@ const AgencyDashboard = () => {
   };
 
   const formatCurrency = (amount) => {
-    return new Intl.NumberFormat("ar-SA", {
+    return new Intl.NumberFormat(language === "ar" ? "ar-SA" : "en-US", {
       style: "currency",
       currency: "SAR",
     }).format(amount);
   };
 
   const formatDate = (dateString) => {
-    return new Date(dateString).toLocaleDateString("ar-SA");
+    return new Date(dateString).toLocaleDateString(
+      language === "ar" ? "ar-SA" : "en-US"
+    );
   };
 
   const handleLanguageChange = () => {
@@ -352,24 +376,37 @@ const AgencyDashboard = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background flex flex-col">
+    <div
+      className={`min-h-screen bg-background flex flex-col ${
+        language === "ar" ? "rtl" : "ltr"
+      }`}
+      dir={language === "ar" ? "rtl" : "ltr"}>
       {/* Navbar */}
       <nav className="bg-card/95 backdrop-blur-sm border-b border-border shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
-            <div className="flex items-center gap-3">
+            <div
+              className={`flex items-center gap-3 ${
+                language === "ar" ? "flex-row-reverse" : ""
+              }`}>
               <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
                 <Building2 className="w-6 h-6 text-white" />
               </div>
-              <div>
-                <h1 className="text-xl font-bold text-foreground font-arabic">
+              <div className={language === "ar" ? "text-right" : "text-left"}>
+                <h1
+                  className={`text-xl font-bold text-foreground ${
+                    language === "ar" ? "font-arabic" : "font-sans"
+                  }`}>
                   {language === "ar"
                     ? "لوحة التحكم للوكالة"
                     : "Agency Dashboard"}
                 </h1>
-                <p className="text-sm text-muted-foreground font-arabic">
+                <p
+                  className={`text-sm text-muted-foreground ${
+                    language === "ar" ? "font-arabic" : "font-sans"
+                  }`}>
                   {language === "ar"
-                    ? "إدارة جميع بيانات الخاصة بالوكالة"
+                    ? "إدارة جميع البيانات الخاصة بالوكالة"
                     : "Manage all data related to the agency"}
                 </p>
               </div>
@@ -426,19 +463,39 @@ const AgencyDashboard = () => {
                 </p>
                 <div className="grid grid-cols-2 gap-4 text-sm">
                   <div>
-                    <span className="font-medium">الشخص المسؤول:</span>{" "}
+                    <span
+                      className={`font-medium ${
+                        language === "ar" ? "font-arabic" : "font-sans"
+                      }`}>
+                      {language === "ar" ? "الشخص المسؤول:" : "Contact Person:"}
+                    </span>{" "}
                     {agencyData.contactPerson}
                   </div>
                   <div>
-                    <span className="font-medium">البريد الإلكتروني:</span>{" "}
+                    <span
+                      className={`font-medium ${
+                        language === "ar" ? "font-arabic" : "font-sans"
+                      }`}>
+                      {language === "ar" ? "البريد الإلكتروني:" : "Email:"}
+                    </span>{" "}
                     {agencyData.email}
                   </div>
                   <div>
-                    <span className="font-medium">الهاتف:</span>{" "}
+                    <span
+                      className={`font-medium ${
+                        language === "ar" ? "font-arabic" : "font-sans"
+                      }`}>
+                      {language === "ar" ? "الهاتف:" : "Phone:"}
+                    </span>{" "}
                     {agencyData.phone}
                   </div>
                   <div>
-                    <span className="font-medium">العنوان:</span>{" "}
+                    <span
+                      className={`font-medium ${
+                        language === "ar" ? "font-arabic" : "font-sans"
+                      }`}>
+                      {language === "ar" ? "العنوان:" : "Address:"}
+                    </span>{" "}
                     {agencyData.address}
                   </div>
                 </div>
@@ -448,7 +505,7 @@ const AgencyDashboard = () => {
               onClick={() => setShowAddForm(true)}
               className="flex items-center gap-2">
               <Plus className="w-4 h-4" />
-              إضافة مبادرة جديدة
+              {language === "ar" ? "إضافة مبادرة جديدة" : "Add New Initiative"}
             </Button>
           </div>
         </div>
@@ -457,33 +514,53 @@ const AgencyDashboard = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           {[
             {
-              label: "إجمالي المبادرات",
+              label:
+                language === "ar" ? "إجمالي المبادرات" : "Total Initiatives",
               value: agencyData.initiatives,
               color: "text-blue-500",
               Icon: Target,
             },
             {
-              label: "المتطوعين",
+              label: language === "ar" ? "المتطوعين" : "Volunteers",
               value: agencyData.volunteers,
               color: "text-green-500",
               valueClass: "text-green-600",
               Icon: Users,
             },
             {
-              label: "نوع الوكالة",
-              value: agencyData.type,
+              label: language === "ar" ? "نوع الوكالة" : "Agency Type",
+              value:
+                language === "ar"
+                  ? agencyData.type === "health"
+                    ? "صحة"
+                    : agencyData.type === "municipality"
+                    ? "بلدية"
+                    : agencyData.type === "education"
+                    ? "تعليم"
+                    : agencyData.type
+                  : agencyData.type,
               color: "text-purple-500",
               Icon: Building2,
             },
           ].map(({ label, value, color, Icon, valueClass }) => (
             <Card key={label}>
               <CardContent className="p-6">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm font-medium text-muted-foreground">
+                <div
+                  className={`flex items-center justify-between ${
+                    language === "ar" ? "flex-row-reverse" : ""
+                  }`}>
+                  <div
+                    className={language === "ar" ? "text-right" : "text-left"}>
+                    <p
+                      className={`text-sm font-medium text-muted-foreground ${
+                        language === "ar" ? "font-arabic" : "font-sans"
+                      }`}>
                       {label}
                     </p>
-                    <p className={`text-2xl font-bold ${valueClass ?? ""}`}>
+                    <p
+                      className={`text-2xl font-bold ${valueClass ?? ""} ${
+                        language === "ar" ? "font-arabic" : "font-sans"
+                      }`}>
                       {value}
                     </p>
                   </div>
@@ -498,11 +575,30 @@ const AgencyDashboard = () => {
           value={activeTab}
           onValueChange={setActiveTab}
           className="space-y-6">
-          <TabsList className="grid w-full grid-cols-4">
-            <TabsTrigger value="overview">المعايير المطلوبة</TabsTrigger>
-            <TabsTrigger value="initiatives">المبادرات</TabsTrigger>
-            <TabsTrigger value="volunteers">المتطوعين</TabsTrigger>
-            <TabsTrigger value="agency-info">معلومات الوكالة</TabsTrigger>
+          <TabsList
+            className={`grid w-full grid-cols-4 ${
+              language === "ar" ? "flex-row-reverse" : ""
+            }`}>
+            <TabsTrigger
+              value="overview"
+              className={language === "ar" ? "font-arabic" : "font-sans"}>
+              {language === "ar" ? "المعايير المطلوبة" : "Required Standards"}
+            </TabsTrigger>
+            <TabsTrigger
+              value="initiatives"
+              className={language === "ar" ? "font-arabic" : "font-sans"}>
+              {language === "ar" ? "المبادرات" : "Initiatives"}
+            </TabsTrigger>
+            <TabsTrigger
+              value="volunteers"
+              className={language === "ar" ? "font-arabic" : "font-sans"}>
+              {language === "ar" ? "المتطوعين" : "Volunteers"}
+            </TabsTrigger>
+            <TabsTrigger
+              value="agency-info"
+              className={language === "ar" ? "font-arabic" : "font-sans"}>
+              {language === "ar" ? "معلومات الوكالة" : "Agency Info"}
+            </TabsTrigger>
           </TabsList>
 
           {/* Overview Tab */}
@@ -511,52 +607,100 @@ const AgencyDashboard = () => {
               {/* Standards Summary */}
               <Card>
                 <CardHeader>
-                  <CardTitle>ملخص المعايير المطلوبة</CardTitle>
-                  <CardDescription>
-                    المعايير المخصصة للوكالة وحالة التنفيذ
+                  <CardTitle
+                    className={
+                      language === "ar"
+                        ? "font-arabic text-right"
+                        : "font-sans text-left"
+                    }>
+                    {language === "ar"
+                      ? "ملخص المعايير المطلوبة"
+                      : "Required Standards Summary"}
+                  </CardTitle>
+                  <CardDescription
+                    className={
+                      language === "ar"
+                        ? "font-arabic text-right"
+                        : "font-sans text-left"
+                    }>
+                    {language === "ar"
+                      ? "المعايير المخصصة للوكالة وحالة التنفيذ"
+                      : "Standards assigned to the agency and implementation status"}
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
                     <div className="text-center p-4 bg-green-50 rounded-lg">
-                      <div className="text-2xl font-bold text-green-600">
+                      <div
+                        className={`text-2xl font-bold text-green-600 ${
+                          language === "ar" ? "font-arabic" : "font-sans"
+                        }`}>
                         {
                           assignedStandards.filter(
                             (s) => s.status === "approved"
                           ).length
                         }
                       </div>
-                      <div className="text-sm text-green-600">موافق عليه</div>
+                      <div
+                        className={`text-sm text-green-600 ${
+                          language === "ar" ? "font-arabic" : "font-sans"
+                        }`}>
+                        {language === "ar" ? "موافق عليه" : "Approved"}
+                      </div>
                     </div>
                     <div className="text-center p-4 bg-red-50 rounded-lg">
-                      <div className="text-2xl font-bold text-red-600">
+                      <div
+                        className={`text-2xl font-bold text-red-600 ${
+                          language === "ar" ? "font-arabic" : "font-sans"
+                        }`}>
                         {
                           assignedStandards.filter(
                             (s) => s.status === "rejected"
                           ).length
                         }
                       </div>
-                      <div className="text-sm text-red-600">مرفوض</div>
+                      <div
+                        className={`text-sm text-red-600 ${
+                          language === "ar" ? "font-arabic" : "font-sans"
+                        }`}>
+                        {language === "ar" ? "مرفوض" : "Rejected"}
+                      </div>
                     </div>
                     <div className="text-center p-4 bg-yellow-50 rounded-lg">
-                      <div className="text-2xl font-bold text-yellow-600">
+                      <div
+                        className={`text-2xl font-bold text-yellow-600 ${
+                          language === "ar" ? "font-arabic" : "font-sans"
+                        }`}>
                         {
                           assignedStandards.filter(
                             (s) => s.status === "pending"
                           ).length
                         }
                       </div>
-                      <div className="text-sm text-yellow-600">في الانتظار</div>
+                      <div
+                        className={`text-sm text-yellow-600 ${
+                          language === "ar" ? "font-arabic" : "font-sans"
+                        }`}>
+                        {language === "ar" ? "في الانتظار" : "Pending"}
+                      </div>
                     </div>
                     <div className="text-center p-4 bg-gray-50 rounded-lg">
-                      <div className="text-2xl font-bold text-gray-600">
+                      <div
+                        className={`text-2xl font-bold text-gray-600 ${
+                          language === "ar" ? "font-arabic" : "font-sans"
+                        }`}>
                         {
                           assignedStandards.filter(
                             (s) => s.status === "not_started"
                           ).length
                         }
                       </div>
-                      <div className="text-sm text-gray-600">لم يبدأ</div>
+                      <div
+                        className={`text-sm text-gray-600 ${
+                          language === "ar" ? "font-arabic" : "font-sans"
+                        }`}>
+                        {language === "ar" ? "لم يبدأ" : "Not Started"}
+                      </div>
                     </div>
                   </div>
                 </CardContent>
@@ -565,30 +709,68 @@ const AgencyDashboard = () => {
               {/* Assigned Standards List */}
               <Card>
                 <CardHeader>
-                  <CardTitle>المعايير المخصصة للوكالة</CardTitle>
-                  <CardDescription>
-                    قائمة المعايير التي يجب على الوكالة تنفيذها
+                  <CardTitle
+                    className={
+                      language === "ar"
+                        ? "font-arabic text-right"
+                        : "font-sans text-left"
+                    }>
+                    {language === "ar"
+                      ? "المعايير المخصصة للوكالة"
+                      : "Assigned Standards"}
+                  </CardTitle>
+                  <CardDescription
+                    className={
+                      language === "ar"
+                        ? "font-arabic text-right"
+                        : "font-sans text-left"
+                    }>
+                    {language === "ar"
+                      ? "قائمة المعايير التي يجب على الوكالة تنفيذها"
+                      : "List of standards that the agency must implement"}
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-4">
                     {assignedStandards.map((standard) => (
                       <div key={standard.id} className="border rounded-lg p-4">
-                        <div className="flex items-start justify-between mb-3">
-                          <div className="flex items-center gap-3">
+                        <div
+                          className={`flex items-start justify-between mb-3 ${
+                            language === "ar" ? "flex-row-reverse" : ""
+                          }`}>
+                          <div
+                            className={`flex items-center gap-3 ${
+                              language === "ar" ? "flex-row-reverse" : ""
+                            }`}>
                             <span className="text-2xl">
                               {getSubmissionTypeIcon(standard.submissionType)}
                             </span>
-                            <div>
-                              <h3 className="text-lg font-semibold">
+                            <div
+                              className={
+                                language === "ar" ? "text-right" : "text-left"
+                              }>
+                              <h3
+                                className={`text-lg font-semibold ${
+                                  language === "ar"
+                                    ? "font-arabic"
+                                    : "font-sans"
+                                }`}>
                                 {standard.standard}
                               </h3>
-                              <p className="text-sm text-muted-foreground">
+                              <p
+                                className={`text-sm text-muted-foreground ${
+                                  language === "ar"
+                                    ? "font-arabic"
+                                    : "font-sans"
+                                }`}>
                                 {standard.requirement}
                               </p>
                             </div>
                           </div>
-                          <div className="flex items-center gap-2">
+                          <div
+                            className={`flex items-center gap-2 ${
+                              language === "ar" ? "flex-row-reverse" : ""
+                            }`}>
                             {getStandardStatusBadge(standard.status)}
                             <Button variant="outline" size="sm">
                               <Eye className="w-4 h-4" />
@@ -597,61 +779,139 @@ const AgencyDashboard = () => {
                         </div>
 
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm mb-3">
-                          <div>
-                            <span className="font-medium">نوع التقديم:</span>
-                            <p className="text-muted-foreground">
-                              {standard.submissionType === "text" && "نص"}
-                              {standard.submissionType === "pdf" && "ملف PDF"}
-                              {standard.submissionType === "photo" && "صورة"}
-                              {standard.submissionType === "video" && "فيديو"}
+                          <div
+                            className={
+                              language === "ar" ? "text-right" : "text-left"
+                            }>
+                            <span
+                              className={`font-medium ${
+                                language === "ar" ? "font-arabic" : "font-sans"
+                              }`}>
+                              {language === "ar"
+                                ? "نوع التقديم:"
+                                : "Submission Type:"}
+                            </span>
+                            <p
+                              className={`text-muted-foreground ${
+                                language === "ar" ? "font-arabic" : "font-sans"
+                              }`}>
+                              {standard.submissionType === "text" &&
+                                (language === "ar" ? "نص" : "Text")}
+                              {standard.submissionType === "pdf" &&
+                                (language === "ar" ? "ملف PDF" : "PDF File")}
+                              {standard.submissionType === "photo" &&
+                                (language === "ar" ? "صورة" : "Photo")}
+                              {standard.submissionType === "video" &&
+                                (language === "ar" ? "فيديو" : "Video")}
                             </p>
                           </div>
-                          <div>
-                            <span className="font-medium">
-                              تاريخ الاستحقاق:
+                          <div
+                            className={
+                              language === "ar" ? "text-right" : "text-left"
+                            }>
+                            <span
+                              className={`font-medium ${
+                                language === "ar" ? "font-arabic" : "font-sans"
+                              }`}>
+                              {language === "ar"
+                                ? "تاريخ الاستحقاق:"
+                                : "Due Date:"}
                             </span>
-                            <p className="text-muted-foreground">
+                            <p
+                              className={`text-muted-foreground ${
+                                language === "ar" ? "font-arabic" : "font-sans"
+                              }`}>
                               {formatDate(standard.dueDate)}
                             </p>
                           </div>
-                          <div>
-                            <span className="font-medium">الحالة:</span>
-                            <p className="text-muted-foreground">
-                              {standard.status === "approved" && "موافق عليه"}
-                              {standard.status === "rejected" && "مرفوض"}
-                              {standard.status === "pending" && "في الانتظار"}
-                              {standard.status === "not_started" && "لم يبدأ"}
+                          <div
+                            className={
+                              language === "ar" ? "text-right" : "text-left"
+                            }>
+                            <span
+                              className={`font-medium ${
+                                language === "ar" ? "font-arabic" : "font-sans"
+                              }`}>
+                              {language === "ar" ? "الحالة:" : "Status:"}
+                            </span>
+                            <p
+                              className={`text-muted-foreground ${
+                                language === "ar" ? "font-arabic" : "font-sans"
+                              }`}>
+                              {standard.status === "approved" &&
+                                (language === "ar" ? "موافق عليه" : "Approved")}
+                              {standard.status === "rejected" &&
+                                (language === "ar" ? "مرفوض" : "Rejected")}
+                              {standard.status === "pending" &&
+                                (language === "ar" ? "في الانتظار" : "Pending")}
+                              {standard.status === "not_started" &&
+                                (language === "ar" ? "لم يبدأ" : "Not Started")}
                             </p>
                           </div>
                         </div>
 
                         <div className="mb-3">
-                          <span className="font-medium text-sm">
-                            المتطلبات:
+                          <span
+                            className={`font-medium text-sm ${
+                              language === "ar" ? "font-arabic" : "font-sans"
+                            }`}>
+                            {language === "ar" ? "المتطلبات:" : "Requirements:"}
                           </span>
-                          <ul className="list-disc list-inside text-sm text-muted-foreground mt-1">
+                          <ul
+                            className={`list-disc list-inside text-sm text-muted-foreground mt-1 ${
+                              language === "ar"
+                                ? "text-right font-arabic"
+                                : "text-left font-sans"
+                            }`}>
                             {standard.requirements.map((req, index) => (
                               <li key={index}>{req}</li>
                             ))}
                           </ul>
                         </div>
 
-                        <p className="text-sm text-muted-foreground mb-3">
+                        <p
+                          className={`text-sm text-muted-foreground mb-3 ${
+                            language === "ar"
+                              ? "text-right font-arabic"
+                              : "text-left font-sans"
+                          }`}>
                           {standard.description}
                         </p>
 
-                        <div className="flex items-center gap-2">
-                          <Button variant="outline" size="sm">
+                        <div
+                          className={`flex items-center gap-2 ${
+                            language === "ar" ? "flex-row-reverse" : ""
+                          }`}>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className={
+                              language === "ar" ? "font-arabic" : "font-sans"
+                            }>
                             <Edit className="w-4 h-4" />
-                            تعديل
+                            {language === "ar" ? "تعديل" : "Edit"}
                           </Button>
-                          <Button variant="outline" size="sm">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className={
+                              language === "ar" ? "font-arabic" : "font-sans"
+                            }>
                             <Plus className="w-4 h-4" />
-                            إضافة تقديم
+                            {language === "ar"
+                              ? "إضافة تقديم"
+                              : "Add Submission"}
                           </Button>
-                          <Button variant="outline" size="sm">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className={
+                              language === "ar" ? "font-arabic" : "font-sans"
+                            }>
                             <Eye className="w-4 h-4" />
-                            عرض التقديمات
+                            {language === "ar"
+                              ? "عرض التقديمات"
+                              : "View Submissions"}
                           </Button>
                         </div>
                       </div>
