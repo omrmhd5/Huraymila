@@ -19,6 +19,13 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { useTheme } from "@/contexts/ThemeContext";
 import Standards from "@/lib/standards";
 import {
@@ -36,6 +43,8 @@ const StandardsManagement = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedAgency, setSelectedAgency] = useState("all");
   const [selectedStatus, setSelectedStatus] = useState("all");
+  const [selectedStandard, setSelectedStandard] = useState(null);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
   const standards = Standards();
   const { records_for_follow_up } = standards;
   const [standardsList, setStandardsList] = useState(records_for_follow_up);
@@ -113,8 +122,12 @@ const StandardsManagement = () => {
   };
 
   const viewSubmissions = (standardId) => {
-    // Navigate to submissions view page
-    navigate(`/admin/standards/${standardId}`);
+    // Find the standard and show it in dialog
+    const standard = standardsList.find((s) => s.id === standardId);
+    if (standard) {
+      setSelectedStandard(standard);
+      setIsDialogOpen(true);
+    }
   };
 
   const toggleStatus = (standard) => {
@@ -436,45 +449,6 @@ const StandardsManagement = () => {
                           <Eye className="w-4 h-4 mr-1" />
                           {language === "ar" ? "عرض" : "View"}
                         </Button>
-                        <Button
-                          size="sm"
-                          variant={
-                            standard.status === "approved" ||
-                            standard.status === "rejected"
-                              ? "default"
-                              : "outlined"
-                          }
-                          disabled={standard.status === "didnt_submit"}
-                          onClick={() => toggleStatus(standard)}
-                          className={`w-full ${
-                            standard.status === "rejected" ||
-                            standard.status === "pending_approval"
-                              ? "bg-green-700 text-green-50 border-green-200 hover:bg-green-500"
-                              : standard.status === "approved"
-                              ? "bg-red-700 text-red-50 border-red-200 hover:bg-red-500"
-                              : "bg-gray-700 text-gray-50 border-gray-200"
-                          }`}
-                        >
-                          {standard.status === "approved" ? (
-                            <XCircle className="w-4 h-4 mr-1" />
-                          ) : standard.status === "didnt_submit" ? (
-                            <AlertCircle className="w-4 h-4 mr-1" />
-                          ) : (
-                            <CheckCircle className="w-4 h-4 mr-1" />
-                          )}
-                          {standard.status === "rejected" ||
-                          standard.status === "pending_approval"
-                            ? language === "ar"
-                              ? "موافقة"
-                              : "Approve"
-                            : standard.status === "approved"
-                            ? language === "ar"
-                              ? "رفض"
-                              : "Reject"
-                            : language === "ar"
-                            ? "لم يتم التقديم"
-                            : "No Submissions"}
-                        </Button>
                       </div>
                     </TableCell>
                   </TableRow>
@@ -484,6 +458,162 @@ const StandardsManagement = () => {
           </div>
         </CardContent>
       </Card>
+
+      {/* Standard Details Dialog */}
+      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+        <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>
+              {language === "ar" ? "تفاصيل المعيار" : "Standard Details"}
+            </DialogTitle>
+          </DialogHeader>
+
+          {selectedStandard && (
+            <div className="space-y-6">
+              {/* Standard Information */}
+              <div className="space-y-4">
+                <div>
+                  <h3 className="text-lg font-semibold mb-2">
+                    {language === "ar" ? "المعيار" : "Standard"}
+                  </h3>
+                  <p className="text-sm leading-relaxed bg-gray-50 p-3 rounded">
+                    {selectedStandard.standard}
+                  </p>
+                </div>
+
+                <div>
+                  <h3 className="text-lg font-semibold mb-2">
+                    {language === "ar" ? "المتطلبات" : "Requirements"}
+                  </h3>
+                  <div className="space-y-2">
+                    {selectedStandard.requirements.map((req, index) => (
+                      <div
+                        key={index}
+                        className="flex items-baseline gap-2 text-sm"
+                      >
+                        <span className="text-blue-500">●</span>
+                        <span>{req}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <div>
+                  <h3 className="text-lg font-semibold mb-2">
+                    {language === "ar"
+                      ? "الوكالات المسؤولة"
+                      : "Responsible Agencies"}
+                  </h3>
+                  <div className="flex flex-wrap gap-2">
+                    {selectedStandard.assigned_agencies.map((agency, index) => (
+                      <Badge key={index} variant="outline">
+                        {agency}
+                      </Badge>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <h3 className="text-lg font-semibold mb-2">
+                      {language === "ar" ? "الحالة" : "Status"}
+                    </h3>
+                    {getStatusBadge(selectedStandard)}
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-semibold mb-2">
+                      {language === "ar"
+                        ? "نسبة التقديمات المعتمدة"
+                        : "Approved Submissions"}
+                    </h3>
+                    <Badge variant="secondary" className="text-sm">
+                      {(() => {
+                        const totalAgencies =
+                          selectedStandard.assigned_agencies.length;
+                        if (totalAgencies === 0) return "0%";
+                        const approvedCount =
+                          selectedStandard.status === "approved" ? 1 : 0;
+                        const rawPercentage =
+                          (approvedCount / totalAgencies) * 100;
+                        const percentage = Math.max(
+                          0,
+                          Math.min(100, Math.round(rawPercentage))
+                        );
+                        return `${percentage}%`;
+                      })()}
+                    </Badge>
+                  </div>
+                </div>
+              </div>
+
+              {/* Actions Section */}
+              <div className="border-t pt-6">
+                <h3 className="text-lg font-semibold mb-4">
+                  {language === "ar" ? "الإجراءات" : "Actions"}
+                </h3>
+                <div className="flex flex-col gap-3">
+                  <Button
+                    size="lg"
+                    variant={
+                      selectedStandard.status === "approved" ||
+                      selectedStandard.status === "rejected"
+                        ? "default"
+                        : "outlined"
+                    }
+                    disabled={selectedStandard.status === "didnt_submit"}
+                    onClick={() => {
+                      toggleStatus(selectedStandard);
+                      setIsDialogOpen(false);
+                    }}
+                    className={`w-full ${
+                      selectedStandard.status === "rejected" ||
+                      selectedStandard.status === "pending_approval"
+                        ? "bg-green-700 text-green-50 border-green-200 hover:bg-green-500"
+                        : selectedStandard.status === "approved"
+                        ? "bg-red-700 text-red-50 border-red-200 hover:bg-red-500"
+                        : "bg-gray-700 text-gray-50 border-gray-200"
+                    }`}
+                  >
+                    {selectedStandard.status === "approved" ? (
+                      <XCircle className="w-5 h-5 mr-2" />
+                    ) : selectedStandard.status === "didnt_submit" ? (
+                      <AlertCircle className="w-5 h-5 mr-2" />
+                    ) : (
+                      <CheckCircle className="w-5 h-5 mr-2" />
+                    )}
+                    {selectedStandard.status === "rejected" ||
+                    selectedStandard.status === "pending_approval"
+                      ? language === "ar"
+                        ? "موافقة"
+                        : "Approve"
+                      : selectedStandard.status === "approved"
+                      ? language === "ar"
+                        ? "رفض"
+                        : "Reject"
+                      : language === "ar"
+                      ? "لم يتم التقديم"
+                      : "No Submissions"}
+                  </Button>
+
+                  <Button
+                    size="lg"
+                    variant="outline"
+                    onClick={() =>
+                      navigate(`/admin/standards/${selectedStandard.id}`)
+                    }
+                    className="w-full"
+                  >
+                    <Eye className="w-5 h-5 mr-2" />
+                    {language === "ar"
+                      ? "عرض التقديمات التفصيلية"
+                      : "View Detailed Submissions"}
+                  </Button>
+                </div>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
