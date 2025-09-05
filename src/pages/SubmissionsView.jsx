@@ -5,6 +5,13 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
   Dialog,
   DialogContent,
   DialogHeader,
@@ -37,6 +44,7 @@ const SubmissionsView = () => {
   const [activeTab, setActiveTab] = useState("all");
   const [selectedSubmission, setSelectedSubmission] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedAgency, setSelectedAgency] = useState("all");
   const standards = Standards();
 
   // Find the standard by ID
@@ -301,10 +309,21 @@ PDF content for standard ${index} - contains:
     }
   };
 
-  const filteredSubmissions =
-    activeTab === "all"
-      ? submissions
-      : submissions.filter((sub) => sub.type === activeTab);
+  const filteredSubmissions = (() => {
+    let filtered = submissions;
+
+    // Filter by type (tab)
+    if (activeTab !== "all") {
+      filtered = filtered.filter((sub) => sub.type === activeTab);
+    }
+
+    // Filter by agency
+    if (selectedAgency !== "all") {
+      filtered = filtered.filter((sub) => sub.agency === selectedAgency);
+    }
+
+    return filtered;
+  })();
 
   if (!standard) {
     return (
@@ -554,6 +573,38 @@ PDF content for standard ${index} - contains:
           </CardTitle>
         </CardHeader>
         <CardContent>
+          {/* Agency Filter */}
+          <div className="mb-4">
+            <div className="flex items-center gap-4">
+              <div className="space-y-2">
+                <label className="text-sm font-medium">
+                  {language === "ar" ? "تصفية حسب الوكالة" : "Filter by Agency"}
+                </label>
+                <Select
+                  value={selectedAgency}
+                  onValueChange={setSelectedAgency}
+                >
+                  <SelectTrigger className="w-64">
+                    <SelectValue
+                      placeholder={
+                        language === "ar" ? "اختر الوكالة" : "Select Agency"
+                      }
+                    />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">
+                      {language === "ar" ? "جميع الوكالات" : "All Agencies"}
+                    </SelectItem>
+                    {standard?.assigned_agencies.map((agency) => (
+                      <SelectItem key={agency} value={agency}>
+                        {agency}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+          </div>
           <Tabs value={activeTab} onValueChange={setActiveTab}>
             <TabsList className="grid w-full grid-cols-5">
               {[
