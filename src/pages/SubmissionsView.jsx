@@ -45,6 +45,7 @@ const SubmissionsView = () => {
   const [selectedSubmission, setSelectedSubmission] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [standards, agencyToStandardsMap] = Standards();
+  const [selectedAgency, setSelectedAgency] = useState("all");
 
   // Find the standard by ID
   const standard = standards.records.find((s) => s.id === parseInt(standardId));
@@ -217,8 +218,7 @@ PDF content for standard ${index} - contains:
     return (
       <Badge
         variant={status.variant}
-        className={`text-center ${status.className}`}
-      >
+        className={`text-center ${status.className}`}>
         {status.icon}
         {language === "ar" ? status.label.ar : status.label.en}
       </Badge>
@@ -269,8 +269,7 @@ PDF content for standard ${index} - contains:
               controls
               autoPlay
               className="w-full h-auto max-h-[80vh] rounded-lg"
-              src={selectedSubmission.content}
-            >
+              src={selectedSubmission.content}>
               {language === "ar"
                 ? "متصفحك لا يدعم تشغيل الفيديو"
                 : "Your browser does not support video playback"}
@@ -351,8 +350,7 @@ PDF content for standard ${index} - contains:
           <Button
             variant="ghost"
             onClick={() => navigate("/admin/standards")}
-            className="mb-4"
-          >
+            className="mb-4">
             <ArrowLeft className="w-4 h-4 mr-2" />
             {language === "ar" ? "العودة للمعايير" : "Back to Standards"}
           </Button>
@@ -365,8 +363,7 @@ PDF content for standard ${index} - contains:
         <div className="text-right">
           <Badge
             variant="outline"
-            className="text-lg px-4 py-2 whitespace-nowrap"
-          >
+            className="text-lg px-4 py-2 whitespace-nowrap">
             {submissions.length} {language === "ar" ? "تقديمات" : "Submissions"}
           </Badge>
         </div>
@@ -412,8 +409,7 @@ PDF content for standard ${index} - contains:
                           agencyStatuses[agency] === "submitted"
                             ? "bg-green-100 text-green-800 border-green-300"
                             : "bg-red-100 text-red-800 border-red-300"
-                        }`}
-                      >
+                        }`}>
                         {agency}
                       </Badge>
                     ));
@@ -425,8 +421,7 @@ PDF content for standard ${index} - contains:
                   <div className="flex items-center gap-2">
                     <Badge
                       variant="outline"
-                      className="bg-green-100 text-green-800 border-green-300"
-                    ></Badge>
+                      className="bg-green-100 text-green-800 border-green-300"></Badge>
                     <span className="text-green-700">
                       {language === "ar" ? "قدمت التقديم" : "Submitted"}
                     </span>
@@ -434,8 +429,7 @@ PDF content for standard ${index} - contains:
                   <div className="flex items-center gap-2">
                     <Badge
                       variant="outline"
-                      className="bg-red-100 text-red-800 border-red-300"
-                    ></Badge>
+                      className="bg-red-100 text-red-800 border-red-300"></Badge>
                     <span className="text-red-700">
                       {language === "ar" ? "لم تقدم التقديم" : "Not Submitted"}
                     </span>
@@ -579,8 +573,7 @@ PDF content for standard ${index} - contains:
                 </label>
                 <Select
                   value={selectedAgency}
-                  onValueChange={setSelectedAgency}
-                >
+                  onValueChange={setSelectedAgency}>
                   <SelectTrigger className="w-64">
                     <SelectValue
                       placeholder={
@@ -652,8 +645,7 @@ PDF content for standard ${index} - contains:
                   {filteredSubmissions.map((submission) => (
                     <Card
                       key={submission.id}
-                      className="hover:shadow-md transition-shadow"
-                    >
+                      className="hover:shadow-md transition-shadow">
                       <CardHeader className="pb-3">
                         <div className="flex items-center justify-between">
                           {getTypeIcon(submission.type)}
@@ -688,8 +680,7 @@ PDF content for standard ${index} - contains:
                             size="sm"
                             variant="outline"
                             className="flex-1"
-                            onClick={() => openModal(submission)}
-                          >
+                            onClick={() => openModal(submission)}>
                             <Eye className="w-4 h-4 mr-1" />
                             {language === "ar" ? "عرض" : "View"}
                           </Button>
@@ -715,8 +706,7 @@ PDF content for standard ${index} - contains:
                               : submission.status === "approved"
                               ? "bg-red-700 text-red-50 border-red-200 hover:bg-red-500"
                               : "bg-gray-700 text-gray-50 border-gray-200"
-                          }`}
-                        >
+                          }`}>
                           {submission.status === "approved" ? (
                             <XCircle className="w-4 h-4 mr-1" />
                           ) : (
@@ -756,8 +746,7 @@ PDF content for standard ${index} - contains:
                 variant="ghost"
                 size="sm"
                 onClick={closeModal}
-                className="h-8 w-8 p-0"
-              >
+                className="h-8 w-8 p-0">
                 <X className="h-4 w-4" />
               </Button>
             </div>

@@ -48,7 +48,6 @@ const AgencyManagement = () => {
     email: "",
     phone: "",
     address: "",
-    type: "health",
     agencyEmail: "",
     agencyPassword: "",
   });
@@ -89,7 +88,6 @@ const AgencyManagement = () => {
       email: "ahmed@moh.gov.sa",
       phone: "+966-11-123-4567",
       address: "شارع الملك فهد، حريملاء",
-      type: "health",
       agencyEmail: "health@harimlaa.gov.sa",
       agencyPassword: "health123",
       initiatives: 12,
@@ -103,7 +101,6 @@ const AgencyManagement = () => {
       email: "sara@baladiyah.gov.sa",
       phone: "+966-11-123-4568",
       address: "مبنى البلدية، حريملاء",
-      type: "municipality",
       agencyEmail: "municipality@harimlaa.gov.sa",
       agencyPassword: "municipality123",
       initiatives: 8,
@@ -117,7 +114,6 @@ const AgencyManagement = () => {
       email: "fatima@hospital.gov.sa",
       phone: "+966-11-123-4569",
       address: "شارع المستشفى، حريملاء",
-      type: "health",
       agencyEmail: "hospital@harimlaa.gov.sa",
       agencyPassword: "hospital123",
       initiatives: 15,
@@ -182,7 +178,6 @@ const AgencyManagement = () => {
         email: "",
         phone: "",
         address: "",
-        type: "health",
         agencyEmail: "",
         agencyPassword: "",
       });
@@ -206,7 +201,6 @@ const AgencyManagement = () => {
       email: agency.email,
       phone: agency.phone,
       address: agency.address,
-      type: agency.type,
       agencyEmail: agency.agencyEmail,
       agencyPassword: agency.agencyPassword,
     });
@@ -241,31 +235,6 @@ const AgencyManagement = () => {
 
   const cancelDelete = () => {
     setDeleteConfirm({ show: false, agencyId: null, agencyName: "" });
-  };
-
-  const getTypeBadge = (type) => {
-    switch (type) {
-      case "health":
-        return (
-          <Badge variant="outline" className="bg-blue-50 text-blue-700">
-            {language === "ar" ? "صحة" : "Health"}
-          </Badge>
-        );
-      case "municipality":
-        return (
-          <Badge variant="outline" className="bg-green-50 text-green-700">
-            {language === "ar" ? "بلدية" : "Municipality"}
-          </Badge>
-        );
-      case "education":
-        return (
-          <Badge variant="outline" className="bg-purple-50 text-purple-700">
-            {language === "ar" ? "تعليم" : "Education"}
-          </Badge>
-        );
-      default:
-        return <Badge variant="outline">{type}</Badge>;
-    }
   };
 
   return (
@@ -320,7 +289,6 @@ const AgencyManagement = () => {
                           <h3 className="text-lg font-semibold">
                             {agency.name}
                           </h3>
-                          {getTypeBadge(agency.type)}
                         </div>
                         <p className="text-muted-foreground mb-3">
                           {agency.description}
@@ -507,7 +475,7 @@ const AgencyManagement = () => {
             </CardHeader>
             <CardContent>
               <form onSubmit={handleSubmit} className="space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 gap-4">
                   <div className="space-y-2">
                     <Label htmlFor="name">
                       {language === "ar" ? "اسم الوكالة *" : "Agency Name *"}
@@ -522,29 +490,6 @@ const AgencyManagement = () => {
                       }
                       required
                     />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="type">
-                      {language === "ar" ? "نوع الوكالة" : "Agency Type"}
-                    </Label>
-                    <select
-                      name="type"
-                      value={formData.type}
-                      onChange={handleInputChange}
-                      className="w-full p-2 border rounded-md">
-                      <option value="health">
-                        {language === "ar" ? "صحة" : "Health"}
-                      </option>
-                      <option value="municipality">
-                        {language === "ar" ? "بلدية" : "Municipality"}
-                      </option>
-                      <option value="education">
-                        {language === "ar" ? "تعليم" : "Education"}
-                      </option>
-                      <option value="other">
-                        {language === "ar" ? "أخرى" : "Other"}
-                      </option>
-                    </select>
                   </div>
                 </div>
 
@@ -692,7 +637,6 @@ const AgencyManagement = () => {
                         email: "",
                         phone: "",
                         address: "",
-                        type: "health",
                         agencyEmail: "",
                         agencyPassword: "",
                       });
