@@ -5,6 +5,13 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
   Dialog,
   DialogContent,
   DialogHeader,
@@ -44,6 +51,20 @@ const SubmissionsView = () => {
 
   // Mock submissions data - you can replace this with real data
   const [submissions, setSubmissions] = useState([]);
+
+  // Function to determine agency submission status
+  const getAgencySubmissionStatus = (standard) => {
+    // Mock submission status for each agency
+    // In real implementation, this would come from your data
+    const agencyStatuses = {};
+    standard.assigned_agencies.forEach((agency) => {
+      // Randomly assign submission status for demo purposes
+      // In real app, this would be based on actual submission data
+      agencyStatuses[agency] =
+        Math.random() > 0.5 ? "submitted" : "not_submitted";
+    });
+    return agencyStatuses;
+  };
 
   useEffect(() => {
     if (standard) {
@@ -196,7 +217,8 @@ PDF content for standard ${index} - contains:
     return (
       <Badge
         variant={status.variant}
-        className={`text-center ${status.className}`}>
+        className={`text-center ${status.className}`}
+      >
         {status.icon}
         {language === "ar" ? status.label.ar : status.label.en}
       </Badge>
@@ -247,7 +269,8 @@ PDF content for standard ${index} - contains:
               controls
               autoPlay
               className="w-full h-auto max-h-[80vh] rounded-lg"
-              src={selectedSubmission.content}>
+              src={selectedSubmission.content}
+            >
               {language === "ar"
                 ? "متصفحك لا يدعم تشغيل الفيديو"
                 : "Your browser does not support video playback"}
@@ -283,10 +306,21 @@ PDF content for standard ${index} - contains:
     }
   };
 
-  const filteredSubmissions =
-    activeTab === "all"
-      ? submissions
-      : submissions.filter((sub) => sub.type === activeTab);
+  const filteredSubmissions = (() => {
+    let filtered = submissions;
+
+    // Filter by type (tab)
+    if (activeTab !== "all") {
+      filtered = filtered.filter((sub) => sub.type === activeTab);
+    }
+
+    // Filter by agency
+    if (selectedAgency !== "all") {
+      filtered = filtered.filter((sub) => sub.agency === selectedAgency);
+    }
+
+    return filtered;
+  })();
 
   if (!standard) {
     return (
@@ -317,7 +351,8 @@ PDF content for standard ${index} - contains:
           <Button
             variant="ghost"
             onClick={() => navigate("/admin/standards")}
-            className="mb-4">
+            className="mb-4"
+          >
             <ArrowLeft className="w-4 h-4 mr-2" />
             {language === "ar" ? "العودة للمعايير" : "Back to Standards"}
           </Button>
@@ -330,7 +365,8 @@ PDF content for standard ${index} - contains:
         <div className="text-right">
           <Badge
             variant="outline"
-            className="text-lg px-4 py-2 whitespace-nowrap">
+            className="text-lg px-4 py-2 whitespace-nowrap"
+          >
             {submissions.length} {language === "ar" ? "تقديمات" : "Submissions"}
           </Badge>
         </div>
@@ -363,12 +399,48 @@ PDF content for standard ${index} - contains:
                   ? "الوكالات المسؤولة:"
                   : "Responsible Agencies:"}
               </h4>
-              <div className="flex flex-wrap gap-2">
-                {standard.assigned_agencies.map((agency, index) => (
-                  <Badge key={index} variant="secondary">
-                    {agency}
-                  </Badge>
-                ))}
+              <div className="space-y-3">
+                {/* Agencies with color coding */}
+                <div className="flex flex-wrap gap-2">
+                  {(() => {
+                    const agencyStatuses = getAgencySubmissionStatus(standard);
+                    return standard.assigned_agencies.map((agency, index) => (
+                      <Badge
+                        key={index}
+                        variant="outline"
+                        className={`${
+                          agencyStatuses[agency] === "submitted"
+                            ? "bg-green-100 text-green-800 border-green-300"
+                            : "bg-red-100 text-red-800 border-red-300"
+                        }`}
+                      >
+                        {agency}
+                      </Badge>
+                    ));
+                  })()}
+                </div>
+
+                {/* Inline Legend */}
+                <div className="flex flex-wrap gap-4 text-sm">
+                  <div className="flex items-center gap-2">
+                    <Badge
+                      variant="outline"
+                      className="bg-green-100 text-green-800 border-green-300"
+                    ></Badge>
+                    <span className="text-green-700">
+                      {language === "ar" ? "قدمت التقديم" : "Submitted"}
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Badge
+                      variant="outline"
+                      className="bg-red-100 text-red-800 border-red-300"
+                    ></Badge>
+                    <span className="text-red-700">
+                      {language === "ar" ? "لم تقدم التقديم" : "Not Submitted"}
+                    </span>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -433,7 +505,7 @@ PDF content for standard ${index} - contains:
       </div>
 
       {/* Status Summary */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         {[
           {
             status: "approved",
@@ -464,6 +536,30 @@ PDF content for standard ${index} - contains:
             </CardContent>
           </Card>
         ))}
+
+        {/* Acceptance Percentage Card */}
+        <Card>
+          <CardContent className="p-4">
+            <div className="text-center">
+              <div className="text-2xl font-bold text-blue-600">
+                {(() => {
+                  const approvedCount = submissions.filter(
+                    (s) => s.status === "approved"
+                  ).length;
+                  const totalCount = submissions.length;
+                  const percentage =
+                    totalCount > 0
+                      ? Math.round((approvedCount / totalCount) * 100)
+                      : 0;
+                  return `${percentage}%`;
+                })()}
+              </div>
+              <p className="text-sm text-muted-foreground">
+                {language === "ar" ? "نسبة القبول" : "Acceptance Rate"}
+              </p>
+            </div>
+          </CardContent>
+        </Card>
       </div>
 
       {/* Submissions Tabs */}
@@ -474,6 +570,38 @@ PDF content for standard ${index} - contains:
           </CardTitle>
         </CardHeader>
         <CardContent>
+          {/* Agency Filter */}
+          <div className="mb-4">
+            <div className="flex items-center gap-4">
+              <div className="space-y-2">
+                <label className="text-sm font-medium">
+                  {language === "ar" ? "تصفية حسب الوكالة" : "Filter by Agency"}
+                </label>
+                <Select
+                  value={selectedAgency}
+                  onValueChange={setSelectedAgency}
+                >
+                  <SelectTrigger className="w-64">
+                    <SelectValue
+                      placeholder={
+                        language === "ar" ? "اختر الوكالة" : "Select Agency"
+                      }
+                    />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">
+                      {language === "ar" ? "جميع الوكالات" : "All Agencies"}
+                    </SelectItem>
+                    {standard?.assigned_agencies.map((agency) => (
+                      <SelectItem key={agency} value={agency}>
+                        {agency}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+          </div>
           <Tabs value={activeTab} onValueChange={setActiveTab}>
             <TabsList className="grid w-full grid-cols-5">
               {[
@@ -524,7 +652,8 @@ PDF content for standard ${index} - contains:
                   {filteredSubmissions.map((submission) => (
                     <Card
                       key={submission.id}
-                      className="hover:shadow-md transition-shadow">
+                      className="hover:shadow-md transition-shadow"
+                    >
                       <CardHeader className="pb-3">
                         <div className="flex items-center justify-between">
                           {getTypeIcon(submission.type)}
@@ -559,7 +688,8 @@ PDF content for standard ${index} - contains:
                             size="sm"
                             variant="outline"
                             className="flex-1"
-                            onClick={() => openModal(submission)}>
+                            onClick={() => openModal(submission)}
+                          >
                             <Eye className="w-4 h-4 mr-1" />
                             {language === "ar" ? "عرض" : "View"}
                           </Button>
@@ -585,7 +715,8 @@ PDF content for standard ${index} - contains:
                               : submission.status === "approved"
                               ? "bg-red-700 text-red-50 border-red-200 hover:bg-red-500"
                               : "bg-gray-700 text-gray-50 border-gray-200"
-                          }`}>
+                          }`}
+                        >
                           {submission.status === "approved" ? (
                             <XCircle className="w-4 h-4 mr-1" />
                           ) : (
@@ -625,7 +756,8 @@ PDF content for standard ${index} - contains:
                 variant="ghost"
                 size="sm"
                 onClick={closeModal}
-                className="h-8 w-8 p-0">
+                className="h-8 w-8 p-0"
+              >
                 <X className="h-4 w-4" />
               </Button>
             </div>

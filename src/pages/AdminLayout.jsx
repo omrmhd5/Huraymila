@@ -112,7 +112,7 @@ const AdminLayout = () => {
     if (currentPath === "/admin/standards") return "/admin/standards";
     if (currentPath === "/admin/agency-management")
       return "/admin/agency-management";
-    return "/admin";
+    return null; // Return null if path doesn't match any of the three tabs
   };
 
   const handleTabChange = (value) => {
@@ -171,7 +171,8 @@ const AdminLayout = () => {
       className={cn(
         "min-h-screen bg-gradient-to-br from-background via-background to-muted/30",
         language === "ar" ? "font-arabic" : "font-english"
-      )}>
+      )}
+    >
       {/* Navbar */}
       <nav className="bg-card/95 backdrop-blur-sm border-b border-border shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -204,7 +205,8 @@ const AdminLayout = () => {
                 variant="ghost"
                 size="sm"
                 onClick={handleLanguageChange}
-                className="hidden sm:flex">
+                className="hidden sm:flex"
+              >
                 <Globe className="w-4 h-4" />
                 {language === "ar" ? "EN" : "عربي"}
               </Button>
@@ -213,7 +215,8 @@ const AdminLayout = () => {
                 variant="ghost"
                 size="sm"
                 onClick={handleThemeChange}
-                className="hidden sm:flex">
+                className="hidden sm:flex"
+              >
                 {theme === "light" ? (
                   <Moon className="w-4 h-4" />
                 ) : (
@@ -234,7 +237,8 @@ const AdminLayout = () => {
           <Tabs
             value={getCurrentTab()}
             onValueChange={handleTabChange}
-            className="w-full">
+            className="w-full"
+          >
             <TabsList className="grid w-full grid-cols-2 lg:w-auto lg:grid-cols-3 h-auto p-1 bg-transparent">
               {adminTabs.map((tab) => (
                 <TabsTrigger
@@ -243,7 +247,8 @@ const AdminLayout = () => {
                   className={cn(
                     "flex flex-col items-start gap-2 h-auto p-4 data-[state=active]:bg-primary/10 data-[state=active]:text-primary data-[state=active]:border-primary/20",
                     "border border-transparent hover:border-border/50 transition-all duration-200"
-                  )}>
+                  )}
+                >
                   <div className="flex items-center gap-2">
                     <tab.icon className="w-4 h-4" />
                     <span className="font-medium">{tab.label}</span>
