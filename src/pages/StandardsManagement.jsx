@@ -19,6 +19,13 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { useTheme } from "@/contexts/ThemeContext";
 import Standards from "@/lib/standards";
 import {
@@ -36,6 +43,8 @@ const StandardsManagement = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedAgency, setSelectedAgency] = useState("all");
   const [selectedStatus, setSelectedStatus] = useState("all");
+  const [selectedStandard, setSelectedStandard] = useState(null);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
   const standards = Standards();
   const { records_for_follow_up } = standards;
   const [standardsList, setStandardsList] = useState(records_for_follow_up);
@@ -100,7 +109,8 @@ const StandardsManagement = () => {
     return (
       <Badge
         variant={status.variant}
-        className={`text-center ${status.className}`}>
+        className={`text-center ${status.className}`}
+      >
         {language === "ar" ? status.label.ar : status.label.en}
       </Badge>
     );
@@ -111,9 +121,26 @@ const StandardsManagement = () => {
     return Math.floor(Math.random() * 5);
   };
 
+  const getAgencySubmissionStatus = (standard) => {
+    // Mock submission status for each agency
+    // In real implementation, this would come from your data
+    const agencyStatuses = {};
+    standard.assigned_agencies.forEach((agency) => {
+      // Randomly assign submission status for demo purposes
+      // In real app, this would be based on actual submission data
+      agencyStatuses[agency] =
+        Math.random() > 0.5 ? "submitted" : "not_submitted";
+    });
+    return agencyStatuses;
+  };
+
   const viewSubmissions = (standardId) => {
-    // Navigate to submissions view page
-    navigate(`/admin/standards/${standardId}`);
+    // Find the standard and show it in dialog
+    const standard = standardsList.find((s) => s.id === standardId);
+    if (standard) {
+      setSelectedStandard(standard);
+      setIsDialogOpen(true);
+    }
   };
 
   const toggleStatus = (standard) => {
@@ -148,7 +175,8 @@ const StandardsManagement = () => {
       {/* Summary Statistics */}
       <div
         className={`grid grid-cols-1 md:grid-cols-5 gap-4
-    ${language === "ar" ? "flex-row-reverse" : ""}`}>
+    ${language === "ar" ? "flex-row-reverse" : ""}`}
+      >
         {[
           {
             value: standardsList.length,
@@ -355,7 +383,8 @@ const StandardsManagement = () => {
                         key={header.key}
                         className={`${header.className} ${
                           language === "ar" ? "text-right" : ""
-                        }`}>
+                        }`}
+                      >
                         {language === "ar" ? header.ar : header.en}
                       </TableHead>
                     ))}
@@ -377,7 +406,8 @@ const StandardsManagement = () => {
                         {standard.requirements.map((req, index) => (
                           <div
                             key={index}
-                            className="flex items-baseline gap-2 text-xs">
+                            className="flex items-baseline gap-2 text-xs"
+                          >
                             ● <span className="mt-1">{req}</span>
                           </div>
                         ))}
@@ -389,7 +419,8 @@ const StandardsManagement = () => {
                           <Badge
                             key={index}
                             variant="outline"
-                            className="text-xs">
+                            className="text-xs"
+                          >
                             {agency}
                           </Badge>
                         ))}
@@ -399,17 +430,24 @@ const StandardsManagement = () => {
                     <TableCell>
                       <div className="flex justify-center gap-1">
                         <Badge variant="secondary" className="text-xs">
-                          {language === "ar" ? (
-                            <>
-                              {getSubmissionCount(standard)} /{" "}
-                              {standard.assigned_agencies.length}
-                            </>
-                          ) : (
-                            <>
-                              {standard.assigned_agencies.length} /{" "}
-                              {getSubmissionCount(standard)}
-                            </>
-                          )}
+                          {(() => {
+                            const totalAgencies =
+                              standard.assigned_agencies.length;
+
+                            if (totalAgencies === 0) return "0%";
+
+                            // Count only approved submissions
+                            const approvedCount =
+                              standard.status === "approved" ? 1 : 0;
+
+                            const rawPercentage =
+                              (approvedCount / totalAgencies) * 100;
+                            const percentage = Math.max(
+                              0,
+                              Math.min(100, Math.round(rawPercentage))
+                            );
+                            return `${percentage}%`;
+                          })()}
                         </Badge>
                       </div>
                     </TableCell>
@@ -419,47 +457,10 @@ const StandardsManagement = () => {
                           size="sm"
                           variant="outline"
                           onClick={() => viewSubmissions(standard.id)}
-                          className="w-full">
+                          className="w-full"
+                        >
                           <Eye className="w-4 h-4 mr-1" />
                           {language === "ar" ? "عرض" : "View"}
-                        </Button>
-                        <Button
-                          size="sm"
-                          variant={
-                            standard.status === "approved" ||
-                            standard.status === "rejected"
-                              ? "default"
-                              : "outlined"
-                          }
-                          disabled={standard.status === "didnt_submit"}
-                          onClick={() => toggleStatus(standard)}
-                          className={`w-full ${
-                            standard.status === "rejected" ||
-                            standard.status === "pending_approval"
-                              ? "bg-green-700 text-green-50 border-green-200 hover:bg-green-500"
-                              : standard.status === "approved"
-                              ? "bg-red-700 text-red-50 border-red-200 hover:bg-red-500"
-                              : "bg-gray-700 text-gray-50 border-gray-200"
-                          }`}>
-                          {standard.status === "approved" ? (
-                            <XCircle className="w-4 h-4 mr-1" />
-                          ) : standard.status === "didnt_submit" ? (
-                            <AlertCircle className="w-4 h-4 mr-1" />
-                          ) : (
-                            <CheckCircle className="w-4 h-4 mr-1" />
-                          )}
-                          {standard.status === "rejected" ||
-                          standard.status === "pending_approval"
-                            ? language === "ar"
-                              ? "موافقة"
-                              : "Approve"
-                            : standard.status === "approved"
-                            ? language === "ar"
-                              ? "رفض"
-                              : "Reject"
-                            : language === "ar"
-                            ? "لم يتم التقديم"
-                            : "No Submissions"}
                         </Button>
                       </div>
                     </TableCell>
@@ -470,6 +471,157 @@ const StandardsManagement = () => {
           </div>
         </CardContent>
       </Card>
+
+      {/* Standard Details Dialog */}
+      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+        <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>
+              {language === "ar" ? "تفاصيل المعيار" : "Standard Details"}
+            </DialogTitle>
+          </DialogHeader>
+
+          {selectedStandard && (
+            <div className="space-y-6">
+              {/* Standard Information */}
+              <div className="space-y-4">
+                <div>
+                  <h3 className="text-lg font-semibold mb-2">
+                    {language === "ar" ? "المعيار" : "Standard"}
+                  </h3>
+                  <p className="text-sm leading-relaxed bg-gray-50 p-3 rounded">
+                    {selectedStandard.standard}
+                  </p>
+                </div>
+
+                <div>
+                  <h3 className="text-lg font-semibold mb-2">
+                    {language === "ar" ? "المتطلبات" : "Requirements"}
+                  </h3>
+                  <div className="space-y-2">
+                    {selectedStandard.requirements.map((req, index) => (
+                      <div
+                        key={index}
+                        className="flex items-baseline gap-2 text-sm"
+                      >
+                        <span className="text-blue-500">●</span>
+                        <span>{req}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <div>
+                  <h3 className="text-lg font-semibold mb-2">
+                    {language === "ar"
+                      ? "الوكالات المسؤولة"
+                      : "Responsible Agencies"}
+                  </h3>
+                  <div className="space-y-4">
+                    {/* Agencies with color coding */}
+                    <div className="flex flex-wrap gap-2">
+                      {(() => {
+                        const agencyStatuses =
+                          getAgencySubmissionStatus(selectedStandard);
+                        return selectedStandard.assigned_agencies.map(
+                          (agency, index) => (
+                            <Badge
+                              key={index}
+                              variant="outline"
+                              className={`${
+                                agencyStatuses[agency] === "submitted"
+                                  ? "bg-green-100 text-green-800 border-green-300"
+                                  : "bg-red-100 text-red-800 border-red-300"
+                              }`}
+                            >
+                              {agency}
+                            </Badge>
+                          )
+                        );
+                      })()}
+                    </div>
+
+                    {/* Inline Legend */}
+                    <div className="flex flex-wrap gap-4 text-sm">
+                      <div className="flex items-center gap-2">
+                        <Badge
+                          variant="outline"
+                          className="bg-green-100 text-green-800 border-green-300"
+                        ></Badge>
+                        <span className="text-green-700">
+                          {language === "ar" ? "قدمت التقديم" : "Submitted"}
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Badge
+                          variant="outline"
+                          className="bg-red-100 text-red-800 border-red-300"
+                        ></Badge>
+                        <span className="text-red-700">
+                          {language === "ar"
+                            ? "لم تقدم التقديم"
+                            : "Not Submitted"}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <h3 className="text-lg font-semibold mb-2">
+                      {language === "ar" ? "الحالة" : "Status"}
+                    </h3>
+                    {getStatusBadge(selectedStandard)}
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-semibold mb-2">
+                      {language === "ar"
+                        ? "نسبة التقديمات المعتمدة"
+                        : "Approved Submissions"}
+                    </h3>
+                    <Badge variant="secondary" className="text-sm">
+                      {(() => {
+                        const totalAgencies =
+                          selectedStandard.assigned_agencies.length;
+                        if (totalAgencies === 0) return "0%";
+                        const approvedCount =
+                          selectedStandard.status === "approved" ? 1 : 0;
+                        const rawPercentage =
+                          (approvedCount / totalAgencies) * 100;
+                        const percentage = Math.max(
+                          0,
+                          Math.min(100, Math.round(rawPercentage))
+                        );
+                        return `${percentage}%`;
+                      })()}
+                    </Badge>
+                  </div>
+                </div>
+              </div>
+
+              {/* Actions Section */}
+              <div className="border-t pt-6">
+                <div className="flex flex-col gap-3">
+                  <Button
+                    size="lg"
+                    variant="outline"
+                    onClick={() =>
+                      navigate(`/admin/standards/${selectedStandard.id}`)
+                    }
+                    className="w-full bg-blue-50 hover:bg-blue-100 border-blue-200 text-blue-700 hover:text-blue-800 transition-colors duration-200"
+                  >
+                    <Eye className="w-5 h-5 mr-2" />
+                    {language === "ar"
+                      ? "عرض التقديمات التفصيلية"
+                      : "View Detailed Submissions"}
+                  </Button>
+                </div>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
