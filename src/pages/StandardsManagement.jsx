@@ -43,11 +43,12 @@ const StandardsManagement = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedAgency, setSelectedAgency] = useState("all");
   const [selectedStatus, setSelectedStatus] = useState("all");
+
   const [selectedStandard, setSelectedStandard] = useState(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const standards = Standards();
-  const { records_for_follow_up } = standards;
-  const [standardsList, setStandardsList] = useState(records_for_follow_up);
+  const [standards] = Standards();
+  const [standardsList, setStandardsList] = useState(standards.records);
 
   // Get unique agencies from standards
   const allAgencies = Array.from(

@@ -44,13 +44,10 @@ const SubmissionsView = () => {
   const [activeTab, setActiveTab] = useState("all");
   const [selectedSubmission, setSelectedSubmission] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedAgency, setSelectedAgency] = useState("all");
-  const standards = Standards();
+  const [standards, agencyToStandardsMap] = Standards();
 
   // Find the standard by ID
-  const standard = standards.records_for_follow_up.find(
-    (s) => s.id === parseInt(standardId)
-  );
+  const standard = standards.records.find((s) => s.id === parseInt(standardId));
 
   // Mock submissions data - you can replace this with real data
   const [submissions, setSubmissions] = useState([]);
