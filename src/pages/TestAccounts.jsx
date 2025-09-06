@@ -44,11 +44,11 @@ const TestAccounts = () => {
     {
       email: "agency@test.sa",
       password: "agency123",
-      name: language === "ar" ? "وكالة الصحة" : "Health Agency",
-      type: language === "ar" ? "وكالة" : "Agency",
+      name: language === "ar" ? "جهة الصحة" : "Health Agency",
+      type: language === "ar" ? "جهة" : "Agency",
       description:
         language === "ar"
-          ? "حساب وكالة حكومية - يمكنها إنشاء المبادرات والأخبار"
+          ? "حساب جهة حكومية - يمكنها إنشاء المبادرات والأخبار"
           : "Government agency account - can create initiatives and news",
       icon: Building,
       color: "bg-blue-500",
@@ -257,7 +257,7 @@ const TestAccounts = () => {
                 <p>
                   •{" "}
                   {language === "ar"
-                    ? "حساب الوكالة يمكنه إنشاء وإدارة المبادرات والأخبار"
+                    ? "حساب الجهة يمكنه إنشاء وإدارة المبادرات والأخبار"
                     : "Agency account can create and manage initiatives and news"}
                 </p>
                 <p>

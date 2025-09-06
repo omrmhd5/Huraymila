@@ -485,16 +485,14 @@ const AgencyDashboard = () => {
                   className={`text-xl font-bold text-foreground ${
                     language === "ar" ? "font-arabic" : "font-sans"
                   }`}>
-                  {language === "ar"
-                    ? "لوحة التحكم للوكالة"
-                    : "Agency Dashboard"}
+                  {language === "ar" ? "لوحة التحكم للجهة" : "Agency Dashboard"}
                 </h1>
                 <p
                   className={`text-sm text-muted-foreground ${
                     language === "ar" ? "font-arabic" : "font-sans"
                   }`}>
                   {language === "ar"
-                    ? "إدارة جميع البيانات الخاصة بالوكالة"
+                    ? "إدارة جميع البيانات الخاصة بالجهة"
                     : "Manage all data related to the agency"}
                 </p>
               </div>
@@ -670,7 +668,7 @@ const AgencyDashboard = () => {
             <TabsTrigger
               value="agency-info"
               className={language === "ar" ? "font-arabic" : "font-sans"}>
-              {language === "ar" ? "معلومات الوكالة" : "Agency Info"}
+              {language === "ar" ? "معلومات الجهة" : "Agency Info"}
             </TabsTrigger>
           </TabsList>
 
@@ -697,7 +695,7 @@ const AgencyDashboard = () => {
                         : "font-sans text-left"
                     }>
                     {language === "ar"
-                      ? "المعايير المخصصة للوكالة وحالة التنفيذ"
+                      ? "المعايير المخصصة للجهة وحالة التنفيذ"
                       : "Standards assigned to the agency and implementation status"}
                   </CardDescription>
                 </CardHeader>
@@ -791,7 +789,7 @@ const AgencyDashboard = () => {
                         : "font-sans text-left"
                     }>
                     {language === "ar"
-                      ? "المعايير المخصصة للوكالة"
+                      ? "المعايير المخصصة للجهة"
                       : "Assigned Standards"}
                   </CardTitle>
                   <CardDescription
@@ -801,7 +799,7 @@ const AgencyDashboard = () => {
                         : "font-sans text-left"
                     }>
                     {language === "ar"
-                      ? "قائمة المعايير التي يجب على الوكالة تنفيذها"
+                      ? "قائمة المعايير التي يجب على الجهة تنفيذها"
                       : "List of standards that the agency must implement"}
                   </CardDescription>
                 </CardHeader>
@@ -1288,19 +1286,19 @@ const AgencyDashboard = () => {
           <TabsContent value="agency-info">
             <Card>
               <CardHeader>
-                <CardTitle>معلومات الوكالة</CardTitle>
-                <CardDescription>تفاصيل الوكالة وبيانات الدخول</CardDescription>
+                <CardTitle>معلومات الجهة</CardTitle>
+                <CardDescription>تفاصيل الجهة وبيانات الدخول</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   {/* Agency Information */}
                   <div className="space-y-4">
                     <h3 className="text-lg font-semibold border-b pb-2">
-                      معلومات الوكالة
+                      معلومات الجهة
                     </h3>
                     <div className="space-y-3">
                       <div>
-                        <span className="font-medium">اسم الوكالة:</span>
+                        <span className="font-medium">اسم الجهة:</span>
                         <p className="text-muted-foreground">
                           {agencyData.name}
                         </p>
@@ -1312,7 +1310,7 @@ const AgencyDashboard = () => {
                         </p>
                       </div>
                       <div>
-                        <span className="font-medium">نوع الوكالة:</span>
+                        <span className="font-medium">نوع الجهة:</span>
                         <p className="text-muted-foreground">
                           {agencyData.type}
                         </p>
@@ -1369,13 +1367,13 @@ const AgencyDashboard = () => {
                         </p>
                       </div>
                       <div>
-                        <span className="font-medium">بريد الوكالة:</span>
+                        <span className="font-medium">بريد الجهة:</span>
                         <p className="text-muted-foreground">
                           {agencyData.agencyEmail}
                         </p>
                       </div>
                       <div>
-                        <span className="font-medium">كلمة مرور الوكالة:</span>
+                        <span className="font-medium">كلمة مرور الجهة:</span>
                         <p className="text-muted-foreground">••••••••</p>
                       </div>
                     </div>

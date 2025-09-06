@@ -166,7 +166,7 @@ const StandardsManagement = () => {
         </h1>
         <p className="text-muted-foreground">
           {language === "ar"
-            ? "مراقبة وإدارة المعايير الصحية الـ 80 مع متطلباتها والوكالات المسؤولة عنها"
+            ? "مراقبة وإدارة المعايير الصحية الـ 80 مع متطلباتها والجهات المسؤولة عنها"
             : "Monitor and manage the 80 health standards with their requirements and responsible agencies"}
         </p>
       </div>
@@ -253,19 +253,19 @@ const StandardsManagement = () => {
 
             <div className="space-y-2">
               <label className="text-sm font-medium">
-                {language === "ar" ? "الوكالة المسؤولة" : "Responsible Agency"}
+                {language === "ar" ? "الجهة المسؤولة" : "Responsible Agency"}
               </label>
               <Select value={selectedAgency} onValueChange={setSelectedAgency}>
                 <SelectTrigger>
                   <SelectValue
                     placeholder={
-                      language === "ar" ? "اختر الوكالة" : "Select Agency"
+                      language === "ar" ? "اختر الجهة" : "Select Agency"
                     }
                   />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">
-                    {language === "ar" ? "جميع الوكالات" : "All Agencies"}
+                    {language === "ar" ? "جميع الجهات" : "All Agencies"}
                   </SelectItem>
                   {allAgencies.map((agency) => (
                     <SelectItem key={agency} value={agency}>
@@ -352,7 +352,7 @@ const StandardsManagement = () => {
                     {
                       key: "agencies",
                       en: "Responsible Agencies",
-                      ar: "الوكالات المسؤولة",
+                      ar: "الجهات المسؤولة",
                       className: "min-w-[200px]",
                     },
                     {
@@ -507,7 +507,7 @@ const StandardsManagement = () => {
                 <div>
                   <h3 className="text-lg font-semibold mb-2">
                     {language === "ar"
-                      ? "الوكالات المسؤولة"
+                      ? "الجهات المسؤولة"
                       : "Responsible Agencies"}
                   </h3>
                   <div className="space-y-4">

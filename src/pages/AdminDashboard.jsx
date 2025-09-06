@@ -372,7 +372,7 @@ const AdminDashboard = () => {
           <CardContent>
             <p className="text-muted-foreground mb-4">
               {language === "ar"
-                ? "مراقبة وإدارة المعايير الصحية الـ 80 مع متطلباتها والوكالات المسؤولة"
+                ? "مراقبة وإدارة المعايير الصحية الـ 80 مع متطلباتها والجهات المسؤولة"
                 : "Monitor and manage the 80 health standards with their requirements and responsible agencies"}
             </p>
             <Button
@@ -387,19 +387,19 @@ const AdminDashboard = () => {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Building2 className="w-5 h-5 text-blue-600" />
-              {language === "ar" ? "إدارة الوكالات" : "Agency Management"}
+              {language === "ar" ? "إدارة الجهات" : "Agency Management"}
             </CardTitle>
           </CardHeader>
           <CardContent>
             <p className="text-muted-foreground mb-4">
               {language === "ar"
-                ? "إدارة الشركاء والوكالات الحكومية والمنظمات المشاركة في المبادرة"
+                ? "إدارة الشركاء والجهات الحكومية والمنظمات المشاركة في المبادرة"
                 : "Manage partner government agencies and organizations participating in the initiative"}
             </p>
             <Button
               className="w-full"
               onClick={() => navigate("/admin/agency-management")}>
-              {language === "ar" ? "إدارة الوكالات" : "Manage Agencies"}
+              {language === "ar" ? "إدارة الجهات" : "Manage Agencies"}
             </Button>
           </CardContent>
         </Card>

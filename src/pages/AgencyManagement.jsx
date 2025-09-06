@@ -61,7 +61,7 @@ const AgencyManagement = () => {
   useEffect(() => {
     document.title =
       language === "ar"
-        ? "إدارة الوكالات - لوحة التحكم الإدارية"
+        ? "إدارة الجهات - لوحة التحكم الإدارية"
         : "Agency Management - Admin Dashboard";
   }, [language]);
 
@@ -151,7 +151,7 @@ const AgencyManagement = () => {
         );
         toast.success(
           language === "ar"
-            ? "تم تحديث بيانات الوكالة بنجاح"
+            ? "تم تحديث بيانات الجهة بنجاح"
             : "Agency data updated successfully"
         );
       } else {
@@ -166,7 +166,7 @@ const AgencyManagement = () => {
         setAgenciesList((prev) => [...prev, newAgency]);
         toast.success(
           language === "ar"
-            ? "تم إضافة الوكالة الجديدة بنجاح"
+            ? "تم إضافة الجهة الجديدة بنجاح"
             : "New agency added successfully"
         );
       }
@@ -219,9 +219,7 @@ const AgencyManagement = () => {
         prev.filter((agency) => agency.id !== deleteConfirm.agencyId)
       );
       toast.success(
-        language === "ar"
-          ? "تم حذف الوكالة بنجاح"
-          : "Agency deleted successfully"
+        language === "ar" ? "تم حذف الجهة بنجاح" : "Agency deleted successfully"
       );
       setDeleteConfirm({ show: false, agencyId: null, agencyName: "" });
     } catch (error) {
@@ -243,11 +241,11 @@ const AgencyManagement = () => {
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-3xl font-bold text-foreground mb-2">
-            {language === "ar" ? "إدارة الوكالات " : "Agency Management"}
+            {language === "ar" ? "إدارة الجهات " : "Agency Management"}
           </h1>
           <p className="text-muted-foreground">
             {language === "ar"
-              ? "إدارة الوكالات الحكومية المشاركة في مبادرة المدينة الصحية"
+              ? "إدارة الجهات الحكومية المشاركة في مبادرة المدينة الصحية"
               : "Manage government agencies participating in the Healthy City initiative"}
           </p>
         </div>
@@ -255,7 +253,7 @@ const AgencyManagement = () => {
           onClick={() => setShowAddForm(true)}
           className="flex items-center gap-2">
           <Plus className="w-4 h-4" />
-          {language === "ar" ? "إضافة وكالة جديدة" : "Add New Agency"}
+          {language === "ar" ? "إضافة جهة جديدة" : "Add New Agency"}
         </Button>
       </div>
 
@@ -265,11 +263,11 @@ const AgencyManagement = () => {
           <Card>
             <CardHeader>
               <CardTitle>
-                {language === "ar" ? "قائمة الوكالات" : "Agencies List"}
+                {language === "ar" ? "قائمة الجهات" : "Agencies List"}
               </CardTitle>
               <CardDescription>
                 {language === "ar"
-                  ? "إدارة جميع الوكالات المشاركة"
+                  ? "إدارة جميع الجهات المشاركة"
                   : "Manage all participating agencies"}
               </CardDescription>
             </CardHeader>
@@ -314,7 +312,7 @@ const AgencyManagement = () => {
                               `}>
                               <span className="font-medium">
                                 {language === "ar"
-                                  ? ":بريد الوكالة"
+                                  ? ":بريد الجهة"
                                   : "Agency Email:"}
                               </span>
                               <p>{agency.agencyEmail}</p>
@@ -326,7 +324,7 @@ const AgencyManagement = () => {
                               `}>
                               <span className="font-medium">
                                 {language === "ar"
-                                  ? ":كلمة مرور الوكالة"
+                                  ? ":كلمة مرور الجهة"
                                   : "Agency Password:"}
                               </span>
                               <p className="font-mono text-xs bg-muted p-1 rounded">
@@ -457,19 +455,19 @@ const AgencyManagement = () => {
               <CardTitle>
                 {editingAgency
                   ? language === "ar"
-                    ? "تعديل الوكالة"
+                    ? "تعديل الجهة"
                     : "Edit Agency"
                   : language === "ar"
-                  ? "إضافة وكالة جديدة"
+                  ? "إضافة جهة جديدة"
                   : "Add New Agency"}
               </CardTitle>
               <CardDescription>
                 {editingAgency
                   ? language === "ar"
-                    ? "تحديث بيانات الوكالة"
+                    ? "تحديث بيانات الجهة"
                     : "Update agency data"
                   : language === "ar"
-                  ? "إدخال بيانات الوكالة الجديدة"
+                  ? "إدخال بيانات الجهة الجديدة"
                   : "Enter new agency data"}
               </CardDescription>
             </CardHeader>
@@ -478,7 +476,7 @@ const AgencyManagement = () => {
                 <div className="grid grid-cols-1 gap-4">
                   <div className="space-y-2">
                     <Label htmlFor="name">
-                      {language === "ar" ? "اسم الوكالة *" : "Agency Name *"}
+                      {language === "ar" ? "اسم الجهة *" : "Agency Name *"}
                     </Label>
                     <Input
                       id="name"
@@ -486,7 +484,7 @@ const AgencyManagement = () => {
                       value={formData.name}
                       onChange={handleInputChange}
                       placeholder={
-                        language === "ar" ? "اسم الوكالة" : "Agency name"
+                        language === "ar" ? "اسم الجهة" : "Agency name"
                       }
                       required
                     />
@@ -495,9 +493,7 @@ const AgencyManagement = () => {
 
                 <div className="space-y-2">
                   <Label htmlFor="description">
-                    {language === "ar"
-                      ? "وصف الوكالة *"
-                      : "Agency Description *"}
+                    {language === "ar" ? "وصف الجهة *" : "Agency Description *"}
                   </Label>
                   <Textarea
                     id="description"
@@ -506,7 +502,7 @@ const AgencyManagement = () => {
                     onChange={handleInputChange}
                     placeholder={
                       language === "ar"
-                        ? "وصف مختصر عن الوكالة ومهامها"
+                        ? "وصف مختصر عن الجهة ومهامها"
                         : "Brief description of the agency and its tasks"
                     }
                     rows={3}
@@ -518,7 +514,7 @@ const AgencyManagement = () => {
                   <div className="space-y-2">
                     <Label htmlFor="agencyEmail">
                       {language === "ar"
-                        ? "بريد الوكالة الإلكتروني"
+                        ? "بريد الجهة الإلكتروني"
                         : "Agency Email"}
                     </Label>
                     <Input
@@ -537,7 +533,7 @@ const AgencyManagement = () => {
                   <div className="space-y-2">
                     <Label htmlFor="agencyPassword">
                       {language === "ar"
-                        ? "كلمة مرور الوكالة"
+                        ? "كلمة مرور الجهة"
                         : "Agency Password"}
                     </Label>
                     <Input
@@ -609,7 +605,7 @@ const AgencyManagement = () => {
                     value={formData.address}
                     onChange={handleInputChange}
                     placeholder={
-                      language === "ar" ? "عنوان الوكالة" : "Agency address"
+                      language === "ar" ? "عنوان الجهة" : "Agency address"
                     }
                   />
                 </div>
@@ -661,14 +657,14 @@ const AgencyManagement = () => {
               </CardTitle>
               <CardDescription>
                 {language === "ar"
-                  ? "هل أنت متأكد من حذف هذه الوكالة؟"
+                  ? "هل أنت متأكد من حذف هذه الجهة؟"
                   : "Are you sure you want to delete this agency?"}
               </CardDescription>
             </CardHeader>
             <CardContent>
               <div className="mb-4 p-3 bg-muted rounded-lg">
                 <p className="font-medium">
-                  {language === "ar" ? "اسم الوكالة:" : "Agency Name:"}
+                  {language === "ar" ? "اسم الجهة:" : "Agency Name:"}
                 </p>
                 <p className="text-muted-foreground">
                   {deleteConfirm.agencyName}

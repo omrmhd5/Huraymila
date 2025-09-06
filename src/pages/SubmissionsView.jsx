@@ -111,7 +111,7 @@ const SubmissionsView = () => {
   const generateMockContent = (type, index) => {
     switch (type) {
       case "text":
-        return `هذا هو محتوى النص للمعيار رقم ${index}. يحتوي على تفاصيل شاملة حول تنفيذ المعيار والمتطلبات المطلوبة. يتم تقديم هذا التقرير من قبل الوكالة المسؤولة لتوثيق التقدم المحرز في تطبيق المعايير الصحية للمدينة.
+        return `هذا هو محتوى النص للمعيار رقم ${index}. يحتوي على تفاصيل شاملة حول تنفيذ المعيار والمتطلبات المطلوبة. يتم تقديم هذا التقرير من قبل الجهة المسؤولة لتوثيق التقدم المحرز في تطبيق المعايير الصحية للمدينة.
 
 This is the text content for standard number ${index}. It contains comprehensive details about the implementation of the standard and the required requirements. This report is submitted by the responsible agency to document the progress made in applying the health standards for the city.`;
 
@@ -393,7 +393,7 @@ PDF content for standard ${index} - contains:
             <div>
               <h4 className="font-semibold mb-2">
                 {language === "ar"
-                  ? "الوكالات المسؤولة:"
+                  ? "الجهات المسؤولة:"
                   : "Responsible Agencies:"}
               </h4>
               <div className="space-y-3">
@@ -569,7 +569,7 @@ PDF content for standard ${index} - contains:
             <div className="flex items-center gap-4">
               <div className="space-y-2">
                 <label className="text-sm font-medium">
-                  {language === "ar" ? "تصفية حسب الوكالة" : "Filter by Agency"}
+                  {language === "ar" ? "تصفية حسب الجهة" : "Filter by Agency"}
                 </label>
                 <Select
                   value={selectedAgency}
@@ -577,13 +577,13 @@ PDF content for standard ${index} - contains:
                   <SelectTrigger className="w-64">
                     <SelectValue
                       placeholder={
-                        language === "ar" ? "اختر الوكالة" : "Select Agency"
+                        language === "ar" ? "اختر الجهة" : "Select Agency"
                       }
                     />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="all">
-                      {language === "ar" ? "جميع الوكالات" : "All Agencies"}
+                      {language === "ar" ? "جميع الجهات" : "All Agencies"}
                     </SelectItem>
                     {standard?.assigned_agencies.map((agency) => (
                       <SelectItem key={agency} value={agency}>
