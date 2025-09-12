@@ -269,7 +269,7 @@ const NewsSection = () => {
 
                   <Button
                     className="w-fit"
-                    onClick={() => navigateToTop(`/news/${newsItem.id}`)}>
+                    onClick={() => navigateToTop(`/news/${featuredNews.id}`)}>
                     {current.readMore}
                     <ArrowRight
                       className={`w-4 h-4 ${isRTL ? "mr-2" : "ml-2"}`}

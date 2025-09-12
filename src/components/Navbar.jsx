@@ -14,7 +14,7 @@ import {
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useTheme } from "@/contexts/ThemeContext";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 
 const Navbar = () => {
   const { user, signOut } = useAuth();
@@ -22,6 +22,7 @@ const Navbar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
 
   useEffect(() => {
     // Close mobile menu when route changes
@@ -44,6 +45,11 @@ const Navbar = () => {
   const handleThemeChange = () => {
     const newTheme = theme === "light" ? "dark" : "light";
     setTheme(newTheme);
+  };
+
+  const navigateToTop = (path) => {
+    navigate(path);
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   const navigationItems = [
@@ -88,14 +94,14 @@ const Navbar = () => {
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center gap-6">
             {navigationItems.map((item) => (
-              <Link
+              <button
                 key={item.href}
-                to={item.href}
+                onClick={() => navigateToTop(item.href)}
                 className={`text-sm font-medium transition-colors hover:text-primary ${
                   isActive(item.href) ? "text-primary" : "text-muted-foreground"
                 }`}>
                 {item.label}
-              </Link>
+              </button>
             ))}
           </nav>
 
@@ -149,13 +155,15 @@ const Navbar = () => {
                       </p>
                     </div>
 
-                    <Link
-                      to="/admin"
-                      className="flex items-center gap-2 px-4 py-2 text-sm hover:bg-muted transition-colors"
-                      onClick={() => setIsUserMenuOpen(false)}>
+                    <button
+                      onClick={() => {
+                        navigateToTop("/admin");
+                        setIsUserMenuOpen(false);
+                      }}
+                      className="flex items-center gap-2 px-4 py-2 text-sm hover:bg-muted transition-colors w-full text-left">
                       <User className="w-4 h-4" />
                       {language === "ar" ? "لوحة التحكم" : "Dashboard"}
-                    </Link>
+                    </button>
 
                     <button
                       onClick={() => {
@@ -171,13 +179,11 @@ const Navbar = () => {
               </div>
             ) : (
               <div className="flex items-center gap-2">
-                <Link to="/auth">
-                  <Button size="sm">
-                    {language === "ar"
-                      ? "تسجيل الدخول / إنشاء حساب"
-                      : "Sign In / Sign Up"}
-                  </Button>
-                </Link>
+                <Button size="sm" onClick={() => navigateToTop("/auth")}>
+                  {language === "ar"
+                    ? "تسجيل الدخول / إنشاء حساب"
+                    : "Sign In / Sign Up"}
+                </Button>
               </div>
             )}
 
@@ -201,17 +207,19 @@ const Navbar = () => {
           <div className="md:hidden border-t border-border py-4">
             <nav className="flex flex-col space-y-3">
               {navigationItems.map((item) => (
-                <Link
+                <button
                   key={item.href}
-                  to={item.href}
+                  onClick={() => {
+                    navigateToTop(item.href);
+                    setIsMobileMenuOpen(false);
+                  }}
                   className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
                     isActive(item.href)
                       ? "bg-primary text-primary-foreground"
                       : "text-muted-foreground hover:text-primary hover:bg-muted"
-                  }`}
-                  onClick={() => setIsMobileMenuOpen(false)}>
+                  }`}>
                   {item.label}
-                </Link>
+                </button>
               ))}
 
               {/* Mobile Controls */}

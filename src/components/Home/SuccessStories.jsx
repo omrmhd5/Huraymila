@@ -326,7 +326,7 @@ const SuccessStories = () => {
                   <Button
                     className="w-fit"
                     onClick={() =>
-                      navigateToTop(`/success-stories/${story.id}`)
+                      navigateToTop(`/success-stories/${featuredStory.id}`)
                     }>
                     {language === "ar" ? "اقرأ القصة كاملة" : "Read Full Story"}
                     <ArrowRight

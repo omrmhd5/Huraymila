@@ -32,13 +32,13 @@ const Home = () => {
       <main>
         <HeroSection />
         <AboutSection />
+        <QuickLinksSection />
         <NewsSection />
         <SuccessStories />
         <HealthDashboard />
         {/* <InteractiveMap /> */}
         <InitiativesSection />
         <PartnersSection />
-        <QuickLinksSection />
       </main>
     </div>
   );
