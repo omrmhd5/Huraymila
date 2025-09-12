@@ -1,6 +1,6 @@
 import React from "react";
 
-import InitiativesSection from "@/components/InitiativesSection";
+import InitiativesSection from "@/components/Home/InitiativesSection";
 import { useAuth } from "@/contexts/AuthContext";
 import { useTheme } from "@/contexts/ThemeContext";
 

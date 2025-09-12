@@ -1,114 +1,136 @@
 import React from "react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { 
-  Heart, 
-  Users, 
-  Target, 
+import {
+  Heart,
+  Users,
+  Target,
   Leaf,
   Shield,
   Award,
   ArrowRight,
-  CheckCircle
+  CheckCircle,
 } from "lucide-react";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useTheme } from "@/contexts/ThemeContext";
 
 const AboutSection = () => {
   const { language } = useTheme();
+  const navigate = useNavigate();
+
+  // Function to navigate and scroll to top
+  const navigateToTop = (path) => {
+    navigate(path);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
 
   const content = {
     ar: {
       title: "من نحن",
       subtitle: "مبادرة مدينة حريملاء الصحية",
-      description: "نحن مبادرة وطنية تهدف إلى تعزيز الصحة العامة وتحسين جودة الحياة في مدينة حريملاء من خلال مجموعة من البرامج والمبادرات المتنوعة.",
+      description:
+        "نحن مبادرة وطنية تهدف إلى تعزيز الصحة العامة وتحسين جودة الحياة في مدينة حريملاء من خلال مجموعة من البرامج والمبادرات المتنوعة.",
       mission: "مهمتنا",
-      missionText: "تعزيز الصحة العامة وتحسين جودة الحياة في مدينة حريملاء من خلال المبادرات المجتمعية والشراكات الاستراتيجية.",
+      missionText:
+        "تعزيز الصحة العامة وتحسين جودة الحياة في مدينة حريملاء من خلال المبادرات المجتمعية والشراكات الاستراتيجية.",
       vision: "رؤيتنا",
-      visionText: "أن تكون مدينة حريملاء نموذجاً للمدينة الصحية المستدامة في المملكة العربية السعودية.",
+      visionText:
+        "أن تكون مدينة حريملاء نموذجاً للمدينة الصحية المستدامة في المملكة العربية السعودية.",
       values: "قيمنا",
       valuesList: [
         "الشفافية والمصداقية",
         "الشراكة المجتمعية",
         "الابتكار والتطوير",
         "الاستدامة البيئية",
-        "الجودة والتميز"
+        "الجودة والتميز",
       ],
       stats: [
-        { value: "2020", label: "سنة التأسيس", icon: Award },
+        { value: "2025", label: "سنة التأسيس", icon: Award },
         { value: "50+", label: "مبادرة صحية", icon: Target },
         { value: "10K+", label: "مستفيد", icon: Users },
-        { value: "15+", label: "جهة شريكة", icon: Shield }
+        { value: "15+", label: "جهة شريكة", icon: Shield },
       ],
       features: [
         {
           title: "المبادرات الصحية",
           description: "برامج متنوعة لتعزيز الصحة البدنية والنفسية والاجتماعية",
           icon: Heart,
-          color: "bg-red-500"
+          color: "bg-red-500",
         },
         {
           title: "البيئة المستدامة",
           description: "مشاريع لحماية البيئة وتحسين جودة الهواء والمياه",
           icon: Leaf,
-          color: "bg-green-500"
+          color: "bg-green-500",
         },
         {
           title: "التوعية المجتمعية",
           description: "حملات توعوية لتعزيز الثقافة الصحية في المجتمع",
           icon: Users,
-          color: "bg-blue-500"
-        }
+          color: "bg-blue-500",
+        },
       ],
       cta: "اعرف المزيد عنا",
-      learnMore: "اكتشف المبادرات"
+      learnMore: "اكتشف المبادرات",
     },
     en: {
       title: "About Us",
       subtitle: "Harimlaa Healthy City Initiative",
-      description: "We are a national initiative aimed at promoting public health and improving quality of life in Harimlaa city through a variety of programs and initiatives.",
+      description:
+        "We are a national initiative aimed at promoting public health and improving quality of life in Harimlaa city through a variety of programs and initiatives.",
       mission: "Our Mission",
-      missionText: "To promote public health and improve quality of life in Harimlaa city through community initiatives and strategic partnerships.",
+      missionText:
+        "To promote public health and improve quality of life in Harimlaa city through community initiatives and strategic partnerships.",
       vision: "Our Vision",
-      visionText: "To make Harimlaa city a model for sustainable healthy cities in Saudi Arabia.",
+      visionText:
+        "To make Harimlaa city a model for sustainable healthy cities in Saudi Arabia.",
       values: "Our Values",
       valuesList: [
         "Transparency and Credibility",
         "Community Partnership",
         "Innovation and Development",
         "Environmental Sustainability",
-        "Quality and Excellence"
+        "Quality and Excellence",
       ],
       stats: [
         { value: "2020", label: "Founded", icon: Award },
         { value: "50+", label: "Health Initiatives", icon: Target },
         { value: "10K+", label: "Beneficiaries", icon: Users },
-        { value: "15+", label: "Partner Organizations", icon: Shield }
+        { value: "15+", label: "Partner Organizations", icon: Shield },
       ],
       features: [
         {
           title: "Health Initiatives",
-          description: "Diverse programs to promote physical, mental, and social health",
+          description:
+            "Diverse programs to promote physical, mental, and social health",
           icon: Heart,
-          color: "bg-red-500"
+          color: "bg-red-500",
         },
         {
           title: "Sustainable Environment",
-          description: "Projects to protect the environment and improve air and water quality",
+          description:
+            "Projects to protect the environment and improve air and water quality",
           icon: Leaf,
-          color: "bg-green-500"
+          color: "bg-green-500",
         },
         {
           title: "Community Awareness",
-          description: "Awareness campaigns to promote health culture in society",
+          description:
+            "Awareness campaigns to promote health culture in society",
           icon: Users,
-          color: "bg-blue-500"
-        }
+          color: "bg-blue-500",
+        },
       ],
       cta: "Learn More About Us",
-      learnMore: "Explore Initiatives"
-    }
+      learnMore: "Explore Initiatives",
+    },
   };
 
   const current = content[language];
@@ -186,7 +208,9 @@ const AboutSection = () => {
             {current.stats.map((stat, index) => {
               const IconComponent = stat.icon;
               return (
-                <Card key={index} className="text-center hover:shadow-lg transition-shadow">
+                <Card
+                  key={index}
+                  className="text-center hover:shadow-lg transition-shadow">
                   <CardContent className="p-6">
                     <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
                       <IconComponent className="w-8 h-8 text-primary" />
@@ -213,9 +237,12 @@ const AboutSection = () => {
             {current.features.map((feature, index) => {
               const IconComponent = feature.icon;
               return (
-                <Card key={index} className="text-center hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
+                <Card
+                  key={index}
+                  className="text-center hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
                   <CardHeader>
-                    <div className={`w-16 h-16 ${feature.color} rounded-full flex items-center justify-center mx-auto mb-4`}>
+                    <div
+                      className={`w-16 h-16 ${feature.color} rounded-full flex items-center justify-center mx-auto mb-4`}>
                       <IconComponent className="w-8 h-8 text-white" />
                     </div>
                     <CardTitle className="text-xl">{feature.title}</CardTitle>
@@ -234,17 +261,20 @@ const AboutSection = () => {
         {/* Call to Action */}
         <div className="text-center">
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <Link to="/about">
-              <Button size="lg" className="px-8 py-6 text-lg">
-                {current.cta}
-                <ArrowRight className={`w-5 h-5 ${isRTL ? 'mr-2' : 'ml-2'}`} />
-              </Button>
-            </Link>
-            <Link to="/initiatives">
-              <Button variant="outline" size="lg" className="px-8 py-6 text-lg">
-                {current.learnMore}
-              </Button>
-            </Link>
+            <Button
+              size="lg"
+              className="px-8 py-6 text-lg"
+              onClick={() => navigateToTop("/about")}>
+              {current.cta}
+              <ArrowRight className={`w-5 h-5 ${isRTL ? "mr-2" : "ml-2"}`} />
+            </Button>
+            <Button
+              variant="outline"
+              size="lg"
+              className="px-8 py-6 text-lg"
+              onClick={() => navigateToTop("/initiatives")}>
+              {current.learnMore}
+            </Button>
           </div>
         </div>
       </div>

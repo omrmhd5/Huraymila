@@ -9,11 +9,18 @@ import {
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Calendar, User, ArrowRight, Clock, Eye, Share2 } from "lucide-react";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useTheme } from "@/contexts/ThemeContext";
 
 const NewsSection = () => {
   const { language } = useTheme();
+  const navigate = useNavigate();
+
+  // Function to navigate and scroll to top
+  const navigateToTop = (path) => {
+    navigate(path);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
 
   const content = {
     ar: {
@@ -260,7 +267,9 @@ const NewsSection = () => {
                     </div>
                   </div>
 
-                  <Button className="w-fit">
+                  <Button
+                    className="w-fit"
+                    onClick={() => navigateToTop(`/news/${newsItem.id}`)}>
                     {current.readMore}
                     <ArrowRight
                       className={`w-4 h-4 ${isRTL ? "mr-2" : "ml-2"}`}
@@ -334,7 +343,8 @@ const NewsSection = () => {
 
                   <Button
                     variant="outline"
-                    className="w-full group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
+                    className="w-full group-hover:bg-primary group-hover:text-primary-foreground transition-colors"
+                    onClick={() => navigateToTop(`/news/${newsItem.id}`)}>
                     {current.readMore}
                     <ArrowRight
                       className={`w-4 h-4 ${isRTL ? "mr-2" : "ml-2"}`}
@@ -347,12 +357,14 @@ const NewsSection = () => {
 
         {/* Call to Action */}
         <div className="text-center">
-          <Link to="/news">
-            <Button size="lg" variant="outline" className="px-8 py-6 text-lg">
-              {current.viewAll}
-              <ArrowRight className={`w-5 h-5 ${isRTL ? "mr-2" : "ml-2"}`} />
-            </Button>
-          </Link>
+          <Button
+            size="lg"
+            variant="outline"
+            className="px-8 py-6 text-lg"
+            onClick={() => navigateToTop("/news")}>
+            {current.viewAll}
+            <ArrowRight className={`w-5 h-5 ${isRTL ? "mr-2" : "ml-2"}`} />
+          </Button>
         </div>
       </div>
     </section>

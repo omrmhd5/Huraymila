@@ -9,11 +9,18 @@ import {
   ArrowRight,
   Play,
 } from "lucide-react";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useTheme } from "@/contexts/ThemeContext";
 
 const HeroSection = () => {
   const { language } = useTheme();
+  const navigate = useNavigate();
+
+  // Function to navigate and scroll to top
+  const navigateToTop = (path) => {
+    navigate(path);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
 
   const content = {
     ar: {
@@ -82,30 +89,20 @@ const HeroSection = () => {
 
           {/* Call to Action Buttons */}
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16">
-            <Link to="/volunteer">
-              <Button
-                size="lg"
-                className="text-lg px-8 py-6 bg-primary hover:bg-primary/90">
-                {current.cta}
-                <ArrowRight className={`w-5 h-5 ${isRTL ? "mr-2" : "ml-2"}`} />
-              </Button>
-            </Link>
-
-            <Link to="/about">
-              <Button
-                variant="outline"
-                size="lg"
-                className="text-lg px-8 py-6 border-white text-white hover:bg-white hover:text-primary">
-                {current.learnMore}
-              </Button>
-            </Link>
+            <Button
+              size="lg"
+              onClick={() => navigateToTop("/volunteer")}
+              className="text-lg px-8 py-6 bg-primary hover:bg-primary/90">
+              {current.cta}
+              <ArrowRight className={`w-5 h-5 ${isRTL ? "mr-2" : "ml-2"}`} />
+            </Button>
 
             <Button
-              variant="ghost"
+              variant="outline"
               size="lg"
-              className="text-lg px-8 py-6 text-white hover:bg-white/10">
-              <Play className="w-5 h-5 mr-2" />
-              {current.watchVideo}
+              onClick={() => navigateToTop("/about")}
+              className="text-lg px-8 py-6 border-white text-primary hover:bg-white hover:text-black">
+              {current.learnMore}
             </Button>
           </div>
 

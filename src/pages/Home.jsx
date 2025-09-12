@@ -1,15 +1,14 @@
-import React from "react";
-import HeroSection from "@/components/HeroSection";
-import AboutSection from "@/components/AboutSection";
-import InitiativesSection from "@/components/InitiativesSection";
-import InteractiveMap from "@/components/InteractiveMap";
-import NewsSection from "@/components/NewsSection";
-import SuccessStories from "@/components/SuccessStories";
-import PartnersSection from "@/components/PartnersSection";
-import QuickLinksSection from "@/components/QuickLinksSection";
+import HeroSection from "@/components/Home/HeroSection";
+import AboutSection from "@/components/Home/AboutSection";
+import InitiativesSection from "@/components/Home/InitiativesSection";
+import InteractiveMap from "@/components/Home/InteractiveMap";
+import NewsSection from "@/components/Home/NewsSection";
+import SuccessStories from "@/components/Home/SuccessStories";
+import PartnersSection from "@/components/Home/PartnersSection";
+import QuickLinksSection from "@/components/Home/QuickLinksSection";
+import HealthDashboard from "@/components/Home/HealthDashboard";
 import { useAuth } from "@/contexts/AuthContext";
 import { useTheme } from "@/contexts/ThemeContext";
-import HealthDashboard from "@/components/HealthDashboard";
 
 const Home = () => {
   const { loading } = useAuth();

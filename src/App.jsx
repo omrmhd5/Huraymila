@@ -22,6 +22,8 @@ import AdminDashboard from "./pages/AdminDashboard";
 import AdminLayout from "./pages/AdminLayout";
 import StandardsManagement from "./pages/StandardsManagement";
 import SubmissionsView from "./pages/SubmissionsView";
+import AllNews from "./pages/AllNews";
+import NewsArticle from "./pages/NewsArticle";
 
 const queryClient = new QueryClient();
 
@@ -47,6 +49,8 @@ const App = () => (
                 <Route path="/contact" element={<Contact />} />
                 <Route path="/auth" element={<Auth />} />
                 <Route path="/test-accounts" element={<TestAccounts />} />
+                <Route path="/news" element={<AllNews />} />
+                <Route path="/news/:id" element={<NewsArticle />} />
               </Route>
 
               <Route path="/admin" element={<AdminLayout />}>
