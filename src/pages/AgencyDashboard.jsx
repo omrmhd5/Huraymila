@@ -22,7 +22,6 @@ import Standards from "@/lib/standards";
 import RequiredStandards from "@/components/AgencyDashboard/RequiredStandards";
 import Initiatives from "@/components/AgencyDashboard/Initiatives";
 import Volunteers from "@/components/AgencyDashboard/Volunteers";
-import AgencyInfo from "@/components/AgencyDashboard/AgencyInfo";
 
 const AgencyDashboard = () => {
   // Commented out useAuth for development
@@ -140,10 +139,8 @@ const AgencyDashboard = () => {
       department: "الصحة العامة",
       email: "ahmed@volunteer.com",
       phone: "+966-50-123-4567",
-      status: "نشط",
+      initiatives: ["مبادرة التوعية الصحية", "مبادرة التوعية البيئية"],
       joinDate: "2024-01-15",
-      hours: 120,
-      initiatives: 3,
     },
     {
       id: 2,
@@ -152,10 +149,8 @@ const AgencyDashboard = () => {
       department: "التوعية الصحية",
       email: "fatima@volunteer.com",
       phone: "+966-50-234-5678",
-      status: "نشط",
-      joinDate: "2024-02-20",
-      hours: 95,
-      initiatives: 2,
+      initiatives: ["مبادرة التوعية الصحية", "مبادرة التوعية البيئية"],
+      joinDate: "2024-01-15",
     },
     {
       id: 3,
@@ -164,10 +159,8 @@ const AgencyDashboard = () => {
       department: "البيئة والصحة",
       email: "saad@volunteer.com",
       phone: "+966-50-345-6789",
-      status: "نشط",
-      joinDate: "2024-03-10",
-      hours: 75,
-      initiatives: 1,
+      initiatives: ["مبادرة التوعية الصحية", "مبادرة التوعية البيئية"],
+      joinDate: "2024-01-15",
     },
     {
       id: 4,
@@ -176,10 +169,8 @@ const AgencyDashboard = () => {
       department: "الإدارة والتنسيق",
       email: "reem@volunteer.com",
       phone: "+966-50-456-7890",
-      status: "إجازة",
-      joinDate: "2024-01-05",
-      hours: 60,
-      initiatives: 2,
+      initiatives: ["مبادرة التوعية الصحية", "مبادرة التوعية البيئية"],
+      joinDate: "2024-01-15",
     },
   ];
 
@@ -438,7 +429,7 @@ const AgencyDashboard = () => {
           onValueChange={setActiveTab}
           className="space-y-6">
           <TabsList
-            className={`grid w-full grid-cols-4 ${
+            className={`grid w-full grid-cols-3 ${
               language === "ar" ? "flex-row-reverse" : ""
             }`}>
             <TabsTrigger
@@ -455,11 +446,6 @@ const AgencyDashboard = () => {
               value="volunteers"
               className={language === "ar" ? "font-arabic" : "font-sans"}>
               {language === "ar" ? "المتطوعين" : "Volunteers"}
-            </TabsTrigger>
-            <TabsTrigger
-              value="agency-info"
-              className={language === "ar" ? "font-arabic" : "font-sans"}>
-              {language === "ar" ? "معلومات الجهة" : "Agency Info"}
             </TabsTrigger>
           </TabsList>
 
@@ -479,11 +465,6 @@ const AgencyDashboard = () => {
           {/* Volunteers Tab */}
           <TabsContent value="volunteers">
             <Volunteers language={language} volunteers={volunteers} />
-          </TabsContent>
-
-          {/* Agency Info Tab */}
-          <TabsContent value="agency-info">
-            <AgencyInfo language={language} agencyData={agencyData} />
           </TabsContent>
         </Tabs>
       </main>
