@@ -78,13 +78,11 @@ const AgencyDashboard = () => {
         language === "ar"
           ? "توعية المجتمع بأهمية الصحة الوقائية"
           : "Raising community awareness about preventive health",
-      status: language === "ar" ? "مكتمل" : "Completed",
-      progress: 100,
+      status: "completed",
       startDate: "2024-01-01",
       endDate: "2024-03-31",
-      budget: 150000,
-      spent: 150000,
-      team: ["أحمد محمد", "فاطمة العتيبي", "سعد القحطاني"],
+      volunteers: 8,
+      maxVolunteers: 10,
     },
     {
       id: 2,
@@ -94,13 +92,11 @@ const AgencyDashboard = () => {
         language === "ar"
           ? "فحص مبكر للأمراض المزمنة"
           : "Early screening for chronic diseases",
-      status: language === "ar" ? "نشط" : "Active",
-      progress: 75,
+      status: "active",
       startDate: "2024-02-01",
       endDate: "2024-06-30",
-      budget: 300000,
-      spent: 225000,
-      team: ["خالد الشمري", "نورا السعد", "عبدالله الحربي"],
+      volunteers: 5,
+      maxVolunteers: 8,
     },
     {
       id: 3,
@@ -112,13 +108,27 @@ const AgencyDashboard = () => {
         language === "ar"
           ? "تحسين البيئة المحيطة بالمرافق الصحية"
           : "Improving the environment around health facilities",
-      status: language === "ar" ? "نشط" : "Active",
-      progress: 45,
+      status: "gathering volunteers",
       startDate: "2024-03-01",
       endDate: "2024-08-31",
-      budget: 200000,
-      spent: 90000,
-      team: ["ريم العلي", "محمد الدوسري", "هند العمري"],
+      volunteers: 3,
+      maxVolunteers: 6,
+    },
+    {
+      id: 4,
+      title:
+        language === "ar"
+          ? "مشروع التغذية الصحية"
+          : "Healthy Nutrition Project",
+      description:
+        language === "ar"
+          ? "تعزيز العادات الغذائية الصحية"
+          : "Promoting healthy eating habits",
+      status: "cancelled",
+      startDate: "2024-04-01",
+      endDate: "2024-07-31",
+      volunteers: 0,
+      maxVolunteers: 5,
     },
   ];
 
