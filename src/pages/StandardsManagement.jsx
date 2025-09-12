@@ -46,7 +46,6 @@ const StandardsManagement = () => {
 
   const [selectedStandard, setSelectedStandard] = useState(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const standards = Standards();
   const [standards] = Standards();
   const [standardsList, setStandardsList] = useState(standards.records);
 
@@ -110,8 +109,7 @@ const StandardsManagement = () => {
     return (
       <Badge
         variant={status.variant}
-        className={`text-center ${status.className}`}
-      >
+        className={`text-center ${status.className}`}>
         {language === "ar" ? status.label.ar : status.label.en}
       </Badge>
     );
@@ -168,7 +166,7 @@ const StandardsManagement = () => {
         </h1>
         <p className="text-muted-foreground">
           {language === "ar"
-            ? "مراقبة وإدارة المعايير الصحية الـ 80 مع متطلباتها والوكالات المسؤولة عنها"
+            ? "مراقبة وإدارة المعايير الصحية الـ 80 مع متطلباتها والجهات المسؤولة عنها"
             : "Monitor and manage the 80 health standards with their requirements and responsible agencies"}
         </p>
       </div>
@@ -176,8 +174,7 @@ const StandardsManagement = () => {
       {/* Summary Statistics */}
       <div
         className={`grid grid-cols-1 md:grid-cols-5 gap-4
-    ${language === "ar" ? "flex-row-reverse" : ""}`}
-      >
+    ${language === "ar" ? "flex-row-reverse" : ""}`}>
         {[
           {
             value: standardsList.length,
@@ -256,19 +253,19 @@ const StandardsManagement = () => {
 
             <div className="space-y-2">
               <label className="text-sm font-medium">
-                {language === "ar" ? "الوكالة المسؤولة" : "Responsible Agency"}
+                {language === "ar" ? "الجهة المسؤولة" : "Responsible Agency"}
               </label>
               <Select value={selectedAgency} onValueChange={setSelectedAgency}>
                 <SelectTrigger>
                   <SelectValue
                     placeholder={
-                      language === "ar" ? "اختر الوكالة" : "Select Agency"
+                      language === "ar" ? "اختر الجهة" : "Select Agency"
                     }
                   />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">
-                    {language === "ar" ? "جميع الوكالات" : "All Agencies"}
+                    {language === "ar" ? "جميع الجهات" : "All Agencies"}
                   </SelectItem>
                   {allAgencies.map((agency) => (
                     <SelectItem key={agency} value={agency}>
@@ -355,7 +352,7 @@ const StandardsManagement = () => {
                     {
                       key: "agencies",
                       en: "Responsible Agencies",
-                      ar: "الوكالات المسؤولة",
+                      ar: "الجهات المسؤولة",
                       className: "min-w-[200px]",
                     },
                     {
@@ -384,8 +381,7 @@ const StandardsManagement = () => {
                         key={header.key}
                         className={`${header.className} ${
                           language === "ar" ? "text-right" : ""
-                        }`}
-                      >
+                        }`}>
                         {language === "ar" ? header.ar : header.en}
                       </TableHead>
                     ))}
@@ -407,8 +403,7 @@ const StandardsManagement = () => {
                         {standard.requirements.map((req, index) => (
                           <div
                             key={index}
-                            className="flex items-baseline gap-2 text-xs"
-                          >
+                            className="flex items-baseline gap-2 text-xs">
                             ● <span className="mt-1">{req}</span>
                           </div>
                         ))}
@@ -420,8 +415,7 @@ const StandardsManagement = () => {
                           <Badge
                             key={index}
                             variant="outline"
-                            className="text-xs"
-                          >
+                            className="text-xs">
                             {agency}
                           </Badge>
                         ))}
@@ -458,8 +452,7 @@ const StandardsManagement = () => {
                           size="sm"
                           variant="outline"
                           onClick={() => viewSubmissions(standard.id)}
-                          className="w-full"
-                        >
+                          className="w-full">
                           <Eye className="w-4 h-4 mr-1" />
                           {language === "ar" ? "عرض" : "View"}
                         </Button>
@@ -503,8 +496,7 @@ const StandardsManagement = () => {
                     {selectedStandard.requirements.map((req, index) => (
                       <div
                         key={index}
-                        className="flex items-baseline gap-2 text-sm"
-                      >
+                        className="flex items-baseline gap-2 text-sm">
                         <span className="text-blue-500">●</span>
                         <span>{req}</span>
                       </div>
@@ -515,7 +507,7 @@ const StandardsManagement = () => {
                 <div>
                   <h3 className="text-lg font-semibold mb-2">
                     {language === "ar"
-                      ? "الوكالات المسؤولة"
+                      ? "الجهات المسؤولة"
                       : "Responsible Agencies"}
                   </h3>
                   <div className="space-y-4">
@@ -533,8 +525,7 @@ const StandardsManagement = () => {
                                 agencyStatuses[agency] === "submitted"
                                   ? "bg-green-100 text-green-800 border-green-300"
                                   : "bg-red-100 text-red-800 border-red-300"
-                              }`}
-                            >
+                              }`}>
                               {agency}
                             </Badge>
                           )
@@ -547,8 +538,7 @@ const StandardsManagement = () => {
                       <div className="flex items-center gap-2">
                         <Badge
                           variant="outline"
-                          className="bg-green-100 text-green-800 border-green-300"
-                        ></Badge>
+                          className="bg-green-100 text-green-800 border-green-300"></Badge>
                         <span className="text-green-700">
                           {language === "ar" ? "قدمت التقديم" : "Submitted"}
                         </span>
@@ -556,8 +546,7 @@ const StandardsManagement = () => {
                       <div className="flex items-center gap-2">
                         <Badge
                           variant="outline"
-                          className="bg-red-100 text-red-800 border-red-300"
-                        ></Badge>
+                          className="bg-red-100 text-red-800 border-red-300"></Badge>
                         <span className="text-red-700">
                           {language === "ar"
                             ? "لم تقدم التقديم"
@@ -610,8 +599,7 @@ const StandardsManagement = () => {
                     onClick={() =>
                       navigate(`/admin/standards/${selectedStandard.id}`)
                     }
-                    className="w-full bg-blue-50 hover:bg-blue-100 border-blue-200 text-blue-700 hover:text-blue-800 transition-colors duration-200"
-                  >
+                    className="w-full bg-blue-50 hover:bg-blue-100 border-blue-200 text-blue-700 hover:text-blue-800 transition-colors duration-200">
                     <Eye className="w-5 h-5 mr-2" />
                     {language === "ar"
                       ? "عرض التقديمات التفصيلية"

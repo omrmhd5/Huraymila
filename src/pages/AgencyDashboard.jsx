@@ -30,6 +30,8 @@ import { useTheme } from "@/contexts/ThemeContext";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
 import Standards from "@/lib/standards";
+import SubmissionModal from "@/components/SubmissionModal";
+import { createSubmission } from "@/lib/submissions";
 
 const AgencyDashboard = () => {
   // Commented out useAuth for development
@@ -38,6 +40,22 @@ const AgencyDashboard = () => {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("overview");
   const [showAddForm, setShowAddForm] = useState(false);
+
+  // Submission modal state
+  const [submissionModal, setSubmissionModal] = useState({
+    isOpen: false,
+    mode: "add", // "add", "edit", "view"
+    standardId: null,
+    standardTitle: "",
+    submission: null,
+  });
+
+  // Mock submissions data - in real app, this would come from API
+  const [submissions, setSubmissions] = useState({});
+
+  // Search and filter state
+  const [statusFilter, setStatusFilter] = useState("all");
+  const [searchTerm, setSearchTerm] = useState("");
 
   // Commented out loading check for development
   // if (loading) {
@@ -64,7 +82,6 @@ const AgencyDashboard = () => {
     email: "ahmed@moh.gov.sa",
     phone: "+966-11-123-4567",
     address: "شارع الملك فهد، حريملاء",
-    type: "Health",
     agencyEmail: "health@harimlaa.gov.sa",
     agencyPassword: "health123",
     initiatives: 12,
@@ -206,12 +223,25 @@ const AgencyDashboard = () => {
       id: standard.id,
       standard: standard.standard,
       requirement: standard.requirements?.[0] || "متطلب غير محدد",
-      status: standard.status || "pending",
+      status: standard.status || "didnt_submit", // Default to "didnt_submit" instead of "pending"
       submissionType: getSubmissionTypeFromRequirements(standard.requirements),
       description: standard.standard,
       requirements: standard.requirements || [],
     })
   );
+
+  // Filter standards based on search and status
+  const filteredStandards = assignedStandards.filter((standard) => {
+    const matchesSearch =
+      searchTerm === "" ||
+      standard.standard.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      standard.id.toLowerCase().includes(searchTerm.toLowerCase());
+
+    const matchesStatus =
+      statusFilter === "all" || standard.status === statusFilter;
+
+    return matchesSearch && matchesStatus;
+  });
 
   // Helper function to determine submission type based on requirements
   function getSubmissionTypeFromRequirements(requirements) {
@@ -294,7 +324,6 @@ const AgencyDashboard = () => {
             {language === "ar" ? "مرفوض" : "Rejected"}
           </Badge>
         );
-      case "pending":
       case "pending_approval":
         return (
           <Badge
@@ -305,7 +334,6 @@ const AgencyDashboard = () => {
             {language === "ar" ? "في انتظار الموافقة" : "Pending Approval"}
           </Badge>
         );
-      case "not_started":
       case "didnt_submit":
         return (
           <Badge
@@ -327,21 +355,6 @@ const AgencyDashboard = () => {
     }
   };
 
-  const getSubmissionTypeIcon = (type) => {
-    switch (type) {
-      case "text":
-        return "📝";
-      case "pdf":
-        return "📄";
-      case "photo":
-        return "📷";
-      case "video":
-        return "🎥";
-      default:
-        return "📋";
-    }
-  };
-
   const getSubmissionTypeText = (type) => {
     switch (type) {
       case "text":
@@ -355,6 +368,70 @@ const AgencyDashboard = () => {
       default:
         return language === "ar" ? "غير محدد" : "Undefined";
     }
+  };
+
+  // Submission modal handlers
+  const openSubmissionModal = (
+    mode,
+    standardId,
+    standardTitle,
+    submission = null
+  ) => {
+    setSubmissionModal({
+      isOpen: true,
+      mode,
+      standardId,
+      standardTitle,
+      submission,
+    });
+  };
+
+  const closeSubmissionModal = () => {
+    setSubmissionModal({
+      isOpen: false,
+      mode: "add",
+      standardId: null,
+      standardTitle: "",
+      submission: null,
+    });
+  };
+
+  const handleSubmissionSubmit = async (submissionData) => {
+    try {
+      if (submissionModal.mode === "add") {
+        // Add new submission
+        setSubmissions((prev) => ({
+          ...prev,
+          [submissionData.standardId]: submissionData,
+        }));
+        toast.success(
+          language === "ar"
+            ? "تم إضافة التقديم بنجاح"
+            : "Submission added successfully"
+        );
+      } else if (submissionModal.mode === "edit") {
+        // Update existing submission
+        setSubmissions((prev) => ({
+          ...prev,
+          [submissionData.standardId]: submissionData,
+        }));
+        toast.success(
+          language === "ar"
+            ? "تم تحديث التقديم بنجاح"
+            : "Submission updated successfully"
+        );
+      }
+    } catch (error) {
+      console.error("Error handling submission:", error);
+      toast.error(
+        language === "ar" ? "حدث خطأ في حفظ التقديم" : "Error saving submission"
+      );
+    }
+  };
+
+  // Get submission for a standard
+  const getSubmissionForStandard = (standardId) => {
+    return submissions[standardId] || null;
   };
 
   const formatCurrency = (amount) => {
@@ -408,16 +485,14 @@ const AgencyDashboard = () => {
                   className={`text-xl font-bold text-foreground ${
                     language === "ar" ? "font-arabic" : "font-sans"
                   }`}>
-                  {language === "ar"
-                    ? "لوحة التحكم للوكالة"
-                    : "Agency Dashboard"}
+                  {language === "ar" ? "لوحة التحكم للجهة" : "Agency Dashboard"}
                 </h1>
                 <p
                   className={`text-sm text-muted-foreground ${
                     language === "ar" ? "font-arabic" : "font-sans"
                   }`}>
                   {language === "ar"
-                    ? "إدارة جميع البيانات الخاصة بالوكالة"
+                    ? "إدارة جميع البيانات الخاصة بالجهة"
                     : "Manage all data related to the agency"}
                 </p>
               </div>
@@ -522,7 +597,7 @@ const AgencyDashboard = () => {
         </div>
 
         {/* Stats Overview */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
           {[
             {
               label:
@@ -537,21 +612,6 @@ const AgencyDashboard = () => {
               color: "text-green-500",
               valueClass: "text-green-600",
               Icon: Users,
-            },
-            {
-              label: language === "ar" ? "نوع الوكالة" : "Agency Type",
-              value:
-                language === "ar"
-                  ? agencyData.type === "health"
-                    ? "صحة"
-                    : agencyData.type === "municipality"
-                    ? "بلدية"
-                    : agencyData.type === "education"
-                    ? "تعليم"
-                    : agencyData.type
-                  : agencyData.type,
-              color: "text-purple-500",
-              Icon: Building2,
             },
           ].map(({ label, value, color, Icon, valueClass }) => (
             <Card key={label}>
@@ -608,7 +668,7 @@ const AgencyDashboard = () => {
             <TabsTrigger
               value="agency-info"
               className={language === "ar" ? "font-arabic" : "font-sans"}>
-              {language === "ar" ? "معلومات الوكالة" : "Agency Info"}
+              {language === "ar" ? "معلومات الجهة" : "Agency Info"}
             </TabsTrigger>
           </TabsList>
 
@@ -635,7 +695,7 @@ const AgencyDashboard = () => {
                         : "font-sans text-left"
                     }>
                     {language === "ar"
-                      ? "المعايير المخصصة للوكالة وحالة التنفيذ"
+                      ? "المعايير المخصصة للجهة وحالة التنفيذ"
                       : "Standards assigned to the agency and implementation status"}
                   </CardDescription>
                 </CardHeader>
@@ -684,7 +744,7 @@ const AgencyDashboard = () => {
                         }`}>
                         {
                           assignedStandards.filter(
-                            (s) => s.status === "pending"
+                            (s) => s.status === "pending_approval"
                           ).length
                         }
                       </div>
@@ -692,7 +752,9 @@ const AgencyDashboard = () => {
                         className={`text-sm text-yellow-600 ${
                           language === "ar" ? "font-arabic" : "font-sans"
                         }`}>
-                        {language === "ar" ? "في الانتظار" : "Pending"}
+                        {language === "ar"
+                          ? "في انتظار الموافقة"
+                          : "Pending Approval"}
                       </div>
                     </div>
                     <div className="text-center p-4 bg-gray-50 rounded-lg">
@@ -702,7 +764,7 @@ const AgencyDashboard = () => {
                         }`}>
                         {
                           assignedStandards.filter(
-                            (s) => s.status === "not_started"
+                            (s) => s.status === "didnt_submit"
                           ).length
                         }
                       </div>
@@ -710,7 +772,7 @@ const AgencyDashboard = () => {
                         className={`text-sm text-gray-600 ${
                           language === "ar" ? "font-arabic" : "font-sans"
                         }`}>
-                        {language === "ar" ? "لم يبدأ" : "Not Started"}
+                        {language === "ar" ? "لم يتم التقديم" : "Didn't Submit"}
                       </div>
                     </div>
                   </div>
@@ -727,7 +789,7 @@ const AgencyDashboard = () => {
                         : "font-sans text-left"
                     }>
                     {language === "ar"
-                      ? "المعايير المخصصة للوكالة"
+                      ? "المعايير المخصصة للجهة"
                       : "Assigned Standards"}
                   </CardTitle>
                   <CardDescription
@@ -737,205 +799,305 @@ const AgencyDashboard = () => {
                         : "font-sans text-left"
                     }>
                     {language === "ar"
-                      ? "قائمة المعايير التي يجب على الوكالة تنفيذها"
+                      ? "قائمة المعايير التي يجب على الجهة تنفيذها"
                       : "List of standards that the agency must implement"}
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
+                  {/* Select Input */}
+                  <div className="mb-6 space-y-4">
+                    <div className="relative">
+                      {/* Status filter dropdown */}
+                      <select
+                        value={statusFilter}
+                        onChange={(e) => setStatusFilter(e.target.value)}
+                        className={`w-1/2 mt-2 px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-green-500 focus:ring-2 focus:ring-green-200 ${
+                          language === "ar" ? "text-right" : "text-left"
+                        }`}>
+                        <option value="all">
+                          {language === "ar" ? "الكل" : "All"}
+                        </option>
+                        <option value="approved">
+                          {language === "ar" ? "موافق عليه" : "Approved"}
+                        </option>
+                        <option value="rejected">
+                          {language === "ar" ? "مرفوض" : "Rejected"}
+                        </option>
+                        <option value="pending_approval">
+                          {language === "ar"
+                            ? "في انتظار الموافقة"
+                            : "Pending Approval"}
+                        </option>
+                        <option value="didnt_submit">
+                          {language === "ar" ? "لم يقدم" : "Didn't Submit"}
+                        </option>
+                      </select>
+                    </div>
+                  </div>
+
                   <div className="space-y-4">
-                    {assignedStandards.map((standard) => (
-                      <div key={standard.id} className="border rounded-lg p-4">
-                        <div
-                          className={`flex items-start justify-between mb-3 ${
-                            language === "ar" ? "flex-row-reverse" : ""
+                    {filteredStandards.length === 0 ? (
+                      <div className="text-center py-8">
+                        <div className="text-gray-500 mb-2">
+                          <svg
+                            className="w-12 h-12 mx-auto"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24">
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M9.172 16.172a4 4 0 015.656 0M9 12h6m-6-4h6m2 5.291A7.962 7.962 0 0112 15c-2.34 0-4.29-1.009-5.824-2.709M15 6.291A7.962 7.962 0 0012 5c-2.34 0-4.29 1.009-5.824 2.709"
+                            />
+                          </svg>
+                        </div>
+                        <p
+                          className={`text-gray-500 ${
+                            language === "ar" ? "font-arabic" : "font-sans"
                           }`}>
+                          {language === "ar"
+                            ? "لا توجد معايير تطابق البحث"
+                            : "No standards match your search"}
+                        </p>
+                      </div>
+                    ) : (
+                      filteredStandards.map((standard) => (
+                        <div
+                          key={standard.id}
+                          className="border rounded-lg p-4">
                           <div
-                            className={`flex items-center gap-3 ${
+                            className={`flex items-start justify-between mb-3 ${
                               language === "ar" ? "flex-row-reverse" : ""
                             }`}>
-                            <span> </span>
                             <div
-                              className={
-                                language === "ar" ? "text-right" : "text-left"
-                              }>
-                              <h3
-                                className={`text-lg font-semibold ${
-                                  language === "ar"
-                                    ? "font-arabic"
-                                    : "font-sans"
-                                }`}>
-                                {language === "ar" ? (
-                                  <>
-                                    {standard.standard} {standard.id}
-                                  </>
-                                ) : (
-                                  <>
-                                    {standard.id}. {standard.standard}
-                                  </>
-                                )}
-                              </h3>
-                            </div>
-                          </div>
-                        </div>
-
-                        <div
-                          className={`grid grid-cols-1 md:grid-cols-2 gap-4 text-sm mb-3 ${
-                            language === "ar" ? "rtl" : "ltr"
-                          }`}>
-                          {language === "ar" ? (
-                            <>
+                              className={`flex items-center gap-3 ${
+                                language === "ar" ? "flex-row-reverse" : ""
+                              }`}>
+                              <span> </span>
                               <div
-                                className={`flex items-center gap-2 ${
-                                  language === "ar" ? "flex-row-reverse" : ""
-                                }`}>
-                                <span
-                                  className={`font-medium ${
-                                    language === "ar"
-                                      ? "font-arabic"
-                                      : "font-sans"
-                                  }`}>
-                                  {language === "ar" ? "الحالة:" : "Status:"}
-                                </span>
-                                {getStandardStatusBadge(standard.status)}
-                              </div>
-                              <div
-                                className={`flex items-center gap-2 ${
-                                  language === "ar" ? "flex-row-reverse" : ""
-                                }`}>
-                                <span
-                                  className={`font-medium ${
-                                    language === "ar"
-                                      ? "font-arabic"
-                                      : "font-sans"
-                                  }`}>
-                                  {language === "ar"
-                                    ? "نوع التقديم:"
-                                    : "Submission Type:"}
-                                </span>
-                                <span
-                                  className={`text-muted-foreground ${
-                                    language === "ar"
-                                      ? "font-arabic"
-                                      : "font-sans"
-                                  }`}>
-                                  {getSubmissionTypeText(
-                                    standard.submissionType
-                                  )}
-                                </span>
-                              </div>
-                            </>
-                          ) : (
-                            <>
-                              <div
-                                className={`flex items-center gap-2 ${
-                                  language === "ar" ? "flex-row-reverse" : ""
-                                }`}>
-                                <span
-                                  className={`font-medium ${
-                                    language === "ar"
-                                      ? "font-arabic"
-                                      : "font-sans"
-                                  }`}>
-                                  {language === "ar"
-                                    ? "نوع التقديم:"
-                                    : "Submission Type:"}
-                                </span>
-                                <span
-                                  className={`text-muted-foreground ${
-                                    language === "ar"
-                                      ? "font-arabic"
-                                      : "font-sans"
-                                  }`}>
-                                  {getSubmissionTypeText(
-                                    standard.submissionType
-                                  )}
-                                </span>
-                              </div>
-                              <div
-                                className={`flex items-center gap-2 ${
-                                  language === "ar" ? "flex-row-reverse" : ""
-                                }`}>
-                                <span
-                                  className={`font-medium ${
-                                    language === "ar"
-                                      ? "font-arabic"
-                                      : "font-sans"
-                                  }`}>
-                                  {language === "ar" ? "الحالة:" : "Status:"}
-                                </span>
-                                {getStandardStatusBadge(standard.status)}
-                              </div>
-                            </>
-                          )}
-                        </div>
-
-                        <div
-                          className={`mb-3 ${
-                            language === "ar" ? "rtl" : "ltr"
-                          }`}>
-                          <span
-                            className={`font-medium text-sm ${
-                              language === "ar" ? "font-arabic" : "font-sans"
-                            }`}>
-                            {language === "ar" ? "المتطلبات:" : "Requirements:"}
-                          </span>
-                          <ul
-                            className={`text-sm text-muted-foreground mt-1 ${
-                              language === "ar"
-                                ? "text-right font-arabic list-disc list-inside"
-                                : "text-left font-sans list-disc list-inside"
-                            }`}
-                            dir={language === "ar" ? "rtl" : "ltr"}>
-                            {standard.requirements.map((req, index) => (
-                              <li
-                                key={index}
                                 className={
                                   language === "ar" ? "text-right" : "text-left"
                                 }>
-                                {req}
-                              </li>
-                            ))}
-                          </ul>
-                        </div>
+                                <h3
+                                  className={`text-lg font-semibold ${
+                                    language === "ar"
+                                      ? "font-arabic"
+                                      : "font-sans"
+                                  }`}>
+                                  {language === "ar" ? (
+                                    <>
+                                      {standard.standard} {standard.id}
+                                    </>
+                                  ) : (
+                                    <>
+                                      {standard.id}. {standard.standard}
+                                    </>
+                                  )}
+                                </h3>
+                              </div>
+                            </div>
+                          </div>
 
-                        <div
-                          className={`flex items-center gap-2 ${
-                            language === "ar" ? "flex-row-reverse" : ""
-                          }`}>
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            className={
-                              language === "ar" ? "font-arabic" : "font-sans"
-                            }>
-                            <Edit className="w-4 h-4" />
-                            {language === "ar" ? "تعديل" : "Edit"}
-                          </Button>
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            className={
-                              language === "ar" ? "font-arabic" : "font-sans"
-                            }>
-                            <Plus className="w-4 h-4" />
-                            {language === "ar"
-                              ? "إضافة تقديم"
-                              : "Add Submission"}
-                          </Button>
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            className={
-                              language === "ar" ? "font-arabic" : "font-sans"
-                            }>
-                            <Eye className="w-4 h-4" />
-                            {language === "ar"
-                              ? "عرض التقديمات"
-                              : "View Submissions"}
-                          </Button>
+                          <div
+                            className={`grid grid-cols-1 md:grid-cols-2 gap-4 text-sm mb-3 ${
+                              language === "ar" ? "rtl" : "ltr"
+                            }`}>
+                            {language === "ar" ? (
+                              <>
+                                <div
+                                  className={`flex items-center gap-2 ${
+                                    language === "ar" ? "flex-row-reverse" : ""
+                                  }`}>
+                                  <span
+                                    className={`font-medium ${
+                                      language === "ar"
+                                        ? "font-arabic"
+                                        : "font-sans"
+                                    }`}>
+                                    {language === "ar" ? "الحالة:" : "Status:"}
+                                  </span>
+                                  {getStandardStatusBadge(standard.status)}
+                                </div>
+                                <div
+                                  className={`flex items-center gap-2 ${
+                                    language === "ar" ? "flex-row-reverse" : ""
+                                  }`}>
+                                  <span
+                                    className={`font-medium ${
+                                      language === "ar"
+                                        ? "font-arabic"
+                                        : "font-sans"
+                                    }`}>
+                                    {language === "ar"
+                                      ? "نوع التقديم:"
+                                      : "Submission Type:"}
+                                  </span>
+                                  <span
+                                    className={`text-muted-foreground ${
+                                      language === "ar"
+                                        ? "font-arabic"
+                                        : "font-sans"
+                                    }`}>
+                                    {getSubmissionTypeText(
+                                      standard.submissionType
+                                    )}
+                                  </span>
+                                </div>
+                              </>
+                            ) : (
+                              <>
+                                <div
+                                  className={`flex items-center gap-2 ${
+                                    language === "ar" ? "flex-row-reverse" : ""
+                                  }`}>
+                                  <span
+                                    className={`font-medium ${
+                                      language === "ar"
+                                        ? "font-arabic"
+                                        : "font-sans"
+                                    }`}>
+                                    {language === "ar"
+                                      ? "نوع التقديم:"
+                                      : "Submission Type:"}
+                                  </span>
+                                  <span
+                                    className={`text-muted-foreground ${
+                                      language === "ar"
+                                        ? "font-arabic"
+                                        : "font-sans"
+                                    }`}>
+                                    {getSubmissionTypeText(
+                                      standard.submissionType
+                                    )}
+                                  </span>
+                                </div>
+                                <div
+                                  className={`flex items-center gap-2 ${
+                                    language === "ar" ? "flex-row-reverse" : ""
+                                  }`}>
+                                  <span
+                                    className={`font-medium ${
+                                      language === "ar"
+                                        ? "font-arabic"
+                                        : "font-sans"
+                                    }`}>
+                                    {language === "ar" ? "الحالة:" : "Status:"}
+                                  </span>
+                                  {getStandardStatusBadge(standard.status)}
+                                </div>
+                              </>
+                            )}
+                          </div>
+
+                          <div
+                            className={`mb-3 ${
+                              language === "ar" ? "rtl" : "ltr"
+                            }`}>
+                            <span
+                              className={`font-medium text-sm ${
+                                language === "ar" ? "font-arabic" : "font-sans"
+                              }`}>
+                              {language === "ar"
+                                ? "المتطلبات:"
+                                : "Requirements:"}
+                            </span>
+                            <ul
+                              className={`text-sm text-muted-foreground mt-1 ${
+                                language === "ar"
+                                  ? "text-right font-arabic list-disc list-inside"
+                                  : "text-left font-sans list-disc list-inside"
+                              }`}
+                              dir={language === "ar" ? "rtl" : "ltr"}>
+                              {standard.requirements.map((req, index) => (
+                                <li
+                                  key={index}
+                                  className={
+                                    language === "ar"
+                                      ? "text-right"
+                                      : "text-left"
+                                  }>
+                                  {req}
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+
+                          <div
+                            className={`flex items-center gap-2 ${
+                              language === "ar" ? "flex-row-reverse" : ""
+                            }`}>
+                            {getSubmissionForStandard(standard.id) ? (
+                              <>
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  onClick={() =>
+                                    openSubmissionModal(
+                                      "view",
+                                      standard.id,
+                                      standard.standard,
+                                      getSubmissionForStandard(standard.id)
+                                    )
+                                  }
+                                  className={
+                                    language === "ar"
+                                      ? "font-arabic"
+                                      : "font-sans"
+                                  }>
+                                  <Eye className="w-4 h-4" />
+                                  {language === "ar"
+                                    ? "عرض التقديم"
+                                    : "View Submission"}
+                                </Button>
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  onClick={() =>
+                                    openSubmissionModal(
+                                      "edit",
+                                      standard.id,
+                                      standard.standard,
+                                      getSubmissionForStandard(standard.id)
+                                    )
+                                  }
+                                  className={
+                                    language === "ar"
+                                      ? "font-arabic"
+                                      : "font-sans"
+                                  }>
+                                  <Edit className="w-4 h-4" />
+                                  {language === "ar"
+                                    ? "تعديل التقديم"
+                                    : "Edit Submission"}
+                                </Button>
+                              </>
+                            ) : (
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() =>
+                                  openSubmissionModal(
+                                    "add",
+                                    standard.id,
+                                    standard.standard
+                                  )
+                                }
+                                className={
+                                  language === "ar"
+                                    ? "font-arabic"
+                                    : "font-sans"
+                                }>
+                                <Plus className="w-4 h-4" />
+                                {language === "ar"
+                                  ? "إضافة تقديم"
+                                  : "Add Submission"}
+                              </Button>
+                            )}
+                          </div>
                         </div>
-                      </div>
-                    ))}
+                      ))
+                    )}
                   </div>
                 </CardContent>
               </Card>
@@ -1124,19 +1286,19 @@ const AgencyDashboard = () => {
           <TabsContent value="agency-info">
             <Card>
               <CardHeader>
-                <CardTitle>معلومات الوكالة</CardTitle>
-                <CardDescription>تفاصيل الوكالة وبيانات الدخول</CardDescription>
+                <CardTitle>معلومات الجهة</CardTitle>
+                <CardDescription>تفاصيل الجهة وبيانات الدخول</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   {/* Agency Information */}
                   <div className="space-y-4">
                     <h3 className="text-lg font-semibold border-b pb-2">
-                      معلومات الوكالة
+                      معلومات الجهة
                     </h3>
                     <div className="space-y-3">
                       <div>
-                        <span className="font-medium">اسم الوكالة:</span>
+                        <span className="font-medium">اسم الجهة:</span>
                         <p className="text-muted-foreground">
                           {agencyData.name}
                         </p>
@@ -1148,7 +1310,7 @@ const AgencyDashboard = () => {
                         </p>
                       </div>
                       <div>
-                        <span className="font-medium">نوع الوكالة:</span>
+                        <span className="font-medium">نوع الجهة:</span>
                         <p className="text-muted-foreground">
                           {agencyData.type}
                         </p>
@@ -1205,13 +1367,13 @@ const AgencyDashboard = () => {
                         </p>
                       </div>
                       <div>
-                        <span className="font-medium">بريد الوكالة:</span>
+                        <span className="font-medium">بريد الجهة:</span>
                         <p className="text-muted-foreground">
                           {agencyData.agencyEmail}
                         </p>
                       </div>
                       <div>
-                        <span className="font-medium">كلمة مرور الوكالة:</span>
+                        <span className="font-medium">كلمة مرور الجهة:</span>
                         <p className="text-muted-foreground">••••••••</p>
                       </div>
                     </div>
@@ -1222,6 +1384,17 @@ const AgencyDashboard = () => {
           </TabsContent>
         </Tabs>
       </main>
+
+      {/* Submission Modal */}
+      <SubmissionModal
+        isOpen={submissionModal.isOpen}
+        onClose={closeSubmissionModal}
+        mode={submissionModal.mode}
+        standardId={submissionModal.standardId}
+        standardTitle={submissionModal.standardTitle}
+        submission={submissionModal.submission}
+        onSubmit={handleSubmissionSubmit}
+      />
     </div>
   );
 };
