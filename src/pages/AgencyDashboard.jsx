@@ -1,23 +1,13 @@
 import React, { useState, useEffect } from "react";
 
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Building2,
   Users,
   Target,
   Plus,
-  Eye,
-  Edit,
-  Trash2,
   Home,
   Globe,
   Moon,
@@ -27,11 +17,12 @@ import {
 // Commented out useAuth for development
 // import { useAuth } from "@/contexts/AuthContext";
 import { useTheme } from "@/contexts/ThemeContext";
-import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
 import Standards from "@/lib/standards";
-import SubmissionModal from "@/components/SubmissionModal";
-import { createSubmission } from "@/lib/submissions";
+import RequiredStandards from "@/components/AgencyDashboard/RequiredStandards";
+import Initiatives from "@/components/AgencyDashboard/Initiatives";
+import Volunteers from "@/components/AgencyDashboard/Volunteers";
+import AgencyInfo from "@/components/AgencyDashboard/AgencyInfo";
 
 const AgencyDashboard = () => {
   // Commented out useAuth for development
@@ -41,21 +32,9 @@ const AgencyDashboard = () => {
   const [activeTab, setActiveTab] = useState("overview");
   const [showAddForm, setShowAddForm] = useState(false);
 
-  // Submission modal state
-  const [submissionModal, setSubmissionModal] = useState({
-    isOpen: false,
-    mode: "add", // "add", "edit", "view"
-    standardId: null,
-    standardTitle: "",
-    submission: null,
-  });
+  // Note: Submission modal state is now handled in RequiredStandards component
 
-  // Mock submissions data - in real app, this would come from API
-  const [submissions, setSubmissions] = useState({});
-
-  // Search and filter state
-  const [statusFilter, setStatusFilter] = useState("all");
-  const [searchTerm, setSearchTerm] = useState("");
+  // Note: statusFilter and searchTerm are now handled in RequiredStandards component
 
   // Commented out loading check for development
   // if (loading) {
@@ -230,19 +209,6 @@ const AgencyDashboard = () => {
     })
   );
 
-  // Filter standards based on search and status
-  const filteredStandards = assignedStandards.filter((standard) => {
-    const matchesSearch =
-      searchTerm === "" ||
-      standard.standard.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      standard.id.toLowerCase().includes(searchTerm.toLowerCase());
-
-    const matchesStatus =
-      statusFilter === "all" || standard.status === statusFilter;
-
-    return matchesSearch && matchesStatus;
-  });
-
   // Helper function to determine submission type based on requirements
   function getSubmissionTypeFromRequirements(requirements) {
     if (!requirements || requirements.length === 0) return "text";
@@ -263,189 +229,6 @@ const AgencyDashboard = () => {
       return "pdf";
     return "text";
   }
-
-  const getStatusBadge = (status) => {
-    switch (status) {
-      case "مكتمل":
-        return (
-          <Badge variant="default" className="bg-green-500">
-            مكتمل
-          </Badge>
-        );
-      case "نشط":
-        return (
-          <Badge variant="default" className="bg-blue-500">
-            نشط
-          </Badge>
-        );
-      case "متوقف":
-        return <Badge variant="secondary">متوقف</Badge>;
-      case "معلق":
-        return <Badge variant="outline">معلق</Badge>;
-      default:
-        return <Badge variant="outline">{status}</Badge>;
-    }
-  };
-
-  const getVolunteerStatusBadge = (status) => {
-    switch (status) {
-      case "نشط":
-        return (
-          <Badge variant="default" className="bg-green-500">
-            نشط
-          </Badge>
-        );
-      case "إجازة":
-        return <Badge variant="secondary">إجازة</Badge>;
-      case "متوقف":
-        return <Badge variant="outline">متوقف</Badge>;
-      default:
-        return <Badge variant="outline">{status}</Badge>;
-    }
-  };
-
-  const getStandardStatusBadge = (status) => {
-    switch (status) {
-      case "approved":
-        return (
-          <Badge
-            variant="default"
-            className={`bg-green-500 ${
-              language === "ar" ? "font-arabic" : "font-sans"
-            }`}>
-            {language === "ar" ? "موافق عليه" : "Approved"}
-          </Badge>
-        );
-      case "rejected":
-        return (
-          <Badge
-            variant="destructive"
-            className={language === "ar" ? "font-arabic" : "font-sans"}>
-            {language === "ar" ? "مرفوض" : "Rejected"}
-          </Badge>
-        );
-      case "pending_approval":
-        return (
-          <Badge
-            variant="secondary"
-            className={`bg-yellow-100 text-yellow-800 border-yellow-200 ${
-              language === "ar" ? "font-arabic" : "font-sans"
-            }`}>
-            {language === "ar" ? "في انتظار الموافقة" : "Pending Approval"}
-          </Badge>
-        );
-      case "didnt_submit":
-        return (
-          <Badge
-            variant="outline"
-            className={`bg-gray-100 text-gray-700 border-gray-300 ${
-              language === "ar" ? "font-arabic" : "font-sans"
-            }`}>
-            {language === "ar" ? "لم يقدم" : "Didn't Submit"}
-          </Badge>
-        );
-      default:
-        return (
-          <Badge
-            variant="outline"
-            className={language === "ar" ? "font-arabic" : "font-sans"}>
-            {status}
-          </Badge>
-        );
-    }
-  };
-
-  const getSubmissionTypeText = (type) => {
-    switch (type) {
-      case "text":
-        return language === "ar" ? "نص" : "Text";
-      case "pdf":
-        return language === "ar" ? "ملف PDF" : "PDF File";
-      case "photo":
-        return language === "ar" ? "صورة" : "Photo";
-      case "video":
-        return language === "ar" ? "فيديو" : "Video";
-      default:
-        return language === "ar" ? "غير محدد" : "Undefined";
-    }
-  };
-
-  // Submission modal handlers
-  const openSubmissionModal = (
-    mode,
-    standardId,
-    standardTitle,
-    submission = null
-  ) => {
-    setSubmissionModal({
-      isOpen: true,
-      mode,
-      standardId,
-      standardTitle,
-      submission,
-    });
-  };
-
-  const closeSubmissionModal = () => {
-    setSubmissionModal({
-      isOpen: false,
-      mode: "add",
-      standardId: null,
-      standardTitle: "",
-      submission: null,
-    });
-  };
-
-  const handleSubmissionSubmit = async (submissionData) => {
-    try {
-      if (submissionModal.mode === "add") {
-        // Add new submission
-        setSubmissions((prev) => ({
-          ...prev,
-          [submissionData.standardId]: submissionData,
-        }));
-        toast.success(
-          language === "ar"
-            ? "تم إضافة التقديم بنجاح"
-            : "Submission added successfully"
-        );
-      } else if (submissionModal.mode === "edit") {
-        // Update existing submission
-        setSubmissions((prev) => ({
-          ...prev,
-          [submissionData.standardId]: submissionData,
-        }));
-        toast.success(
-          language === "ar"
-            ? "تم تحديث التقديم بنجاح"
-            : "Submission updated successfully"
-        );
-      }
-    } catch (error) {
-      console.error("Error handling submission:", error);
-      toast.error(
-        language === "ar" ? "حدث خطأ في حفظ التقديم" : "Error saving submission"
-      );
-    }
-  };
-
-  // Get submission for a standard
-  const getSubmissionForStandard = (standardId) => {
-    return submissions[standardId] || null;
-  };
-
-  const formatCurrency = (amount) => {
-    return new Intl.NumberFormat(language === "ar" ? "ar-SA" : "en-US", {
-      style: "currency",
-      currency: "SAR",
-    }).format(amount);
-  };
-
-  const formatDate = (dateString) => {
-    return new Date(dateString).toLocaleDateString(
-      language === "ar" ? "ar-SA" : "en-US"
-    );
-  };
 
   const handleLanguageChange = () => {
     const newLanguage = language === "ar" ? "en" : "ar";
@@ -617,11 +400,13 @@ const AgencyDashboard = () => {
             <Card key={label}>
               <CardContent className="p-6">
                 <div
-                  className={`flex items-center justify-between ${
-                    language === "ar" ? "flex-row-reverse" : ""
+                  className={`flex items-center ${
+                    language === "ar" ? "flex-row-reverse" : "flex-row"
                   }`}>
                   <div
-                    className={language === "ar" ? "text-right" : "text-left"}>
+                    className={`flex-1 ${
+                      language === "ar" ? "text-right" : "text-left"
+                    }`}>
                     <p
                       className={`text-sm font-medium text-muted-foreground ${
                         language === "ar" ? "font-arabic" : "font-sans"
@@ -635,7 +420,9 @@ const AgencyDashboard = () => {
                       {value}
                     </p>
                   </div>
-                  <Icon className={`w-8 h-8 ${color}`} />
+                  <div className={`${language === "ar" ? "ml-4" : "ml-4"}`}>
+                    <Icon className={`w-8 h-8 ${color}`} />
+                  </div>
                 </div>
               </CardContent>
             </Card>
@@ -674,727 +461,28 @@ const AgencyDashboard = () => {
 
           {/* Overview Tab */}
           <TabsContent value="overview">
-            <div className="space-y-6">
-              {/* Standards Summary */}
-              <Card>
-                <CardHeader>
-                  <CardTitle
-                    className={
-                      language === "ar"
-                        ? "font-arabic text-right"
-                        : "font-sans text-left"
-                    }>
-                    {language === "ar"
-                      ? "ملخص المعايير المطلوبة"
-                      : "Required Standards Summary"}
-                  </CardTitle>
-                  <CardDescription
-                    className={
-                      language === "ar"
-                        ? "font-arabic text-right"
-                        : "font-sans text-left"
-                    }>
-                    {language === "ar"
-                      ? "المعايير المخصصة للجهة وحالة التنفيذ"
-                      : "Standards assigned to the agency and implementation status"}
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-                    <div className="text-center p-4 bg-green-50 rounded-lg">
-                      <div
-                        className={`text-2xl font-bold text-green-600 ${
-                          language === "ar" ? "font-arabic" : "font-sans"
-                        }`}>
-                        {
-                          assignedStandards.filter(
-                            (s) => s.status === "approved"
-                          ).length
-                        }
-                      </div>
-                      <div
-                        className={`text-sm text-green-600 ${
-                          language === "ar" ? "font-arabic" : "font-sans"
-                        }`}>
-                        {language === "ar" ? "موافق عليه" : "Approved"}
-                      </div>
-                    </div>
-                    <div className="text-center p-4 bg-red-50 rounded-lg">
-                      <div
-                        className={`text-2xl font-bold text-red-600 ${
-                          language === "ar" ? "font-arabic" : "font-sans"
-                        }`}>
-                        {
-                          assignedStandards.filter(
-                            (s) => s.status === "rejected"
-                          ).length
-                        }
-                      </div>
-                      <div
-                        className={`text-sm text-red-600 ${
-                          language === "ar" ? "font-arabic" : "font-sans"
-                        }`}>
-                        {language === "ar" ? "مرفوض" : "Rejected"}
-                      </div>
-                    </div>
-                    <div className="text-center p-4 bg-yellow-50 rounded-lg">
-                      <div
-                        className={`text-2xl font-bold text-yellow-600 ${
-                          language === "ar" ? "font-arabic" : "font-sans"
-                        }`}>
-                        {
-                          assignedStandards.filter(
-                            (s) => s.status === "pending_approval"
-                          ).length
-                        }
-                      </div>
-                      <div
-                        className={`text-sm text-yellow-600 ${
-                          language === "ar" ? "font-arabic" : "font-sans"
-                        }`}>
-                        {language === "ar"
-                          ? "في انتظار الموافقة"
-                          : "Pending Approval"}
-                      </div>
-                    </div>
-                    <div className="text-center p-4 bg-gray-50 rounded-lg">
-                      <div
-                        className={`text-2xl font-bold text-gray-600 ${
-                          language === "ar" ? "font-arabic" : "font-sans"
-                        }`}>
-                        {
-                          assignedStandards.filter(
-                            (s) => s.status === "didnt_submit"
-                          ).length
-                        }
-                      </div>
-                      <div
-                        className={`text-sm text-gray-600 ${
-                          language === "ar" ? "font-arabic" : "font-sans"
-                        }`}>
-                        {language === "ar" ? "لم يتم التقديم" : "Didn't Submit"}
-                      </div>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-
-              {/* Assigned Standards List */}
-              <Card>
-                <CardHeader>
-                  <CardTitle
-                    className={
-                      language === "ar"
-                        ? "font-arabic text-right"
-                        : "font-sans text-left"
-                    }>
-                    {language === "ar"
-                      ? "المعايير المخصصة للجهة"
-                      : "Assigned Standards"}
-                  </CardTitle>
-                  <CardDescription
-                    className={
-                      language === "ar"
-                        ? "font-arabic text-right"
-                        : "font-sans text-left"
-                    }>
-                    {language === "ar"
-                      ? "قائمة المعايير التي يجب على الجهة تنفيذها"
-                      : "List of standards that the agency must implement"}
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  {/* Select Input */}
-                  <div className="mb-6 space-y-4">
-                    <div className="relative">
-                      {/* Status filter dropdown */}
-                      <select
-                        value={statusFilter}
-                        onChange={(e) => setStatusFilter(e.target.value)}
-                        className={`w-1/2 mt-2 px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-green-500 focus:ring-2 focus:ring-green-200 ${
-                          language === "ar" ? "text-right" : "text-left"
-                        }`}>
-                        <option value="all">
-                          {language === "ar" ? "الكل" : "All"}
-                        </option>
-                        <option value="approved">
-                          {language === "ar" ? "موافق عليه" : "Approved"}
-                        </option>
-                        <option value="rejected">
-                          {language === "ar" ? "مرفوض" : "Rejected"}
-                        </option>
-                        <option value="pending_approval">
-                          {language === "ar"
-                            ? "في انتظار الموافقة"
-                            : "Pending Approval"}
-                        </option>
-                        <option value="didnt_submit">
-                          {language === "ar" ? "لم يقدم" : "Didn't Submit"}
-                        </option>
-                      </select>
-                    </div>
-                  </div>
-
-                  <div className="space-y-4">
-                    {filteredStandards.length === 0 ? (
-                      <div className="text-center py-8">
-                        <div className="text-gray-500 mb-2">
-                          <svg
-                            className="w-12 h-12 mx-auto"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24">
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth={2}
-                              d="M9.172 16.172a4 4 0 015.656 0M9 12h6m-6-4h6m2 5.291A7.962 7.962 0 0112 15c-2.34 0-4.29-1.009-5.824-2.709M15 6.291A7.962 7.962 0 0012 5c-2.34 0-4.29 1.009-5.824 2.709"
-                            />
-                          </svg>
-                        </div>
-                        <p
-                          className={`text-gray-500 ${
-                            language === "ar" ? "font-arabic" : "font-sans"
-                          }`}>
-                          {language === "ar"
-                            ? "لا توجد معايير تطابق البحث"
-                            : "No standards match your search"}
-                        </p>
-                      </div>
-                    ) : (
-                      filteredStandards.map((standard) => (
-                        <div
-                          key={standard.id}
-                          className="border rounded-lg p-4">
-                          <div
-                            className={`flex items-start justify-between mb-3 ${
-                              language === "ar" ? "flex-row-reverse" : ""
-                            }`}>
-                            <div
-                              className={`flex items-center gap-3 ${
-                                language === "ar" ? "flex-row-reverse" : ""
-                              }`}>
-                              <span> </span>
-                              <div
-                                className={
-                                  language === "ar" ? "text-right" : "text-left"
-                                }>
-                                <h3
-                                  className={`text-lg font-semibold ${
-                                    language === "ar"
-                                      ? "font-arabic"
-                                      : "font-sans"
-                                  }`}>
-                                  {language === "ar" ? (
-                                    <>
-                                      {standard.standard} {standard.id}
-                                    </>
-                                  ) : (
-                                    <>
-                                      {standard.id}. {standard.standard}
-                                    </>
-                                  )}
-                                </h3>
-                              </div>
-                            </div>
-                          </div>
-
-                          <div
-                            className={`grid grid-cols-1 md:grid-cols-2 gap-4 text-sm mb-3 ${
-                              language === "ar" ? "rtl" : "ltr"
-                            }`}>
-                            {language === "ar" ? (
-                              <>
-                                <div
-                                  className={`flex items-center gap-2 ${
-                                    language === "ar" ? "flex-row-reverse" : ""
-                                  }`}>
-                                  <span
-                                    className={`font-medium ${
-                                      language === "ar"
-                                        ? "font-arabic"
-                                        : "font-sans"
-                                    }`}>
-                                    {language === "ar" ? "الحالة:" : "Status:"}
-                                  </span>
-                                  {getStandardStatusBadge(standard.status)}
-                                </div>
-                                <div
-                                  className={`flex items-center gap-2 ${
-                                    language === "ar" ? "flex-row-reverse" : ""
-                                  }`}>
-                                  <span
-                                    className={`font-medium ${
-                                      language === "ar"
-                                        ? "font-arabic"
-                                        : "font-sans"
-                                    }`}>
-                                    {language === "ar"
-                                      ? "نوع التقديم:"
-                                      : "Submission Type:"}
-                                  </span>
-                                  <span
-                                    className={`text-muted-foreground ${
-                                      language === "ar"
-                                        ? "font-arabic"
-                                        : "font-sans"
-                                    }`}>
-                                    {getSubmissionTypeText(
-                                      standard.submissionType
-                                    )}
-                                  </span>
-                                </div>
-                              </>
-                            ) : (
-                              <>
-                                <div
-                                  className={`flex items-center gap-2 ${
-                                    language === "ar" ? "flex-row-reverse" : ""
-                                  }`}>
-                                  <span
-                                    className={`font-medium ${
-                                      language === "ar"
-                                        ? "font-arabic"
-                                        : "font-sans"
-                                    }`}>
-                                    {language === "ar"
-                                      ? "نوع التقديم:"
-                                      : "Submission Type:"}
-                                  </span>
-                                  <span
-                                    className={`text-muted-foreground ${
-                                      language === "ar"
-                                        ? "font-arabic"
-                                        : "font-sans"
-                                    }`}>
-                                    {getSubmissionTypeText(
-                                      standard.submissionType
-                                    )}
-                                  </span>
-                                </div>
-                                <div
-                                  className={`flex items-center gap-2 ${
-                                    language === "ar" ? "flex-row-reverse" : ""
-                                  }`}>
-                                  <span
-                                    className={`font-medium ${
-                                      language === "ar"
-                                        ? "font-arabic"
-                                        : "font-sans"
-                                    }`}>
-                                    {language === "ar" ? "الحالة:" : "Status:"}
-                                  </span>
-                                  {getStandardStatusBadge(standard.status)}
-                                </div>
-                              </>
-                            )}
-                          </div>
-
-                          <div
-                            className={`mb-3 ${
-                              language === "ar" ? "rtl" : "ltr"
-                            }`}>
-                            <span
-                              className={`font-medium text-sm ${
-                                language === "ar" ? "font-arabic" : "font-sans"
-                              }`}>
-                              {language === "ar"
-                                ? "المتطلبات:"
-                                : "Requirements:"}
-                            </span>
-                            <ul
-                              className={`text-sm text-muted-foreground mt-1 ${
-                                language === "ar"
-                                  ? "text-right font-arabic list-disc list-inside"
-                                  : "text-left font-sans list-disc list-inside"
-                              }`}
-                              dir={language === "ar" ? "rtl" : "ltr"}>
-                              {standard.requirements.map((req, index) => (
-                                <li
-                                  key={index}
-                                  className={
-                                    language === "ar"
-                                      ? "text-right"
-                                      : "text-left"
-                                  }>
-                                  {req}
-                                </li>
-                              ))}
-                            </ul>
-                          </div>
-
-                          <div
-                            className={`flex items-center gap-2 ${
-                              language === "ar" ? "flex-row-reverse" : ""
-                            }`}>
-                            {getSubmissionForStandard(standard.id) ? (
-                              <>
-                                <Button
-                                  variant="outline"
-                                  size="sm"
-                                  onClick={() =>
-                                    openSubmissionModal(
-                                      "view",
-                                      standard.id,
-                                      standard.standard,
-                                      getSubmissionForStandard(standard.id)
-                                    )
-                                  }
-                                  className={
-                                    language === "ar"
-                                      ? "font-arabic"
-                                      : "font-sans"
-                                  }>
-                                  <Eye className="w-4 h-4" />
-                                  {language === "ar"
-                                    ? "عرض التقديم"
-                                    : "View Submission"}
-                                </Button>
-                                <Button
-                                  variant="outline"
-                                  size="sm"
-                                  onClick={() =>
-                                    openSubmissionModal(
-                                      "edit",
-                                      standard.id,
-                                      standard.standard,
-                                      getSubmissionForStandard(standard.id)
-                                    )
-                                  }
-                                  className={
-                                    language === "ar"
-                                      ? "font-arabic"
-                                      : "font-sans"
-                                  }>
-                                  <Edit className="w-4 h-4" />
-                                  {language === "ar"
-                                    ? "تعديل التقديم"
-                                    : "Edit Submission"}
-                                </Button>
-                              </>
-                            ) : (
-                              <Button
-                                variant="outline"
-                                size="sm"
-                                onClick={() =>
-                                  openSubmissionModal(
-                                    "add",
-                                    standard.id,
-                                    standard.standard
-                                  )
-                                }
-                                className={
-                                  language === "ar"
-                                    ? "font-arabic"
-                                    : "font-sans"
-                                }>
-                                <Plus className="w-4 h-4" />
-                                {language === "ar"
-                                  ? "إضافة تقديم"
-                                  : "Add Submission"}
-                              </Button>
-                            )}
-                          </div>
-                        </div>
-                      ))
-                    )}
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
+            <RequiredStandards
+              language={language}
+              assignedStandards={assignedStandards}
+            />
           </TabsContent>
 
           {/* Initiatives Tab */}
           <TabsContent value="initiatives">
-            <Card>
-              <CardHeader>
-                <CardTitle>المبادرات</CardTitle>
-                <CardDescription>إدارة جميع المبادرات النشطة</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  {initiatives.map((initiative) => (
-                    <div key={initiative.id} className="border rounded-lg p-4">
-                      <div className="flex items-start justify-between mb-4">
-                        <div className="flex-1">
-                          <div className="flex items-center gap-3 mb-2">
-                            <h3 className="text-lg font-semibold">
-                              {initiative.title}
-                            </h3>
-                            {getStatusBadge(initiative.status)}
-                          </div>
-                          <p className="text-muted-foreground mb-3">
-                            {initiative.description}
-                          </p>
-
-                          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm mb-3">
-                            <div>
-                              <span className="font-medium">
-                                تاريخ البداية:
-                              </span>
-                              <p>{formatDate(initiative.startDate)}</p>
-                            </div>
-                            <div>
-                              <span className="font-medium">
-                                تاريخ الانتهاء:
-                              </span>
-                              <p>{formatDate(initiative.endDate)}</p>
-                            </div>
-                            <div>
-                              <span className="font-medium">الميزانية:</span>
-                              <p>{formatCurrency(initiative.budget)}</p>
-                            </div>
-                            <div>
-                              <span className="font-medium">المصروفات:</span>
-                              <p>{formatCurrency(initiative.spent)}</p>
-                            </div>
-                          </div>
-
-                          <div className="space-y-2">
-                            <div className="flex items-center justify-between text-sm">
-                              <span>التقدم</span>
-                              <span className="font-medium">
-                                {initiative.progress}%
-                              </span>
-                            </div>
-                            <div className="w-full bg-muted rounded-full h-2">
-                              <div
-                                className="bg-primary h-2 rounded-full transition-all duration-300"
-                                style={{
-                                  width: `${initiative.progress}%`,
-                                }}></div>
-                            </div>
-                          </div>
-
-                          <div className="mt-3">
-                            <span className="text-sm font-medium">
-                              فريق العمل:
-                            </span>
-                            <div className="flex flex-wrap gap-2 mt-1">
-                              {initiative.team.map((member, index) => (
-                                <Badge
-                                  key={index}
-                                  variant="outline"
-                                  className="text-xs">
-                                  {member}
-                                </Badge>
-                              ))}
-                            </div>
-                          </div>
-                        </div>
-
-                        <div className="flex items-center gap-2 ml-4">
-                          <Button variant="outline" size="sm">
-                            <Eye className="w-4 h-4" />
-                          </Button>
-                          <Button variant="outline" size="sm">
-                            <Edit className="w-4 h-4" />
-                          </Button>
-                          <Button variant="outline" size="sm">
-                            <Trash2 className="w-4 h-4" />
-                          </Button>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
+            <Initiatives language={language} initiatives={initiatives} />
           </TabsContent>
 
           {/* Volunteers Tab */}
           <TabsContent value="volunteers">
-            <Card>
-              <CardHeader>
-                <CardTitle>المتطوعين</CardTitle>
-                <CardDescription>إدارة المتطوعين والمتطوعات</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  {volunteers.map((volunteer) => (
-                    <div key={volunteer.id} className="border rounded-lg p-4">
-                      <div className="flex items-start justify-between">
-                        <div className="flex-1">
-                          <div className="flex items-center gap-3 mb-2">
-                            <h3 className="text-lg font-semibold">
-                              {volunteer.name}
-                            </h3>
-                            {getVolunteerStatusBadge(volunteer.status)}
-                          </div>
-
-                          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
-                            <div>
-                              <span className="font-medium">المنصب:</span>
-                              <p>{volunteer.position}</p>
-                            </div>
-                            <div>
-                              <span className="font-medium">القسم:</span>
-                              <p>{volunteer.department}</p>
-                            </div>
-                            <div>
-                              <span className="font-medium">
-                                البريد الإلكتروني:
-                              </span>
-                              <p>{volunteer.email}</p>
-                            </div>
-                            <div>
-                              <span className="font-medium">الهاتف:</span>
-                              <p>{volunteer.phone}</p>
-                            </div>
-                          </div>
-
-                          <div className="grid grid-cols-2 md:grid-cols-3 gap-4 text-sm mt-3">
-                            <div>
-                              <span className="font-medium">
-                                تاريخ الانضمام:
-                              </span>
-                              <p>{formatDate(volunteer.joinDate)}</p>
-                            </div>
-                            <div>
-                              <span className="font-medium">ساعات التطوع:</span>
-                              <p>{volunteer.hours} ساعة</p>
-                            </div>
-                            <div>
-                              <span className="font-medium">
-                                المبادرات المشاركة:
-                              </span>
-                              <p>{volunteer.initiatives} مبادرة</p>
-                            </div>
-                          </div>
-                        </div>
-
-                        <div className="flex items-center gap-2 ml-4">
-                          <Button variant="outline" size="sm">
-                            <Eye className="w-4 h-4" />
-                          </Button>
-                          <Button variant="outline" size="sm">
-                            <Edit className="w-4 h-4" />
-                          </Button>
-                          <Button variant="outline" size="sm">
-                            <Trash2 className="w-4 h-4" />
-                          </Button>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
+            <Volunteers language={language} volunteers={volunteers} />
           </TabsContent>
 
           {/* Agency Info Tab */}
           <TabsContent value="agency-info">
-            <Card>
-              <CardHeader>
-                <CardTitle>معلومات الجهة</CardTitle>
-                <CardDescription>تفاصيل الجهة وبيانات الدخول</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  {/* Agency Information */}
-                  <div className="space-y-4">
-                    <h3 className="text-lg font-semibold border-b pb-2">
-                      معلومات الجهة
-                    </h3>
-                    <div className="space-y-3">
-                      <div>
-                        <span className="font-medium">اسم الجهة:</span>
-                        <p className="text-muted-foreground">
-                          {agencyData.name}
-                        </p>
-                      </div>
-                      <div>
-                        <span className="font-medium">الوصف:</span>
-                        <p className="text-muted-foreground">
-                          {agencyData.description}
-                        </p>
-                      </div>
-                      <div>
-                        <span className="font-medium">نوع الجهة:</span>
-                        <p className="text-muted-foreground">
-                          {agencyData.type}
-                        </p>
-                      </div>
-                      <div>
-                        <span className="font-medium">الحالة:</span>
-                        <p className="text-muted-foreground">
-                          {agencyData.status}
-                        </p>
-                      </div>
-                      <div>
-                        <span className="font-medium">عدد المبادرات:</span>
-                        <p className="text-muted-foreground">
-                          {agencyData.initiatives}
-                        </p>
-                      </div>
-                      <div>
-                        <span className="font-medium">عدد المتطوعين:</span>
-                        <p className="text-muted-foreground">
-                          {agencyData.volunteers}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Contact Information */}
-                  <div className="space-y-4">
-                    <h3 className="text-lg font-semibold border-b pb-2">
-                      معلومات الاتصال
-                    </h3>
-                    <div className="space-y-3">
-                      <div>
-                        <span className="font-medium">الشخص المسؤول:</span>
-                        <p className="text-muted-foreground">
-                          {agencyData.contactPerson}
-                        </p>
-                      </div>
-                      <div>
-                        <span className="font-medium">البريد الإلكتروني:</span>
-                        <p className="text-muted-foreground">
-                          {agencyData.email}
-                        </p>
-                      </div>
-                      <div>
-                        <span className="font-medium">الهاتف:</span>
-                        <p className="text-muted-foreground">
-                          {agencyData.phone}
-                        </p>
-                      </div>
-                      <div>
-                        <span className="font-medium">العنوان:</span>
-                        <p className="text-muted-foreground">
-                          {agencyData.address}
-                        </p>
-                      </div>
-                      <div>
-                        <span className="font-medium">بريد الجهة:</span>
-                        <p className="text-muted-foreground">
-                          {agencyData.agencyEmail}
-                        </p>
-                      </div>
-                      <div>
-                        <span className="font-medium">كلمة مرور الجهة:</span>
-                        <p className="text-muted-foreground">••••••••</p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+            <AgencyInfo language={language} agencyData={agencyData} />
           </TabsContent>
         </Tabs>
       </main>
-
-      {/* Submission Modal */}
-      <SubmissionModal
-        isOpen={submissionModal.isOpen}
-        onClose={closeSubmissionModal}
-        mode={submissionModal.mode}
-        standardId={submissionModal.standardId}
-        standardTitle={submissionModal.standardTitle}
-        submission={submissionModal.submission}
-        onSubmit={handleSubmissionSubmit}
-      />
     </div>
   );
 };
