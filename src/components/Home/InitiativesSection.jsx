@@ -19,11 +19,18 @@ import {
   Clock,
   CheckCircle,
 } from "lucide-react";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useTheme } from "@/contexts/ThemeContext";
 
 const InitiativesSection = () => {
   const { language } = useTheme();
+  const navigate = useNavigate();
+
+  // Function to navigate and scroll to top
+  const navigateToTop = (path) => {
+    navigate(path);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
 
   const content = {
     ar: {
@@ -79,6 +86,7 @@ const InitiativesSection = () => {
       location: "مركز المدينة الصحي",
       locationEn: "City Health Center",
       participants: 150,
+      maxParticipants: 200,
       progress: 75,
       image: "/assets/health-workshop.jpg",
     },
@@ -97,6 +105,7 @@ const InitiativesSection = () => {
       location: "مختلف أحياء المدينة",
       locationEn: "Various City Neighborhoods",
       participants: 80,
+      maxParticipants: 120,
       progress: 45,
       image: "/assets/green-garden.jpg",
     },
@@ -114,6 +123,7 @@ const InitiativesSection = () => {
       location: "المسارات الصحية",
       locationEn: "Health Trails",
       participants: 200,
+      maxParticipants: 200,
       progress: 100,
       image: "/assets/walking-initiative.jpg",
     },
@@ -131,6 +141,7 @@ const InitiativesSection = () => {
       location: "المدارس والمراكز المجتمعية",
       locationEn: "Schools and Community Centers",
       participants: 0,
+      maxParticipants: 50,
       progress: 0,
       image: "/assets/health-workshop.jpg",
     },
@@ -202,7 +213,7 @@ const InitiativesSection = () => {
 
         {/* Initiatives Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
-          {initiatives.map((initiative) => (
+          {initiatives.slice(0, 3).map((initiative) => (
             <Card
               key={initiative.id}
               className="group hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
@@ -238,17 +249,40 @@ const InitiativesSection = () => {
                   <div className="space-y-2">
                     <div className="flex items-center justify-between text-sm">
                       <span className="text-muted-foreground">
-                        {language === "ar" ? "التقدم" : "Progress"}
+                        {initiative.participants}{" "}
+                        {language === "ar" ? "من" : "of"}{" "}
+                        {initiative.maxParticipants}{" "}
+                        {language === "ar" ? "مشارك" : "participants"}
                       </span>
                       <span className="font-medium">
-                        {initiative.progress}%
+                        {Math.round(
+                          (initiative.participants /
+                            initiative.maxParticipants) *
+                            100
+                        )}
+                        %
                       </span>
                     </div>
                     <div className="w-full bg-muted rounded-full h-2">
                       <div
                         className="bg-primary h-2 rounded-full transition-all duration-300"
-                        style={{ width: `${initiative.progress}%` }}></div>
+                        style={{
+                          width: `${
+                            (initiative.participants /
+                              initiative.maxParticipants) *
+                            100
+                          }%`,
+                        }}></div>
                     </div>
+                    <p
+                      className={`text-xs text-muted-foreground ${
+                        isRTL ? "font-arabic text-right" : "font-sans text-left"
+                      }`}>
+                      {initiative.maxParticipants - initiative.participants}{" "}
+                      {language === "ar"
+                        ? "مشارك مطلوب"
+                        : "participants needed"}
+                    </p>
                   </div>
                 )}
 
@@ -308,7 +342,11 @@ const InitiativesSection = () => {
                 </div>
 
                 {/* Action Button */}
-                <Button className="w-full group-hover:bg-primary/90 transition-colors">
+                <Button
+                  className="w-full group-hover:bg-primary/90 transition-colors"
+                  onClick={() =>
+                    navigateToTop(`/initiatives/${initiative.id}`)
+                  }>
                   {language === "ar" ? "عرض التفاصيل" : "View Details"}
                   <ArrowRight
                     className={`w-4 h-4 ${isRTL ? "mr-2" : "ml-2"}`}
@@ -321,12 +359,14 @@ const InitiativesSection = () => {
 
         {/* Call to Action */}
         <div className="text-center">
-          <Link to="/initiatives">
-            <Button size="lg" variant="outline" className="px-8 py-6 text-lg">
-              {current.viewAll}
-              <ArrowRight className={`w-5 h-5 ${isRTL ? "mr-2" : "ml-2"}`} />
-            </Button>
-          </Link>
+          <Button
+            size="lg"
+            variant="outline"
+            className="px-8 py-6 text-lg"
+            onClick={() => navigateToTop("/initiatives")}>
+            {current.viewAll}
+            <ArrowRight className={`w-5 h-5 ${isRTL ? "mr-2" : "ml-2"}`} />
+          </Button>
         </div>
       </div>
     </section>

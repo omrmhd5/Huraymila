@@ -8,13 +8,11 @@ import { ThemeProvider } from "@/contexts/ThemeContext";
 import Layout from "./pages/Layout";
 import Home from "./pages/Home";
 import About from "./pages/About";
-import Initiatives from "./pages/Initiatives";
 import Volunteer from "./pages/Volunteer";
 import EnvironmentalReport from "./pages/EnvironmentalReport";
 import Feedback from "./pages/Feedback";
 import Contact from "./pages/Contact";
 import Auth from "./pages/Auth";
-import TestAccounts from "./pages/TestAccounts";
 import NotFound from "./pages/NotFound";
 import AgencyDashboard from "./pages/AgencyDashboard";
 import AgencyManagement from "./pages/AgencyManagement";
@@ -26,6 +24,8 @@ import AllNews from "./pages/AllNews";
 import NewsArticle from "./pages/NewsArticle";
 import AllSuccessStories from "./pages/AllSuccessStories";
 import SuccessStory from "./pages/SuccessStory";
+import AllInitiatives from "./pages/AllInitiatives";
+import Initiative from "./pages/Initiative";
 
 const queryClient = new QueryClient();
 
@@ -41,7 +41,6 @@ const App = () => (
               <Route path="/" element={<Layout />}>
                 <Route index element={<Home />} />
                 <Route path="/about" element={<About />} />
-                <Route path="/initiatives" element={<Initiatives />} />
                 <Route path="/volunteer" element={<Volunteer />} />
                 <Route
                   path="/environmental-report"
@@ -50,7 +49,6 @@ const App = () => (
                 <Route path="/feedback" element={<Feedback />} />
                 <Route path="/contact" element={<Contact />} />
                 <Route path="/auth" element={<Auth />} />
-                <Route path="/test-accounts" element={<TestAccounts />} />
                 <Route path="/news" element={<AllNews />} />
                 <Route path="/news/:id" element={<NewsArticle />} />
                 <Route
@@ -58,6 +56,8 @@ const App = () => (
                   element={<AllSuccessStories />}
                 />
                 <Route path="/success-stories/:id" element={<SuccessStory />} />
+                <Route path="/initiatives" element={<AllInitiatives />} />
+                <Route path="/initiatives/:id" element={<Initiative />} />
               </Route>
 
               <Route path="/admin" element={<AdminLayout />}>
