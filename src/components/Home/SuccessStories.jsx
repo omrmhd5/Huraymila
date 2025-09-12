@@ -18,11 +18,18 @@ import {
   Award,
   TrendingUp,
 } from "lucide-react";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useTheme } from "@/contexts/ThemeContext";
 
 const SuccessStories = () => {
   const { language } = useTheme();
+  const navigate = useNavigate();
+
+  // Function to navigate and scroll to top
+  const navigateToTop = (path) => {
+    navigate(path);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
 
   const content = {
     ar: {
@@ -316,7 +323,11 @@ const SuccessStories = () => {
                     "
                   </blockquote>
 
-                  <Button className="w-fit">
+                  <Button
+                    className="w-fit"
+                    onClick={() =>
+                      navigateToTop(`/success-stories/${story.id}`)
+                    }>
                     {language === "ar" ? "اقرأ القصة كاملة" : "Read Full Story"}
                     <ArrowRight
                       className={`w-4 h-4 ${isRTL ? "mr-2" : "ml-2"}`}
@@ -403,7 +414,10 @@ const SuccessStories = () => {
 
                   <Button
                     variant="outline"
-                    className="w-full group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
+                    className="w-full group-hover:bg-primary group-hover:text-primary-foreground transition-colors"
+                    onClick={() =>
+                      navigateToTop(`/success-stories/${story.id}`)
+                    }>
                     {language === "ar" ? "اقرأ القصة" : "Read Story"}
                     <ArrowRight
                       className={`w-4 h-4 ${isRTL ? "mr-2" : "ml-2"}`}
@@ -416,12 +430,14 @@ const SuccessStories = () => {
 
         {/* Call to Action */}
         <div className="text-center">
-          <Link to="/success-stories">
-            <Button size="lg" variant="outline" className="px-8 py-6 text-lg">
-              {current.viewAll}
-              <ArrowRight className={`w-5 h-5 ${isRTL ? "mr-2" : "ml-2"}`} />
-            </Button>
-          </Link>
+          <Button
+            size="lg"
+            variant="outline"
+            className="px-8 py-6 text-lg"
+            onClick={() => navigateToTop("/success-stories")}>
+            {current.viewAll}
+            <ArrowRight className={`w-5 h-5 ${isRTL ? "mr-2" : "ml-2"}`} />
+          </Button>
         </div>
       </div>
     </section>

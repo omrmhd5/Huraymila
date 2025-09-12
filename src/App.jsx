@@ -24,6 +24,8 @@ import StandardsManagement from "./pages/StandardsManagement";
 import SubmissionsView from "./pages/SubmissionsView";
 import AllNews from "./pages/AllNews";
 import NewsArticle from "./pages/NewsArticle";
+import AllSuccessStories from "./pages/AllSuccessStories";
+import SuccessStory from "./pages/SuccessStory";
 
 const queryClient = new QueryClient();
 
@@ -51,6 +53,11 @@ const App = () => (
                 <Route path="/test-accounts" element={<TestAccounts />} />
                 <Route path="/news" element={<AllNews />} />
                 <Route path="/news/:id" element={<NewsArticle />} />
+                <Route
+                  path="/success-stories"
+                  element={<AllSuccessStories />}
+                />
+                <Route path="/success-stories/:id" element={<SuccessStory />} />
               </Route>
 
               <Route path="/admin" element={<AdminLayout />}>
