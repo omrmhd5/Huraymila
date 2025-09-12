@@ -274,7 +274,7 @@ const Report = () => {
             <CardContent>
               <div className="space-y-6">
                 {/* Upload Area */}
-                <div className="border-2 border-dashed border-muted-foreground/25 rounded-lg p-8 text-center hover:border-primary/50 transition-colors">
+                <div className="border-2 border-dashed border-muted-foreground/25 rounded-lg p-8 text-center hover:border-primary/50 transition-colors relative">
                   <Upload className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
                   <div className="space-y-2">
                     <p
@@ -296,7 +296,7 @@ const Report = () => {
                     multiple
                     accept="image/*,video/*"
                     onChange={handleFileUpload}
-                    className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                    className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
                   />
                 </div>
 

@@ -2,11 +2,18 @@ import React from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { FileText, Users, LogIn, ArrowRight } from "lucide-react";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useTheme } from "@/contexts/ThemeContext";
 
 const QuickLinksSection = () => {
   const { language } = useTheme();
+  const navigate = useNavigate();
+
+  // Navigation helper function
+  const navigateToTop = (path) => {
+    navigate(path);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
 
   const content = {
     ar: {
@@ -80,14 +87,14 @@ const QuickLinksSection = () => {
                     {language === "ar" ? link.title : link.titleEn}
                   </h3>
 
-                  <Link to={link.href}>
-                    <Button className="w-full group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
-                      {language === "ar" ? "ابدأ الآن" : "Get Started"}
-                      <ArrowRight
-                        className={`w-4 h-4 ${isRTL ? "mr-2" : "ml-2"}`}
-                      />
-                    </Button>
-                  </Link>
+                  <Button
+                    className="w-full group-hover:bg-primary group-hover:text-primary-foreground transition-colors"
+                    onClick={() => navigateToTop(link.href)}>
+                    {language === "ar" ? "ابدأ الآن" : "Get Started"}
+                    <ArrowRight
+                      className={`w-4 h-4 ${isRTL ? "mr-2" : "ml-2"}`}
+                    />
+                  </Button>
                 </CardContent>
               </Card>
             );
