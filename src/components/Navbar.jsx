@@ -53,6 +53,11 @@ const Navbar = () => {
       href: "/initiatives",
       label: language === "ar" ? "المبادرات" : "Initiatives",
     },
+    { href: "/news", label: language === "ar" ? "الأخبار" : "News" },
+    {
+      href: "/success-stories",
+      label: language === "ar" ? "قصص النجاح" : "Success Stories",
+    },
     { href: "/volunteer", label: language === "ar" ? "التطوع" : "Volunteer" },
     { href: "/contact", label: language === "ar" ? "اتصل بنا" : "Contact" },
   ];

@@ -272,37 +272,64 @@ const HealthDashboard = () => {
 
         {/* Summary Statistics */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-12">
-          <Card className="text-center p-6 bg-gradient-to-br from-green-50 to-green-100 border-green-200">
-            <Target className="h-8 w-8 text-green-600 mx-auto mb-3" />
-            <div className="text-2xl font-bold text-green-700 mb-1">6</div>
-            <p className="text-sm text-green-600">
-              {language === "ar" ? "مؤشرات صحية" : "Health Indicators"}
-            </p>
-          </Card>
-
-          <Card className="text-center p-6 bg-gradient-to-br from-blue-50 to-blue-100 border-blue-200">
-            <Award className="h-8 w-8 text-blue-600 mx-auto mb-3" />
-            <div className="text-2xl font-bold text-blue-700 mb-1">4</div>
-            <p className="text-sm text-blue-600">
-              {language === "ar" ? "مؤشرات ممتازة" : "Excellent Indicators"}
-            </p>
-          </Card>
-
-          <Card className="text-center p-6 bg-gradient-to-br from-purple-50 to-purple-100 border-purple-200">
-            <TrendingUp className="h-8 w-8 text-purple-600 mx-auto mb-3" />
-            <div className="text-2xl font-bold text-purple-700 mb-1">100%</div>
-            <p className="text-sm text-purple-600">
-              {language === "ar" ? "اتجاه إيجابي" : "Positive Trend"}
-            </p>
-          </Card>
-
-          <Card className="text-center p-6 bg-gradient-to-br from-orange-50 to-orange-100 border-orange-200">
-            <Sparkles className="h-8 w-8 text-orange-600 mx-auto mb-3" />
-            <div className="text-2xl font-bold text-orange-700 mb-1">87%</div>
-            <p className="text-sm text-orange-600">
-              {language === "ar" ? "متوسط الأداء" : "Performance Average"}
-            </p>
-          </Card>
+          {[
+            {
+              icon: Target,
+              value: "6",
+              label: language === "ar" ? "مؤشرات صحية" : "Health Indicators",
+              gradient: "from-green-50 to-green-100",
+              border: "border-green-200",
+              iconColor: "text-green-600",
+              valueColor: "text-green-700",
+              labelColor: "text-green-600",
+            },
+            {
+              icon: Award,
+              value: "4",
+              label:
+                language === "ar" ? "مؤشرات ممتازة" : "Excellent Indicators",
+              gradient: "from-blue-50 to-blue-100",
+              border: "border-blue-200",
+              iconColor: "text-blue-600",
+              valueColor: "text-blue-700",
+              labelColor: "text-blue-600",
+            },
+            {
+              icon: TrendingUp,
+              value: "100%",
+              label: language === "ar" ? "اتجاه إيجابي" : "Positive Trend",
+              gradient: "from-purple-50 to-purple-100",
+              border: "border-purple-200",
+              iconColor: "text-purple-600",
+              valueColor: "text-purple-700",
+              labelColor: "text-purple-600",
+            },
+            {
+              icon: Sparkles,
+              value: "87%",
+              label: language === "ar" ? "متوسط الأداء" : "Performance Average",
+              gradient: "from-orange-50 to-orange-100",
+              border: "border-orange-200",
+              iconColor: "text-orange-600",
+              valueColor: "text-orange-700",
+              labelColor: "text-orange-600",
+            },
+          ].map((stat, index) => {
+            const IconComponent = stat.icon;
+            return (
+              <Card
+                key={index}
+                className={`text-center p-6 bg-gradient-to-br ${stat.gradient} ${stat.border}`}>
+                <IconComponent
+                  className={`h-8 w-8 ${stat.iconColor} mx-auto mb-3`}
+                />
+                <div className={`text-2xl font-bold ${stat.valueColor} mb-1`}>
+                  {stat.value}
+                </div>
+                <p className={`text-sm ${stat.labelColor}`}>{stat.label}</p>
+              </Card>
+            );
+          })}
         </div>
 
         {/* Last Update */}

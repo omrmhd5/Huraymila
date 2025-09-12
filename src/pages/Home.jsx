@@ -35,7 +35,7 @@ const Home = () => {
         <NewsSection />
         <SuccessStories />
         <HealthDashboard />
-        <InteractiveMap />
+        {/* <InteractiveMap /> */}
         <InitiativesSection />
         <PartnersSection />
         <QuickLinksSection />
