@@ -8,8 +8,15 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Eye, Edit, Plus } from "lucide-react";
-import SubmissionModal from "@/components/AgencyDashboard/SubmissionModal";
+import SubmissionModal from "@/components/AgencyDashboard/Modals/SubmissionModal";
 import { toast } from "sonner";
 
 const RequiredStandards = ({ language, assignedStandards }) => {
@@ -300,32 +307,69 @@ const RequiredStandards = ({ language, assignedStandards }) => {
         <CardContent>
           {/* Select Input */}
           <div className="mb-6 space-y-4">
-            <div className="relative">
+            <div className="w-1/2">
               {/* Status filter dropdown */}
-              <select
-                value={statusFilter}
-                onChange={(e) => setStatusFilter(e.target.value)}
-                className={`w-1/2 mt-2 px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-green-500 focus:ring-2 focus:ring-green-200 ${
-                  language === "ar" ? "text-right" : "text-left"
-                }`}>
-                <option value="all">
-                  {language === "ar" ? "الكل" : "All"}
-                </option>
-                <option value="approved">
-                  {language === "ar" ? "موافق عليه" : "Approved"}
-                </option>
-                <option value="rejected">
-                  {language === "ar" ? "مرفوض" : "Rejected"}
-                </option>
-                <option value="pending_approval">
-                  {language === "ar"
-                    ? "في انتظار الموافقة"
-                    : "Pending Approval"}
-                </option>
-                <option value="didnt_submit">
-                  {language === "ar" ? "لم يقدم" : "Didn't Submit"}
-                </option>
-              </select>
+              <Select value={statusFilter} onValueChange={setStatusFilter}>
+                <SelectTrigger
+                  className={
+                    language === "ar"
+                      ? "font-arabic text-right"
+                      : "font-sans text-left"
+                  }>
+                  <SelectValue
+                    placeholder={language === "ar" ? "الكل" : "All"}
+                  />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem
+                    value="all"
+                    className={
+                      language === "ar"
+                        ? "font-arabic text-right"
+                        : "font-sans text-left"
+                    }>
+                    {language === "ar" ? "الكل" : "All"}
+                  </SelectItem>
+                  <SelectItem
+                    value="approved"
+                    className={
+                      language === "ar"
+                        ? "font-arabic text-right"
+                        : "font-sans text-left"
+                    }>
+                    {language === "ar" ? "موافق عليه" : "Approved"}
+                  </SelectItem>
+                  <SelectItem
+                    value="rejected"
+                    className={
+                      language === "ar"
+                        ? "font-arabic text-right"
+                        : "font-sans text-left"
+                    }>
+                    {language === "ar" ? "مرفوض" : "Rejected"}
+                  </SelectItem>
+                  <SelectItem
+                    value="pending_approval"
+                    className={
+                      language === "ar"
+                        ? "font-arabic text-right"
+                        : "font-sans text-left"
+                    }>
+                    {language === "ar"
+                      ? "في انتظار الموافقة"
+                      : "Pending Approval"}
+                  </SelectItem>
+                  <SelectItem
+                    value="didnt_submit"
+                    className={
+                      language === "ar"
+                        ? "font-arabic text-right"
+                        : "font-sans text-left"
+                    }>
+                    {language === "ar" ? "لم يقدم" : "Didn't Submit"}
+                  </SelectItem>
+                </SelectContent>
+              </Select>
             </div>
           </div>
 

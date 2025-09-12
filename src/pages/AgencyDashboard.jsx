@@ -380,12 +380,6 @@ const AgencyDashboard = () => {
                 </div>
               </div>
             </div>
-            <Button
-              onClick={() => setShowAddForm(true)}
-              className="flex items-center gap-2">
-              <Plus className="w-4 h-4" />
-              {language === "ar" ? "إضافة مبادرة جديدة" : "Add New Initiative"}
-            </Button>
           </div>
         </div>
 

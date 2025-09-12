@@ -573,7 +573,7 @@ const SubmissionModal = ({
                   handleInputChange("submissionType", value)
                 }>
                 <SelectTrigger
-                  className={`border-2 border-gray-300 focus:border-green-500 focus:ring-2 focus:ring-green-200 ${
+                  className={`border-2 border-gray-300 focus:ring-2 ${
                     language === "ar" ? "text-right" : "text-left"
                   }`}>
                   <SelectValue />
@@ -610,7 +610,7 @@ const SubmissionModal = ({
                     ? "أدخل عنوان التقديم"
                     : "Enter submission title"
                 }
-                className={`border-2 border-gray-300 focus:border-green-500 focus:ring-2 focus:ring-green-200 ${
+                className={`border-2 border-gray-300 focus:ring-2 focus:ring-green-200 ${
                   language === "ar" ? "text-right" : "text-left"
                 }`}
               />
@@ -638,7 +638,7 @@ const SubmissionModal = ({
                     : "Enter detailed description of the submission"
                 }
                 rows={4}
-                className={`border-2 border-gray-300 focus:border-green-500 focus:ring-2 focus:ring-green-200 ${
+                className={`border-2 border-gray-300 focus:ring-2 focus:ring-green-200 ${
                   language === "ar" ? "text-right" : "text-left"
                 }`}
               />
@@ -667,7 +667,7 @@ const SubmissionModal = ({
                     : "Enter any additional notes"
                 }
                 rows={3}
-                className={`border-2 border-gray-300 focus:border-green-500 focus:ring-2 focus:ring-green-200 ${
+                className={`border-2 border-gray-300 focus:ring-2 focus:ring-green-200 ${
                   language === "ar" ? "text-right" : "text-left"
                 }`}
               />
