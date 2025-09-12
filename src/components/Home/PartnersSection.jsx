@@ -10,6 +10,21 @@ import {
   Target,
   UserCheck,
   HandHeart,
+  BarChart3,
+  Globe,
+  FileText,
+  Home,
+  Flame,
+  Leaf,
+  BookOpen,
+  Phone,
+  MapPin,
+  Stethoscope,
+  GraduationCap as School,
+  Briefcase,
+  Star,
+  Activity,
+  Zap,
 } from "lucide-react";
 import { useTheme } from "@/contexts/ThemeContext";
 
@@ -18,104 +33,116 @@ const PartnersSection = () => {
 
   const partners = [
     {
-      name: language === "ar" ? "وزارة الصحة" : "Ministry of Health",
-      role: language === "ar" ? "سياسات صحية" : "Health Policies",
-      icon: Heart,
+      name: "مكتب تنسيق برنامج المدينة الصحية",
+      icon: Activity,
       color: "bg-red-500",
     },
     {
-      name: language === "ar" ? "بلدية حريملاء" : "Harimlaa Municipality",
-      role: language === "ar" ? "خدمات محلية" : "Local Services",
-      icon: Building,
+      name: "المرصد الحضري",
+      icon: BarChart3,
       color: "bg-blue-500",
     },
     {
-      name: language === "ar" ? "إدارة التعليم" : "Education Department",
-      role: language === "ar" ? "برامج توعوية" : "Awareness Programs",
-      icon: GraduationCap,
+      name: "وزارة الشؤون البلدية والقروية",
+      icon: Building,
       color: "bg-green-500",
     },
     {
-      name: language === "ar" ? "شركة المياه" : "Water Company",
-      role: language === "ar" ? "جودة المياه" : "Water Quality",
+      name: "الهيئة العامة للاحصاء",
+      icon: FileText,
+      color: "bg-purple-500",
+    },
+    {
+      name: "المراكز الثقافية",
+      icon: BookOpen,
+      color: "bg-amber-500",
+    },
+    {
+      name: "الدفاع المدني",
+      icon: Shield,
+      color: "bg-orange-500",
+    },
+    {
+      name: "الجمعيات البيئية",
+      icon: Leaf,
+      color: "bg-emerald-500",
+    },
+    {
+      name: "شركة المياه الوطنية",
       icon: Droplets,
       color: "bg-cyan-500",
     },
     {
-      name: language === "ar" ? "إدارة المرور" : "Traffic Department",
-      role: language === "ar" ? "سلامة مرورية" : "Traffic Safety",
-      icon: Car,
-      color: "bg-orange-500",
+      name: "وزارة البيئة والمياه والزراعة",
+      icon: Globe,
+      color: "bg-teal-500",
     },
     {
-      name: language === "ar" ? "الدفاع المدني" : "Civil Defense",
-      role: language === "ar" ? "استجابة طوارئ" : "Emergency Response",
-      icon: Shield,
-      color: "bg-purple-500",
-    },
-    {
-      name: language === "ar" ? "المنظمات الخيرية" : "Charitable Organizations",
-      role: language === "ar" ? "دعم اجتماعي" : "Social Support",
-      icon: HandHeart,
-      color: "bg-pink-500",
-    },
-    {
-      name:
-        language === "ar"
-          ? "الهيئة العامة للغذاء والدواء"
-          : "Food and Drug Authority",
-      role: language === "ar" ? "سلامة غذائية" : "Food Safety",
+      name: "الهيئة العامة للغذاء والدواء",
       icon: Shield,
       color: "bg-indigo-500",
     },
     {
-      name: language === "ar" ? "وزارة البيئة" : "Ministry of Environment",
-      role: language === "ar" ? "حماية بيئية" : "Environmental Protection",
-      icon: Building,
-      color: "bg-emerald-500",
+      name: "الهيئة العامة للأرصاد وحماية البيئة",
+      icon: Zap,
+      color: "bg-sky-500",
     },
     {
-      name:
-        language === "ar"
-          ? "إدارة الطوارئ الطبية"
-          : "Medical Emergency Department",
-      role: language === "ar" ? "خدمات إسعافية" : "Ambulance Services",
-      icon: Heart,
+      name: "وزارة الصحة ( الشؤون الصحية - المستشفيات - القطاع الصحي – مراكز الرعاية الصحية )",
+      icon: Stethoscope,
       color: "bg-red-600",
     },
     {
-      name: language === "ar" ? "مكتب العمل" : "Labor Office",
-      role: language === "ar" ? "تنمية مهارات" : "Skills Development",
-      icon: Building,
+      name: "إدارة التعليم",
+      icon: School,
+      color: "bg-green-600",
+    },
+    {
+      name: "وزارة الموارد البشرية والتنمية الاجتماعية",
+      icon: Users,
+      color: "bg-pink-500",
+    },
+    {
+      name: "إدارة الدفاع المدني",
+      icon: Shield,
+      color: "bg-orange-600",
+    },
+    {
+      name: "الهلال الأحمر",
+      icon: Heart,
+      color: "bg-red-500",
+    },
+    {
+      name: "نادي الحي",
+      icon: Home,
       color: "bg-blue-600",
     },
     {
-      name:
-        language === "ar"
-          ? "إدارة المتاحف والتراث"
-          : "Museums and Heritage Department",
-      role: language === "ar" ? "حفظ تراث" : "Heritage Preservation",
-      icon: Building,
-      color: "bg-amber-500",
+      name: "وزارة الموارد البشرية والتنمية الاجتماعية (الجمعيات الخيرية – الجمعيات الأهلية)",
+      icon: HandHeart,
+      color: "bg-pink-600",
     },
     {
-      name: language === "ar" ? "مركز الأحياء" : "Community Center",
-      role: language === "ar" ? "تطوير مجتمعي" : "Community Development",
-      icon: Users,
-      color: "bg-teal-500",
+      name: "المؤسسة العامة للتدريب التقني والمهني",
+      icon: Briefcase,
+      color: "bg-indigo-600",
     },
     {
-      name: language === "ar" ? "هيئة الرياضة" : "Sports Authority",
-      role: language === "ar" ? "نشاط رياضي" : "Sports Activities",
-      icon: Users,
-      color: "bg-lime-500",
+      name: "وزارة التعليم (الجامعات – المدارس – نادي الحي – المنصات التعليمية)",
+      icon: GraduationCap,
+      color: "bg-green-700",
+    },
+    {
+      name: "وزارة الموارد البشرية والتنمية الاجتماعية (الضمان الاجتماعي – الجمعيات الخيرية – الجمعيات الأهلية)",
+      icon: Star,
+      color: "bg-purple-600",
     },
   ];
 
   const stats = [
     {
       icon: Users,
-      value: "19",
+      value: "21",
       label: language === "ar" ? "جهات شريكة" : "Partner Organizations",
       color: "text-primary",
     },
@@ -176,7 +203,7 @@ const PartnersSection = () => {
           </div>
           <div className="text-center mt-2">
             <p className="text-md text-muted-foreground">
-              <span className="font-bold text-primary">20+</span>{" "}
+              <span className="font-bold text-primary">21</span>{" "}
               {language === "ar"
                 ? "جهة شريكة تعمل معنا لتحقيق الرؤية"
                 : "partner organizations working with us to achieve the vision"}
@@ -200,9 +227,6 @@ const PartnersSection = () => {
                   <h4 className="font-semibold text-foreground mb-2 text-lg">
                     {partner.name}
                   </h4>
-                  <p className="text-sm text-muted-foreground">
-                    {partner.role}
-                  </p>
                 </CardContent>
               </Card>
             );
