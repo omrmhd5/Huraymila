@@ -483,9 +483,10 @@ const Initiatives = ({ language, initiatives }) => {
                             {initiative.maxVolunteers || 10}
                           </span>
                         </div>
-                        <div className={`w-full bg-muted rounded-full h-2 ${
-                          language === "ar" ? "rtl" : "ltr"
-                        }`}>
+                        <div
+                          className={`w-full bg-muted rounded-full h-2 ${
+                            language === "ar" ? "rtl" : "ltr"
+                          }`}>
                           <div
                             className={`bg-primary h-2 rounded-full transition-all duration-300 ${
                               language === "ar" ? "ml-auto" : "mr-auto"
