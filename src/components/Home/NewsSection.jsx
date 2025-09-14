@@ -72,7 +72,7 @@ const NewsSection = () => {
       excerpt:
         "تم إطلاق برنامج شامل للتوعية الصحية يستهدف جميع فئات المجتمع في مدينة حريملاء...",
       excerptEn:
-        "A comprehensive health awareness program targeting all community segments in Harimlaa city has been launched...",
+        "A comprehensive health awareness program targeting all community segments in Huraymila city has been launched...",
       content:
         "يهدف البرنامج إلى تعزيز الوعي الصحي وتشجيع الممارسات الصحية السليمة بين المواطنين. يتضمن البرنامج ورش عمل تعليمية وحملات توعوية في المدارس والمراكز التجارية والأماكن العامة.",
       contentEn:
@@ -94,7 +94,7 @@ const NewsSection = () => {
       excerpt:
         "حقق مشروع التشجير الحضري في مدينة حريملاء نتائج مذهلة خلال الأشهر الماضية...",
       excerptEn:
-        "The urban afforestation project in Harimlaa city has achieved amazing results over the past months...",
+        "The urban afforestation project in Huraymila city has achieved amazing results over the past months...",
       content:
         "تم زراعة أكثر من 1000 شجرة في مختلف أحياء المدينة، مما أدى إلى تحسين جودة الهواء وزيادة المساحات الخضراء. المشروع يهدف إلى تحقيق الاستدامة البيئية وتحسين جودة الحياة.",
       contentEn:
@@ -138,7 +138,7 @@ const NewsSection = () => {
       excerpt:
         "تم افتتاح مركز التثقيف الصحي للأطفال في مدينة حريملاء بهدف تعزيز الثقافة الصحية...",
       excerptEn:
-        "A children's health education center has been opened in Harimlaa city to promote health culture...",
+        "A children's health education center has been opened in Huraymila city to promote health culture...",
       content:
         "يقدم المركز برامج تعليمية تفاعلية للأطفال تهدف إلى تعزيز الثقافة الصحية والوعي بأهمية التغذية السليمة والنظافة الشخصية. المركز مجهز بأحدث التقنيات التعليمية.",
       contentEn:
@@ -173,7 +173,7 @@ const NewsSection = () => {
     en: {
       title: "Latest News",
       subtitle:
-        "Follow the latest updates and initiatives in Harimlaa Healthy City",
+        "Follow the latest updates and initiatives in Huraymila Healthy City",
       description:
         "We provide you with the latest news and developments in public health and community initiatives.",
       viewAll: "View All News",

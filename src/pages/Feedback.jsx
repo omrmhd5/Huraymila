@@ -101,7 +101,7 @@ const Feedback = () => {
               <CardDescription>
                 {language === "ar"
                   ? "أخبرنا عن تجربتك مع مبادرة مدينة حريملاء الصحية"
-                  : "Tell us about your experience with the Harimlaa Healthy City initiative"}
+                  : "Tell us about your experience with the Huraymila Healthy City initiative"}
               </CardDescription>
             </CardHeader>
             <CardContent>

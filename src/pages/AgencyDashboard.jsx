@@ -60,7 +60,7 @@ const AgencyDashboard = () => {
     email: "ahmed@moh.gov.sa",
     phone: "+966-11-123-4567",
     address: "شارع الملك فهد، حريملاء",
-    agencyEmail: "health@harimlaa.gov.sa",
+    agencyEmail: "health@huraymila.gov.sa",
     agencyPassword: "health123",
     initiatives: 12,
     volunteers: 45,

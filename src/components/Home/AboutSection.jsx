@@ -60,7 +60,7 @@ const AboutSection = () => {
         ],
       },
 
-      aboutHarimlaa: {
+      aboutHuraymila: {
         title: "عن محافظة حريملاء",
         description:
           "تقع محافظة حريملاء في منطقة الرياض شمال غرب مدينة الرياض على بعد 86 كيلومتراً. تتميز بموقعها الاستراتيجي وتراثها العريق وتشتهر بالزراعة والمواقع التاريخية.",
@@ -173,16 +173,16 @@ const AboutSection = () => {
       ],
     },
     en: {
-      title: "About Harimlaa Healthy City Program",
+      title: "About Huraymila Healthy City Program",
       subtitle:
         "A Leading National Initiative within Saudi Healthy Cities Program",
       description:
-        "Harimlaa Healthy City Program is an ambitious national initiative aimed at transforming Harimlaa Governorate into an advanced model of healthy cities in Saudi Arabia, through implementing the latest global standards and best practices in community health and sustainable development.",
+        "Huraymila Healthy City Program is an ambitious national initiative aimed at transforming Huraymila Governorate into an advanced model of healthy cities in Saudi Arabia, through implementing the latest global standards and best practices in community health and sustainable development.",
 
       vision: {
         title: "Our Vision",
         description:
-          "To make Harimlaa an exemplary healthy city that achieves the highest standards of quality of life for its residents and visitors, contributing to Saudi Vision 2030.",
+          "To make Huraymila an exemplary healthy city that achieves the highest standards of quality of life for its residents and visitors, contributing to Saudi Vision 2030.",
       },
 
       mission: {
@@ -202,10 +202,10 @@ const AboutSection = () => {
         ],
       },
 
-      aboutHarimlaa: {
-        title: "About Harimlaa Governorate",
+      aboutHuraymila: {
+        title: "About Huraymila Governorate",
         description:
-          "Harimlaa Governorate is located in Riyadh region, 86 km northwest of Riyadh city. It is distinguished by its strategic location, rich heritage, and is known for agriculture and historical sites.",
+          "Huraymila Governorate is located in Riyadh region, 86 km northwest of Riyadh city. It is distinguished by its strategic location, rich heritage, and is known for agriculture and historical sites.",
         facts: [
           { label: "Population", value: "21,758 residents" },
           { label: "Area", value: "1,480 km²" },
@@ -441,7 +441,7 @@ const AboutSection = () => {
           </Card>
         </div>
 
-        {/* About Harimlaa */}
+        {/* About Huraymila */}
         <div className="mb-20">
           <Card className="bg-gradient-card border-0 shadow-card">
             <CardContent className="p-8 md:p-12">
@@ -454,7 +454,7 @@ const AboutSection = () => {
                     "text-2xl md:text-3xl font-bold text-foreground",
                     isRTL ? "font-arabic" : "font-english"
                   )}>
-                  {current.aboutHarimlaa.title}
+                  {current.aboutHuraymila.title}
                 </h3>
               </div>
               <p
@@ -462,10 +462,10 @@ const AboutSection = () => {
                   "text-lg text-foreground/80 leading-relaxed mb-8",
                   isRTL ? "font-arabic" : "font-english"
                 )}>
-                {current.aboutHarimlaa.description}
+                {current.aboutHuraymila.description}
               </p>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-8">
-                {current.aboutHarimlaa.facts.map((fact, index) => (
+                {current.aboutHuraymila.facts.map((fact, index) => (
                   <div key={index} className="text-center">
                     <div className="text-2xl font-bold text-primary mb-2">
                       {fact.value}
@@ -482,14 +482,14 @@ const AboutSection = () => {
               </div>
               <div className="text-center">
                 <button
-                  onClick={() => navigateToTop("/about-harimlaa")}
+                  onClick={() => navigateToTop("/about-huraymila")}
                   className={cn(
                     "inline-flex items-center gap-2 px-6 py-3 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors font-medium",
                     isRTL ? "font-arabic" : "font-english"
                   )}>
                   {isRTL
                     ? "اعرف المزيد عن حريملاء"
-                    : "Learn More About Harimlaa"}
+                    : "Learn More About Huraymila"}
                   <ArrowRight
                     className={`w-4 h-4 ${isRTL ? "rotate-180" : ""}`}
                   />

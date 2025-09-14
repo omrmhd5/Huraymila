@@ -203,7 +203,7 @@ const Auth = () => {
               <h1 className="text-2xl font-bold text-foreground mb-2">
                 {language === "ar"
                   ? "مدينة حريملاء الصحية"
-                  : "Harimlaa Healthy City"}
+                  : "Huraymila Healthy City"}
               </h1>
               <p className="text-muted-foreground">
                 {language === "ar"

@@ -74,7 +74,7 @@ const HealthDashboard = () => {
     },
     en: {
       title: "Health Indicators Dashboard",
-      subtitle: "Real-time quality of life indicators in Harimlaa",
+      subtitle: "Real-time quality of life indicators in Huraymila",
       indicators: {
         airQuality: {
           title: "Air Quality",

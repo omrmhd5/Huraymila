@@ -21,7 +21,7 @@ import { useNavigate } from "react-router-dom";
 import { useTheme } from "@/contexts/ThemeContext";
 import { cn } from "@/lib/utils";
 
-const AboutHarimlaa = () => {
+const AboutHuraymila = () => {
   const { language } = useTheme();
   const navigate = useNavigate();
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -31,7 +31,7 @@ const AboutHarimlaa = () => {
     {
       id: 1,
       src: "/api/placeholder/800/400",
-      alt: "Harimlaa City View",
+      alt: "Huraymila City View",
       title: "مدينة حريملاء",
       description: "منظر عام لمدينة حريملاء الجميلة",
     },
@@ -125,33 +125,33 @@ const AboutHarimlaa = () => {
       backButton: "العودة للصفحة الرئيسية",
     },
     en: {
-      title: "About Harimlaa Governorate",
+      title: "About Huraymila Governorate",
       subtitle: "The Jewel of Riyadh Region",
       description:
-        "Harimlaa Governorate is located in Riyadh region, 86 km northwest of Riyadh city. It is distinguished by its strategic location, rich heritage, and is known for agriculture and historical sites.",
+        "Huraymila Governorate is located in Riyadh region, 86 km northwest of Riyadh city. It is distinguished by its strategic location, rich heritage, and is known for agriculture and historical sites.",
 
       history: {
         title: "History & Heritage",
         description:
-          "Harimlaa boasts a rich history spanning centuries, having been an important stop on ancient trade routes. It is renowned for its traditional architectural heritage and archaeological sites that reflect the region's antiquity.",
+          "Huraymila boasts a rich history spanning centuries, having been an important stop on ancient trade routes. It is renowned for its traditional architectural heritage and archaeological sites that reflect the region's antiquity.",
       },
 
       geography: {
         title: "Geographic Location",
         description:
-          "Located in Riyadh region at an elevation of 650 meters above sea level, Harimlaa is characterized by its moderate climate and picturesque nature that combines mountains and green plains.",
+          "Located in Riyadh region at an elevation of 650 meters above sea level, Huraymila is characterized by its moderate climate and picturesque nature that combines mountains and green plains.",
       },
 
       economy: {
         title: "Economy & Development",
         description:
-          "Harimlaa relies on agriculture as a fundamental pillar of the local economy, in addition to heritage tourism and modern industrial development that contribute to driving development forward.",
+          "Huraymila relies on agriculture as a fundamental pillar of the local economy, in addition to heritage tourism and modern industrial development that contribute to driving development forward.",
       },
 
       culture: {
         title: "Culture & Society",
         description:
-          "Harimlaa's community is distinguished by strong social cohesion and preservation of authentic customs and traditions, while being open to modern developments in various fields.",
+          "Huraymila's community is distinguished by strong social cohesion and preservation of authentic customs and traditions, while being open to modern developments in various fields.",
       },
 
       features: [
@@ -510,4 +510,4 @@ const AboutHarimlaa = () => {
   );
 };
 
-export default AboutHarimlaa;
+export default AboutHuraymila;

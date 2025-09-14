@@ -64,6 +64,19 @@ const About = () => {
         "الاستدامة البيئية",
         "الجودة والتميز",
       ],
+      goals: "أهدافنا",
+      goalsText:
+        "نسعى لتحقيق مجموعة من الأهداف الاستراتيجية التي تساهم في بناء مجتمع صحي ومستدام",
+      goalsList: [
+        "تحسين مؤشرات الصحة العامة في المدينة بنسبة 30% خلال 3 سنوات",
+        "زيادة المساحات الخضراء في المدينة إلى 40% من إجمالي المساحة",
+        "توعية 80% من سكان المدينة بالثقافة الصحية والبيئية",
+        "تطوير 20 مبادرة صحية جديدة سنوياً",
+        "إنشاء شبكة من الشركاء المحليين والدوليين",
+        "تحقيق الاستدامة البيئية في جميع مشاريعنا",
+        "تطوير برامج تدريبية متخصصة للعاملين في القطاع الصحي",
+        "إنشاء نظام متكامل لرصد وتقييم المبادرات الصحية",
+      ],
       stats: [
         { value: "2025", label: "سنة التأسيس", icon: Award },
         { value: "50+", label: "مبادرة صحية", icon: Target },
@@ -152,23 +165,23 @@ const About = () => {
       contact: "تواصل معنا",
       contactDescription: "نحن هنا لخدمتكم ومساعدتكم في أي وقت",
       address: "مدينة حريملاء، الرياض، المملكة العربية السعودية",
-      addressEn: "Harimlaa City, Riyadh, Saudi Arabia",
+      addressEn: "Huraymila City, Riyadh, Saudi Arabia",
       phone: "+966-11-123-4567",
-      email: "info@harimlaa-healthy.city",
+      email: "info@huraymila-healthy.city",
       workingHours: "الأحد - الخميس: 8:00 ص - 4:00 م",
       workingHoursEn: "Sunday - Thursday: 8:00 AM - 4:00 PM",
     },
     en: {
       title: "About Us",
-      subtitle: "Harimlaa Healthy City Initiative",
+      subtitle: "Huraymila Healthy City Initiative",
       description:
-        "We are a national initiative aimed at promoting public health and improving quality of life in Harimlaa City through a variety of programs and initiatives.",
+        "We are a national initiative aimed at promoting public health and improving quality of life in Huraymila City through a variety of programs and initiatives.",
       mission: "Our Mission",
       missionText:
-        "To promote public health and improve quality of life in Harimlaa city through community initiatives and strategic partnerships.",
+        "To promote public health and improve quality of life in Huraymila city through community initiatives and strategic partnerships.",
       vision: "Our Vision",
       visionText:
-        "To make Harimlaa city a model for sustainable healthy cities in Saudi Arabia.",
+        "To make Huraymila city a model for sustainable healthy cities in Saudi Arabia.",
       values: "Our Values",
       valuesList: [
         "Transparency and Credibility",
@@ -176,6 +189,19 @@ const About = () => {
         "Innovation and Development",
         "Environmental Sustainability",
         "Quality and Excellence",
+      ],
+      goals: "Our Goals",
+      goalsText:
+        "We strive to achieve a set of strategic goals that contribute to building a healthy and sustainable community",
+      goalsList: [
+        "Improve public health indicators in the city by 30% within 3 years",
+        "Increase green spaces in the city to 40% of total area",
+        "Educate 80% of city residents about health and environmental culture",
+        "Develop 20 new health initiatives annually",
+        "Establish a network of local and international partners",
+        "Achieve environmental sustainability in all our projects",
+        "Develop specialized training programs for healthcare workers",
+        "Create an integrated system for monitoring and evaluating health initiatives",
       ],
       stats: [
         { value: "2025", label: "Founded", icon: Award },
@@ -268,10 +294,10 @@ const About = () => {
       ],
       contact: "Contact Us",
       contactDescription: "We are here to serve you and help you at any time",
-      address: "Harimlaa City, Riyadh, Saudi Arabia",
-      addressEn: "Harimlaa City, Riyadh, Saudi Arabia",
+      address: "Huraymila City, Riyadh, Saudi Arabia",
+      addressEn: "Huraymila City, Riyadh, Saudi Arabia",
       phone: "+966-11-123-4567",
-      email: "info@harimlaa-healthy.city",
+      email: "info@huraymila-healthy.city",
       workingHours: "Sunday - Thursday: 8:00 AM - 4:00 PM",
       workingHoursEn: "Sunday - Thursday: 8:00 AM - 4:00 PM",
     },
@@ -304,10 +330,10 @@ const About = () => {
         </div>
       </section>
 
-      {/* Mission, Vision, Values */}
+      {/* Mission, Vision, Values, Goals */}
       <section className="py-20 bg-muted/30">
         <div className="container mx-auto px-4">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-16">
+          <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-2 gap-8 mb-16">
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-3">
@@ -359,6 +385,36 @@ const About = () => {
                           isRTL ? "font-arabic" : "font-sans"
                         }`}>
                         {value}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-3">
+                  <Globe className="w-6 h-6 text-primary" />
+                  {current.goals}
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p
+                  className={`text-muted-foreground leading-relaxed mb-4 ${
+                    isRTL ? "font-arabic" : "font-sans"
+                  }`}>
+                  {current.goalsText}
+                </p>
+                <ul className="space-y-2">
+                  {current.goalsList.slice(0, 4).map((goal, index) => (
+                    <li key={index} className="flex items-start gap-2">
+                      <CheckCircle className="w-4 h-4 text-green-500 mt-1 flex-shrink-0" />
+                      <span
+                        className={`text-sm text-muted-foreground ${
+                          isRTL ? "font-arabic" : "font-sans"
+                        }`}>
+                        {goal}
                       </span>
                     </li>
                   ))}

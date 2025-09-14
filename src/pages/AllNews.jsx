@@ -44,7 +44,7 @@ const AllNews = () => {
     {
       id: 1,
       title: "إطلاق مبادرة الصحة الوقائية في مدينة حريملاء",
-      titleEn: "Launch of Preventive Health Initiative in Harimlaa City",
+      titleEn: "Launch of Preventive Health Initiative in Huraymila City",
       excerpt:
         "مبادرة جديدة للصحة الوقائية تهدف إلى تعزيز الوعي الصحي بين المواطنين",
       excerptEn:
@@ -255,7 +255,7 @@ const AllNews = () => {
             }`}>
             {language === "ar"
               ? "تابع آخر الأخبار والتطورات في مدينة حريملاء الصحية"
-              : "Stay updated with the latest news and developments in Harimlaa Healthy City"}
+              : "Stay updated with the latest news and developments in Huraymila Healthy City"}
           </p>
         </div>
 

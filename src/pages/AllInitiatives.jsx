@@ -134,7 +134,7 @@ const AllInitiatives = () => {
       startDate: "2023-09-01",
       endDate: "2024-01-31",
       location: "مدارس حريملاء",
-      locationEn: "Harimlaa Schools",
+      locationEn: "Huraymila Schools",
       volunteers: 95,
       maxVolunteers: 100,
       progress: 100,
@@ -361,7 +361,7 @@ const AllInitiatives = () => {
             }`}>
             {language === "ar"
               ? "اكتشف المبادرات النشطة في مدينة حريملاء الصحية"
-              : "Discover Active Initiatives in Harimlaa Healthy City"}
+              : "Discover Active Initiatives in Huraymila Healthy City"}
           </p>
         </div>
 

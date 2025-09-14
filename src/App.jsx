@@ -26,7 +26,7 @@ import SuccessStory from "./pages/SuccessStory";
 import AllInitiatives from "./pages/AllInitiatives";
 import Initiative from "./pages/Initiative";
 import Report from "./pages/Report";
-import AboutHarimlaa from "./pages/AboutHarimlaa";
+import AboutHuraymila from "./pages/AboutHuraymila";
 
 const queryClient = new QueryClient();
 
@@ -59,7 +59,7 @@ const App = () => (
                 <Route path="/initiatives" element={<AllInitiatives />} />
                 <Route path="/initiatives/:id" element={<Initiative />} />
                 <Route path="/report" element={<Report />} />
-                <Route path="/about-harimlaa" element={<AboutHarimlaa />} />
+                <Route path="/about-huraymila" element={<AboutHuraymila />} />
               </Route>
 
               <Route path="/admin" element={<AdminLayout />}>

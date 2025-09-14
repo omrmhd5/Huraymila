@@ -25,7 +25,7 @@ const NewsArticle = () => {
     1: {
       id: 1,
       title: "إطلاق مبادرة الصحة الوقائية في مدينة حريملاء",
-      titleEn: "Launch of Preventive Health Initiative in Harimlaa City",
+      titleEn: "Launch of Preventive Health Initiative in Huraymila City",
       content: `
         <p>تعلن مدينة حريملاء الصحية عن إطلاق مبادرة جديدة للصحة الوقائية تهدف إلى تعزيز الوعي الصحي بين المواطنين وتشجيعهم على اتباع نمط حياة صحي.</p>
         
@@ -42,7 +42,7 @@ const NewsArticle = () => {
         <p>من المقرر أن تبدأ المبادرة في الأسبوع القادم وتستمر لمدة ستة أشهر، مع إمكانية تمديدها حسب النتائج المحققة.</p>
       `,
       contentEn: `
-        <p>Harimlaa Healthy City announces the launch of a new preventive health initiative aimed at promoting health awareness among citizens and encouraging them to follow a healthy lifestyle.</p>
+        <p>Huraymila Healthy City announces the launch of a new preventive health initiative aimed at promoting health awareness among citizens and encouraging them to follow a healthy lifestyle.</p>
         
         <p>The initiative includes several sub-programs including:</p>
         <ul>
@@ -70,7 +70,7 @@ const NewsArticle = () => {
       likes: 89,
       comments: 23,
       tags: ["صحة وقائية", "مبادرات", "حريملاء"],
-      tagsEn: ["Preventive Health", "Initiatives", "Harimlaa"],
+      tagsEn: ["Preventive Health", "Initiatives", "Huraymila"],
     },
     2: {
       id: 2,

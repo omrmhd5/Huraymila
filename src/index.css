@@ -2,7 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Harimlaa Healthy City Design System - All colors MUST be HSL */
+/* Huraymila Healthy City Design System - All colors MUST be HSL */
 
 @layer base {
   :root {
@@ -195,10 +195,10 @@
     background: hsl(var(--primary) / 0.8);
   }
 
-  /* Heritage Pattern - Traditional Harimlaa Patterns */
+  /* Heritage Pattern - Traditional Huraymila Patterns */
   .heritage-pattern {
     background-image: 
-      /* Traditional geometric pattern inspired by Harimlaa architecture */ radial-gradient(
+      /* Traditional geometric pattern inspired by Huraymila architecture */ radial-gradient(
         circle at 50% 50%,
         hsl(var(--pattern-secondary) / 0.15) 0%,
         transparent 25%

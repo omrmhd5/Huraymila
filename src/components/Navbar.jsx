@@ -54,10 +54,10 @@ const Navbar = () => {
 
   const navigationItems = [
     { href: "/", label: language === "ar" ? "الرئيسية" : "Home" },
-    { href: "/about", label: language === "ar" ? "من نحن" : "About" },
+    { href: "/about", label: language === "ar" ? " عن البرنامج" : "About" },
     {
-      href: "/about-harimlaa",
-      label: language === "ar" ? "عن حريملاء" : "About Harimlaa",
+      href: "/about-huraymila",
+      label: language === "ar" ? "عن حريملاء" : "About Huraymila",
     },
     {
       href: "/initiatives",
@@ -86,7 +86,7 @@ const Navbar = () => {
               <h1 className="text-xl font-bold text-primary">
                 {language === "ar"
                   ? "مدينة حريملاء الصحية"
-                  : "Harimlaa Healthy City"}
+                  : "Huraymila Healthy City"}
               </h1>
               <p className="text-xs text-muted-foreground">
                 {language === "ar" ? "مبادرة وطنية" : "National Initiative"}

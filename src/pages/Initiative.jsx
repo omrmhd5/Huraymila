@@ -51,7 +51,7 @@ const Initiative = () => {
         <p>يشمل البرنامج ورش عمل تفاعلية، محاضرات توعوية، حملات توعية في المدارس والمراكز التجارية، بالإضافة إلى مواد توعوية مطبوعة ورقمية.</p>
       `,
       contentEn: `
-        <p>The Health Awareness Program aims to promote health awareness among all community segments in Harimlaa city. The program includes a variety of activities and events designed to improve health knowledge and healthy practices.</p>
+        <p>The Health Awareness Program aims to promote health awareness among all community segments in Huraymila city. The program includes a variety of activities and events designed to improve health knowledge and healthy practices.</p>
         
         <p>Program Objectives:</p>
         <ul>
@@ -104,7 +104,7 @@ const Initiative = () => {
         "Symbolic rewards for active participants",
       ],
       tags: ["صحة", "توعية", "مجتمع", "حريملاء"],
-      tagsEn: ["Health", "Awareness", "Community", "Harimlaa"],
+      tagsEn: ["Health", "Awareness", "Community", "Huraymila"],
     },
     2: {
       id: 2,
@@ -128,7 +128,7 @@ const Initiative = () => {
         <p>سيتم تنفيذ المشروع بالتعاون مع البلدية والجمعيات البيئية المحلية، مع إشراك المجتمع في عمليات الزراعة والصيانة.</p>
       `,
       contentEn: `
-        <p>The Urban Greening Project aims to transform Harimlaa into a greener and healthier city by planting trees and plants in streets, public parks, and residential areas.</p>
+        <p>The Urban Greening Project aims to transform Huraymila into a greener and healthier city by planting trees and plants in streets, public parks, and residential areas.</p>
         
         <p>Project Components:</p>
         <ul>
@@ -180,7 +180,7 @@ const Initiative = () => {
         "Recognition for outstanding participants",
       ],
       tags: ["بيئة", "تشجير", "استدامة", "حريملاء"],
-      tagsEn: ["Environment", "Greening", "Sustainability", "Harimlaa"],
+      tagsEn: ["Environment", "Greening", "Sustainability", "Huraymila"],
     },
   };
 

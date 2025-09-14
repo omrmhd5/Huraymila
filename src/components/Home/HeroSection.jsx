@@ -113,7 +113,7 @@ const HeroSection = () => {
       ],
     },
     en: {
-      title: "Harimlaa Healthy City",
+      title: "Huraymila Healthy City",
       subtitle: "A National Initiative for Public Health and Quality of Life",
       description:
         "We work together to build a healthy and sustainable city through community initiatives and strategic partnerships with government agencies and health institutions.",

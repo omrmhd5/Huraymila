@@ -135,7 +135,7 @@ const EnvironmentalReport = () => {
           <p className="text-lg text-muted-foreground">
             {language === "ar"
               ? "نظرة شاملة على الوضع البيئي في مدينة حريملاء الصحية"
-              : "Comprehensive overview of the environmental status in Harimlaa Healthy City"}
+              : "Comprehensive overview of the environmental status in Huraymila Healthy City"}
           </p>
         </div>
 

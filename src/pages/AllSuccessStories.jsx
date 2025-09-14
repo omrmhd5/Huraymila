@@ -133,7 +133,7 @@ const AllSuccessStories = () => {
       authorEn: "Volunteer Coordinator Saad Al-Qahtani",
       age: "مجتمع",
       location: "مدينة حريملاء",
-      locationEn: "Harimlaa City",
+      locationEn: "Huraymila City",
       category: "مجتمع",
       categoryEn: "Community",
       duration: "3 أشهر",
@@ -183,7 +183,7 @@ const AllSuccessStories = () => {
       authorEn: "Nutritionist Nora Al-Saeed",
       age: "مؤسسة",
       location: "مدارس حريملاء",
-      locationEn: "Harimlaa Schools",
+      locationEn: "Huraymila Schools",
       category: "تغذية",
       categoryEn: "Nutrition",
       duration: "سنتان",
@@ -299,7 +299,7 @@ const AllSuccessStories = () => {
             }`}>
             {language === "ar"
               ? "اكتشف كيف غيرت مبادرتنا حياة الناس في مدينة حريملاء"
-              : "Discover how our initiatives have changed people's lives in Harimlaa"}
+              : "Discover how our initiatives have changed people's lives in Huraymila"}
           </p>
         </div>
 

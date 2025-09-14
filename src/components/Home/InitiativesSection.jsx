@@ -53,7 +53,7 @@ const InitiativesSection = () => {
     },
     en: {
       title: "Health Initiatives",
-      subtitle: "Discover Active Initiatives in Harimlaa Healthy City",
+      subtitle: "Discover Active Initiatives in Huraymila Healthy City",
       description:
         "We offer a variety of health initiatives aimed at promoting public health and improving quality of life in the community.",
       viewAll: "View All Initiatives",

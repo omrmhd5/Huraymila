@@ -104,7 +104,7 @@ const Contact = () => {
     {
       icon: Mail,
       title: language === "ar" ? "البريد الإلكتروني" : "Email",
-      value: "info@harimlaa-healthy.city",
+      value: "info@huraymila-healthy.city",
       description:
         language === "ar"
           ? "راسلنا عبر البريد الإلكتروني"

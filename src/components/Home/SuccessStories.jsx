@@ -48,7 +48,7 @@ const SuccessStories = () => {
     en: {
       title: "Success Stories",
       subtitle:
-        "Discover how our initiatives have changed people's lives in Harimlaa",
+        "Discover how our initiatives have changed people's lives in Huraymila",
       description:
         "We are proud of our successes and achievements in promoting public health and improving quality of life in the community.",
       viewAll: "View All Stories",

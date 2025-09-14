@@ -84,7 +84,7 @@ const VolunteerForm = () => {
     },
     en: {
       title: "Join Our Volunteer Team",
-      subtitle: "Contribute to building a healthy Harimlaa community",
+      subtitle: "Contribute to building a healthy Huraymila community",
       form: {
         personalInfo: "Personal Information",
         fullName: "Full Name",
@@ -106,7 +106,7 @@ const VolunteerForm = () => {
 
         motivation: "Motivation for Volunteering",
         motivationDesc:
-          "Why do you want to volunteer with Harimlaa Healthy City?",
+          "Why do you want to volunteer with Huraymila Healthy City?",
 
         submit: "Submit Volunteer Application",
         submitting: "Submitting...",

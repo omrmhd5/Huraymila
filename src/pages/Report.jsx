@@ -99,7 +99,7 @@ const Report = () => {
             }`}>
             {language === "ar"
               ? "شاركنا ملاحظاتك وبلاغاتك لتحسين الخدمات في مدينة حريملاء الصحية"
-              : "Share your observations and reports to improve services in Harimlaa Healthy City"}
+              : "Share your observations and reports to improve services in Huraymila Healthy City"}
           </p>
         </div>
 
