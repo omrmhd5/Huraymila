@@ -293,7 +293,7 @@ PDF content for standard ${index} - contains:
         return (
           <div className="w-full max-w-4xl max-h-[80vh] overflow-y-auto">
             <div className="prose prose-sm max-w-none">
-              <pre className="whitespace-pre-wrap text-sm leading-relaxed p-4 bg-gray-50 rounded-lg">
+              <pre className="whitespace-pre-wrap text-sm leading-relaxed p-4 bg-muted rounded-lg">
                 {selectedSubmission.content}
               </pre>
             </div>
@@ -407,8 +407,8 @@ PDF content for standard ${index} - contains:
                         variant="outline"
                         className={`${
                           agencyStatuses[agency] === "submitted"
-                            ? "bg-green-100 text-green-800 border-green-300"
-                            : "bg-red-100 text-red-800 border-red-300"
+                            ? "bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 border-green-300 dark:border-green-700"
+                            : "bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-200 border-red-300 dark:border-red-700"
                         }`}>
                         {agency}
                       </Badge>
@@ -421,16 +421,16 @@ PDF content for standard ${index} - contains:
                   <div className="flex items-center gap-2">
                     <Badge
                       variant="outline"
-                      className="bg-green-100 text-green-800 border-green-300"></Badge>
-                    <span className="text-green-700">
+                      className="bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 border-green-300 dark:border-green-700"></Badge>
+                    <span className="text-green-700 dark:text-green-300">
                       {language === "ar" ? "قدمت التقديم" : "Submitted"}
                     </span>
                   </div>
                   <div className="flex items-center gap-2">
                     <Badge
                       variant="outline"
-                      className="bg-red-100 text-red-800 border-red-300"></Badge>
-                    <span className="text-red-700">
+                      className="bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-200 border-red-300 dark:border-red-700"></Badge>
+                    <span className="text-red-700 dark:text-red-300">
                       {language === "ar" ? "لم تقدم التقديم" : "Not Submitted"}
                     </span>
                   </div>
@@ -702,10 +702,10 @@ PDF content for standard ${index} - contains:
                           className={`w-full ${
                             submission.status === "rejected" ||
                             submission.status === "pending_approval"
-                              ? "bg-green-700 text-green-50 border-green-200 hover:bg-green-500"
+                              ? "bg-green-700 dark:bg-green-600 text-green-50 border-green-200 dark:border-green-500 hover:bg-green-500 dark:hover:bg-green-500"
                               : submission.status === "approved"
-                              ? "bg-red-700 text-red-50 border-red-200 hover:bg-red-500"
-                              : "bg-gray-700 text-gray-50 border-gray-200"
+                              ? "bg-red-700 dark:bg-red-600 text-red-50 border-red-200 dark:border-red-500 hover:bg-red-500 dark:hover:bg-red-500"
+                              : "bg-gray-700 dark:bg-gray-600 text-gray-50 border-gray-200 dark:border-gray-500"
                           }`}>
                           {submission.status === "approved" ? (
                             <XCircle className="w-4 h-4 mr-1" />

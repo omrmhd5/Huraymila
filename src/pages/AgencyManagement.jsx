@@ -14,6 +14,12 @@ import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import {
   Building2,
   Users,
   Target,
@@ -25,10 +31,14 @@ import {
   CheckCircle,
   Clock,
   AlertCircle,
+  X,
+  CheckSquare,
+  Square,
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useTheme } from "@/contexts/ThemeContext";
 import { toast } from "sonner";
+import Standards from "@/lib/standards";
 
 const AgencyManagement = () => {
   const { user, loading } = useAuth();
@@ -40,6 +50,10 @@ const AgencyManagement = () => {
     show: false,
     agencyId: null,
     agencyName: "",
+  });
+  const [viewStandards, setViewStandards] = useState({
+    show: false,
+    agency: null,
   });
   const [formData, setFormData] = useState({
     name: "",
@@ -56,6 +70,9 @@ const AgencyManagement = () => {
   useEffect(() => {
     setAgenciesList(agencies);
   }, []);
+
+  // Get standards data
+  const [standards, agencyToStandardsMap] = Standards();
 
   // Page title for better UX
   useEffect(() => {
@@ -233,6 +250,43 @@ const AgencyManagement = () => {
 
   const cancelDelete = () => {
     setDeleteConfirm({ show: false, agencyId: null, agencyName: "" });
+  };
+
+  const handleViewStandards = (agency) => {
+    setViewStandards({ show: true, agency });
+  };
+
+  const closeViewStandards = () => {
+    setViewStandards({ show: false, agency: null });
+  };
+
+  const getAgencyStandards = (agencyName) => {
+    const standardIds = agencyToStandardsMap[agencyName] || [];
+    return standards.records.filter((standard) =>
+      standardIds.includes(standard.id)
+    );
+  };
+
+  const getUnassignedStandards = (agencyName) => {
+    const assignedIds = agencyToStandardsMap[agencyName] || [];
+    return standards.records.filter(
+      (standard) => !assignedIds.includes(standard.id)
+    );
+  };
+
+  const toggleStandardAssignment = (standardId, agencyName) => {
+    // This would typically update the backend
+    // For now, we'll just show a toast message
+    const isCurrentlyAssigned = (
+      agencyToStandardsMap[agencyName] || []
+    ).includes(standardId);
+    const action = isCurrentlyAssigned ? "unassigned" : "assigned";
+
+    toast.success(
+      language === "ar"
+        ? `تم ${isCurrentlyAssigned ? "إلغاء تعيين" : "تعيين"} المعيار بنجاح`
+        : `Standard ${action} successfully`
+    );
   };
 
   return (
@@ -428,7 +482,10 @@ const AgencyManagement = () => {
                           onClick={() => handleEdit(agency)}>
                           <Edit className="w-4 h-4" />
                         </Button>
-                        <Button variant="outline" size="sm">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => handleViewStandards(agency)}>
                           <Eye className="w-4 h-4" />
                         </Button>
                         <Button
@@ -689,6 +746,179 @@ const AgencyManagement = () => {
           </Card>
         </div>
       )}
+
+      {/* View Standards Modal */}
+      <Dialog open={viewStandards.show} onOpenChange={setViewStandards}>
+        <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
+          <DialogHeader>
+            <div className="flex items-center justify-between">
+              <DialogTitle className="flex items-center gap-2">
+                <Building2 className="w-5 h-5" />
+                {language === "ar" ? "المعايير المخصصة" : "Assigned Standards"}
+              </DialogTitle>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={closeViewStandards}
+                className="h-8 w-8 p-0">
+                <X className="h-4 w-4" />
+              </Button>
+            </div>
+          </DialogHeader>
+
+          {viewStandards.agency && (
+            <div className="space-y-6">
+              {/* Agency Info */}
+              <div className="bg-muted p-4 rounded-lg">
+                <h3 className="text-lg font-semibold mb-2">
+                  {viewStandards.agency.name}
+                </h3>
+                <p className="text-muted-foreground">
+                  {viewStandards.agency.description}
+                </p>
+              </div>
+
+              {/* Assigned Standards Section */}
+              <div className="space-y-4">
+                <h4 className="text-lg font-semibold flex items-center gap-2">
+                  <CheckSquare className="w-5 h-5 text-green-600" />
+                  {language === "ar"
+                    ? "المعايير المخصصة"
+                    : "Assigned Standards"}
+                </h4>
+
+                {(() => {
+                  const assignedStandards = getAgencyStandards(
+                    viewStandards.agency.name
+                  );
+
+                  if (assignedStandards.length === 0) {
+                    return (
+                      <div className="text-center py-8 bg-muted/50 rounded-lg">
+                        <Target className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
+                        <p className="text-muted-foreground">
+                          {language === "ar"
+                            ? "لا توجد معايير مخصصة لهذه الجهة"
+                            : "No standards assigned to this agency"}
+                        </p>
+                      </div>
+                    );
+                  }
+
+                  return (
+                    <div className="grid gap-3 max-h-60 overflow-y-auto">
+                      {assignedStandards.map((standard) => (
+                        <Card
+                          key={standard.id}
+                          className="p-3 hover:shadow-sm transition-shadow">
+                          <div className="flex items-start gap-3">
+                            <button
+                              onClick={() =>
+                                toggleStandardAssignment(
+                                  standard.id,
+                                  viewStandards.agency.name
+                                )
+                              }
+                              className="mt-1 text-green-600 hover:text-green-700 transition-colors">
+                              <CheckSquare className="w-4 h-4" />
+                            </button>
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-center gap-2 mb-1">
+                                <Badge variant="outline" className="text-xs">
+                                  #{standard.id}
+                                </Badge>
+                                <span className="text-xs text-muted-foreground">
+                                  {language === "ar" ? "معيار" : "Standard"}
+                                </span>
+                              </div>
+                              <h5 className="font-medium text-sm leading-relaxed mb-2">
+                                {standard.standard}
+                              </h5>
+                              <div className="text-xs text-muted-foreground">
+                                {standard.requirements.length}{" "}
+                                {language === "ar" ? "متطلب" : "requirements"}
+                              </div>
+                            </div>
+                          </div>
+                        </Card>
+                      ))}
+                    </div>
+                  );
+                })()}
+              </div>
+
+              {/* Unassigned Standards Section */}
+              <div className="space-y-4">
+                <h4 className="text-lg font-semibold flex items-center gap-2">
+                  <Square className="w-5 h-5 text-gray-500" />
+                  {language === "ar"
+                    ? "المعايير غير المخصصة"
+                    : "Unassigned Standards"}
+                </h4>
+
+                {(() => {
+                  const unassignedStandards = getUnassignedStandards(
+                    viewStandards.agency.name
+                  );
+
+                  if (unassignedStandards.length === 0) {
+                    return (
+                      <div className="text-center py-8 bg-muted/50 rounded-lg">
+                        <CheckCircle className="w-12 h-12 text-green-500 mx-auto mb-4" />
+                        <p className="text-muted-foreground">
+                          {language === "ar"
+                            ? "جميع المعايير مخصصة لهذه الجهة"
+                            : "All standards are assigned to this agency"}
+                        </p>
+                      </div>
+                    );
+                  }
+
+                  return (
+                    <div className="grid gap-3 max-h-60 overflow-y-auto">
+                      {unassignedStandards.map((standard) => (
+                        <Card
+                          key={standard.id}
+                          className="p-3 hover:shadow-sm transition-shadow">
+                          <div className="flex items-start gap-3">
+                            <button
+                              onClick={() =>
+                                toggleStandardAssignment(
+                                  standard.id,
+                                  viewStandards.agency.name
+                                )
+                              }
+                              className="mt-1 text-gray-400 hover:text-gray-600 transition-colors">
+                              <Square className="w-4 h-4" />
+                            </button>
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-center gap-2 mb-1">
+                                <Badge variant="outline" className="text-xs">
+                                  #{standard.id}
+                                </Badge>
+                                <span className="text-xs text-muted-foreground">
+                                  {language === "ar" ? "معيار" : "Standard"}
+                                </span>
+                              </div>
+                              <h5 className="font-medium text-sm leading-relaxed mb-2">
+                                {standard.standard}
+                              </h5>
+                              <div className="text-xs text-muted-foreground">
+                                {standard.requirements.length}{" "}
+                                {language === "ar" ? "متطلب" : "requirements"}
+                              </div>
+                            </div>
+                          </div>
+                        </Card>
+                      ))}
+                    </div>
+                  );
+                })()}
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
