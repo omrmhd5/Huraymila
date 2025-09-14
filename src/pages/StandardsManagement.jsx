@@ -483,7 +483,7 @@ const StandardsManagement = () => {
                   <h3 className="text-lg font-semibold mb-2">
                     {language === "ar" ? "المعيار" : "Standard"}
                   </h3>
-                  <p className="text-sm leading-relaxed bg-gray-50 p-3 rounded">
+                  <p className="text-sm leading-relaxed bg-muted p-3 rounded">
                     {selectedStandard.standard}
                   </p>
                 </div>
@@ -497,7 +497,7 @@ const StandardsManagement = () => {
                       <div
                         key={index}
                         className="flex items-baseline gap-2 text-sm">
-                        <span className="text-blue-500">●</span>
+                        <span className="text-primary">●</span>
                         <span>{req}</span>
                       </div>
                     ))}
@@ -523,8 +523,8 @@ const StandardsManagement = () => {
                               variant="outline"
                               className={`${
                                 agencyStatuses[agency] === "submitted"
-                                  ? "bg-green-100 text-green-800 border-green-300"
-                                  : "bg-red-100 text-red-800 border-red-300"
+                                  ? "bg-green-100 text-green-800 border-green-300 dark:bg-green-900 dark:text-green-200 dark:border-green-700"
+                                  : "bg-red-100 text-red-800 border-red-300 dark:bg-red-900 dark:text-red-200 dark:border-red-700"
                               }`}>
                               {agency}
                             </Badge>
@@ -538,16 +538,16 @@ const StandardsManagement = () => {
                       <div className="flex items-center gap-2">
                         <Badge
                           variant="outline"
-                          className="bg-green-100 text-green-800 border-green-300"></Badge>
-                        <span className="text-green-700">
+                          className="bg-green-100 text-green-800 border-green-300 dark:bg-green-900 dark:text-green-200 dark:border-green-700"></Badge>
+                        <span className="text-green-700 dark:text-green-300">
                           {language === "ar" ? "قدمت التقديم" : "Submitted"}
                         </span>
                       </div>
                       <div className="flex items-center gap-2">
                         <Badge
                           variant="outline"
-                          className="bg-red-100 text-red-800 border-red-300"></Badge>
-                        <span className="text-red-700">
+                          className="bg-red-100 text-red-800 border-red-300 dark:bg-red-900 dark:text-red-200 dark:border-red-700"></Badge>
+                        <span className="text-red-700 dark:text-red-300">
                           {language === "ar"
                             ? "لم تقدم التقديم"
                             : "Not Submitted"}
@@ -599,7 +599,7 @@ const StandardsManagement = () => {
                     onClick={() =>
                       navigate(`/admin/standards/${selectedStandard.id}`)
                     }
-                    className="w-full bg-blue-50 hover:bg-blue-100 border-blue-200 text-blue-700 hover:text-blue-800 transition-colors duration-200">
+                    className="w-full bg-blue-50 hover:bg-blue-100 border-blue-200 text-blue-700 hover:text-blue-800 dark:bg-blue-900 dark:hover:bg-blue-800 dark:border-blue-700 dark:text-blue-200 dark:hover:text-blue-100 transition-colors duration-200">
                     <Eye className="w-5 h-5 mr-2" />
                     {language === "ar"
                       ? "عرض التقديمات التفصيلية"

@@ -12,24 +12,21 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import {
   Building2,
-  Users,
   Target,
-  TrendingUp,
-  Settings,
-  LogOut,
-  BarChart3,
   FileText,
-  Calendar,
-  Bell,
   Database,
-  Shield,
-  Activity,
-  MessageCircle,
   Heart,
   Newspaper,
   UserCheck,
   HandHeart,
   AlertTriangle,
+  Wind,
+  Droplets,
+  Shield,
+  Activity,
+  Car,
+  Recycle,
+  Award,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useTheme } from "@/contexts/ThemeContext";
@@ -54,25 +51,81 @@ const AdminDashboard = () => {
   // const [userRole, setUserRole] = useState(null);
   // const [loading, setLoading] = useState(true);
   const [stats, setStats] = useState({
-    profiles: 0,
     initiatives: 0,
     news: 0,
-    feedback: 0,
-    partners: 0,
-    applications: 0,
-    notifications: 0,
+    agencies: 0,
+    volunteers: 0,
+    success_stories: 0,
+    reports: 0,
     health_metrics: 0,
   });
   const [data, setData] = useState({
-    profiles: [],
     initiatives: [],
     news: [],
-    feedback: [],
-    partners: [],
-    applications: [],
-    notifications: [],
+    agencies: [],
+    volunteers: [],
+    success_stories: [],
+    reports: [],
     health_metrics: [],
   });
+
+  // Health indicators state for editing
+  const [healthIndicators, setHealthIndicators] = useState([
+    {
+      id: "airQuality",
+      title: "جودة الهواء",
+      currentValue: 85,
+      targetValue: 90,
+      unit: "%",
+      description: "PM2.5: 12 μg/m³",
+      status: "جيد",
+    },
+    {
+      id: "waterQuality",
+      title: "جودة المياه",
+      currentValue: 92,
+      targetValue: 95,
+      unit: "%",
+      description: "نقاء 99.8%",
+      status: "ممتاز",
+    },
+    {
+      id: "vaccination",
+      title: "معدل التطعيمات",
+      currentValue: 96,
+      targetValue: 95,
+      unit: "%",
+      description: "96% من السكان",
+      status: "عالي",
+    },
+    {
+      id: "physicalActivity",
+      title: "النشاط البدني",
+      currentValue: 68,
+      targetValue: 80,
+      unit: "%",
+      description: "68% يمارسون الرياضة",
+      status: "متوسط",
+    },
+    {
+      id: "trafficAccidents",
+      title: "الحوادث المرورية",
+      currentValue: 12,
+      targetValue: 10,
+      unit: "حادث/شهر",
+      description: "12 حادث/شهر",
+      status: "منخفض",
+    },
+    {
+      id: "recycling",
+      title: "إعادة التدوير",
+      currentValue: 74,
+      targetValue: 80,
+      unit: "%",
+      description: "74% من النفايات",
+      status: "جيد",
+    },
+  ]);
 
   // Commented out useEffects for development
   // useEffect(() => {
@@ -119,24 +172,15 @@ const AdminDashboard = () => {
 
       // Mock data for demonstration
       const mockStats = {
-        profiles: 25,
         initiatives: 12,
         news: 8,
-        feedback: 45,
-        partners: 15,
-        applications: 32,
-        notifications: 18,
-        health_metrics: 28,
+        agencies: 15,
+        volunteers: 32,
+        success_stories: 18,
+        reports: 25,
       };
 
       const mockData = {
-        profiles: Array.from({ length: 10 }, (_, i) => ({
-          id: i + 1,
-          user_type: ["volunteer", "organization", "agency"][i % 3],
-          phone: `+96650${String(i + 1).padStart(7, "0")}`,
-          full_name: `مستخدم ${i + 1}`,
-          created_at: new Date(Date.now() - i * 86400000).toISOString(),
-        })),
         initiatives: Array.from({ length: 10 }, (_, i) => ({
           id: i + 1,
           status: ["active", "completed", "draft"][i % 3],
@@ -151,21 +195,14 @@ const AdminDashboard = () => {
           title: `خبر ${i + 1}`,
           created_at: new Date(Date.now() - i * 86400000).toISOString(),
         })),
-        feedback: Array.from({ length: 10 }, (_, i) => ({
-          id: i + 1,
-          is_public: i % 2 === 0,
-          rating: [3, 4, 5][i % 3],
-          feedback_type: ["مبادرة", "خدمة", "موقع"][i % 3],
-          created_at: new Date(Date.now() - i * 86400000).toISOString(),
-        })),
-        partners: Array.from({ length: 10 }, (_, i) => ({
+        agencies: Array.from({ length: 10 }, (_, i) => ({
           id: i + 1,
           is_active: i % 2 === 0,
-          partnership_type: ["صحة", "بيئة", "تعليم"][i % 3],
-          name: `شريك ${i + 1}`,
+          agency_type: ["حكومية", "خاصة", "غير ربحية"][i % 3],
+          name: `جهة ${i + 1}`,
           created_at: new Date(Date.now() - i * 86400000).toISOString(),
         })),
-        applications: Array.from({ length: 10 }, (_, i) => ({
+        volunteers: Array.from({ length: 10 }, (_, i) => ({
           id: i + 1,
           status: ["pending", "approved", "rejected"][i % 3],
           availability: ["صباحاً", "مساءً", "أي وقت"][i % 3],
@@ -175,11 +212,18 @@ const AdminDashboard = () => {
               : null,
           created_at: new Date(Date.now() - i * 86400000).toISOString(),
         })),
-        notifications: Array.from({ length: 10 }, (_, i) => ({
+        success_stories: Array.from({ length: 10 }, (_, i) => ({
           id: i + 1,
-          read_status: i % 2 === 0,
-          type: ["عام", "مبادرة", "تطبيق"][i % 3],
-          title: `إشعار ${i + 1}`,
+          is_published: i % 2 === 0,
+          category: ["صحة", "بيئة", "تعليم"][i % 3],
+          title: `قصة نجاح ${i + 1}`,
+          created_at: new Date(Date.now() - i * 86400000).toISOString(),
+        })),
+        reports: Array.from({ length: 10 }, (_, i) => ({
+          id: i + 1,
+          report_type: ["صحة", "بيئة", "تعليم"][i % 3],
+          status: ["مكتمل", "قيد المراجعة", "مسودة"][i % 3],
+          title: `بلاغ ${i + 1}`,
           created_at: new Date(Date.now() - i * 86400000).toISOString(),
         })),
         health_metrics: Array.from({ length: 10 }, (_, i) => ({
@@ -217,62 +261,90 @@ const AdminDashboard = () => {
     });
   };
 
+  // Health indicators management functions
+  const updateHealthIndicator = (id, field, value) => {
+    setHealthIndicators((prev) =>
+      prev.map((indicator) =>
+        indicator.id === id
+          ? { ...indicator, [field]: parseFloat(value) || 0 }
+          : indicator
+      )
+    );
+  };
+
+  const saveHealthIndicator = (id) => {
+    // Here you would typically save to backend
+    console.log(
+      `Saving health indicator ${id}:`,
+      healthIndicators.find((ind) => ind.id === id)
+    );
+    // You could add a toast notification here
+  };
+
+  const resetHealthIndicator = (id) => {
+    // Reset to original values
+    const originalValues = {
+      airQuality: { currentValue: 85, targetValue: 90 },
+      waterQuality: { currentValue: 92, targetValue: 95 },
+      vaccination: { currentValue: 96, targetValue: 95 },
+      physicalActivity: { currentValue: 68, targetValue: 80 },
+      trafficAccidents: { currentValue: 12, targetValue: 10 },
+      recycling: { currentValue: 74, targetValue: 80 },
+    };
+
+    if (originalValues[id]) {
+      setHealthIndicators((prev) =>
+        prev.map((indicator) =>
+          indicator.id === id
+            ? { ...indicator, ...originalValues[id] }
+            : indicator
+        )
+      );
+    }
+  };
+
   const statCards = [
     {
-      title: "الملفات الشخصية",
-      value: stats.profiles,
-      icon: Users,
+      title: { ar: "الجهات", en: "Agencies" },
+      value: stats.agencies,
+      icon: Building2,
       color: "text-blue-600",
       bgColor: "bg-blue-50",
     },
     {
-      title: "المبادرات",
+      title: { ar: "المبادرات", en: "Initiatives" },
       value: stats.initiatives,
       icon: Target,
       color: "text-green-600",
       bgColor: "bg-green-50",
     },
     {
-      title: "الأخبار",
+      title: { ar: "المتطوعين", en: "Volunteers" },
+      value: stats.volunteers,
+      icon: UserCheck,
+      color: "text-indigo-600",
+      bgColor: "bg-indigo-50",
+    },
+    {
+      title: { ar: "الأخبار", en: "News" },
       value: stats.news,
       icon: Newspaper,
       color: "text-purple-600",
       bgColor: "bg-purple-50",
     },
     {
-      title: "التقييمات",
-      value: stats.feedback,
-      icon: MessageCircle,
-      color: "text-orange-600",
-      bgColor: "bg-orange-50",
-    },
-    {
-      title: "الشركاء",
-      value: stats.partners,
+      title: { ar: "قصص النجاح", en: "Success Stories" },
+      value: stats.success_stories,
       icon: HandHeart,
       color: "text-red-600",
       bgColor: "bg-red-50",
     },
     {
-      title: "طلبات التطوع",
-      value: stats.applications,
-      icon: UserCheck,
-      color: "text-indigo-600",
-      bgColor: "bg-indigo-50",
-    },
-    {
-      title: "الإشعارات",
-      value: stats.notifications,
-      icon: Bell,
-      color: "text-yellow-600",
-      bgColor: "bg-yellow-50",
-    },
-    {
-      title: "المؤشرات الصحية",
-      value: stats.health_metrics,
-      icon: Heart,
-      color: "text-pink-600",
-      bgColor: "bg-pink-50",
+      title: { ar: "البلاغات", en: "Reports" },
+      value: stats.reports,
+      icon: FileText,
+      color: "text-orange-600",
+      bgColor: "bg-orange-50",
     },
   ];
 
@@ -340,8 +412,11 @@ const AdminDashboard = () => {
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-muted-foreground font-arabic mb-1">
-                    {stat.title}
+                  <p
+                    className={`text-sm font-medium text-muted-foreground mb-1 ${
+                      language === "ar" ? "font-arabic" : "font-english"
+                    }`}>
+                    {language === "ar" ? stat.title.ar : stat.title.en}
                   </p>
                   <p className="text-2xl font-bold text-foreground">
                     {stat.value}
@@ -406,79 +481,417 @@ const AdminDashboard = () => {
       </div>
 
       {/* Data Tables */}
-      <Tabs defaultValue="profiles" className="space-y-6">
-        <TabsList className="grid w-full grid-cols-4 lg:grid-cols-8">
-          <TabsTrigger value="profiles" className="font-arabic">
-            الملفات
-          </TabsTrigger>
-          <TabsTrigger value="initiatives" className="font-arabic">
-            المبادرات
-          </TabsTrigger>
-          <TabsTrigger value="news" className="font-arabic">
-            الأخبار
-          </TabsTrigger>
-          <TabsTrigger value="feedback" className="font-arabic">
-            التقييمات
-          </TabsTrigger>
-          <TabsTrigger value="partners" className="font-arabic">
-            الشركاء
-          </TabsTrigger>
-          <TabsTrigger value="applications" className="font-arabic">
-            التطوع
-          </TabsTrigger>
-          <TabsTrigger value="notifications" className="font-arabic">
-            الإشعارات
-          </TabsTrigger>
-          <TabsTrigger value="health" className="font-arabic">
-            الصحة
-          </TabsTrigger>
+      <Tabs defaultValue="health" className="space-y-6">
+        <TabsList className="grid w-full grid-cols-3 lg:grid-cols-7">
+          {[
+            {
+              value: "health",
+              ar: "الصحة",
+              en: "Health",
+            },
+            {
+              value: "agencies",
+              ar: "الجهات",
+              en: "Agencies",
+            },
+            {
+              value: "initiatives",
+              ar: "المبادرات",
+              en: "Initiatives",
+            },
+            {
+              value: "volunteers",
+              ar: "المتطوعين",
+              en: "Volunteers",
+            },
+            {
+              value: "news",
+              ar: "الأخبار",
+              en: "News",
+            },
+            {
+              value: "success_stories",
+              ar: "قصص النجاح",
+              en: "Success Stories",
+            },
+            {
+              value: "reports",
+              ar: "البلاغات",
+              en: "Reports",
+            },
+          ]
+            .sort(() => (language === "ar" ? -1 : 1))
+            .map((tab) => (
+              <TabsTrigger
+                key={tab.value}
+                value={tab.value}
+                className={language === "ar" ? "font-arabic" : "font-english"}>
+                {language === "ar" ? tab.ar : tab.en}
+              </TabsTrigger>
+            ))}
         </TabsList>
 
-        {/* Profiles Tab */}
-        <TabsContent value="profiles">
+        {/* Health Metrics Tab */}
+        <TabsContent value="health">
+          <div className="space-y-6">
+            <Card>
+              <CardHeader>
+                <CardTitle
+                  className={`${
+                    language === "ar"
+                      ? "text-right font-arabic"
+                      : "text-left font-english"
+                  }`}>
+                  {language === "ar"
+                    ? "إدارة المؤشرات الصحية"
+                    : "Health Indicators Management"}
+                </CardTitle>
+                <CardDescription
+                  className={`${
+                    language === "ar"
+                      ? "text-right font-arabic"
+                      : "text-left font-english"
+                  }`}>
+                  {language === "ar"
+                    ? "تعديل قيم المؤشرات الصحية والأهداف"
+                    : "Edit health indicators values and targets"}
+                </CardDescription>
+              </CardHeader>
+            </Card>
+
+            {/* Editable Health Indicators Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {healthIndicators.map((indicator, index) => {
+                const iconMap = {
+                  airQuality: Wind,
+                  waterQuality: Droplets,
+                  vaccination: Shield,
+                  physicalActivity: Activity,
+                  trafficAccidents: Car,
+                  recycling: Recycle,
+                };
+
+                const colorMap = {
+                  airQuality: "text-green-600",
+                  waterQuality: "text-blue-600",
+                  vaccination: "text-purple-600",
+                  physicalActivity: "text-orange-600",
+                  trafficAccidents: "text-red-600",
+                  recycling: "text-teal-600",
+                };
+
+                const bgColorMap = {
+                  airQuality: "bg-green-100",
+                  waterQuality: "bg-blue-100",
+                  vaccination: "bg-purple-100",
+                  physicalActivity: "bg-orange-100",
+                  trafficAccidents: "bg-red-100",
+                  recycling: "bg-teal-100",
+                };
+
+                const IconComponent = iconMap[indicator.id];
+                const progressValue = Math.min(
+                  (indicator.currentValue / indicator.targetValue) * 100,
+                  100
+                );
+                const isExcellent =
+                  indicator.currentValue >= indicator.targetValue * 0.9;
+
+                return (
+                  <Card
+                    key={index}
+                    className="group hover:shadow-xl transition-all duration-300 bg-gradient-to-br from-card to-card/80 border-2 relative overflow-hidden hover:scale-[1.02] hover:border-primary/20">
+                    {isExcellent && (
+                      <div className="absolute top-0 right-0 bg-gradient-to-l from-primary to-primary/80 text-primary-foreground px-3 py-1 text-xs font-bold rounded-bl-lg">
+                        <Award className="h-3 w-3 inline mr-1" />
+                        {language === "ar" ? "ممتاز" : "Excellent"}
+                      </div>
+                    )}
+
+                    <CardHeader className="pb-3">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                          <div
+                            className={`w-14 h-14 rounded-xl flex items-center justify-center transition-all duration-300 group-hover:scale-110 relative ${
+                              bgColorMap[indicator.id]
+                            }`}>
+                            <IconComponent
+                              className={`h-7 w-7 ${colorMap[indicator.id]}`}
+                            />
+                          </div>
+                          <div>
+                            <CardTitle
+                              className={`text-lg font-bold text-foreground ${
+                                language === "ar"
+                                  ? "font-arabic"
+                                  : "font-english"
+                              }`}>
+                              {language === "ar"
+                                ? indicator.title
+                                : indicator.id === "airQuality"
+                                ? "Air Quality"
+                                : indicator.id === "waterQuality"
+                                ? "Water Quality"
+                                : indicator.id === "vaccination"
+                                ? "Vaccination Rate"
+                                : indicator.id === "physicalActivity"
+                                ? "Physical Activity"
+                                : indicator.id === "trafficAccidents"
+                                ? "Traffic Accidents"
+                                : "Recycling"}
+                            </CardTitle>
+                            <p
+                              className={`text-xs text-muted-foreground ${
+                                language === "ar"
+                                  ? "font-arabic"
+                                  : "font-english"
+                              }`}>
+                              {indicator.description}
+                            </p>
+                          </div>
+                        </div>
+                        <Badge
+                          variant="outline"
+                          className="text-xs border font-medium bg-green-100 text-green-700">
+                          {indicator.status}
+                        </Badge>
+                      </div>
+                    </CardHeader>
+
+                    <CardContent className="pt-0">
+                      <div className="space-y-4">
+                        {/* Current Value Input */}
+                        <div className="space-y-2">
+                          <label
+                            className={`text-sm font-medium text-foreground ${
+                              language === "ar" ? "font-arabic" : "font-english"
+                            }`}>
+                            {language === "ar"
+                              ? "القيمة الحالية"
+                              : "Current Value"}
+                          </label>
+                          <div className="flex items-center gap-2">
+                            <input
+                              type="number"
+                              value={indicator.currentValue}
+                              onChange={(e) => {
+                                updateHealthIndicator(
+                                  indicator.id,
+                                  "currentValue",
+                                  e.target.value
+                                );
+                              }}
+                              className={`flex-1 px-3 py-2 border border-input rounded-md bg-background text-sm ${
+                                language === "ar"
+                                  ? "font-arabic"
+                                  : "font-english"
+                              } [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none`}
+                              min="0"
+                              max="100"
+                            />
+                            <span
+                              className={`text-sm text-muted-foreground ${
+                                language === "ar"
+                                  ? "font-arabic"
+                                  : "font-english"
+                              }`}>
+                              {indicator.unit}
+                            </span>
+                          </div>
+                        </div>
+
+                        {/* Target Value Input */}
+                        <div className="space-y-2">
+                          <label
+                            className={`text-sm font-medium text-foreground ${
+                              language === "ar" ? "font-arabic" : "font-english"
+                            }`}>
+                            {language === "ar" ? "الهدف" : "Target"}
+                          </label>
+                          <div className="flex items-center gap-2">
+                            <input
+                              type="number"
+                              value={indicator.targetValue}
+                              onChange={(e) => {
+                                updateHealthIndicator(
+                                  indicator.id,
+                                  "targetValue",
+                                  e.target.value
+                                );
+                              }}
+                              className={`flex-1 px-3 py-2 border border-input rounded-md bg-background text-sm ${
+                                language === "ar"
+                                  ? "font-arabic"
+                                  : "font-english"
+                              } [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none`}
+                              min="0"
+                              max="100"
+                            />
+                            <span
+                              className={`text-sm text-muted-foreground ${
+                                language === "ar"
+                                  ? "font-arabic"
+                                  : "font-english"
+                              }`}>
+                              {indicator.unit}
+                            </span>
+                          </div>
+                        </div>
+
+                        {/* Progress Bar */}
+                        <div className="space-y-2">
+                          <div
+                            className={`flex justify-between text-xs text-muted-foreground ${
+                              language === "ar" ? "font-arabic" : "font-english"
+                            }`}>
+                            <span>
+                              {language === "ar" ? "التقدم" : "Progress"}
+                            </span>
+                            <span>{Math.round(progressValue)}%</span>
+                          </div>
+                          <div className="relative h-3 bg-muted rounded-full overflow-hidden">
+                            <div
+                              className={`h-full rounded-full bg-gradient-to-r transition-all duration-1000 ease-out relative ${
+                                indicator.id === "airQuality"
+                                  ? "from-green-500 to-green-600"
+                                  : indicator.id === "waterQuality"
+                                  ? "from-blue-500 to-blue-600"
+                                  : indicator.id === "vaccination"
+                                  ? "from-purple-500 to-purple-600"
+                                  : indicator.id === "physicalActivity"
+                                  ? "from-orange-500 to-orange-600"
+                                  : indicator.id === "trafficAccidents"
+                                  ? "from-red-500 to-red-600"
+                                  : "from-teal-500 to-teal-600"
+                              }`}
+                              style={{ width: `${progressValue}%` }}>
+                              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent animate-pulse" />
+                            </div>
+                            {/* Target line */}
+                            <div
+                              className="absolute top-0 bottom-0 w-0.5 bg-foreground/30"
+                              style={{
+                                left: `${(indicator.targetValue / 100) * 100}%`,
+                              }}>
+                              <Target className="h-3 w-3 text-foreground/60 absolute -top-0.5 -left-1" />
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Action Buttons */}
+                        <div className="flex gap-2 pt-2">
+                          <Button
+                            size="sm"
+                            className={`flex-1 ${
+                              language === "ar" ? "font-arabic" : "font-english"
+                            }`}
+                            onClick={() => saveHealthIndicator(indicator.id)}>
+                            {language === "ar" ? "حفظ" : "Save"}
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            className={`flex-1 ${
+                              language === "ar" ? "font-arabic" : "font-english"
+                            }`}
+                            onClick={() => resetHealthIndicator(indicator.id)}>
+                            {language === "ar" ? "إعادة تعيين" : "Reset"}
+                          </Button>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                );
+              })}
+            </div>
+          </div>
+        </TabsContent>
+
+        {/* Agencies Tab */}
+        <TabsContent value="agencies">
           <Card>
             <CardHeader>
-              <CardTitle className="font-arabic text-right">
-                الملفات الشخصية
+              <CardTitle
+                className={`text-right ${
+                  language === "ar" ? "font-arabic" : "font-english"
+                }`}>
+                {language === "ar" ? "الجهات" : "Agencies"}
               </CardTitle>
-              <CardDescription className="font-arabic text-right">
-                قائمة جميع المستخدمين المسجلين
+              <CardDescription
+                className={`text-right ${
+                  language === "ar" ? "font-arabic" : "font-english"
+                }`}>
+                {language === "ar"
+                  ? "جميع الجهات والشركاء المتعاونين"
+                  : "All agencies and cooperating partners"}
               </CardDescription>
             </CardHeader>
             <CardContent>
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead className="text-right font-arabic">
-                      النوع
+                    <TableHead
+                      className={`text-right ${
+                        language === "ar" ? "font-arabic" : "font-english"
+                      }`}>
+                      {language === "ar" ? "الحالة" : "Status"}
                     </TableHead>
-                    <TableHead className="text-right font-arabic">
-                      الهاتف
+                    <TableHead
+                      className={`text-right ${
+                        language === "ar" ? "font-arabic" : "font-english"
+                      }`}>
+                      {language === "ar" ? "نوع الجهة" : "Agency Type"}
                     </TableHead>
-                    <TableHead className="text-right font-arabic">
-                      الاسم الكامل
+                    <TableHead
+                      className={`text-right ${
+                        language === "ar" ? "font-arabic" : "font-english"
+                      }`}>
+                      {language === "ar" ? "الاسم" : "Name"}
                     </TableHead>
-                    <TableHead className="text-right font-arabic">
-                      تاريخ الإنشاء
+                    <TableHead
+                      className={`text-right ${
+                        language === "ar" ? "font-arabic" : "font-english"
+                      }`}>
+                      {language === "ar" ? "تاريخ الإضافة" : "Date Added"}
                     </TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {data.profiles.slice(0, 10).map((profile) => (
-                    <TableRow key={profile.id}>
+                  {data.agencies.slice(0, 10).map((agency) => (
+                    <TableRow key={agency.id}>
                       <TableCell className="text-right">
-                        <Badge variant="outline" className="font-arabic">
-                          {profile.user_type}
+                        <Badge
+                          variant={agency.is_active ? "default" : "secondary"}
+                          className={
+                            language === "ar" ? "font-arabic" : "font-english"
+                          }>
+                          {agency.is_active
+                            ? language === "ar"
+                              ? "نشط"
+                              : "Active"
+                            : language === "ar"
+                            ? "غير نشط"
+                            : "Inactive"}
                         </Badge>
                       </TableCell>
-                      <TableCell className="text-right font-arabic">
-                        {profile.phone || "غير محدد"}
+                      <TableCell
+                        className={`text-right ${
+                          language === "ar" ? "font-arabic" : "font-english"
+                        }`}>
+                        {agency.agency_type ||
+                          (language === "ar" ? "غير محدد" : "Not specified")}
                       </TableCell>
-                      <TableCell className="text-right font-arabic">
-                        {profile.full_name}
+                      <TableCell
+                        className={`text-right ${
+                          language === "ar" ? "font-arabic" : "font-english"
+                        }`}>
+                        {agency.name}
                       </TableCell>
-                      <TableCell className="text-right font-arabic">
-                        {formatDate(profile.created_at)}
+                      <TableCell
+                        className={`text-right ${
+                          language === "ar" ? "font-arabic" : "font-english"
+                        }`}>
+                        {formatDate(agency.created_at)}
                       </TableCell>
                     </TableRow>
                   ))}
@@ -604,71 +1017,13 @@ const AdminDashboard = () => {
           </Card>
         </TabsContent>
 
-        {/* Feedback Tab */}
-        <TabsContent value="feedback">
+        {/* Agencies Tab */}
+        <TabsContent value="agencies">
           <Card>
             <CardHeader>
-              <CardTitle className="font-arabic text-right">
-                التقييمات والملاحظات
-              </CardTitle>
+              <CardTitle className="font-arabic text-right">الجهات</CardTitle>
               <CardDescription className="font-arabic text-right">
-                جميع التقييمات المرسلة من المستخدمين
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead className="text-right font-arabic">
-                      عام
-                    </TableHead>
-                    <TableHead className="text-right font-arabic">
-                      التقييم
-                    </TableHead>
-                    <TableHead className="text-right font-arabic">
-                      النوع
-                    </TableHead>
-                    <TableHead className="text-right font-arabic">
-                      تاريخ الإرسال
-                    </TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {data.feedback.slice(0, 10).map((feedback) => (
-                    <TableRow key={feedback.id}>
-                      <TableCell className="text-right">
-                        <Badge
-                          variant={feedback.is_public ? "default" : "secondary"}
-                          className="font-arabic">
-                          {feedback.is_public ? "عام" : "خاص"}
-                        </Badge>
-                      </TableCell>
-                      <TableCell className="text-right font-arabic">
-                        {feedback.rating
-                          ? `${feedback.rating}/5`
-                          : "بدون تقييم"}
-                      </TableCell>
-                      <TableCell className="text-right font-arabic">
-                        {feedback.feedback_type}
-                      </TableCell>
-                      <TableCell className="text-right font-arabic">
-                        {formatDate(feedback.created_at)}
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        {/* Partners Tab */}
-        <TabsContent value="partners">
-          <Card>
-            <CardHeader>
-              <CardTitle className="font-arabic text-right">الشركاء</CardTitle>
-              <CardDescription className="font-arabic text-right">
-                جميع الشركاء والجهات المتعاونة
+                جميع الجهات والشركاء المتعاونين
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -679,7 +1034,7 @@ const AdminDashboard = () => {
                       الحالة
                     </TableHead>
                     <TableHead className="text-right font-arabic">
-                      نوع الشراكة
+                      نوع الجهة
                     </TableHead>
                     <TableHead className="text-right font-arabic">
                       الاسم
@@ -690,23 +1045,23 @@ const AdminDashboard = () => {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {data.partners.slice(0, 10).map((partner) => (
-                    <TableRow key={partner.id}>
+                  {data.agencies.slice(0, 10).map((agency) => (
+                    <TableRow key={agency.id}>
                       <TableCell className="text-right">
                         <Badge
-                          variant={partner.is_active ? "default" : "secondary"}
+                          variant={agency.is_active ? "default" : "secondary"}
                           className="font-arabic">
-                          {partner.is_active ? "نشط" : "غير نشط"}
+                          {agency.is_active ? "نشط" : "غير نشط"}
                         </Badge>
                       </TableCell>
                       <TableCell className="text-right font-arabic">
-                        {partner.partnership_type || "غير محدد"}
+                        {agency.agency_type || "غير محدد"}
                       </TableCell>
                       <TableCell className="text-right font-arabic">
-                        {partner.name}
+                        {agency.name}
                       </TableCell>
                       <TableCell className="text-right font-arabic">
-                        {formatDate(partner.created_at)}
+                        {formatDate(agency.created_at)}
                       </TableCell>
                     </TableRow>
                   ))}
@@ -716,12 +1071,12 @@ const AdminDashboard = () => {
           </Card>
         </TabsContent>
 
-        {/* Applications Tab */}
-        <TabsContent value="applications">
+        {/* Volunteers Tab */}
+        <TabsContent value="volunteers">
           <Card>
             <CardHeader>
               <CardTitle className="font-arabic text-right">
-                طلبات التطوع
+                المتطوعين
               </CardTitle>
               <CardDescription className="font-arabic text-right">
                 جميع طلبات التطوع المقدمة
@@ -746,31 +1101,31 @@ const AdminDashboard = () => {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {data.applications.slice(0, 10).map((application) => (
-                    <TableRow key={application.id}>
+                  {data.volunteers.slice(0, 10).map((volunteer) => (
+                    <TableRow key={volunteer.id}>
                       <TableCell className="text-right">
                         <Badge
                           variant={
-                            application.status === "approved"
+                            volunteer.status === "approved"
                               ? "default"
-                              : application.status === "rejected"
+                              : volunteer.status === "rejected"
                               ? "destructive"
                               : "secondary"
                           }
                           className="font-arabic">
-                          {application.status}
+                          {volunteer.status}
                         </Badge>
                       </TableCell>
                       <TableCell className="text-right font-arabic">
-                        {application.availability || "غير محدد"}
+                        {volunteer.availability || "غير محدد"}
                       </TableCell>
                       <TableCell className="text-right font-arabic">
-                        {application.reviewed_at
-                          ? formatDate(application.reviewed_at)
+                        {volunteer.reviewed_at
+                          ? formatDate(volunteer.reviewed_at)
                           : "لم تتم المراجعة"}
                       </TableCell>
                       <TableCell className="text-right font-arabic">
-                        {formatDate(application.created_at)}
+                        {formatDate(volunteer.created_at)}
                       </TableCell>
                     </TableRow>
                   ))}
@@ -780,15 +1135,15 @@ const AdminDashboard = () => {
           </Card>
         </TabsContent>
 
-        {/* Notifications Tab */}
-        <TabsContent value="notifications">
+        {/* Success Stories Tab */}
+        <TabsContent value="success_stories">
           <Card>
             <CardHeader>
               <CardTitle className="font-arabic text-right">
-                الإشعارات
+                قصص النجاح
               </CardTitle>
               <CardDescription className="font-arabic text-right">
-                جميع الإشعارات المرسلة للمستخدمين
+                جميع قصص النجاح المنشورة
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -796,39 +1151,37 @@ const AdminDashboard = () => {
                 <TableHeader>
                   <TableRow>
                     <TableHead className="text-right font-arabic">
-                      مقروء
+                      النشر
                     </TableHead>
                     <TableHead className="text-right font-arabic">
-                      النوع
+                      الفئة
                     </TableHead>
                     <TableHead className="text-right font-arabic">
                       العنوان
                     </TableHead>
                     <TableHead className="text-right font-arabic">
-                      تاريخ الإرسال
+                      تاريخ الإنشاء
                     </TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {data.notifications.slice(0, 10).map((notification) => (
-                    <TableRow key={notification.id}>
+                  {data.success_stories.slice(0, 10).map((story) => (
+                    <TableRow key={story.id}>
                       <TableCell className="text-right">
                         <Badge
-                          variant={
-                            notification.read_status ? "default" : "secondary"
-                          }
+                          variant={story.is_published ? "default" : "secondary"}
                           className="font-arabic">
-                          {notification.read_status ? "مقروء" : "غير مقروء"}
+                          {story.is_published ? "منشور" : "مسودة"}
                         </Badge>
                       </TableCell>
                       <TableCell className="text-right font-arabic">
-                        {notification.type}
+                        {story.category}
                       </TableCell>
                       <TableCell className="text-right font-arabic">
-                        {notification.title}
+                        {story.title}
                       </TableCell>
                       <TableCell className="text-right font-arabic">
-                        {formatDate(notification.created_at)}
+                        {formatDate(story.created_at)}
                       </TableCell>
                     </TableRow>
                   ))}
@@ -838,15 +1191,13 @@ const AdminDashboard = () => {
           </Card>
         </TabsContent>
 
-        {/* Health Metrics Tab */}
-        <TabsContent value="health">
+        {/* Reports Tab */}
+        <TabsContent value="reports">
           <Card>
             <CardHeader>
-              <CardTitle className="font-arabic text-right">
-                المؤشرات الصحية
-              </CardTitle>
+              <CardTitle className="font-arabic text-right">البلاغات</CardTitle>
               <CardDescription className="font-arabic text-right">
-                جميع مؤشرات المدينة الصحية
+                جميع البلاغات المقدمة
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -854,33 +1205,43 @@ const AdminDashboard = () => {
                 <TableHeader>
                   <TableRow>
                     <TableHead className="text-right font-arabic">
-                      المصدر
+                      نوع البلاغ
                     </TableHead>
                     <TableHead className="text-right font-arabic">
-                      المنطقة
+                      الحالة
                     </TableHead>
                     <TableHead className="text-right font-arabic">
-                      القيمة
+                      العنوان
                     </TableHead>
                     <TableHead className="text-right font-arabic">
-                      اسم المؤشر
+                      تاريخ الإنشاء
                     </TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {data.health_metrics.slice(0, 10).map((metric) => (
-                    <TableRow key={metric.id}>
+                  {data.reports.slice(0, 10).map((report) => (
+                    <TableRow key={report.id}>
                       <TableCell className="text-right font-arabic">
-                        {metric.source || "غير محدد"}
+                        {report.report_type}
+                      </TableCell>
+                      <TableCell className="text-right">
+                        <Badge
+                          variant={
+                            report.status === "مكتمل"
+                              ? "default"
+                              : report.status === "قيد المراجعة"
+                              ? "secondary"
+                              : "outline"
+                          }
+                          className="font-arabic">
+                          {report.status}
+                        </Badge>
                       </TableCell>
                       <TableCell className="text-right font-arabic">
-                        {metric.region || "غير محدد"}
+                        {report.title}
                       </TableCell>
                       <TableCell className="text-right font-arabic">
-                        {metric.value} {metric.unit}
-                      </TableCell>
-                      <TableCell className="text-right font-arabic">
-                        {metric.metric_name}
+                        {formatDate(report.created_at)}
                       </TableCell>
                     </TableRow>
                   ))}
