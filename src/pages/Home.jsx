@@ -7,6 +7,7 @@ import SuccessStories from "@/components/Home/SuccessStories";
 import PartnersSection from "@/components/Home/PartnersSection";
 import QuickLinksSection from "@/components/Home/QuickLinksSection";
 import HealthDashboard from "@/components/Home/HealthDashboard";
+import AnimatedSection from "@/components/animations/AnimatedSection";
 import { useAuth } from "@/contexts/AuthContext";
 import { useTheme } from "@/contexts/ThemeContext";
 
@@ -30,15 +31,31 @@ const Home = () => {
   return (
     <div className="min-h-screen bg-background">
       <main>
-        <HeroSection />
-        <AboutSection />
-        <QuickLinksSection />
-        <NewsSection />
-        <SuccessStories />
-        <HealthDashboard />
+        <AnimatedSection animation="fadeIn" delay={0} duration={400}>
+          <HeroSection />
+        </AnimatedSection>
+        <AnimatedSection animation="fadeInUp" delay={50} duration={400}>
+          <AboutSection />
+        </AnimatedSection>
+        <AnimatedSection animation="fadeInLeft" delay={100} duration={400}>
+          <QuickLinksSection />
+        </AnimatedSection>
+        <AnimatedSection animation="fadeInRight" delay={150} duration={400}>
+          <NewsSection />
+        </AnimatedSection>
+        <AnimatedSection animation="fadeInUp" delay={200} duration={400}>
+          <SuccessStories />
+        </AnimatedSection>
+        <AnimatedSection animation="scaleIn" delay={250} duration={400}>
+          <HealthDashboard />
+        </AnimatedSection>
         {/* <InteractiveMap /> */}
-        <InitiativesSection />
-        <PartnersSection />
+        <AnimatedSection animation="fadeInUp" delay={300} duration={400}>
+          <InitiativesSection />
+        </AnimatedSection>
+        <AnimatedSection animation="fadeInDown" delay={350} duration={400}>
+          <PartnersSection />
+        </AnimatedSection>
       </main>
     </div>
   );

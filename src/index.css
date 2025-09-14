@@ -2,6 +2,35 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Animation Performance Optimizations */
+@layer base {
+  * {
+    box-sizing: border-box;
+  }
+
+  /* Prevent layout shifts during animations */
+  .animate-section {
+    contain: layout style paint;
+    transform: translateZ(0);
+    backface-visibility: hidden;
+  }
+
+  /* Smooth scrolling */
+  html {
+    scroll-behavior: smooth;
+  }
+
+  /* Prevent horizontal scroll during animations */
+  body {
+    overflow-x: hidden;
+  }
+
+  /* Optimize animations for better performance */
+  .transition-all {
+    will-change: opacity, transform;
+  }
+}
+
 /* Huraymila Healthy City Design System - All colors MUST be HSL */
 
 @layer base {

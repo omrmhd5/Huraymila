@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import AnimatedSection from "@/components/animations/AnimatedSection";
+import StaggeredContainer from "@/components/animations/StaggeredContainer";
 import {
   MapPin,
   Users,
@@ -306,295 +308,328 @@ const AboutHuraymila = () => {
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
-      <div className="relative h-96 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-primary/40"></div>
-        <div className="relative z-10 container mx-auto px-4 h-full flex items-center justify-center">
-          <div className="text-center text-white">
-            <h1
-              className={cn(
-                "text-4xl md:text-6xl font-bold mb-4",
-                isRTL ? "font-arabic" : "font-english"
-              )}>
-              {current.title}
-            </h1>
-            <p
-              className={cn(
-                "text-xl md:text-2xl opacity-90",
-                isRTL ? "font-arabic" : "font-english"
-              )}>
-              {current.subtitle}
-            </p>
+      <AnimatedSection animation="fadeIn" delay={0}>
+        <div className="relative h-96 overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-primary/40"></div>
+          <div className="relative z-10 container mx-auto px-4 h-full flex items-center justify-center">
+            <div className="text-center text-white">
+              <AnimatedSection animation="fadeInDown" delay={200}>
+                <h1
+                  className={cn(
+                    "text-4xl md:text-6xl font-bold mb-4",
+                    isRTL ? "font-arabic" : "font-english"
+                  )}>
+                  {current.title}
+                </h1>
+              </AnimatedSection>
+              <AnimatedSection animation="fadeInUp" delay={400}>
+                <p
+                  className={cn(
+                    "text-xl md:text-2xl opacity-90",
+                    isRTL ? "font-arabic" : "font-english"
+                  )}>
+                  {current.subtitle}
+                </p>
+              </AnimatedSection>
+            </div>
           </div>
         </div>
-      </div>
+      </AnimatedSection>
 
       <div className="container mx-auto px-4 py-12">
         {/* Back Button */}
-        <div className="mb-8">
-          <Button
-            variant="outline"
-            onClick={() => navigate("/")}
-            className={cn(
-              "flex items-center gap-2",
-              isRTL ? "font-arabic" : "font-english"
-            )}>
-            <ArrowLeft className={`w-4 h-4 ${isRTL ? "rotate-180" : ""}`} />
-            {current.backButton}
-          </Button>
-        </div>
+        <AnimatedSection animation="fadeInLeft" delay={200}>
+          <div className="mb-8">
+            <Button
+              variant="outline"
+              onClick={() => navigate("/")}
+              className={cn(
+                "flex items-center gap-2",
+                isRTL ? "font-arabic" : "font-english"
+              )}>
+              <ArrowLeft className={`w-4 h-4 ${isRTL ? "rotate-180" : ""}`} />
+              {current.backButton}
+            </Button>
+          </div>
+        </AnimatedSection>
 
         {/* Slideshow */}
-        <div className="mb-16">
-          <Card className="overflow-hidden">
-            <div className="relative h-96 md:h-[500px]">
-              <div className="relative h-full">
-                <img
-                  src={slideshowImages[currentSlide].src}
-                  alt={slideshowImages[currentSlide].alt}
-                  className="w-full h-full object-contain"
-                />
-                <div className="absolute inset-0 bg-black/30"></div>
-                <div className="absolute bottom-6 left-6 text-white">
-                  <h3
-                    className={cn(
-                      "text-2xl font-bold mb-2",
-                      isRTL ? "font-arabic" : "font-english"
-                    )}>
-                    {slideshowImages[currentSlide].title}
-                  </h3>
-                  <p
-                    className={cn(
-                      "text-lg opacity-90",
-                      isRTL ? "font-arabic" : "font-english"
-                    )}>
-                    {slideshowImages[currentSlide].description}
-                  </p>
+        <AnimatedSection animation="fadeInUp" delay={400}>
+          <div className="mb-16">
+            <Card className="overflow-hidden hover:shadow-xl transition-all duration-500 hover:scale-[1.02]">
+              <div className="relative h-96 md:h-[500px]">
+                <div className="relative h-full">
+                  <img
+                    src={slideshowImages[currentSlide].src}
+                    alt={slideshowImages[currentSlide].alt}
+                    className="w-full h-full object-contain transition-all duration-500 hover:scale-105"
+                  />
+                  <div className="absolute inset-0 bg-black/30"></div>
+                  <AnimatedSection animation="fadeInUp" delay={600}>
+                    <div className="absolute bottom-6 left-6 text-white">
+                      <h3
+                        className={cn(
+                          "text-2xl font-bold mb-2",
+                          isRTL ? "font-arabic" : "font-english"
+                        )}>
+                        {slideshowImages[currentSlide].title}
+                      </h3>
+                      <p
+                        className={cn(
+                          "text-lg opacity-90",
+                          isRTL ? "font-arabic" : "font-english"
+                        )}>
+                        {slideshowImages[currentSlide].description}
+                      </p>
+                    </div>
+                  </AnimatedSection>
+                </div>
+
+                {/* Navigation Buttons */}
+                <Button
+                  variant="outline"
+                  size="icon"
+                  onClick={prevSlide}
+                  className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-white/20 hover:bg-white/30 text-white border-white/30 transition-all duration-300 hover:scale-110">
+                  <ChevronLeft className="w-4 h-4" />
+                </Button>
+                <Button
+                  variant="outline"
+                  size="icon"
+                  onClick={nextSlide}
+                  className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-white/20 hover:bg-white/30 text-white border-white/30 transition-all duration-300 hover:scale-110">
+                  <ChevronRight className="w-4 h-4" />
+                </Button>
+
+                {/* Dots Indicator */}
+                <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex gap-2">
+                  {slideshowImages.map((_, index) => (
+                    <button
+                      key={index}
+                      onClick={() => setCurrentSlide(index)}
+                      className={`w-3 h-3 rounded-full transition-all duration-300 hover:scale-125 ${
+                        index === currentSlide ? "bg-white" : "bg-white/50"
+                      }`}
+                    />
+                  ))}
                 </div>
               </div>
-
-              {/* Navigation Buttons */}
-              <Button
-                variant="outline"
-                size="icon"
-                onClick={prevSlide}
-                className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-white/20 hover:bg-white/30 text-white border-white/30">
-                <ChevronLeft className="w-4 h-4" />
-              </Button>
-              <Button
-                variant="outline"
-                size="icon"
-                onClick={nextSlide}
-                className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-white/20 hover:bg-white/30 text-white border-white/30">
-                <ChevronRight className="w-4 h-4" />
-              </Button>
-
-              {/* Dots Indicator */}
-              <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex gap-2">
-                {slideshowImages.map((_, index) => (
-                  <button
-                    key={index}
-                    onClick={() => setCurrentSlide(index)}
-                    className={`w-3 h-3 rounded-full transition-colors ${
-                      index === currentSlide ? "bg-white" : "bg-white/50"
-                    }`}
-                  />
-                ))}
-              </div>
-            </div>
-          </Card>
-        </div>
+            </Card>
+          </div>
+        </AnimatedSection>
 
         {/* Description */}
-        <div className="mb-16">
-          <Card>
-            <CardContent className="p-8">
-              <p
-                className={cn(
-                  "text-lg text-foreground/80 leading-relaxed text-center max-w-4xl mx-auto",
-                  isRTL ? "font-arabic" : "font-english"
-                )}>
-                {current.description}
-              </p>
-            </CardContent>
-          </Card>
-        </div>
+        <AnimatedSection animation="fadeInUp" delay={600}>
+          <div className="mb-16">
+            <Card className="hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
+              <CardContent className="p-8">
+                <p
+                  className={cn(
+                    "text-lg text-foreground/80 leading-relaxed text-center max-w-4xl mx-auto",
+                    isRTL ? "font-arabic" : "font-english"
+                  )}>
+                  {current.description}
+                </p>
+              </CardContent>
+            </Card>
+          </div>
+        </AnimatedSection>
 
         {/* Information Sections */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-16">
-          <Card>
-            <CardContent className="p-8">
-              <div className="flex items-center gap-3 mb-4">
-                <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
-                  <Clock className="h-6 w-6 text-primary" />
+        <AnimatedSection animation="fadeInUp" delay={800}>
+          <StaggeredContainer
+            className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-16"
+            staggerDelay={150}
+            animation="fadeInUp">
+            <Card className="hover:shadow-lg transition-all duration-300 hover:-translate-y-1 hover:scale-105">
+              <CardContent className="p-8">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
+                    <Clock className="h-6 w-6 text-primary" />
+                  </div>
+                  <h3
+                    className={cn(
+                      "text-2xl font-bold text-foreground",
+                      isRTL ? "font-arabic" : "font-english"
+                    )}>
+                    {current.history.title}
+                  </h3>
                 </div>
-                <h3
+                <p
                   className={cn(
-                    "text-2xl font-bold text-foreground",
+                    "text-foreground/80 leading-relaxed",
                     isRTL ? "font-arabic" : "font-english"
                   )}>
-                  {current.history.title}
-                </h3>
-              </div>
-              <p
-                className={cn(
-                  "text-foreground/80 leading-relaxed",
-                  isRTL ? "font-arabic" : "font-english"
-                )}>
-                {current.history.description}
-              </p>
-            </CardContent>
-          </Card>
+                  {current.history.description}
+                </p>
+              </CardContent>
+            </Card>
 
-          <Card>
-            <CardContent className="p-8">
-              <div className="flex items-center gap-3 mb-4">
-                <div className="w-12 h-12 bg-secondary/10 rounded-full flex items-center justify-center">
-                  <MapPin className="h-6 w-6 text-secondary" />
+            <Card className="hover:shadow-lg transition-all duration-300 hover:-translate-y-1 hover:scale-105">
+              <CardContent className="p-8">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-12 h-12 bg-secondary/10 rounded-full flex items-center justify-center">
+                    <MapPin className="h-6 w-6 text-secondary" />
+                  </div>
+                  <h3
+                    className={cn(
+                      "text-2xl font-bold text-foreground",
+                      isRTL ? "font-arabic" : "font-english"
+                    )}>
+                    {current.geography.title}
+                  </h3>
                 </div>
-                <h3
+                <p
                   className={cn(
-                    "text-2xl font-bold text-foreground",
+                    "text-foreground/80 leading-relaxed",
                     isRTL ? "font-arabic" : "font-english"
                   )}>
-                  {current.geography.title}
-                </h3>
-              </div>
-              <p
-                className={cn(
-                  "text-foreground/80 leading-relaxed",
-                  isRTL ? "font-arabic" : "font-english"
-                )}>
-                {current.geography.description}
-              </p>
-            </CardContent>
-          </Card>
+                  {current.geography.description}
+                </p>
+              </CardContent>
+            </Card>
 
-          <Card>
-            <CardContent className="p-8">
-              <div className="flex items-center gap-3 mb-4">
-                <div className="w-12 h-12 bg-accent/10 rounded-full flex items-center justify-center">
-                  <Award className="h-6 w-6 text-accent" />
+            <Card className="hover:shadow-lg transition-all duration-300 hover:-translate-y-1 hover:scale-105">
+              <CardContent className="p-8">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-12 h-12 bg-accent/10 rounded-full flex items-center justify-center">
+                    <Award className="h-6 w-6 text-accent" />
+                  </div>
+                  <h3
+                    className={cn(
+                      "text-2xl font-bold text-foreground",
+                      isRTL ? "font-arabic" : "font-english"
+                    )}>
+                    {current.economy.title}
+                  </h3>
                 </div>
-                <h3
+                <p
                   className={cn(
-                    "text-2xl font-bold text-foreground",
+                    "text-foreground/80 leading-relaxed",
                     isRTL ? "font-arabic" : "font-english"
                   )}>
-                  {current.economy.title}
-                </h3>
-              </div>
-              <p
-                className={cn(
-                  "text-foreground/80 leading-relaxed",
-                  isRTL ? "font-arabic" : "font-english"
-                )}>
-                {current.economy.description}
-              </p>
-            </CardContent>
-          </Card>
+                  {current.economy.description}
+                </p>
+              </CardContent>
+            </Card>
 
-          <Card>
-            <CardContent className="p-8">
-              <div className="flex items-center gap-3 mb-4">
-                <div className="w-12 h-12 bg-green-500/10 rounded-full flex items-center justify-center">
-                  <Heart className="h-6 w-6 text-green-500" />
+            <Card className="hover:shadow-lg transition-all duration-300 hover:-translate-y-1 hover:scale-105">
+              <CardContent className="p-8">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-12 h-12 bg-green-500/10 rounded-full flex items-center justify-center">
+                    <Heart className="h-6 w-6 text-green-500" />
+                  </div>
+                  <h3
+                    className={cn(
+                      "text-2xl font-bold text-foreground",
+                      isRTL ? "font-arabic" : "font-english"
+                    )}>
+                    {current.culture.title}
+                  </h3>
                 </div>
-                <h3
+                <p
                   className={cn(
-                    "text-2xl font-bold text-foreground",
+                    "text-foreground/80 leading-relaxed",
                     isRTL ? "font-arabic" : "font-english"
                   )}>
-                  {current.culture.title}
-                </h3>
-              </div>
-              <p
-                className={cn(
-                  "text-foreground/80 leading-relaxed",
-                  isRTL ? "font-arabic" : "font-english"
-                )}>
-                {current.culture.description}
-              </p>
-            </CardContent>
-          </Card>
-        </div>
+                  {current.culture.description}
+                </p>
+              </CardContent>
+            </Card>
+          </StaggeredContainer>
+        </AnimatedSection>
 
         {/* Features */}
-        <div className="mb-16">
-          <h2
-            className={cn(
-              "text-3xl font-bold text-center mb-12",
-              isRTL ? "font-arabic" : "font-english"
-            )}>
-            {isRTL ? "المميزات الرئيسية" : "Key Features"}
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {current.features.map((feature, index) => {
-              const IconComponent = feature.icon;
-              return (
-                <Card
-                  key={index}
-                  className="text-center hover:shadow-lg transition-shadow">
-                  <CardContent className="p-6">
-                    <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                      <IconComponent className="h-8 w-8 text-primary" />
-                    </div>
-                    <h3
-                      className={cn(
-                        "text-lg font-semibold mb-2",
-                        isRTL ? "font-arabic" : "font-english"
-                      )}>
-                      {feature.title}
-                    </h3>
-                    <p
-                      className={cn(
-                        "text-sm text-muted-foreground",
-                        isRTL ? "font-arabic" : "font-english"
-                      )}>
-                      {feature.description}
-                    </p>
-                  </CardContent>
-                </Card>
-              );
-            })}
+        <AnimatedSection animation="fadeInUp" delay={1000}>
+          <div className="mb-16">
+            <AnimatedSection animation="fadeInDown" delay={1200}>
+              <h2
+                className={cn(
+                  "text-3xl font-bold text-center mb-12",
+                  isRTL ? "font-arabic" : "font-english"
+                )}>
+                {isRTL ? "المميزات الرئيسية" : "Key Features"}
+              </h2>
+            </AnimatedSection>
+            <StaggeredContainer
+              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"
+              staggerDelay={100}
+              animation="scaleIn">
+              {current.features.map((feature, index) => {
+                const IconComponent = feature.icon;
+                return (
+                  <Card
+                    key={index}
+                    className="text-center hover:shadow-lg transition-all duration-300 hover:-translate-y-1 hover:scale-105">
+                    <CardContent className="p-6">
+                      <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <IconComponent className="h-8 w-8 text-primary" />
+                      </div>
+                      <h3
+                        className={cn(
+                          "text-lg font-semibold mb-2",
+                          isRTL ? "font-arabic" : "font-english"
+                        )}>
+                        {feature.title}
+                      </h3>
+                      <p
+                        className={cn(
+                          "text-sm text-muted-foreground",
+                          isRTL ? "font-arabic" : "font-english"
+                        )}>
+                        {feature.description}
+                      </p>
+                    </CardContent>
+                  </Card>
+                );
+              })}
+            </StaggeredContainer>
           </div>
-        </div>
+        </AnimatedSection>
 
         {/* Statistics */}
-        <div className="mb-16">
-          <h2
-            className={cn(
-              "text-3xl font-bold text-center mb-12",
-              isRTL ? "font-arabic" : "font-english"
-            )}>
-            {isRTL ? "الإحصائيات" : "Statistics"}
-          </h2>
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-6">
-            {current.stats.map((stat, index) => {
-              const IconComponent = stat.icon;
-              return (
-                <Card
-                  key={index}
-                  className="text-center hover:shadow-lg transition-shadow">
-                  <CardContent className="p-6">
-                    <div className="w-12 h-12 bg-accent/10 rounded-full flex items-center justify-center mx-auto mb-3">
-                      <IconComponent className="h-6 w-6 text-accent" />
-                    </div>
-                    <div className="text-2xl font-bold text-foreground mb-1">
-                      {stat.value}
-                    </div>
-                    <div
-                      className={cn(
-                        "text-sm text-muted-foreground",
-                        isRTL ? "font-arabic" : "font-english"
-                      )}>
-                      {stat.label}
-                    </div>
-                  </CardContent>
-                </Card>
-              );
-            })}
+        <AnimatedSection animation="fadeInUp" delay={1200}>
+          <div className="mb-16">
+            <AnimatedSection animation="fadeInDown" delay={1400}>
+              <h2
+                className={cn(
+                  "text-3xl font-bold text-center mb-12",
+                  isRTL ? "font-arabic" : "font-english"
+                )}>
+                {isRTL ? "الإحصائيات" : "Statistics"}
+              </h2>
+            </AnimatedSection>
+            <StaggeredContainer
+              className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-6"
+              staggerDelay={80}
+              animation="fadeInUp">
+              {current.stats.map((stat, index) => {
+                const IconComponent = stat.icon;
+                return (
+                  <Card
+                    key={index}
+                    className="text-center hover:shadow-lg transition-all duration-300 hover:-translate-y-1 hover:scale-105">
+                    <CardContent className="p-6">
+                      <div className="w-12 h-12 bg-accent/10 rounded-full flex items-center justify-center mx-auto mb-3">
+                        <IconComponent className="h-6 w-6 text-accent" />
+                      </div>
+                      <div className="text-2xl font-bold text-foreground mb-1">
+                        {stat.value}
+                      </div>
+                      <div
+                        className={cn(
+                          "text-sm text-muted-foreground",
+                          isRTL ? "font-arabic" : "font-english"
+                        )}>
+                        {stat.label}
+                      </div>
+                    </CardContent>
+                  </Card>
+                );
+              })}
+            </StaggeredContainer>
           </div>
-        </div>
+        </AnimatedSection>
       </div>
     </div>
   );

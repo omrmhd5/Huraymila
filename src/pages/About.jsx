@@ -2,6 +2,8 @@ import React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import AnimatedSection from "@/components/animations/AnimatedSection";
+import StaggeredContainer from "@/components/animations/StaggeredContainer";
 import {
   Heart,
   Target,
@@ -308,386 +310,440 @@ const About = () => {
   return (
     <div className="min-h-screen bg-background">
       {/* Hero Section */}
-      <section className="py-20 bg-gradient-to-br from-primary/10 to-primary/5">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-16">
-            <Badge variant="outline" className="mb-4 px-4 py-2 text-sm">
-              {current.subtitle}
-            </Badge>
-            <h1
-              className={`text-4xl md:text-6xl font-bold text-foreground mb-6 ${
-                isRTL ? "font-arabic" : "font-sans"
-              }`}>
-              {current.title}
-            </h1>
-            <p
-              className={`text-xl text-muted-foreground max-w-4xl mx-auto leading-relaxed ${
-                isRTL ? "font-arabic" : "font-sans"
-              }`}>
-              {current.description}
-            </p>
+      <AnimatedSection animation="fadeIn" delay={0}>
+        <section className="py-20 bg-gradient-to-br from-primary/10 to-primary/5">
+          <div className="container mx-auto px-4">
+            <div className="text-center mb-16">
+              <AnimatedSection animation="fadeInDown" delay={200}>
+                <Badge variant="outline" className="mb-4 px-4 py-2 text-sm">
+                  {current.subtitle}
+                </Badge>
+              </AnimatedSection>
+              <AnimatedSection animation="fadeInUp" delay={400}>
+                <h1
+                  className={`text-4xl md:text-6xl font-bold text-foreground mb-6 ${
+                    isRTL ? "font-arabic" : "font-sans"
+                  }`}>
+                  {current.title}
+                </h1>
+              </AnimatedSection>
+              <AnimatedSection animation="fadeIn" delay={600}>
+                <p
+                  className={`text-xl text-muted-foreground max-w-4xl mx-auto leading-relaxed ${
+                    isRTL ? "font-arabic" : "font-sans"
+                  }`}>
+                  {current.description}
+                </p>
+              </AnimatedSection>
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      </AnimatedSection>
 
       {/* Mission, Vision, Values, Goals */}
-      <section className="py-20 bg-muted/30">
-        <div className="container mx-auto px-4">
-          <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-2 gap-8 mb-16">
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-3">
-                  <Target className="w-6 h-6 text-primary" />
-                  {current.mission}
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p
-                  className={`text-muted-foreground leading-relaxed ${
+      <AnimatedSection animation="fadeInUp" delay={200}>
+        <section className="py-20 bg-muted/30">
+          <div className="container mx-auto px-4">
+            <StaggeredContainer
+              className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-2 gap-8 mb-16"
+              staggerDelay={150}
+              animation="fadeInUp">
+              <Card className="hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-3">
+                    <Target className="w-6 h-6 text-primary" />
+                    {current.mission}
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p
+                    className={`text-muted-foreground leading-relaxed ${
+                      isRTL ? "font-arabic" : "font-sans"
+                    }`}>
+                    {current.missionText}
+                  </p>
+                </CardContent>
+              </Card>
+
+              <Card className="hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-3">
+                    <Award className="w-6 h-6 text-primary" />
+                    {current.vision}
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p
+                    className={`text-muted-foreground leading-relaxed ${
+                      isRTL ? "font-arabic" : "font-sans"
+                    }`}>
+                    {current.visionText}
+                  </p>
+                </CardContent>
+              </Card>
+
+              <Card className="hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-3">
+                    <Shield className="w-6 h-6 text-primary" />
+                    {current.values}
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <ul className="space-y-2">
+                    {current.valuesList.map((value, index) => (
+                      <li key={index} className="flex items-center gap-2">
+                        <CheckCircle className="w-4 h-4 text-green-500" />
+                        <span
+                          className={`text-muted-foreground ${
+                            isRTL ? "font-arabic" : "font-sans"
+                          }`}>
+                          {value}
+                        </span>
+                      </li>
+                    ))}
+                  </ul>
+                </CardContent>
+              </Card>
+
+              <Card className="hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-3">
+                    <Globe className="w-6 h-6 text-primary" />
+                    {current.goals}
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p
+                    className={`text-muted-foreground leading-relaxed mb-4 ${
+                      isRTL ? "font-arabic" : "font-sans"
+                    }`}>
+                    {current.goalsText}
+                  </p>
+                  <ul className="space-y-2">
+                    {current.goalsList.slice(0, 4).map((goal, index) => (
+                      <li key={index} className="flex items-start gap-2">
+                        <CheckCircle className="w-4 h-4 text-green-500 mt-1 flex-shrink-0" />
+                        <span
+                          className={`text-sm text-muted-foreground ${
+                            isRTL ? "font-arabic" : "font-sans"
+                          }`}>
+                          {goal}
+                        </span>
+                      </li>
+                    ))}
+                  </ul>
+                </CardContent>
+              </Card>
+            </StaggeredContainer>
+          </div>
+        </section>
+      </AnimatedSection>
+
+      {/* Statistics */}
+      <AnimatedSection animation="fadeInUp" delay={400}>
+        <section className="py-20 bg-background">
+          <div className="container mx-auto px-4">
+            <AnimatedSection animation="fadeInDown" delay={600}>
+              <div className="text-center mb-16">
+                <h2
+                  className={`text-3xl font-bold text-foreground mb-4 ${
                     isRTL ? "font-arabic" : "font-sans"
                   }`}>
-                  {current.missionText}
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-3">
-                  <Award className="w-6 h-6 text-primary" />
-                  {current.vision}
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p
-                  className={`text-muted-foreground leading-relaxed ${
-                    isRTL ? "font-arabic" : "font-sans"
-                  }`}>
-                  {current.visionText}
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-3">
-                  <Shield className="w-6 h-6 text-primary" />
-                  {current.values}
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <ul className="space-y-2">
-                  {current.valuesList.map((value, index) => (
-                    <li key={index} className="flex items-center gap-2">
-                      <CheckCircle className="w-4 h-4 text-green-500" />
-                      <span
-                        className={`text-muted-foreground ${
-                          isRTL ? "font-arabic" : "font-sans"
-                        }`}>
-                        {value}
-                      </span>
-                    </li>
-                  ))}
-                </ul>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-3">
-                  <Globe className="w-6 h-6 text-primary" />
-                  {current.goals}
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p
-                  className={`text-muted-foreground leading-relaxed mb-4 ${
-                    isRTL ? "font-arabic" : "font-sans"
-                  }`}>
-                  {current.goalsText}
-                </p>
-                <ul className="space-y-2">
-                  {current.goalsList.slice(0, 4).map((goal, index) => (
-                    <li key={index} className="flex items-start gap-2">
-                      <CheckCircle className="w-4 h-4 text-green-500 mt-1 flex-shrink-0" />
-                      <span
+                  {language === "ar" ? "إحصائياتنا" : "Our Statistics"}
+                </h2>
+              </div>
+            </AnimatedSection>
+            <StaggeredContainer
+              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"
+              staggerDelay={100}
+              animation="scaleIn">
+              {current.stats.map((stat, index) => {
+                const IconComponent = stat.icon;
+                return (
+                  <Card
+                    key={index}
+                    className="text-center hover:shadow-lg transition-all duration-300 hover:-translate-y-1 hover:scale-105">
+                    <CardContent className="p-6">
+                      <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <IconComponent className="w-8 h-8 text-primary" />
+                      </div>
+                      <div className="text-3xl font-bold text-foreground mb-2">
+                        {stat.value}
+                      </div>
+                      <div
                         className={`text-sm text-muted-foreground ${
                           isRTL ? "font-arabic" : "font-sans"
                         }`}>
-                        {goal}
-                      </span>
-                    </li>
-                  ))}
-                </ul>
-              </CardContent>
-            </Card>
+                        {stat.label}
+                      </div>
+                    </CardContent>
+                  </Card>
+                );
+              })}
+            </StaggeredContainer>
           </div>
-        </div>
-      </section>
-
-      {/* Statistics */}
-      <section className="py-20 bg-background">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-16">
-            <h2
-              className={`text-3xl font-bold text-foreground mb-4 ${
-                isRTL ? "font-arabic" : "font-sans"
-              }`}>
-              {language === "ar" ? "إحصائياتنا" : "Our Statistics"}
-            </h2>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {current.stats.map((stat, index) => {
-              const IconComponent = stat.icon;
-              return (
-                <Card
-                  key={index}
-                  className="text-center hover:shadow-lg transition-shadow">
-                  <CardContent className="p-6">
-                    <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                      <IconComponent className="w-8 h-8 text-primary" />
-                    </div>
-                    <div className="text-3xl font-bold text-foreground mb-2">
-                      {stat.value}
-                    </div>
-                    <div
-                      className={`text-sm text-muted-foreground ${
-                        isRTL ? "font-arabic" : "font-sans"
-                      }`}>
-                      {stat.label}
-                    </div>
-                  </CardContent>
-                </Card>
-              );
-            })}
-          </div>
-        </div>
-      </section>
+        </section>
+      </AnimatedSection>
 
       {/* Features */}
-      <section className="py-20 bg-muted/30">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-16">
-            <h2
-              className={`text-3xl font-bold text-foreground mb-4 ${
-                isRTL ? "font-arabic" : "font-sans"
-              }`}>
-              {language === "ar" ? "مميزاتنا" : "Our Features"}
-            </h2>
+      <AnimatedSection animation="fadeInUp" delay={600}>
+        <section className="py-20 bg-muted/30">
+          <div className="container mx-auto px-4">
+            <AnimatedSection animation="fadeInDown" delay={800}>
+              <div className="text-center mb-16">
+                <h2
+                  className={`text-3xl font-bold text-foreground mb-4 ${
+                    isRTL ? "font-arabic" : "font-sans"
+                  }`}>
+                  {language === "ar" ? "مميزاتنا" : "Our Features"}
+                </h2>
+              </div>
+            </AnimatedSection>
+            <StaggeredContainer
+              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8"
+              staggerDelay={150}
+              animation="fadeInUp">
+              {current.features.map((feature, index) => {
+                const IconComponent = feature.icon;
+                return (
+                  <Card
+                    key={index}
+                    className="text-center hover:shadow-lg transition-all duration-300 hover:-translate-y-1 hover:scale-105">
+                    <CardHeader>
+                      <div
+                        className={`w-16 h-16 ${feature.color} rounded-full flex items-center justify-center mx-auto mb-4`}>
+                        <IconComponent className="w-8 h-8 text-white" />
+                      </div>
+                      <CardTitle
+                        className={`text-xl ${
+                          isRTL ? "font-arabic" : "font-sans"
+                        }`}>
+                        {feature.title}
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <p
+                        className={`text-muted-foreground leading-relaxed ${
+                          isRTL ? "font-arabic" : "font-sans"
+                        }`}>
+                        {feature.description}
+                      </p>
+                    </CardContent>
+                  </Card>
+                );
+              })}
+            </StaggeredContainer>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {current.features.map((feature, index) => {
-              const IconComponent = feature.icon;
-              return (
+        </section>
+      </AnimatedSection>
+
+      {/* Team */}
+      <AnimatedSection animation="fadeInUp" delay={800}>
+        <section className="py-20 bg-background">
+          <div className="container mx-auto px-4">
+            <AnimatedSection animation="fadeInDown" delay={1000}>
+              <div className="text-center mb-16">
+                <h2
+                  className={`text-3xl font-bold text-foreground mb-4 ${
+                    isRTL ? "font-arabic" : "font-sans"
+                  }`}>
+                  {current.team}
+                </h2>
+                <p
+                  className={`text-lg text-muted-foreground ${
+                    isRTL ? "font-arabic" : "font-sans"
+                  }`}>
+                  {current.teamDescription}
+                </p>
+              </div>
+            </AnimatedSection>
+            <StaggeredContainer
+              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
+              staggerDelay={200}
+              animation="fadeInUp">
+              {current.teamMembers.map((member, index) => (
                 <Card
                   key={index}
-                  className="text-center hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
-                  <CardHeader>
-                    <div
-                      className={`w-16 h-16 ${feature.color} rounded-full flex items-center justify-center mx-auto mb-4`}>
-                      <IconComponent className="w-8 h-8 text-white" />
+                  className="text-center hover:shadow-lg transition-all duration-300 hover:-translate-y-1 hover:scale-105">
+                  <CardContent className="p-6">
+                    <div className="w-24 h-24 bg-muted rounded-full flex items-center justify-center mx-auto mb-4">
+                      <Users className="w-12 h-12 text-muted-foreground" />
                     </div>
-                    <CardTitle
-                      className={`text-xl ${
+                    <h3
+                      className={`text-xl font-semibold text-foreground mb-2 ${
                         isRTL ? "font-arabic" : "font-sans"
                       }`}>
-                      {feature.title}
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
+                      {isRTL ? member.name : member.nameEn}
+                    </h3>
                     <p
-                      className={`text-muted-foreground leading-relaxed ${
+                      className={`text-primary font-medium mb-2 ${
                         isRTL ? "font-arabic" : "font-sans"
                       }`}>
-                      {feature.description}
+                      {isRTL ? member.position : member.positionEn}
+                    </p>
+                    <p
+                      className={`text-sm text-muted-foreground mb-2 ${
+                        isRTL ? "font-arabic" : "font-sans"
+                      }`}>
+                      {isRTL ? member.specialty : member.specialtyEn}
+                    </p>
+                    <p
+                      className={`text-xs text-muted-foreground ${
+                        isRTL ? "font-arabic" : "font-sans"
+                      }`}>
+                      {isRTL ? member.experience : member.experienceEn}{" "}
+                      {language === "ar" ? "خبرة" : "experience"}
                     </p>
                   </CardContent>
                 </Card>
-              );
-            })}
+              ))}
+            </StaggeredContainer>
           </div>
-        </div>
-      </section>
-
-      {/* Team */}
-      <section className="py-20 bg-background">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-16">
-            <h2
-              className={`text-3xl font-bold text-foreground mb-4 ${
-                isRTL ? "font-arabic" : "font-sans"
-              }`}>
-              {current.team}
-            </h2>
-            <p
-              className={`text-lg text-muted-foreground ${
-                isRTL ? "font-arabic" : "font-sans"
-              }`}>
-              {current.teamDescription}
-            </p>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {current.teamMembers.map((member, index) => (
-              <Card
-                key={index}
-                className="text-center hover:shadow-lg transition-shadow">
-                <CardContent className="p-6">
-                  <div className="w-24 h-24 bg-muted rounded-full flex items-center justify-center mx-auto mb-4">
-                    <Users className="w-12 h-12 text-muted-foreground" />
-                  </div>
-                  <h3
-                    className={`text-xl font-semibold text-foreground mb-2 ${
-                      isRTL ? "font-arabic" : "font-sans"
-                    }`}>
-                    {isRTL ? member.name : member.nameEn}
-                  </h3>
-                  <p
-                    className={`text-primary font-medium mb-2 ${
-                      isRTL ? "font-arabic" : "font-sans"
-                    }`}>
-                    {isRTL ? member.position : member.positionEn}
-                  </p>
-                  <p
-                    className={`text-sm text-muted-foreground mb-2 ${
-                      isRTL ? "font-arabic" : "font-sans"
-                    }`}>
-                    {isRTL ? member.specialty : member.specialtyEn}
-                  </p>
-                  <p
-                    className={`text-xs text-muted-foreground ${
-                      isRTL ? "font-arabic" : "font-sans"
-                    }`}>
-                    {isRTL ? member.experience : member.experienceEn}{" "}
-                    {language === "ar" ? "خبرة" : "experience"}
-                  </p>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </div>
-      </section>
+        </section>
+      </AnimatedSection>
 
       {/* Achievements */}
-      <section className="py-20 bg-muted/30">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-16">
-            <h2
-              className={`text-3xl font-bold text-foreground mb-4 ${
-                isRTL ? "font-arabic" : "font-sans"
-              }`}>
-              {current.achievements}
-            </h2>
+      <AnimatedSection animation="fadeInUp" delay={1000}>
+        <section className="py-20 bg-muted/30">
+          <div className="container mx-auto px-4">
+            <AnimatedSection animation="fadeInDown" delay={1200}>
+              <div className="text-center mb-16">
+                <h2
+                  className={`text-3xl font-bold text-foreground mb-4 ${
+                    isRTL ? "font-arabic" : "font-sans"
+                  }`}>
+                  {current.achievements}
+                </h2>
+              </div>
+            </AnimatedSection>
+            <StaggeredContainer
+              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+              staggerDelay={100}
+              animation="fadeInLeft">
+              {current.achievementsList.map((achievement, index) => (
+                <Card
+                  key={index}
+                  className="hover:shadow-lg transition-all duration-300 hover:-translate-y-1 hover:scale-105">
+                  <CardContent className="p-6">
+                    <div className="flex items-start gap-3">
+                      <CheckCircle className="w-6 h-6 text-green-500 mt-1" />
+                      <p
+                        className={`text-foreground ${
+                          isRTL ? "font-arabic" : "font-sans"
+                        }`}>
+                        {achievement}
+                      </p>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </StaggeredContainer>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {current.achievementsList.map((achievement, index) => (
-              <Card key={index} className="hover:shadow-lg transition-shadow">
-                <CardContent className="p-6">
-                  <div className="flex items-start gap-3">
-                    <CheckCircle className="w-6 h-6 text-green-500 mt-1" />
-                    <p
-                      className={`text-foreground ${
-                        isRTL ? "font-arabic" : "font-sans"
-                      }`}>
-                      {achievement}
-                    </p>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </div>
-      </section>
+        </section>
+      </AnimatedSection>
 
       {/* Contact */}
-      <section className="py-20 bg-background">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-16">
-            <h2
-              className={`text-3xl font-bold text-foreground mb-4 ${
-                isRTL ? "font-arabic" : "font-sans"
-              }`}>
-              {current.contact}
-            </h2>
-            <p
-              className={`text-lg text-muted-foreground ${
-                isRTL ? "font-arabic" : "font-sans"
-              }`}>
-              {current.contactDescription}
-            </p>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            <Card className="text-center hover:shadow-lg transition-shadow">
-              <CardContent className="p-6">
-                <div className="w-16 h-16 bg-blue-500 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <MapPin className="w-8 h-8 text-white" />
-                </div>
-                <h3
-                  className={`font-semibold text-foreground mb-2 ${
+      <AnimatedSection animation="fadeInUp" delay={1200}>
+        <section className="py-20 bg-background">
+          <div className="container mx-auto px-4">
+            <AnimatedSection animation="fadeInDown" delay={1400}>
+              <div className="text-center mb-16">
+                <h2
+                  className={`text-3xl font-bold text-foreground mb-4 ${
                     isRTL ? "font-arabic" : "font-sans"
                   }`}>
-                  {language === "ar" ? "العنوان" : "Address"}
-                </h3>
+                  {current.contact}
+                </h2>
                 <p
-                  className={`text-sm text-muted-foreground ${
+                  className={`text-lg text-muted-foreground ${
                     isRTL ? "font-arabic" : "font-sans"
                   }`}>
-                  {isRTL ? current.address : current.addressEn}
+                  {current.contactDescription}
                 </p>
-              </CardContent>
-            </Card>
+              </div>
+            </AnimatedSection>
+            <StaggeredContainer
+              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"
+              staggerDelay={150}
+              animation="scaleIn">
+              <Card className="text-center hover:shadow-lg transition-all duration-300 hover:-translate-y-1 hover:scale-105">
+                <CardContent className="p-6">
+                  <div className="w-16 h-16 bg-blue-500 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <MapPin className="w-8 h-8 text-white" />
+                  </div>
+                  <h3
+                    className={`font-semibold text-foreground mb-2 ${
+                      isRTL ? "font-arabic" : "font-sans"
+                    }`}>
+                    {language === "ar" ? "العنوان" : "Address"}
+                  </h3>
+                  <p
+                    className={`text-sm text-muted-foreground ${
+                      isRTL ? "font-arabic" : "font-sans"
+                    }`}>
+                    {isRTL ? current.address : current.addressEn}
+                  </p>
+                </CardContent>
+              </Card>
 
-            <Card className="text-center hover:shadow-lg transition-shadow">
-              <CardContent className="p-6">
-                <div className="w-16 h-16 bg-green-500 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Phone className="w-8 h-8 text-white" />
-                </div>
-                <h3
-                  className={`font-semibold text-foreground mb-2 ${
-                    isRTL ? "font-arabic" : "font-sans"
-                  }`}>
-                  {language === "ar" ? "الهاتف" : "Phone"}
-                </h3>
-                <p className="text-sm text-muted-foreground">{current.phone}</p>
-              </CardContent>
-            </Card>
+              <Card className="text-center hover:shadow-lg transition-all duration-300 hover:-translate-y-1 hover:scale-105">
+                <CardContent className="p-6">
+                  <div className="w-16 h-16 bg-green-500 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <Phone className="w-8 h-8 text-white" />
+                  </div>
+                  <h3
+                    className={`font-semibold text-foreground mb-2 ${
+                      isRTL ? "font-arabic" : "font-sans"
+                    }`}>
+                    {language === "ar" ? "الهاتف" : "Phone"}
+                  </h3>
+                  <p className="text-sm text-muted-foreground">
+                    {current.phone}
+                  </p>
+                </CardContent>
+              </Card>
 
-            <Card className="text-center hover:shadow-lg transition-shadow">
-              <CardContent className="p-6">
-                <div className="w-16 h-16 bg-purple-500 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Mail className="w-8 h-8 text-white" />
-                </div>
-                <h3
-                  className={`font-semibold text-foreground mb-2 ${
-                    isRTL ? "font-arabic" : "font-sans"
-                  }`}>
-                  {language === "ar" ? "البريد الإلكتروني" : "Email"}
-                </h3>
-                <p className="text-sm text-muted-foreground">{current.email}</p>
-              </CardContent>
-            </Card>
+              <Card className="text-center hover:shadow-lg transition-all duration-300 hover:-translate-y-1 hover:scale-105">
+                <CardContent className="p-6">
+                  <div className="w-16 h-16 bg-purple-500 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <Mail className="w-8 h-8 text-white" />
+                  </div>
+                  <h3
+                    className={`font-semibold text-foreground mb-2 ${
+                      isRTL ? "font-arabic" : "font-sans"
+                    }`}>
+                    {language === "ar" ? "البريد الإلكتروني" : "Email"}
+                  </h3>
+                  <p className="text-sm text-muted-foreground">
+                    {current.email}
+                  </p>
+                </CardContent>
+              </Card>
 
-            <Card className="text-center hover:shadow-lg transition-shadow">
-              <CardContent className="p-6">
-                <div className="w-16 h-16 bg-orange-500 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Calendar className="w-8 h-8 text-white" />
-                </div>
-                <h3
-                  className={`font-semibold text-foreground mb-2 ${
-                    isRTL ? "font-arabic" : "font-sans"
-                  }`}>
-                  {language === "ar" ? "ساعات العمل" : "Working Hours"}
-                </h3>
-                <p
-                  className={`text-sm text-muted-foreground ${
-                    isRTL ? "font-arabic" : "font-sans"
-                  }`}>
-                  {isRTL ? current.workingHours : current.workingHoursEn}
-                </p>
-              </CardContent>
-            </Card>
+              <Card className="text-center hover:shadow-lg transition-all duration-300 hover:-translate-y-1 hover:scale-105">
+                <CardContent className="p-6">
+                  <div className="w-16 h-16 bg-orange-500 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <Calendar className="w-8 h-8 text-white" />
+                  </div>
+                  <h3
+                    className={`font-semibold text-foreground mb-2 ${
+                      isRTL ? "font-arabic" : "font-sans"
+                    }`}>
+                    {language === "ar" ? "ساعات العمل" : "Working Hours"}
+                  </h3>
+                  <p
+                    className={`text-sm text-muted-foreground ${
+                      isRTL ? "font-arabic" : "font-sans"
+                    }`}>
+                    {isRTL ? current.workingHours : current.workingHoursEn}
+                  </p>
+                </CardContent>
+              </Card>
+            </StaggeredContainer>
           </div>
-        </div>
-      </section>
+        </section>
+      </AnimatedSection>
     </div>
   );
 };

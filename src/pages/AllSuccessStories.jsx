@@ -3,6 +3,9 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
+import AnimatedSection from "@/components/animations/AnimatedSection";
+import StaggeredContainer from "@/components/animations/StaggeredContainer";
+import AnimatedCard from "@/components/animations/AnimatedCard";
 import {
   Card,
   CardContent,
@@ -286,120 +289,135 @@ const AllSuccessStories = () => {
     <div className="min-h-screen bg-background">
       <div className="container mx-auto px-4 py-8">
         {/* Header */}
-        <div className="mb-8">
-          <h1
-            className={`text-4xl md:text-5xl font-bold mb-4 ${
-              isRTL ? "font-arabic text-right" : "font-sans text-left"
-            }`}>
-            {language === "ar" ? "قصص النجاح" : "Success Stories"}
-          </h1>
-          <p
-            className={`text-xl text-muted-foreground ${
-              isRTL ? "font-arabic text-right" : "font-sans text-left"
-            }`}>
-            {language === "ar"
-              ? "اكتشف كيف غيرت مبادرتنا حياة الناس في مدينة حريملاء"
-              : "Discover how our initiatives have changed people's lives in Huraymila"}
-          </p>
-        </div>
+        <AnimatedSection animation="fadeInUp" delay={0}>
+          <div className="mb-8">
+            <h1
+              className={`text-4xl md:text-5xl font-bold mb-4 ${
+                isRTL ? "font-arabic text-right" : "font-sans text-left"
+              }`}>
+              {language === "ar" ? "قصص النجاح" : "Success Stories"}
+            </h1>
+            <p
+              className={`text-xl text-muted-foreground ${
+                isRTL ? "font-arabic text-right" : "font-sans text-left"
+              }`}>
+              {language === "ar"
+                ? "اكتشف كيف غيرت مبادرتنا حياة الناس في مدينة حريملاء"
+                : "Discover how our initiatives have changed people's lives in Huraymila"}
+            </p>
+          </div>
+        </AnimatedSection>
 
         {/* Search and Filters */}
-        <div className="mb-8">
-          <div className="flex flex-col md:flex-row gap-4 mb-6">
-            {/* Search */}
-            <div className="flex-1">
-              <div className="relative">
-                <Search
-                  className={`absolute top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground ${
-                    isRTL ? "right-3" : "left-3"
-                  }`}
-                />
-                <Input
-                  placeholder={
-                    language === "ar"
-                      ? "البحث في القصص..."
-                      : "Search stories..."
-                  }
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className={`${
-                    isRTL
-                      ? "font-arabic text-right pr-10"
-                      : "font-sans text-left pl-10"
-                  }`}
-                />
+        <AnimatedSection animation="fadeInUp" delay={200}>
+          <div className="mb-8">
+            <div className="flex flex-col md:flex-row gap-4 mb-6">
+              {/* Search */}
+              <div className="flex-1">
+                <div className="relative">
+                  <Search
+                    className={`absolute top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground ${
+                      isRTL ? "right-3" : "left-3"
+                    }`}
+                  />
+                  <Input
+                    placeholder={
+                      language === "ar"
+                        ? "البحث في القصص..."
+                        : "Search stories..."
+                    }
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className={`${
+                      isRTL
+                        ? "font-arabic text-right pr-10"
+                        : "font-sans text-left pl-10"
+                    }`}
+                  />
+                </div>
+              </div>
+
+              {/* Category Filter */}
+              <div className="w-full md:w-48">
+                <Select
+                  value={categoryFilter}
+                  onValueChange={setCategoryFilter}>
+                  <SelectTrigger
+                    className={
+                      isRTL ? "font-arabic text-right" : "font-sans text-left"
+                    }>
+                    <SelectValue
+                      placeholder={language === "ar" ? "التصنيف" : "Category"}
+                    />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {categories.map((category) => (
+                      <SelectItem
+                        key={category.value}
+                        value={category.value}
+                        className={
+                          isRTL
+                            ? "font-arabic text-right"
+                            : "font-sans text-left"
+                        }>
+                        {category.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {/* Sort */}
+              <div className="w-full md:w-48">
+                <Select value={sortBy} onValueChange={setSortBy}>
+                  <SelectTrigger
+                    className={
+                      isRTL ? "font-arabic text-right" : "font-sans text-left"
+                    }>
+                    <SelectValue
+                      placeholder={language === "ar" ? "ترتيب" : "Sort"}
+                    />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {sortOptions.map((option) => (
+                      <SelectItem
+                        key={option.value}
+                        value={option.value}
+                        className={
+                          isRTL
+                            ? "font-arabic text-right"
+                            : "font-sans text-left"
+                        }>
+                        {option.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
             </div>
 
-            {/* Category Filter */}
-            <div className="w-full md:w-48">
-              <Select value={categoryFilter} onValueChange={setCategoryFilter}>
-                <SelectTrigger
-                  className={
-                    isRTL ? "font-arabic text-right" : "font-sans text-left"
-                  }>
-                  <SelectValue
-                    placeholder={language === "ar" ? "التصنيف" : "Category"}
-                  />
-                </SelectTrigger>
-                <SelectContent>
-                  {categories.map((category) => (
-                    <SelectItem
-                      key={category.value}
-                      value={category.value}
-                      className={
-                        isRTL ? "font-arabic text-right" : "font-sans text-left"
-                      }>
-                      {category.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-
-            {/* Sort */}
-            <div className="w-full md:w-48">
-              <Select value={sortBy} onValueChange={setSortBy}>
-                <SelectTrigger
-                  className={
-                    isRTL ? "font-arabic text-right" : "font-sans text-left"
-                  }>
-                  <SelectValue
-                    placeholder={language === "ar" ? "ترتيب" : "Sort"}
-                  />
-                </SelectTrigger>
-                <SelectContent>
-                  {sortOptions.map((option) => (
-                    <SelectItem
-                      key={option.value}
-                      value={option.value}
-                      className={
-                        isRTL ? "font-arabic text-right" : "font-sans text-left"
-                      }>
-                      {option.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
+            {/* Results Count */}
+            <p
+              className={`text-sm text-muted-foreground ${
+                isRTL ? "font-arabic text-right" : "font-sans text-left"
+              }`}>
+              {language === "ar"
+                ? `عرض ${filteredStories.length} من ${storiesData.length} قصة`
+                : `Showing ${filteredStories.length} of ${storiesData.length} stories`}
+            </p>
           </div>
-
-          {/* Results Count */}
-          <p
-            className={`text-sm text-muted-foreground ${
-              isRTL ? "font-arabic text-right" : "font-sans text-left"
-            }`}>
-            {language === "ar"
-              ? `عرض ${filteredStories.length} من ${storiesData.length} قصة`
-              : `Showing ${filteredStories.length} of ${storiesData.length} stories`}
-          </p>
-        </div>
+        </AnimatedSection>
 
         {/* Stories Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredStories.map((story) => (
-            <Card
+        <StaggeredContainer
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+          staggerDelay={150}
+          animation="fadeInUp">
+          {filteredStories.map((story, index) => (
+            <AnimatedCard
               key={story.id}
+              animation="fadeInUp"
+              delay={index * 150}
               className="group hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
               {/* Story Image */}
               <div className="relative h-48 overflow-hidden rounded-t-lg">
@@ -504,28 +522,30 @@ const AllSuccessStories = () => {
                   />
                 </Button>
               </CardContent>
-            </Card>
+            </AnimatedCard>
           ))}
-        </div>
+        </StaggeredContainer>
 
         {/* No Results */}
         {filteredStories.length === 0 && (
-          <div className="text-center py-12">
-            <h3
-              className={`text-xl font-semibold mb-2 ${
-                isRTL ? "font-arabic" : "font-sans"
-              }`}>
-              {language === "ar" ? "لا توجد نتائج" : "No Results Found"}
-            </h3>
-            <p
-              className={`text-muted-foreground ${
-                isRTL ? "font-arabic" : "font-sans"
-              }`}>
-              {language === "ar"
-                ? "جرب البحث بكلمات مختلفة أو تغيير الفلاتر"
-                : "Try searching with different keywords or changing the filters"}
-            </p>
-          </div>
+          <AnimatedSection animation="fadeInUp" delay={400}>
+            <div className="text-center py-12">
+              <h3
+                className={`text-xl font-semibold mb-2 ${
+                  isRTL ? "font-arabic" : "font-sans"
+                }`}>
+                {language === "ar" ? "لا توجد نتائج" : "No Results Found"}
+              </h3>
+              <p
+                className={`text-muted-foreground ${
+                  isRTL ? "font-arabic" : "font-sans"
+                }`}>
+                {language === "ar"
+                  ? "جرب البحث بكلمات مختلفة أو تغيير الفلاتر"
+                  : "Try searching with different keywords or changing the filters"}
+              </p>
+            </div>
+          </AnimatedSection>
         )}
       </div>
     </div>
