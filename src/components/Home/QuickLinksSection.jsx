@@ -41,7 +41,7 @@ const QuickLinksSection = () => {
       titleEn: "Volunteer in Initiatives",
       icon: Users,
       color: "bg-green-500",
-      href: "/volunteer",
+      href: "/initiatives",
     },
     {
       id: 3,
@@ -57,7 +57,7 @@ const QuickLinksSection = () => {
   const isRTL = language === "ar";
 
   return (
-    <section className="py-20 bg-muted/30">
+    <section className="py-20 bg-background">
       <div className="container mx-auto px-4">
         {/* Header */}
         <div className="text-center mb-16">

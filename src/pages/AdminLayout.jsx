@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Outlet, useNavigate, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Building2,
@@ -35,6 +36,77 @@ const AdminLayout = () => {
   // const { user, signOut } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
+  const isRTL = language === "ar";
+
+  const content = {
+    ar: {
+      timeline: {
+        title: "الجدول الزمني للبرنامج",
+        phases: [
+          {
+            year: "2024",
+            title: "إطلاق البرنامج",
+            description: "بداية المبادرات الأساسية وتأسيس الشراكات",
+            status: "مكتمل",
+          },
+          {
+            year: "2025",
+            title: "التوسع والتطوير",
+            description: "تنفيذ المشاريع الكبرى وزيادة المشاركة المجتمعية",
+            status: "قيد التنفيذ",
+          },
+          {
+            year: "2026",
+            title: "التقييم والتحسين",
+            description: "تقييم النتائج وتطوير المبادرات القائمة",
+            status: "مخطط",
+          },
+          {
+            year: "2027",
+            title: "الاعتماد العالمي",
+            description: "التقدم للحصول على اعتماد منظمة الصحة العالمية",
+            status: "مخطط",
+          },
+        ],
+      },
+    },
+    en: {
+      timeline: {
+        title: "Program Timeline",
+        phases: [
+          {
+            year: "2024",
+            title: "Program Launch",
+            description:
+              "Start of basic initiatives and establishing partnerships",
+            status: "Completed",
+          },
+          {
+            year: "2025",
+            title: "Expansion & Development",
+            description:
+              "Implementation of major projects and increased community participation",
+            status: "In Progress",
+          },
+          {
+            year: "2026",
+            title: "Evaluation & Improvement",
+            description:
+              "Results evaluation and development of existing initiatives",
+            status: "Planned",
+          },
+          {
+            year: "2027",
+            title: "Global Accreditation",
+            description: "Apply for WHO accreditation",
+            status: "Planned",
+          },
+        ],
+      },
+    },
+  };
+
+  const current = content[language];
   // Commented out user role state for development
   // const [userRole, setUserRole] = useState(null);
   // const [loading, setLoading] = useState(true);
@@ -255,6 +327,82 @@ const AdminLayout = () => {
               ))}
             </TabsList>
           </Tabs>
+        </div>
+      </div>
+
+      {/* Program Timeline */}
+      <div className="bg-card/50 border-b border-border">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <h3
+            className={cn(
+              "text-2xl md:text-3xl font-bold text-center text-foreground mb-12",
+              isRTL ? "font-arabic" : "font-english"
+            )}>
+            {current.timeline.title}
+          </h3>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {current.timeline.phases.map((phase, index) => (
+              <Card
+                key={index}
+                className={cn(
+                  "relative overflow-hidden",
+                  phase.status === "مكتمل" || phase.status === "Completed"
+                    ? "bg-gradient-to-br from-green-50 to-green-100 border-green-200 dark:from-green-950/30 dark:to-green-900/30 dark:border-green-800"
+                    : phase.status === "قيد التنفيذ" ||
+                      phase.status === "In Progress"
+                    ? "bg-gradient-to-br from-blue-50 to-blue-100 border-blue-200 dark:from-blue-950/30 dark:to-blue-900/30 dark:border-blue-800"
+                    : "bg-gradient-to-br from-gray-50 to-gray-100 border-gray-200 dark:from-gray-950/30 dark:to-gray-900/30 dark:border-gray-700"
+                )}>
+                <CardContent className="p-6">
+                  <div className="flex items-center justify-between mb-4">
+                    <div
+                      className={cn(
+                        "text-3xl font-bold",
+                        phase.status === "مكتمل" || phase.status === "Completed"
+                          ? "text-green-600"
+                          : phase.status === "قيد التنفيذ" ||
+                            phase.status === "In Progress"
+                          ? "text-blue-600"
+                          : "text-gray-500"
+                      )}>
+                      {phase.year}
+                    </div>
+                    <div
+                      className={cn(
+                        "px-2 py-1 rounded-full text-xs font-medium",
+                        phase.status === "مكتمل" || phase.status === "Completed"
+                          ? "bg-green-200 text-green-800 dark:bg-green-800/30 dark:text-green-300"
+                          : phase.status === "قيد التنفيذ" ||
+                            phase.status === "In Progress"
+                          ? "bg-blue-200 text-blue-800 dark:bg-blue-800/30 dark:text-blue-300"
+                          : "bg-gray-200 text-gray-600 dark:bg-gray-700/30 dark:text-gray-400"
+                      )}>
+                      {phase.status}
+                    </div>
+                  </div>
+                  <h4
+                    className={cn(
+                      "text-lg font-bold text-foreground mb-2",
+                      isRTL ? "font-arabic" : "font-english"
+                    )}>
+                    {phase.title}
+                  </h4>
+                  <p
+                    className={cn(
+                      "text-sm text-muted-foreground leading-relaxed",
+                      isRTL ? "font-arabic" : "font-english"
+                    )}>
+                    {phase.description}
+                  </p>
+                </CardContent>
+                {(phase.status === "قيد التنفيذ" ||
+                  phase.status === "In Progress") && (
+                  <div className="absolute top-0 right-0 w-0 h-0 border-l-[20px] border-l-transparent border-t-[20px] border-t-blue-500"></div>
+                )}
+              </Card>
+            ))}
+          </div>
         </div>
       </div>
 

@@ -1,0 +1,513 @@
+import React, { useState, useEffect } from "react";
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import {
+  MapPin,
+  Users,
+  Calendar,
+  Award,
+  Leaf,
+  Building2,
+  Heart,
+  ArrowLeft,
+  ChevronLeft,
+  ChevronRight,
+  Clock,
+  Globe,
+  Mountain,
+  Sun,
+} from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { useTheme } from "@/contexts/ThemeContext";
+import { cn } from "@/lib/utils";
+
+const AboutHarimlaa = () => {
+  const { language } = useTheme();
+  const navigate = useNavigate();
+  const [currentSlide, setCurrentSlide] = useState(0);
+
+  // Placeholder images - you can replace these with actual images later
+  const slideshowImages = [
+    {
+      id: 1,
+      src: "/api/placeholder/800/400",
+      alt: "Harimlaa City View",
+      title: "مدينة حريملاء",
+      description: "منظر عام لمدينة حريملاء الجميلة",
+    },
+    {
+      id: 2,
+      src: "/api/placeholder/800/400",
+      alt: "Historical Sites",
+      title: "المواقع التاريخية",
+      description: "التراث العريق والمواقع الأثرية",
+    },
+    {
+      id: 3,
+      src: "/api/placeholder/800/400",
+      alt: "Agriculture",
+      title: "الزراعة",
+      description: "الأراضي الزراعية الخصبة",
+    },
+    {
+      id: 4,
+      src: "/api/placeholder/800/400",
+      alt: "Modern Development",
+      title: "التطوير الحديث",
+      description: "المشاريع التنموية الجديدة",
+    },
+  ];
+
+  const content = {
+    ar: {
+      title: "عن محافظة حريملاء",
+      subtitle: "جوهرة منطقة الرياض",
+      description:
+        "تقع محافظة حريملاء في منطقة الرياض شمال غرب مدينة الرياض على بعد 86 كيلومتراً. تتميز بموقعها الاستراتيجي وتراثها العريق وتشتهر بالزراعة والمواقع التاريخية.",
+
+      history: {
+        title: "التاريخ والتراث",
+        description:
+          "تتمتع حريملاء بتاريخ عريق يعود إلى قرون عديدة، حيث كانت محطة مهمة على طرق التجارة القديمة. تشتهر بتراثها المعماري التقليدي والمواقع الأثرية التي تعكس عراقة المنطقة.",
+      },
+
+      geography: {
+        title: "الموقع الجغرافي",
+        description:
+          "تقع حريملاء في منطقة الرياض على ارتفاع 650 متر فوق مستوى سطح البحر، وتتميز بمناخها المعتدل وطبيعتها الخلابة التي تجمع بين الجبال والسهول الخضراء.",
+      },
+
+      economy: {
+        title: "الاقتصاد والتنمية",
+        description:
+          "تعتمد حريملاء على الزراعة كركيزة أساسية للاقتصاد المحلي، بالإضافة إلى السياحة التراثية والتنمية الصناعية الحديثة التي تساهم في دفع عجلة التطوير.",
+      },
+
+      culture: {
+        title: "الثقافة والمجتمع",
+        description:
+          "يتميز مجتمع حريملاء بالترابط الاجتماعي القوي والحفاظ على العادات والتقاليد الأصيلة، مع الانفتاح على التطورات الحديثة في مختلف المجالات.",
+      },
+
+      features: [
+        {
+          icon: Mountain,
+          title: "الطبيعة الخلابة",
+          description: "جبال وسهول تتميز بجمالها الطبيعي",
+        },
+        {
+          icon: Sun,
+          title: "المناخ المعتدل",
+          description: "مناخ صحراوي معتدل على مدار السنة",
+        },
+        {
+          icon: Leaf,
+          title: "الزراعة المزدهرة",
+          description: "أراضي زراعية خصبة ومنتجة",
+        },
+        {
+          icon: Building2,
+          title: "التطوير المستمر",
+          description: "مشاريع تنموية حديثة ومستدامة",
+        },
+      ],
+
+      stats: [
+        { label: "عدد السكان", value: "21,758 نسمة", icon: Users },
+        { label: "المساحة", value: "1,480 كم²", icon: Globe },
+        { label: "المرافق الصحية", value: "5 مراكز", icon: Heart },
+        { label: "المدارس", value: "18 مدرسة", icon: Award },
+        { label: "سنة التأسيس", value: "1400 هـ", icon: Calendar },
+        { label: "الارتفاع", value: "650 م", icon: Mountain },
+      ],
+
+      cta: "اكتشف المزيد",
+      backButton: "العودة للصفحة الرئيسية",
+    },
+    en: {
+      title: "About Harimlaa Governorate",
+      subtitle: "The Jewel of Riyadh Region",
+      description:
+        "Harimlaa Governorate is located in Riyadh region, 86 km northwest of Riyadh city. It is distinguished by its strategic location, rich heritage, and is known for agriculture and historical sites.",
+
+      history: {
+        title: "History & Heritage",
+        description:
+          "Harimlaa boasts a rich history spanning centuries, having been an important stop on ancient trade routes. It is renowned for its traditional architectural heritage and archaeological sites that reflect the region's antiquity.",
+      },
+
+      geography: {
+        title: "Geographic Location",
+        description:
+          "Located in Riyadh region at an elevation of 650 meters above sea level, Harimlaa is characterized by its moderate climate and picturesque nature that combines mountains and green plains.",
+      },
+
+      economy: {
+        title: "Economy & Development",
+        description:
+          "Harimlaa relies on agriculture as a fundamental pillar of the local economy, in addition to heritage tourism and modern industrial development that contribute to driving development forward.",
+      },
+
+      culture: {
+        title: "Culture & Society",
+        description:
+          "Harimlaa's community is distinguished by strong social cohesion and preservation of authentic customs and traditions, while being open to modern developments in various fields.",
+      },
+
+      features: [
+        {
+          icon: Mountain,
+          title: "Scenic Nature",
+          description:
+            "Mountains and plains distinguished by their natural beauty",
+        },
+        {
+          icon: Sun,
+          title: "Moderate Climate",
+          description: "Moderate desert climate throughout the year",
+        },
+        {
+          icon: Leaf,
+          title: "Thriving Agriculture",
+          description: "Fertile and productive agricultural lands",
+        },
+        {
+          icon: Building2,
+          title: "Continuous Development",
+          description: "Modern and sustainable development projects",
+        },
+      ],
+
+      stats: [
+        { label: "Population", value: "21,758 residents", icon: Users },
+        { label: "Area", value: "1,480 km²", icon: Globe },
+        { label: "Health Facilities", value: "5 centers", icon: Heart },
+        { label: "Schools", value: "18 schools", icon: Award },
+        { label: "Founded", value: "1980", icon: Calendar },
+        { label: "Elevation", value: "650 m", icon: Mountain },
+      ],
+
+      cta: "Discover More",
+      backButton: "Back to Home",
+    },
+  };
+
+  const current = content[language];
+  const isRTL = language === "ar";
+
+  // Auto-advance slideshow
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentSlide((prev) => (prev + 1) % slideshowImages.length);
+    }, 5000);
+    return () => clearInterval(timer);
+  }, []);
+
+  const nextSlide = () => {
+    setCurrentSlide((prev) => (prev + 1) % slideshowImages.length);
+  };
+
+  const prevSlide = () => {
+    setCurrentSlide(
+      (prev) => (prev - 1 + slideshowImages.length) % slideshowImages.length
+    );
+  };
+
+  return (
+    <div className="min-h-screen bg-background">
+      {/* Header */}
+      <div className="relative h-96 overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-primary/40"></div>
+        <div className="relative z-10 container mx-auto px-4 h-full flex items-center justify-center">
+          <div className="text-center text-white">
+            <h1
+              className={cn(
+                "text-4xl md:text-6xl font-bold mb-4",
+                isRTL ? "font-arabic" : "font-english"
+              )}>
+              {current.title}
+            </h1>
+            <p
+              className={cn(
+                "text-xl md:text-2xl opacity-90",
+                isRTL ? "font-arabic" : "font-english"
+              )}>
+              {current.subtitle}
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div className="container mx-auto px-4 py-12">
+        {/* Back Button */}
+        <div className="mb-8">
+          <Button
+            variant="outline"
+            onClick={() => navigate("/")}
+            className={cn(
+              "flex items-center gap-2",
+              isRTL ? "font-arabic" : "font-english"
+            )}>
+            <ArrowLeft className={`w-4 h-4 ${isRTL ? "rotate-180" : ""}`} />
+            {current.backButton}
+          </Button>
+        </div>
+
+        {/* Slideshow */}
+        <div className="mb-16">
+          <Card className="overflow-hidden">
+            <div className="relative h-96 md:h-[500px]">
+              <div className="relative h-full">
+                <img
+                  src={slideshowImages[currentSlide].src}
+                  alt={slideshowImages[currentSlide].alt}
+                  className="w-full h-full object-cover"
+                />
+                <div className="absolute inset-0 bg-black/30"></div>
+                <div className="absolute bottom-6 left-6 text-white">
+                  <h3
+                    className={cn(
+                      "text-2xl font-bold mb-2",
+                      isRTL ? "font-arabic" : "font-english"
+                    )}>
+                    {slideshowImages[currentSlide].title}
+                  </h3>
+                  <p
+                    className={cn(
+                      "text-lg opacity-90",
+                      isRTL ? "font-arabic" : "font-english"
+                    )}>
+                    {slideshowImages[currentSlide].description}
+                  </p>
+                </div>
+              </div>
+
+              {/* Navigation Buttons */}
+              <Button
+                variant="outline"
+                size="icon"
+                onClick={prevSlide}
+                className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-white/20 hover:bg-white/30 text-white border-white/30">
+                <ChevronLeft className="w-4 h-4" />
+              </Button>
+              <Button
+                variant="outline"
+                size="icon"
+                onClick={nextSlide}
+                className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-white/20 hover:bg-white/30 text-white border-white/30">
+                <ChevronRight className="w-4 h-4" />
+              </Button>
+
+              {/* Dots Indicator */}
+              <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex gap-2">
+                {slideshowImages.map((_, index) => (
+                  <button
+                    key={index}
+                    onClick={() => setCurrentSlide(index)}
+                    className={`w-3 h-3 rounded-full transition-colors ${
+                      index === currentSlide ? "bg-white" : "bg-white/50"
+                    }`}
+                  />
+                ))}
+              </div>
+            </div>
+          </Card>
+        </div>
+
+        {/* Description */}
+        <div className="mb-16">
+          <Card>
+            <CardContent className="p-8">
+              <p
+                className={cn(
+                  "text-lg text-foreground/80 leading-relaxed text-center max-w-4xl mx-auto",
+                  isRTL ? "font-arabic" : "font-english"
+                )}>
+                {current.description}
+              </p>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Information Sections */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-16">
+          <Card>
+            <CardContent className="p-8">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
+                  <Clock className="h-6 w-6 text-primary" />
+                </div>
+                <h3
+                  className={cn(
+                    "text-2xl font-bold text-foreground",
+                    isRTL ? "font-arabic" : "font-english"
+                  )}>
+                  {current.history.title}
+                </h3>
+              </div>
+              <p
+                className={cn(
+                  "text-foreground/80 leading-relaxed",
+                  isRTL ? "font-arabic" : "font-english"
+                )}>
+                {current.history.description}
+              </p>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardContent className="p-8">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-12 h-12 bg-secondary/10 rounded-full flex items-center justify-center">
+                  <MapPin className="h-6 w-6 text-secondary" />
+                </div>
+                <h3
+                  className={cn(
+                    "text-2xl font-bold text-foreground",
+                    isRTL ? "font-arabic" : "font-english"
+                  )}>
+                  {current.geography.title}
+                </h3>
+              </div>
+              <p
+                className={cn(
+                  "text-foreground/80 leading-relaxed",
+                  isRTL ? "font-arabic" : "font-english"
+                )}>
+                {current.geography.description}
+              </p>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardContent className="p-8">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-12 h-12 bg-accent/10 rounded-full flex items-center justify-center">
+                  <Award className="h-6 w-6 text-accent" />
+                </div>
+                <h3
+                  className={cn(
+                    "text-2xl font-bold text-foreground",
+                    isRTL ? "font-arabic" : "font-english"
+                  )}>
+                  {current.economy.title}
+                </h3>
+              </div>
+              <p
+                className={cn(
+                  "text-foreground/80 leading-relaxed",
+                  isRTL ? "font-arabic" : "font-english"
+                )}>
+                {current.economy.description}
+              </p>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardContent className="p-8">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-12 h-12 bg-green-500/10 rounded-full flex items-center justify-center">
+                  <Heart className="h-6 w-6 text-green-500" />
+                </div>
+                <h3
+                  className={cn(
+                    "text-2xl font-bold text-foreground",
+                    isRTL ? "font-arabic" : "font-english"
+                  )}>
+                  {current.culture.title}
+                </h3>
+              </div>
+              <p
+                className={cn(
+                  "text-foreground/80 leading-relaxed",
+                  isRTL ? "font-arabic" : "font-english"
+                )}>
+                {current.culture.description}
+              </p>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Features */}
+        <div className="mb-16">
+          <h2
+            className={cn(
+              "text-3xl font-bold text-center mb-12",
+              isRTL ? "font-arabic" : "font-english"
+            )}>
+            {isRTL ? "المميزات الرئيسية" : "Key Features"}
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {current.features.map((feature, index) => {
+              const IconComponent = feature.icon;
+              return (
+                <Card
+                  key={index}
+                  className="text-center hover:shadow-lg transition-shadow">
+                  <CardContent className="p-6">
+                    <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                      <IconComponent className="h-8 w-8 text-primary" />
+                    </div>
+                    <h3
+                      className={cn(
+                        "text-lg font-semibold mb-2",
+                        isRTL ? "font-arabic" : "font-english"
+                      )}>
+                      {feature.title}
+                    </h3>
+                    <p
+                      className={cn(
+                        "text-sm text-muted-foreground",
+                        isRTL ? "font-arabic" : "font-english"
+                      )}>
+                      {feature.description}
+                    </p>
+                  </CardContent>
+                </Card>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Statistics */}
+        <div className="mb-16">
+          <h2
+            className={cn(
+              "text-3xl font-bold text-center mb-12",
+              isRTL ? "font-arabic" : "font-english"
+            )}>
+            {isRTL ? "الإحصائيات" : "Statistics"}
+          </h2>
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
+            {current.stats.map((stat, index) => {
+              const IconComponent = stat.icon;
+              return (
+                <Card
+                  key={index}
+                  className="text-center hover:shadow-lg transition-shadow">
+                  <CardContent className="p-6">
+                    <div className="w-12 h-12 bg-accent/10 rounded-full flex items-center justify-center mx-auto mb-3">
+                      <IconComponent className="h-6 w-6 text-accent" />
+                    </div>
+                    <div className="text-2xl font-bold text-foreground mb-1">
+                      {stat.value}
+                    </div>
+                    <div
+                      className={cn(
+                        "text-sm text-muted-foreground",
+                        isRTL ? "font-arabic" : "font-english"
+                      )}>
+                      {stat.label}
+                    </div>
+                  </CardContent>
+                </Card>
+              );
+            })}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default AboutHarimlaa;

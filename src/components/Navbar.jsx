@@ -56,6 +56,10 @@ const Navbar = () => {
     { href: "/", label: language === "ar" ? "الرئيسية" : "Home" },
     { href: "/about", label: language === "ar" ? "من نحن" : "About" },
     {
+      href: "/about-harimlaa",
+      label: language === "ar" ? "عن حريملاء" : "About Harimlaa",
+    },
+    {
       href: "/initiatives",
       label: language === "ar" ? "المبادرات" : "Initiatives",
     },
@@ -64,7 +68,6 @@ const Navbar = () => {
       href: "/success-stories",
       label: language === "ar" ? "قصص النجاح" : "Success Stories",
     },
-    { href: "/volunteer", label: language === "ar" ? "التطوع" : "Volunteer" },
     { href: "/contact", label: language === "ar" ? "اتصل بنا" : "Contact" },
   ];
 

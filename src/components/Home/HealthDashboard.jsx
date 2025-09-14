@@ -70,6 +70,7 @@ const HealthDashboard = () => {
         },
       },
       lastUpdate: "آخر تحديث",
+      excellent: "ممتاز",
     },
     en: {
       title: "Health Indicators Dashboard",
@@ -119,6 +120,7 @@ const HealthDashboard = () => {
         },
       },
       lastUpdate: "Last Update",
+      excellent: "Excellent",
     },
   };
 
@@ -131,7 +133,13 @@ const HealthDashboard = () => {
       icon: Wind,
       color: "text-green-600",
       bgColor: "bg-green-100",
-      progressColor: "bg-green-500",
+      ringColor: "ring-green-500",
+      progressColor: "from-green-500 to-green-600",
+      target: 90,
+      detail:
+        language === "ar"
+          ? "مستويات PM2.5 ضمن معايير منظمة الصحة العالمية"
+          : "PM2.5 levels within WHO standards",
       inverted: false,
     },
     {
@@ -139,7 +147,13 @@ const HealthDashboard = () => {
       icon: Droplets,
       color: "text-blue-600",
       bgColor: "bg-blue-100",
-      progressColor: "bg-blue-500",
+      ringColor: "ring-blue-500",
+      progressColor: "from-blue-500 to-blue-600",
+      target: 95,
+      detail:
+        language === "ar"
+          ? "نقاء المياه يتجاوز المعايير الوطنية"
+          : "Water purity exceeds national standards",
       inverted: false,
     },
     {
@@ -147,7 +161,13 @@ const HealthDashboard = () => {
       icon: Shield,
       color: "text-purple-600",
       bgColor: "bg-purple-100",
-      progressColor: "bg-purple-500",
+      ringColor: "ring-purple-500",
+      progressColor: "from-purple-500 to-purple-600",
+      target: 95,
+      detail:
+        language === "ar"
+          ? "تغطية التطعيمات للسكان"
+          : "Population vaccination coverage",
       inverted: false,
     },
     {
@@ -155,7 +175,13 @@ const HealthDashboard = () => {
       icon: Activity,
       color: "text-orange-600",
       bgColor: "bg-orange-100",
-      progressColor: "bg-orange-500",
+      ringColor: "ring-orange-500",
+      progressColor: "from-orange-500 to-orange-600",
+      target: 80,
+      detail:
+        language === "ar"
+          ? "البالغون الذين يمارسون الرياضة بانتظام"
+          : "Adults engaging in regular exercise",
       inverted: false,
     },
     {
@@ -163,7 +189,13 @@ const HealthDashboard = () => {
       icon: Car,
       color: "text-red-600",
       bgColor: "bg-red-100",
-      progressColor: "bg-red-500",
+      ringColor: "ring-red-500",
+      progressColor: "from-red-500 to-red-600",
+      target: 10,
+      detail:
+        language === "ar"
+          ? "حوادث المرور الشهرية"
+          : "Monthly traffic accident incidents",
       inverted: true, // Lower is better
     },
     {
@@ -171,10 +203,20 @@ const HealthDashboard = () => {
       icon: Recycle,
       color: "text-teal-600",
       bgColor: "bg-teal-100",
-      progressColor: "bg-teal-500",
+      ringColor: "ring-teal-500",
+      progressColor: "from-teal-500 to-teal-600",
+      target: 80,
+      detail:
+        language === "ar"
+          ? "نسبة إعادة تدوير النفايات"
+          : "Waste recycling percentage",
       inverted: false,
     },
   ];
+
+  const calculateProgress = (value, target) => {
+    return Math.min((value / target) * 100, 100);
+  };
 
   const getStatusColor = (status) => {
     // Handle both Arabic and English status values
@@ -213,56 +255,126 @@ const HealthDashboard = () => {
         </div>
 
         {/* Indicators Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
           {indicators.map((indicator, index) => {
             const IconComponent = indicator.icon;
-            const progressValue = indicator.inverted
-              ? 100 - indicator.value
-              : indicator.value;
+            const progressValue = calculateProgress(
+              indicator.value,
+              indicator.target
+            );
+            const isExcellent = indicator.value >= indicator.target * 0.9;
 
             return (
               <Card
                 key={index}
-                className="bg-card border border-border shadow-soft hover:shadow-card transition-all duration-300">
-                <CardHeader className="pb-4">
+                className={cn(
+                  "group hover:shadow-xl transition-all duration-300 bg-gradient-to-br from-card to-card/80 border-2 relative overflow-hidden",
+                  "hover:scale-[1.02] hover:border-primary/20",
+                  isExcellent && "ring-2 ring-primary/20"
+                )}>
+                {isExcellent && (
+                  <div className="absolute top-0 right-0 bg-gradient-to-l from-primary to-primary/80 text-primary-foreground px-3 py-1 text-xs font-bold rounded-bl-lg">
+                    <Award className="h-3 w-3 inline mr-1" />
+                    {current.excellent}
+                  </div>
+                )}
+
+                <CardHeader className="pb-3">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
                       <div
-                        className={`w-12 h-12 rounded-full flex items-center justify-center ${indicator.bgColor}`}>
+                        className={cn(
+                          "w-14 h-14 rounded-xl flex items-center justify-center transition-all duration-300 group-hover:scale-110 relative",
+                          indicator.bgColor,
+                          "ring-2 ring-transparent group-hover:" +
+                            indicator.ringColor
+                        )}>
                         <IconComponent
-                          className={`h-6 w-6 ${indicator.color}`}
+                          className={cn("h-7 w-7", indicator.color)}
                         />
+                        {indicator.trend === "up" && (
+                          <div className="absolute -top-1 -right-1 w-4 h-4 bg-emerald-500 rounded-full flex items-center justify-center">
+                            <TrendingUp className="h-2 w-2 text-white" />
+                          </div>
+                        )}
                       </div>
                       <div>
-                        <CardTitle className="text-lg font-semibold text-foreground">
+                        <CardTitle
+                          className={cn(
+                            "text-lg font-bold text-foreground",
+                            isRTL ? "font-arabic" : "font-english"
+                          )}>
                           {indicator.title}
                         </CardTitle>
+                        <p
+                          className={cn(
+                            "text-xs text-muted-foreground",
+                            isRTL ? "font-arabic" : "font-english"
+                          )}>
+                          {indicator.description}
+                        </p>
                       </div>
                     </div>
-                    <div className="flex items-center gap-2">
-                      <Badge className={getStatusColor(indicator.status)}>
-                        {indicator.status}
-                      </Badge>
-                      {indicator.trend === "up" ? (
-                        <TrendingUp className="h-4 w-4 text-green-600" />
-                      ) : (
-                        <TrendingDown className="h-4 w-4 text-red-600" />
-                      )}
-                    </div>
+                    <Badge
+                      variant="outline"
+                      className={cn(
+                        "text-xs border font-medium",
+                        getStatusColor(indicator.status)
+                      )}>
+                      {indicator.status}
+                    </Badge>
                   </div>
                 </CardHeader>
-                <CardContent>
+
+                <CardContent className="pt-0">
                   <div className="space-y-4">
-                    <div className="flex items-center justify-between">
-                      <span className="text-3xl font-bold text-foreground">
-                        {indicator.inverted ? indicator.value : indicator.value}
-                        {!indicator.title.includes("الحوادث") && "%"}
-                      </span>
+                    <div className="flex items-end justify-between">
+                      <div>
+                        <span className="text-4xl font-bold text-foreground">
+                          {indicator.value}
+                        </span>
+                        <span className="text-lg text-muted-foreground ml-1">
+                          %
+                        </span>
+                      </div>
+                      <div className="text-right">
+                        <div className="text-xs text-muted-foreground mb-1">
+                          {isRTL ? "الهدف" : "Target"}
+                        </div>
+                        <div className="text-sm font-bold text-primary">
+                          {indicator.target}%
+                        </div>
+                      </div>
                     </div>
-                    <Progress value={progressValue} className="h-2" />
-                    <p className="text-sm text-muted-foreground">
-                      {indicator.description}
-                    </p>
+
+                    {/* Enhanced Progress Bar */}
+                    <div className="space-y-2">
+                      <div className="relative h-4 bg-muted rounded-full overflow-hidden">
+                        <div
+                          className={cn(
+                            "h-full rounded-full bg-gradient-to-r transition-all duration-1000 ease-out relative",
+                            indicator.progressColor
+                          )}
+                          style={{ width: `${progressValue}%` }}>
+                          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent animate-pulse" />
+                        </div>
+                        {/* Target line */}
+                        <div
+                          className="absolute top-0 bottom-0 w-0.5 bg-foreground/30"
+                          style={{
+                            left: `${(indicator.target / 100) * 100}%`,
+                          }}>
+                          <Target className="h-3 w-3 text-foreground/60 absolute -top-0.5 -left-1" />
+                        </div>
+                      </div>
+                      <p
+                        className={cn(
+                          "text-sm text-muted-foreground",
+                          isRTL ? "font-arabic" : "font-english"
+                        )}>
+                        {indicator.detail}
+                      </p>
+                    </div>
                   </div>
                 </CardContent>
               </Card>

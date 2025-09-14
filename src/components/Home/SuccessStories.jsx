@@ -9,7 +9,6 @@ import {
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
-  Star,
   Heart,
   Users,
   Target,
@@ -20,6 +19,7 @@ import {
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useTheme } from "@/contexts/ThemeContext";
+import { cn } from "@/lib/utils";
 
 const SuccessStories = () => {
   const { language } = useTheme();
@@ -203,17 +203,6 @@ const SuccessStories = () => {
     );
   };
 
-  const renderStars = (rating) => {
-    return Array.from({ length: 5 }).map((_, index) => (
-      <Star
-        key={index}
-        className={`w-4 h-4 ${
-          index < rating ? "text-yellow-500 fill-current" : "text-gray-300"
-        }`}
-      />
-    ));
-  };
-
   return (
     <section className="py-20 bg-background">
       <div className="container mx-auto px-4">
@@ -233,196 +222,82 @@ const SuccessStories = () => {
           </p>
         </div>
 
-        {/* Featured Story */}
-        {stories
-          .filter((story) => story.featured)
-          .map((featuredStory) => (
-            <Card key={featuredStory.id} className="mb-16 overflow-hidden">
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-0">
-                <div className="relative h-64 lg:h-full">
-                  <img
-                    src={featuredStory.image}
-                    alt={
-                      language === "ar"
-                        ? featuredStory.title
-                        : featuredStory.titleEn
-                    }
-                    className="w-full h-full object-cover"
-                  />
-                  <div className="absolute top-4 right-4">
-                    {getCategoryBadge(featuredStory.category)}
-                  </div>
-                </div>
-                <div className="p-8 flex flex-col justify-center">
-                  <div className="flex items-center gap-2 mb-4">
-                    {renderStars(featuredStory.rating)}
-                    <span className="text-sm text-muted-foreground">
-                      {featuredStory.rating}/5
-                    </span>
-                  </div>
-
-                  <h3 className="text-2xl font-bold text-foreground mb-4">
-                    {language === "ar"
-                      ? featuredStory.title
-                      : featuredStory.titleEn}
-                  </h3>
-
-                  <p className="text-muted-foreground leading-relaxed mb-6">
-                    {language === "ar"
-                      ? featuredStory.description
-                      : featuredStory.descriptionEn}
-                  </p>
-
-                  <div className="grid grid-cols-2 gap-4 mb-6">
-                    <div className="text-sm">
-                      <span className="font-medium text-muted-foreground">
-                        {language === "ar" ? "قبل:" : "Before:"}
-                      </span>
-                      <p className="text-foreground">
-                        {language === "ar"
-                          ? featuredStory.before
-                          : featuredStory.beforeEn}
-                      </p>
-                    </div>
-                    <div className="text-sm">
-                      <span className="font-medium text-muted-foreground">
-                        {language === "ar" ? "بعد:" : "After:"}
-                      </span>
-                      <p className="text-foreground">
-                        {language === "ar"
-                          ? featuredStory.after
-                          : featuredStory.afterEn}
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center gap-4 mb-6">
-                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                      <Users className="w-4 h-4" />
-                      <span>
-                        {language === "ar"
-                          ? featuredStory.author
-                          : featuredStory.authorEn}
-                      </span>
-                    </div>
-                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                      <Target className="w-4 h-4" />
-                      <span>
-                        {language === "ar"
-                          ? featuredStory.location
-                          : featuredStory.locationEn}
-                      </span>
-                    </div>
-                  </div>
-
-                  <blockquote className="border-r-4 border-primary pr-4 mb-6 italic text-muted-foreground">
-                    "
-                    {language === "ar"
-                      ? featuredStory.testimonial
-                      : featuredStory.testimonialEn}
-                    "
-                  </blockquote>
-
-                  <Button
-                    className="w-fit"
-                    onClick={() =>
-                      navigateToTop(`/success-stories/${featuredStory.id}`)
-                    }>
-                    {language === "ar" ? "اقرأ القصة كاملة" : "Read Full Story"}
-                    <ArrowRight
-                      className={`w-4 h-4 ${isRTL ? "mr-2" : "ml-2"}`}
-                    />
-                  </Button>
-                </div>
-              </div>
-            </Card>
-          ))}
-
         {/* Stories Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
           {stories
             .filter((story) => !story.featured)
-            .map((story) => (
+            .map((story, index) => (
               <Card
-                key={story.id}
-                className="group hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
-                {/* Story Image */}
-                <div className="relative h-48 overflow-hidden rounded-t-lg">
-                  <img
-                    src={story.image}
-                    alt={language === "ar" ? story.title : story.titleEn}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                  />
-                  <div className="absolute top-4 right-4">
-                    {getCategoryBadge(story.category)}
-                  </div>
-                </div>
-
-                <CardHeader>
-                  <div className="flex items-center gap-2 mb-3">
-                    {renderStars(story.rating)}
-                    <span className="text-sm text-muted-foreground">
-                      {story.rating}/5
-                    </span>
+                key={index}
+                className="bg-card border border-border shadow-soft hover:shadow-card transition-all duration-300 group">
+                <CardContent className="p-6">
+                  {/* Quote Icon */}
+                  <div className="mb-4">
+                    <Quote className="h-8 w-8 text-primary opacity-50" />
                   </div>
 
-                  <CardTitle className="text-lg mb-2">
-                    {language === "ar" ? story.title : story.titleEn}
-                  </CardTitle>
-
-                  <CardDescription className="text-base leading-relaxed line-clamp-3">
+                  {/* Story Text */}
+                  <p
+                    className={cn(
+                      "text-muted-foreground leading-relaxed mb-6",
+                      isRTL ? "font-arabic" : "font-english"
+                    )}>
+                    "
                     {language === "ar"
-                      ? story.description
-                      : story.descriptionEn}
-                  </CardDescription>
-                </CardHeader>
+                      ? story.testimonial
+                      : story.testimonialEn}
+                    "
+                  </p>
 
-                <CardContent className="space-y-4">
-                  <div className="grid grid-cols-2 gap-4 text-sm">
-                    <div>
-                      <span className="font-medium text-muted-foreground">
+                  {/* Initiative Badge */}
+                  <Badge variant="secondary" className="mb-4">
+                    {language === "ar" ? story.title : story.titleEn}
+                  </Badge>
+
+                  {/* Before and After */}
+                  <div className="grid grid-cols-2 gap-4 mb-4">
+                    <div className="text-sm">
+                      <span className="font-medium text-red-600 dark:text-red-400">
                         {language === "ar" ? "قبل:" : "Before:"}
                       </span>
-                      <p className="text-foreground text-xs">
+                      <p className="text-red-700 dark:text-red-300 text-xs">
                         {language === "ar" ? story.before : story.beforeEn}
                       </p>
                     </div>
-                    <div>
-                      <span className="font-medium text-muted-foreground">
+                    <div className="text-sm">
+                      <span className="font-medium text-green-600 dark:text-green-400">
                         {language === "ar" ? "بعد:" : "After:"}
                       </span>
-                      <p className="text-foreground text-xs">
+                      <p className="text-green-700 dark:text-green-300 text-xs">
                         {language === "ar" ? story.after : story.afterEn}
                       </p>
                     </div>
                   </div>
 
-                  <div className="flex items-center justify-between text-sm text-muted-foreground">
-                    <div className="flex items-center gap-2">
-                      <Users className="w-4 h-4" />
-                      <span>
-                        {language === "ar" ? story.author : story.authorEn}
+                  {/* Author Info */}
+                  <div className="flex items-center gap-3">
+                    <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
+                      <span className="text-primary font-semibold text-sm">
+                        {story.author.charAt(0)}
                       </span>
                     </div>
-                    <div className="flex items-center gap-2">
-                      <Target className="w-4 h-4" />
-                      <span>
+                    <div>
+                      <h4
+                        className={cn(
+                          "font-semibold text-foreground",
+                          isRTL ? "font-arabic" : "font-english"
+                        )}>
+                        {language === "ar" ? story.author : story.authorEn}
+                      </h4>
+                      <p
+                        className={cn(
+                          "text-sm text-muted-foreground",
+                          isRTL ? "font-arabic" : "font-english"
+                        )}>
                         {language === "ar" ? story.location : story.locationEn}
-                      </span>
+                      </p>
                     </div>
                   </div>
-
-                  <Button
-                    variant="outline"
-                    className="w-full group-hover:bg-primary group-hover:text-primary-foreground transition-colors"
-                    onClick={() =>
-                      navigateToTop(`/success-stories/${story.id}`)
-                    }>
-                    {language === "ar" ? "اقرأ القصة" : "Read Story"}
-                    <ArrowRight
-                      className={`w-4 h-4 ${isRTL ? "mr-2" : "ml-2"}`}
-                    />
-                  </Button>
                 </CardContent>
               </Card>
             ))}

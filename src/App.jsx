@@ -8,7 +8,6 @@ import { ThemeProvider } from "@/contexts/ThemeContext";
 import Layout from "./pages/Layout";
 import Home from "./pages/Home";
 import About from "./pages/About";
-import Volunteer from "./pages/Volunteer";
 import EnvironmentalReport from "./pages/EnvironmentalReport";
 import Feedback from "./pages/Feedback";
 import Contact from "./pages/Contact";
@@ -27,6 +26,7 @@ import SuccessStory from "./pages/SuccessStory";
 import AllInitiatives from "./pages/AllInitiatives";
 import Initiative from "./pages/Initiative";
 import Report from "./pages/Report";
+import AboutHarimlaa from "./pages/AboutHarimlaa";
 
 const queryClient = new QueryClient();
 
@@ -42,7 +42,6 @@ const App = () => (
               <Route path="/" element={<Layout />}>
                 <Route index element={<Home />} />
                 <Route path="/about" element={<About />} />
-                <Route path="/volunteer" element={<Volunteer />} />
                 <Route
                   path="/environmental-report"
                   element={<EnvironmentalReport />}
@@ -60,6 +59,7 @@ const App = () => (
                 <Route path="/initiatives" element={<AllInitiatives />} />
                 <Route path="/initiatives/:id" element={<Initiative />} />
                 <Route path="/report" element={<Report />} />
+                <Route path="/about-harimlaa" element={<AboutHarimlaa />} />
               </Route>
 
               <Route path="/admin" element={<AdminLayout />}>

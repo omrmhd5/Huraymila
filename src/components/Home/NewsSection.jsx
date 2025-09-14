@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import {
   Card,
   CardContent,
@@ -8,13 +8,27 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Calendar, User, ArrowRight, Clock, Eye, Share2 } from "lucide-react";
+import {
+  Calendar,
+  User,
+  ArrowRight,
+  Clock,
+  Eye,
+  Share2,
+  ChevronLeft,
+  ChevronRight,
+  Play,
+  Pause,
+} from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useTheme } from "@/contexts/ThemeContext";
+import { cn } from "@/lib/utils";
 
 const NewsSection = () => {
   const { language } = useTheme();
   const navigate = useNavigate();
+  const [currentSlide, setCurrentSlide] = useState(0);
+  const [isPlaying, setIsPlaying] = useState(true);
 
   // Function to navigate and scroll to top
   const navigateToTop = (path) => {
@@ -22,36 +36,32 @@ const NewsSection = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  const content = {
-    ar: {
-      title: "أحدث الأخبار",
-      subtitle: "تابع آخر التحديثات والمبادرات في مدينة حريملاء الصحية",
-      description:
-        "نوفر لك أحدث الأخبار والتطورات في مجال الصحة العامة والمبادرات المجتمعية.",
-      viewAll: "عرض جميع الأخبار",
-      readMore: "اقرأ المزيد",
-      categories: {
-        health: "صحة",
-        environment: "بيئة",
-        community: "مجتمع",
-        education: "تعليم",
-      },
-    },
-    en: {
-      title: "Latest News",
-      subtitle:
-        "Follow the latest updates and initiatives in Harimlaa Healthy City",
-      description:
-        "We provide you with the latest news and developments in public health and community initiatives.",
-      viewAll: "View All News",
-      readMore: "Read More",
-      categories: {
-        health: "Health",
-        environment: "Environment",
-        community: "Community",
-        education: "Education",
-      },
-    },
+  // Auto-play slideshow
+  useEffect(() => {
+    if (!isPlaying) return;
+
+    const interval = setInterval(() => {
+      setCurrentSlide((prev) => (prev + 1) % news.length);
+    }, 5000); // Change slide every 5 seconds
+
+    return () => clearInterval(interval);
+  }, [isPlaying]);
+
+  // Navigation functions
+  const nextSlide = () => {
+    setCurrentSlide((prev) => (prev + 1) % news.length);
+  };
+
+  const prevSlide = () => {
+    setCurrentSlide((prev) => (prev - 1 + news.length) % news.length);
+  };
+
+  const goToSlide = (index) => {
+    setCurrentSlide(index);
+  };
+
+  const togglePlayPause = () => {
+    setIsPlaying(!isPlaying);
   };
 
   const news = [
@@ -145,6 +155,38 @@ const NewsSection = () => {
     },
   ];
 
+  const content = {
+    ar: {
+      title: "أحدث الأخبار",
+      subtitle: "تابع آخر التحديثات والمبادرات في مدينة حريملاء الصحية",
+      description:
+        "نوفر لك أحدث الأخبار والتطورات في مجال الصحة العامة والمبادرات المجتمعية.",
+      viewAll: "عرض جميع الأخبار",
+      readMore: "اقرأ المزيد",
+      categories: {
+        health: "صحة",
+        environment: "بيئة",
+        community: "مجتمع",
+        education: "تعليم",
+      },
+    },
+    en: {
+      title: "Latest News",
+      subtitle:
+        "Follow the latest updates and initiatives in Harimlaa Healthy City",
+      description:
+        "We provide you with the latest news and developments in public health and community initiatives.",
+      viewAll: "View All News",
+      readMore: "Read More",
+      categories: {
+        health: "Health",
+        environment: "Environment",
+        community: "Community",
+        education: "Education",
+      },
+    },
+  };
+
   const current = content[language];
   const isRTL = language === "ar";
 
@@ -201,162 +243,190 @@ const NewsSection = () => {
           </p>
         </div>
 
-        {/* Featured News */}
-        {news
-          .filter((item) => item.featured)
-          .map((featuredNews) => (
-            <Card key={featuredNews.id} className="mb-12 overflow-hidden">
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-0">
-                <div className="relative h-64 lg:h-full">
-                  <img
-                    src={featuredNews.image}
-                    alt={
-                      language === "ar"
-                        ? featuredNews.title
-                        : featuredNews.titleEn
-                    }
-                    className="w-full h-full object-cover"
-                  />
-                  <div className="absolute top-4 right-4">
-                    {getCategoryBadge(featuredNews.category)}
-                  </div>
+        {/* News Slideshow */}
+        <div className="relative max-w-6xl mx-auto">
+          {/* Slideshow Container */}
+          <div className="relative overflow-hidden rounded-2xl shadow-2xl">
+            <div
+              className="flex transition-transform duration-500 ease-in-out"
+              style={{
+                transform: `translateX(${
+                  isRTL ? currentSlide * 100 : -currentSlide * 100
+                }%)`,
+              }}>
+              {news.map((newsItem, index) => (
+                <div
+                  key={newsItem.id}
+                  className="w-full flex-shrink-0 min-w-full">
+                  <Card className="overflow-hidden border-0 shadow-none">
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-0">
+                      {/* Image Section */}
+                      <div className="relative h-64 lg:h-96">
+                        <img
+                          src={newsItem.image}
+                          alt={
+                            language === "ar"
+                              ? newsItem.title
+                              : newsItem.titleEn
+                          }
+                          className="w-full h-full object-cover"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
+                        <div className="absolute top-4 right-4">
+                          {getCategoryBadge(newsItem.category)}
+                        </div>
+                        <div className="absolute bottom-4 left-4 text-white">
+                          <div className="flex items-center gap-4 text-sm mb-2">
+                            <div className="flex items-center gap-2">
+                              <Calendar className="w-4 h-4" />
+                              <span>{formatDate(newsItem.publishDate)}</span>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <Clock className="w-4 h-4" />
+                              <span>
+                                {language === "ar"
+                                  ? newsItem.readTime
+                                  : newsItem.readTimeEn}
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Content Section */}
+                      <div className="p-8 lg:p-12 flex flex-col justify-center bg-card">
+                        <div className="flex items-center justify-between mb-4">
+                          <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                            <User className="w-4 h-4" />
+                            <span>
+                              {language === "ar"
+                                ? newsItem.author
+                                : newsItem.authorEn}
+                            </span>
+                          </div>
+                          <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                            <Eye className="w-4 h-4" />
+                            <span>
+                              {newsItem.views}{" "}
+                              {language === "ar" ? "مشاهد" : "views"}
+                            </span>
+                          </div>
+                        </div>
+
+                        <h3
+                          className={cn(
+                            "text-2xl lg:text-3xl font-bold text-foreground mb-4",
+                            isRTL ? "font-arabic" : "font-english"
+                          )}>
+                          {language === "ar"
+                            ? newsItem.title
+                            : newsItem.titleEn}
+                        </h3>
+
+                        <p
+                          className={cn(
+                            "text-muted-foreground leading-relaxed mb-6 text-lg",
+                            isRTL ? "font-arabic" : "font-english"
+                          )}>
+                          {language === "ar"
+                            ? newsItem.excerpt
+                            : newsItem.excerptEn}
+                        </p>
+
+                        <Button
+                          size="lg"
+                          className="w-fit"
+                          onClick={() => navigateToTop(`/news/${newsItem.id}`)}>
+                          {current.readMore}
+                          <ArrowRight
+                            className={`w-4 h-4 ${isRTL ? "mr-2" : "ml-2"}`}
+                          />
+                        </Button>
+                      </div>
+                    </div>
+                  </Card>
                 </div>
-                <div className="p-8 flex flex-col justify-center">
-                  <div className="flex items-center gap-4 text-sm text-muted-foreground mb-4">
-                    <div className="flex items-center gap-2">
-                      <Calendar className="w-4 h-4" />
-                      <span>{formatDate(featuredNews.publishDate)}</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Clock className="w-4 h-4" />
-                      <span>
-                        {language === "ar"
-                          ? featuredNews.readTime
-                          : featuredNews.readTimeEn}
-                      </span>
-                    </div>
-                  </div>
+              ))}
+            </div>
+          </div>
 
-                  <h3 className="text-2xl font-bold text-foreground mb-4">
-                    {language === "ar"
-                      ? featuredNews.title
-                      : featuredNews.titleEn}
-                  </h3>
+          {/* Navigation Controls */}
+          <div
+            className={`flex items-center justify-between mt-8 ${
+              isRTL ? "flex-row-reverse" : ""
+            }`}>
+            {/* Previous Button */}
+            <Button
+              variant="outline"
+              size="lg"
+              onClick={prevSlide}
+              className={`flex items-center gap-2 px-6 py-3 ${
+                isRTL ? "flex-row-reverse" : ""
+              }`}>
+              <ChevronLeft className="w-5 h-5" />
+              {language === "ar" ? "السابق" : "Previous"}
+            </Button>
 
-                  <p className="text-muted-foreground leading-relaxed mb-6">
-                    {language === "ar"
-                      ? featuredNews.excerpt
-                      : featuredNews.excerptEn}
-                  </p>
+            {/* Play/Pause Button */}
+            <Button
+              variant="outline"
+              size="lg"
+              onClick={togglePlayPause}
+              className={`flex items-center gap-2 px-6 py-3 ${
+                isRTL ? "flex-row-reverse" : ""
+              }`}>
+              {isPlaying ? (
+                <>
+                  <Pause className="w-5 h-5" />
+                  {language === "ar" ? "إيقاف" : "Pause"}
+                </>
+              ) : (
+                <>
+                  <Play className="w-5 h-5" />
+                  {language === "ar" ? "تشغيل" : "Play"}
+                </>
+              )}
+            </Button>
 
-                  <div className="flex items-center justify-between mb-6">
-                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                      <User className="w-4 h-4" />
-                      <span>
-                        {language === "ar"
-                          ? featuredNews.author
-                          : featuredNews.authorEn}
-                      </span>
-                    </div>
-                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                      <Eye className="w-4 h-4" />
-                      <span>
-                        {featuredNews.views}{" "}
-                        {language === "ar" ? "مشاهد" : "views"}
-                      </span>
-                    </div>
-                  </div>
+            {/* Next Button */}
+            <Button
+              variant="outline"
+              size="lg"
+              onClick={nextSlide}
+              className={`flex items-center gap-2 px-6 py-3 ${
+                isRTL ? "flex-row-reverse" : ""
+              }`}>
+              {language === "ar" ? "التالي" : "Next"}
+              <ChevronRight className="w-5 h-5" />
+            </Button>
+          </div>
 
-                  <Button
-                    className="w-fit"
-                    onClick={() => navigateToTop(`/news/${featuredNews.id}`)}>
-                    {current.readMore}
-                    <ArrowRight
-                      className={`w-4 h-4 ${isRTL ? "mr-2" : "ml-2"}`}
-                    />
-                  </Button>
-                </div>
-              </div>
-            </Card>
-          ))}
-
-        {/* News Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
-          {news
-            .filter((item) => !item.featured)
-            .map((newsItem) => (
-              <Card
-                key={newsItem.id}
-                className="group hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
-                {/* News Image */}
-                <div className="relative h-48 overflow-hidden rounded-t-lg">
-                  <img
-                    src={newsItem.image}
-                    alt={language === "ar" ? newsItem.title : newsItem.titleEn}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                  />
-                  <div className="absolute top-4 right-4">
-                    {getCategoryBadge(newsItem.category)}
-                  </div>
-                </div>
-
-                <CardHeader>
-                  <div className="flex items-center gap-4 text-sm text-muted-foreground mb-3">
-                    <div className="flex items-center gap-2">
-                      <Calendar className="w-4 h-4" />
-                      <span>{formatDate(newsItem.publishDate)}</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Clock className="w-4 h-4" />
-                      <span>
-                        {language === "ar"
-                          ? newsItem.readTime
-                          : newsItem.readTimeEn}
-                      </span>
-                    </div>
-                  </div>
-
-                  <CardTitle className="text-lg mb-2 line-clamp-2">
-                    {language === "ar" ? newsItem.title : newsItem.titleEn}
-                  </CardTitle>
-
-                  <CardDescription className="text-base leading-relaxed line-clamp-3">
-                    {language === "ar" ? newsItem.excerpt : newsItem.excerptEn}
-                  </CardDescription>
-                </CardHeader>
-
-                <CardContent className="space-y-4">
-                  <div className="flex items-center justify-between text-sm text-muted-foreground">
-                    <div className="flex items-center gap-2">
-                      <User className="w-4 h-4" />
-                      <span>
-                        {language === "ar"
-                          ? newsItem.author
-                          : newsItem.authorEn}
-                      </span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Eye className="w-4 h-4" />
-                      <span>{newsItem.views}</span>
-                    </div>
-                  </div>
-
-                  <Button
-                    variant="outline"
-                    className="w-full group-hover:bg-primary group-hover:text-primary-foreground transition-colors"
-                    onClick={() => navigateToTop(`/news/${newsItem.id}`)}>
-                    {current.readMore}
-                    <ArrowRight
-                      className={`w-4 h-4 ${isRTL ? "mr-2" : "ml-2"}`}
-                    />
-                  </Button>
-                </CardContent>
-              </Card>
+          {/* Slide Indicators */}
+          <div className="flex justify-center mt-6 gap-2">
+            {news.map((_, index) => (
+              <button
+                key={index}
+                onClick={() => goToSlide(index)}
+                className={cn(
+                  "w-3 h-3 rounded-full transition-all duration-300",
+                  index === currentSlide
+                    ? "bg-primary w-8"
+                    : "bg-muted-foreground/30 hover:bg-muted-foreground/50"
+                )}
+              />
             ))}
+          </div>
+
+          {/* Slide Counter */}
+          <div className="text-center mt-4">
+            <span className="text-sm text-muted-foreground">
+              {currentSlide + 1} / {news.length}
+            </span>
+          </div>
         </div>
 
         {/* Call to Action */}
-        <div className="text-center">
+        <div className="text-center mt-16">
           <Button
             size="lg"
             variant="outline"
