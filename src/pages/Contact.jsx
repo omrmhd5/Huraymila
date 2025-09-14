@@ -125,13 +125,6 @@ const Contact = () => {
           ? "موقع مبادرة المدينة الصحية"
           : "Location of the Healthy City initiative",
     },
-    {
-      icon: Clock,
-      title: language === "ar" ? "ساعات العمل" : "Office Hours",
-      value: "الأحد - الخميس: 8:00 ص - 4:00 م",
-      description:
-        language === "ar" ? "أوقات العمل الرسمية" : "Official working hours",
-    },
   ];
 
   return (
@@ -184,53 +177,6 @@ const Contact = () => {
                     </div>
                   </div>
                 ))}
-              </CardContent>
-            </Card>
-
-            {/* Office Hours */}
-            <Card>
-              <CardHeader>
-                <CardTitle>
-                  {language === "ar" ? "ساعات العمل" : "Office Hours"}
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-2 text-sm">
-                  <div className="flex justify-between">
-                    <span>
-                      {language === "ar"
-                        ? "الأحد - الخميس"
-                        : "Sunday - Thursday"}
-                    </span>
-                    <span className="font-medium">
-                      {language === "ar"
-                        ? "8:00 ص - 4:00 م"
-                        : "8:00 AM - 4:00 PM"}
-                    </span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span>{language === "ar" ? "الجمعة" : "Friday"}</span>
-                    <span className="font-medium">
-                      {language === "ar" ? "مغلق" : "Closed"}
-                    </span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span>{language === "ar" ? "السبت" : "Saturday"}</span>
-                    <span className="font-medium">
-                      {language === "ar"
-                        ? "9:00 ص - 1:00 م"
-                        : "9:00 AM - 1:00 PM"}
-                    </span>
-                  </div>
-                </div>
-                <div className="mt-4 p-3 bg-muted/50 rounded-lg">
-                  <p className="text-xs text-muted-foreground">
-                    <strong>{language === "ar" ? "ملاحظة:" : "Note:"}</strong>{" "}
-                    {language === "ar"
-                      ? "في أيام العطل الرسمية، قد تتغير ساعات العمل"
-                      : "In official holidays, working hours may change"}
-                  </p>
-                </div>
               </CardContent>
             </Card>
           </div>
@@ -390,62 +336,6 @@ const Contact = () => {
             </Card>
           </div>
         </div>
-
-        {/* FAQ Section */}
-        <Card className="mt-8">
-          <CardHeader>
-            <CardTitle>
-              {language === "ar"
-                ? "الأسئلة الشائعة"
-                : "Frequently Asked Questions"}
-            </CardTitle>
-            <CardDescription>
-              {language === "ar"
-                ? "إجابات على أكثر الأسئلة شيوعاً"
-                : "Answers to the most frequently asked questions"}
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              <div className="border-b border-border pb-4">
-                <h4 className="font-medium mb-2">
-                  {language === "ar"
-                    ? "كيف يمكنني الانضمام كمتطوع؟"
-                    : "How can I join as a volunteer?"}
-                </h4>
-                <p className="text-sm text-muted-foreground">
-                  {language === "ar"
-                    ? "يمكنك التقديم عبر صفحة التطوع في الموقع أو التواصل معنا مباشرة عبر البريد الإلكتروني"
-                    : "You can apply through the volunteering page on the website or contact us directly via email"}
-                </p>
-              </div>
-              <div className="border-b border-border pb-4">
-                <h4 className="font-medium mb-2">
-                  {language === "ar"
-                    ? "ما هي المبادرات المتاحة حالياً؟"
-                    : "What initiatives are available currently?"}
-                </h4>
-                <p className="text-sm text-muted-foreground">
-                  {language === "ar"
-                    ? "لدينا عدة مبادرات نشطة تشمل التشجير الحضري، التوعية الصحية، والأنشطة المجتمعية"
-                    : "We have several active initiatives including urban greening, health awareness, and community activities"}
-                </p>
-              </div>
-              <div className="border-b border-border pb-4">
-                <h4 className="font-medium mb-2">
-                  {language === "ar"
-                    ? "كيف يمكنني اقتراح مبادرة جديدة؟"
-                    : "How can I propose a new initiative?"}
-                </h4>
-                <p className="text-sm text-muted-foreground">
-                  {language === "ar"
-                    ? "يمكنك إرسال اقتراحك عبر نموذج الاتصال أو البريد الإلكتروني مع تفاصيل المبادرة"
-                    : "You can submit your proposal through the contact form or email us with details of the initiative"}
-                </p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
       </main>
     </div>
   );
