@@ -16,6 +16,7 @@ import {
   Globe,
   Mountain,
   Sun,
+  Phone,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useTheme } from "@/contexts/ThemeContext";
@@ -29,32 +30,109 @@ const AboutHuraymila = () => {
   // Placeholder images - you can replace these with actual images later
   const slideshowImages = [
     {
-      id: 1,
-      src: "/api/placeholder/800/400",
-      alt: "Huraymila City View",
-      title: "مدينة حريملاء",
-      description: "منظر عام لمدينة حريملاء الجميلة",
+      name: "حافة العالم حريملاء",
+      src: "/assets/slideshow/1.jpg",
+      alt: "حافة العالم حريملاء",
+      title: "حافة العالم حريملاء",
+      description: "إطلالة ساحرة من أعلى منحدرات حافة العالم في حريملاء.",
     },
     {
-      id: 2,
-      src: "/api/placeholder/800/400",
-      alt: "Historical Sites",
-      title: "المواقع التاريخية",
-      description: "التراث العريق والمواقع الأثرية",
+      name: "مطل الجرف العظيم حريملاء",
+      src: "/assets/slideshow/2.jpg",
+      alt: "مطل الجرف العظيم حريملاء",
+      title: "مطل الجرف العظيم حريملاء",
+      description: "موقع مرتفع يكشف مشهداً بانورامياً للصحراء الواسعة.",
     },
     {
-      id: 3,
-      src: "/api/placeholder/800/400",
-      alt: "Agriculture",
-      title: "الزراعة",
-      description: "الأراضي الزراعية الخصبة",
+      name: "حافة العالم - قمة حريملاء",
+      src: "/assets/slideshow/3.jpg",
+      alt: "حافة العالم - قمة حريملاء",
+      title: "حافة العالم - قمة حريملاء",
+      description: "قمة صخرية مذهلة تجذب عشاق المغامرات والتصوير.",
     },
     {
-      id: 4,
-      src: "/api/placeholder/800/400",
-      alt: "Modern Development",
-      title: "التطوير الحديث",
-      description: "المشاريع التنموية الجديدة",
+      name: "مطل نهاية العالم حريملاء",
+      src: "/assets/slideshow/4.jpg",
+      alt: "مطل نهاية العالم حريملاء",
+      title: "مطل نهاية العالم حريملاء",
+      description: "مطل مرتفع يطل على الصحراء في مشهد يشبه نهاية العالم.",
+    },
+    {
+      name: "طريق الصعود إلى حافة العالم حريملاء",
+      src: "/assets/slideshow/5.jpg",
+      alt: "طريق الصعود إلى حافة العالم حريملاء",
+      title: "طريق الصعود إلى حافة العالم حريملاء",
+      description: "مسار ترابي يقود الزوار نحو القمم العالية.",
+    },
+    {
+      name: "المطل الشمالي في حافة العالم حريملاء",
+      src: "/assets/slideshow/6.jpg",
+      alt: "المطل الشمالي في حافة العالم حريملاء",
+      title: "المطل الشمالي في حافة العالم حريملاء",
+      description: "زاوية مختلفة تكشف عمق الجبال وتفاصيل الطبيعة.",
+    },
+    {
+      name: "هايكنج مطل حافة العالم حريملاء",
+      src: "/assets/slideshow/7.jpg",
+      alt: "هايكنج مطل حافة العالم حريملاء",
+      title: "هايكنج مطل حافة العالم حريملاء",
+      description: "رحلة مشي ممتعة لعشاق الرياضة في أجواء جبلية.",
+    },
+    {
+      name: "تسلق جبال حافة العالم حريملاء",
+      src: "/assets/slideshow/8.jpg",
+      alt: "تسلق جبال حافة العالم حريملاء",
+      title: "تسلق جبال حافة العالم حريملاء",
+      description: "تجربة فريدة لعشاق التحدي وتسلق الصخور.",
+    },
+    {
+      name: "التخييم قرب حافة نهاية العالم حريملاء",
+      src: "/assets/slideshow/9.jpg",
+      alt: "التخييم قرب حافة نهاية العالم حريملاء",
+      title: "التخييم قرب حافة نهاية العالم حريملاء",
+      description: "خيام تحت سماء صافية بجوار الجرف العظيم.",
+    },
+    {
+      name: "غروب الشمس من حافة العالم حريملاء",
+      src: "/assets/slideshow/10.jpg",
+      alt: "غروب الشمس من حافة العالم حريملاء",
+      title: "غروب الشمس من حافة العالم حريملاء",
+      description: "ألوان غروب خلابة تزين أفق الصحراء.",
+    },
+    {
+      name: "المطل الغربي حافة نهاية العالم حريملاء",
+      src: "/assets/slideshow/11.jpg",
+      alt: "المطل الغربي حافة نهاية العالم حريملاء",
+      title: "المطل الغربي حافة نهاية العالم حريملاء",
+      description: "إطلالة على الجهة الغربية بأجواء هادئة.",
+    },
+    {
+      name: "رحلات المغامرة في حافة العالم حريملاء",
+      src: "/assets/slideshow/12.jpg",
+      alt: "رحلات المغامرة في حافة العالم حريملاء",
+      title: "رحلات المغامرة في حافة العالم حريملاء",
+      description: "جولات جماعية لعشاق الاكتشاف والمغامرة.",
+    },
+    {
+      name: "جولات استكشافية في حافة العالم حريملاء",
+      src: "/assets/slideshow/13.jpg",
+      alt: "جولات استكشافية في حافة العالم حريملاء",
+      title: "جولات استكشافية في حافة العالم حريملاء",
+      description: "أنشطة سياحية لاستكشاف الطبيعة والمطل.",
+    },
+    {
+      name: "المطل الجنوبي حافة العالم حريملاء",
+      src: "/assets/slideshow/14.jpg",
+      alt: "المطل الجنوبي حافة العالم حريملاء",
+      title: "المطل الجنوبي حافة العالم حريملاء",
+      description: "زاوية أخرى تكشف عن امتداد الصخور والوديان.",
+    },
+    {
+      name: "مطل السماء في حافة العالم حريملاء",
+      src: "/assets/slideshow/15.jpg",
+      alt: "مطل السماء في حافة العالم حريملاء",
+      title: "مطل السماء في حافة العالم حريملاء",
+      description: "موقع مرتفع يمنحك شعوراً وكأنك تلمس السماء.",
     },
   ];
 
@@ -113,12 +191,16 @@ const AboutHuraymila = () => {
       ],
 
       stats: [
-        { label: "عدد السكان", value: "21,758 نسمة", icon: Users },
-        { label: "المساحة", value: "1,480 كم²", icon: Globe },
-        { label: "المرافق الصحية", value: "5 مراكز", icon: Heart },
-        { label: "المدارس", value: "18 مدرسة", icon: Award },
+        { label: "عدد السكان (2022)", value: "21,758 نسمة", icon: Users },
         { label: "سنة التأسيس", value: "1400 هـ", icon: Calendar },
         { label: "الارتفاع", value: "650 م", icon: Mountain },
+        { label: "المساحة", value: "1,480 كم²", icon: Globe },
+        { label: "الكثافة السكانية", value: "15 نسمة/كم²", icon: Users },
+        { label: "السعوديون", value: "12,724 (58.48%)", icon: Heart },
+        { label: "غير السعوديين", value: "9,034 (41.52%)", icon: Globe },
+        { label: "عدد الأسر (2010)", value: "3,617 أسرة", icon: Building2 },
+        { label: "خطة ترقيم الهواتف", value: "011", icon: Phone },
+        { label: "الإحداثيات", value: "25°07′01″N 46°06′01″E", icon: MapPin },
       ],
 
       cta: "اكتشف المزيد",
@@ -179,12 +261,20 @@ const AboutHuraymila = () => {
       ],
 
       stats: [
-        { label: "Population", value: "21,758 residents", icon: Users },
-        { label: "Area", value: "1,480 km²", icon: Globe },
-        { label: "Health Facilities", value: "5 centers", icon: Heart },
-        { label: "Schools", value: "18 schools", icon: Award },
+        { label: "Population (2022)", value: "21,758 residents", icon: Users },
         { label: "Founded", value: "1980", icon: Calendar },
         { label: "Elevation", value: "650 m", icon: Mountain },
+        { label: "Area", value: "1,480 km²", icon: Globe },
+        { label: "Population Density", value: "15 residents/km²", icon: Users },
+        { label: "Saudis", value: "12,724 (58.48%)", icon: Heart },
+        { label: "Non-Saudis", value: "9,034 (41.52%)", icon: Globe },
+        {
+          label: "Households (2010)",
+          value: "3,617 households",
+          icon: Building2,
+        },
+        { label: "Dialing Code", value: "011", icon: Phone },
+        { label: "Coordinates", value: "25°07′01″N 46°06′01″E", icon: MapPin },
       ],
 
       cta: "Discover More",
@@ -261,7 +351,7 @@ const AboutHuraymila = () => {
                 <img
                   src={slideshowImages[currentSlide].src}
                   alt={slideshowImages[currentSlide].alt}
-                  className="w-full h-full object-cover"
+                  className="w-full h-full object-contain"
                 />
                 <div className="absolute inset-0 bg-black/30"></div>
                 <div className="absolute bottom-6 left-6 text-white">
@@ -478,7 +568,7 @@ const AboutHuraymila = () => {
             )}>
             {isRTL ? "الإحصائيات" : "Statistics"}
           </h2>
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-6">
             {current.stats.map((stat, index) => {
               const IconComponent = stat.icon;
               return (
