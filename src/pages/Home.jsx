@@ -37,24 +37,24 @@ const Home = () => {
         <AnimatedSection animation="fadeInUp" delay={50} duration={400}>
           <AboutSection />
         </AnimatedSection>
-        <AnimatedSection animation="fadeInLeft" delay={100} duration={400}>
-          <QuickLinksSection />
+        <AnimatedSection animation="fadeInUp" delay={100} duration={400}>
+          <SuccessStories />
         </AnimatedSection>
         <AnimatedSection animation="fadeInRight" delay={150} duration={400}>
           <NewsSection />
         </AnimatedSection>
-        <AnimatedSection animation="fadeInUp" delay={200} duration={400}>
-          <SuccessStories />
-        </AnimatedSection>
-        <AnimatedSection animation="scaleIn" delay={250} duration={400}>
+        <AnimatedSection animation="scaleIn" delay={200} duration={400}>
           <HealthDashboard />
         </AnimatedSection>
         {/* <InteractiveMap /> */}
-        <AnimatedSection animation="fadeInUp" delay={300} duration={400}>
+        <AnimatedSection animation="fadeInUp" delay={250} duration={400}>
           <InitiativesSection />
         </AnimatedSection>
-        <AnimatedSection animation="fadeInDown" delay={350} duration={400}>
+        <AnimatedSection animation="fadeInDown" delay={300} duration={400}>
           <PartnersSection />
+        </AnimatedSection>
+        <AnimatedSection animation="fadeInLeft" delay={350} duration={400}>
+          <QuickLinksSection />
         </AnimatedSection>
       </main>
     </div>

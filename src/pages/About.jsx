@@ -345,7 +345,7 @@ const About = () => {
         <section className="py-20 bg-muted/30">
           <div className="container mx-auto px-4">
             <StaggeredContainer
-              className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-2 gap-8 mb-16"
+              className="grid grid-cols-1 lg:grid-cols-3 xl:grid-cols-3 gap-8 mb-16"
               staggerDelay={150}
               animation="fadeInUp">
               <Card className="hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
@@ -379,30 +379,6 @@ const About = () => {
                     }`}>
                     {current.visionText}
                   </p>
-                </CardContent>
-              </Card>
-
-              <Card className="hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-3">
-                    <Shield className="w-6 h-6 text-primary" />
-                    {current.values}
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <ul className="space-y-2">
-                    {current.valuesList.map((value, index) => (
-                      <li key={index} className="flex items-center gap-2">
-                        <CheckCircle className="w-4 h-4 text-green-500" />
-                        <span
-                          className={`text-muted-foreground ${
-                            isRTL ? "font-arabic" : "font-sans"
-                          }`}>
-                          {value}
-                        </span>
-                      </li>
-                    ))}
-                  </ul>
                 </CardContent>
               </Card>
 

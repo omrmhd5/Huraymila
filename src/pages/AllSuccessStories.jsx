@@ -3,6 +3,16 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import AnimatedSection from "@/components/animations/AnimatedSection";
 import StaggeredContainer from "@/components/animations/StaggeredContainer";
 import AnimatedCard from "@/components/animations/AnimatedCard";
@@ -34,6 +44,8 @@ import {
   ArrowRight,
   Quote,
   Award,
+  Plus,
+  X,
 } from "lucide-react";
 import { useTheme } from "@/contexts/ThemeContext";
 
@@ -43,6 +55,16 @@ const AllSuccessStories = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("all");
   const [sortBy, setSortBy] = useState("newest");
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [formData, setFormData] = useState({
+    title: "",
+    description: "",
+    author: "",
+    before: "",
+    after: "",
+    body: "",
+    authorComment: "",
+  });
 
   const isRTL = language === "ar";
 
@@ -285,6 +307,36 @@ const AllSuccessStories = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
+  const handleInputChange = (field, value) => {
+    setFormData((prev) => ({
+      ...prev,
+      [field]: value,
+    }));
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    // Here you would typically send the data to your backend
+    console.log("New success story:", formData);
+    // Reset form
+    setFormData({
+      title: "",
+      description: "",
+      author: "",
+      before: "",
+      after: "",
+      body: "",
+      authorComment: "",
+    });
+    setIsModalOpen(false);
+    // Show success message
+    alert(
+      language === "ar"
+        ? "تم إضافة قصة النجاح بنجاح!"
+        : "Success story added successfully!"
+    );
+  };
+
   return (
     <div className="min-h-screen bg-background">
       <div className="container mx-auto px-4 py-8">
@@ -305,6 +357,199 @@ const AllSuccessStories = () => {
                 ? "اكتشف كيف غيرت مبادرتنا حياة الناس في مدينة حريملاء"
                 : "Discover how our initiatives have changed people's lives in Huraymila"}
             </p>
+          </div>
+        </AnimatedSection>
+
+        {/* Add Story Button */}
+        <AnimatedSection animation="fadeInUp" delay={100}>
+          <div className="mb-8 flex justify-end">
+            <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
+              <DialogTrigger asChild>
+                <Button className="bg-primary hover:bg-primary/90">
+                  <Plus className="w-4 h-4 mr-2" />
+                  {language === "ar" ? "إضافة قصة نجاح" : "Add Success Story"}
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+                <DialogHeader>
+                  <DialogTitle>
+                    {language === "ar"
+                      ? "إضافة قصة نجاح جديدة"
+                      : "Add New Success Story"}
+                  </DialogTitle>
+                  <DialogDescription>
+                    {language === "ar"
+                      ? "شارك قصتك الملهمة مع المجتمع"
+                      : "Share your inspiring story with the community"}
+                  </DialogDescription>
+                </DialogHeader>
+                <form onSubmit={handleSubmit} className="space-y-6">
+                  <div className="space-y-6">
+                    {/* Title */}
+                    <div className="space-y-2">
+                      <Label htmlFor="title">
+                        {language === "ar" ? "العنوان" : "Title"}
+                      </Label>
+                      <Input
+                        id="title"
+                        value={formData.title}
+                        onChange={(e) =>
+                          handleInputChange("title", e.target.value)
+                        }
+                        placeholder={
+                          language === "ar"
+                            ? "أدخل عنوان قصة النجاح"
+                            : "Enter success story title"
+                        }
+                        required
+                      />
+                    </div>
+
+                    {/* Description */}
+                    <div className="space-y-2">
+                      <Label htmlFor="description">
+                        {language === "ar"
+                          ? "الوصف المختصر"
+                          : "Short Description"}
+                      </Label>
+                      <Textarea
+                        id="description"
+                        value={formData.description}
+                        onChange={(e) =>
+                          handleInputChange("description", e.target.value)
+                        }
+                        placeholder={
+                          language === "ar"
+                            ? "وصف مختصر عن قصة النجاح"
+                            : "Brief description of the success story"
+                        }
+                        rows={3}
+                        required
+                      />
+                    </div>
+
+                    {/* Author */}
+                    <div className="space-y-2">
+                      <Label htmlFor="author">
+                        {language === "ar" ? "المؤلف" : "Author"}
+                      </Label>
+                      <Input
+                        id="author"
+                        value={formData.author}
+                        onChange={(e) =>
+                          handleInputChange("author", e.target.value)
+                        }
+                        placeholder={
+                          language === "ar"
+                            ? "اسم المؤلف أو الشخص المسؤول"
+                            : "Author name or responsible person"
+                        }
+                        required
+                      />
+                    </div>
+
+                    {/* Before */}
+                    <div className="space-y-2">
+                      <Label htmlFor="before">
+                        {language === "ar" ? "قبل" : "Before"}
+                      </Label>
+                      <Textarea
+                        id="before"
+                        value={formData.before}
+                        onChange={(e) =>
+                          handleInputChange("before", e.target.value)
+                        }
+                        placeholder={
+                          language === "ar"
+                            ? "وصف الحالة قبل المبادرة (مثال: كان وزني 100 كجم، لم أكن أمارس الرياضة)"
+                            : "Describe the situation before the initiative (e.g., I weighed 100kg, I didn't exercise)"
+                        }
+                        rows={3}
+                        required
+                      />
+                    </div>
+
+                    {/* After */}
+                    <div className="space-y-2">
+                      <Label htmlFor="after">
+                        {language === "ar" ? "بعد" : "After"}
+                      </Label>
+                      <Textarea
+                        id="after"
+                        value={formData.after}
+                        onChange={(e) =>
+                          handleInputChange("after", e.target.value)
+                        }
+                        placeholder={
+                          language === "ar"
+                            ? "وصف الحالة بعد المبادرة (مثال: أصبح وزني 75 كجم، أمارس الرياضة بانتظام)"
+                            : "Describe the situation after the initiative (e.g., I now weigh 75kg, I exercise regularly)"
+                        }
+                        rows={3}
+                        required
+                      />
+                    </div>
+
+                    {/* Body/Actual Text */}
+                    <div className="space-y-2">
+                      <Label htmlFor="body">
+                        {language === "ar" ? "النص الكامل" : "Full Story Text"}
+                      </Label>
+                      <Textarea
+                        id="body"
+                        value={formData.body}
+                        onChange={(e) =>
+                          handleInputChange("body", e.target.value)
+                        }
+                        placeholder={
+                          language === "ar"
+                            ? "اكتب القصة كاملة بالتفصيل"
+                            : "Write the complete story in detail"
+                        }
+                        rows={6}
+                        required
+                      />
+                    </div>
+
+                    {/* Author's Comment */}
+                    <div className="space-y-2">
+                      <Label htmlFor="authorComment">
+                        {language === "ar"
+                          ? "تعليق المؤلف"
+                          : "Author's Comment"}
+                      </Label>
+                      <Textarea
+                        id="authorComment"
+                        value={formData.authorComment}
+                        onChange={(e) =>
+                          handleInputChange("authorComment", e.target.value)
+                        }
+                        placeholder={
+                          language === "ar"
+                            ? "تعليق شخصي أو نصيحة من المؤلف"
+                            : "Personal comment or advice from the author"
+                        }
+                        rows={3}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="flex justify-end space-x-4">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={() => setIsModalOpen(false)}>
+                      {language === "ar" ? "إلغاء" : "Cancel"}
+                    </Button>
+                    <Button
+                      type="submit"
+                      className="bg-primary hover:bg-primary/90">
+                      {language === "ar" ? "إضافة القصة" : "Add Story"}
+                    </Button>
+                  </div>
+                </form>
+              </DialogContent>
+            </Dialog>
           </div>
         </AnimatedSection>
 

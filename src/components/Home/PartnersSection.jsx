@@ -45,151 +45,94 @@ const PartnersSection = () => {
       },
       connections: [
         {
-          name: "مكتب تنسيق برنامج المدينة الصحية",
-          role: "تنسيق صحي",
-          icon: Activity,
-          color: "bg-red-500",
-          flow: "يقدم: تنسيق برامج صحية\nيستفيد: تقارير المجتمع",
-        },
-        {
-          name: "المرصد الحضري",
-          role: "مراقبة حضرية",
-          icon: BarChart3,
-          color: "bg-blue-500",
-          flow: "يقدم: بيانات حضرية\nيستفيد: احتياجات المواطنين",
-        },
-        {
-          name: "وزارة الشؤون البلدية والقروية",
-          role: "خدمات بلدية",
-          icon: Building,
-          color: "bg-green-500",
-          flow: "يقدم: خدمات بلدية\nيستفيد: ملاحظات المواطنين",
-        },
-        {
-          name: "الهيئة العامة للاحصاء",
-          role: "إحصائيات",
-          icon: FileText,
-          color: "bg-purple-500",
-          flow: "يقدم: بيانات إحصائية\nيستفيد: تقارير مجتمعية",
-        },
-        {
-          name: "المراكز الثقافية",
-          role: "ثقافة وفنون",
-          icon: BookOpen,
-          color: "bg-amber-500",
-          flow: "يقدم: برامج ثقافية\nيستفيد: مشاركة مجتمعية",
-        },
-        {
-          name: "الدفاع المدني",
-          role: "حماية مدنية",
-          icon: Shield,
-          color: "bg-orange-500",
-          flow: "يقدم: حماية وأمان\nيستفيد: بلاغات المواطنين",
-        },
-        {
-          name: "الجمعيات البيئية",
-          role: "حماية بيئية",
-          icon: Leaf,
-          color: "bg-emerald-500",
-          flow: "يقدم: برامج بيئية\nيستفيد: مشاركة بيئية",
-        },
-        {
-          name: "شركة المياه الوطنية",
-          role: "خدمات مياه",
-          icon: Droplets,
-          color: "bg-cyan-500",
-          flow: "يقدم: مياه صحية\nيستفيد: تقارير الجودة",
-        },
-        {
-          name: "وزارة البيئة والمياه والزراعة",
-          role: "بيئة وزراعة",
-          icon: Globe,
-          color: "bg-teal-500",
-          flow: "يقدم: برامج بيئية\nيستفيد: مشاركة مجتمعية",
-        },
-        {
-          name: "الهيئة العامة للغذاء والدواء",
-          role: "سلامة غذائية",
-          icon: Shield,
-          color: "bg-indigo-500",
-          flow: "يقدم: رقابة غذائية\nيستفيد: تقارير سلامة",
-        },
-        {
-          name: "الهيئة العامة للأرصاد وحماية البيئة",
-          role: "أرصاد جوية",
-          icon: Zap,
-          color: "bg-sky-500",
-          flow: "يقدم: تنبؤات جوية\nيستفيد: بيانات مجتمعية",
+          name: "رؤية المملكة 2030",
+          role: "الرؤية الاستراتيجية",
+          logo: "/assets/logos/رؤية المملكة 2030.png",
+          flow: "يقدم: التوجيه الاستراتيجي\nيستفيد: تقارير التقدم",
         },
         {
           name: "وزارة الصحة",
           role: "خدمات صحية",
-          icon: Stethoscope,
-          color: "bg-red-600",
+          logo: "/assets/logos/وزارة الصحة.png",
           flow: "يقدم: برامج صحية\nيستفيد: تقارير المجتمع",
         },
         {
-          name: "إدارة التعليم",
+          name: "وزارة التعليم",
           role: "تعليم وتدريب",
-          icon: School,
-          color: "bg-green-600",
+          logo: "/assets/logos/وزارة التعليم.png",
           flow: "يقدم: برامج تعليمية\nيستفيد: مشاركة المتطوعين",
+        },
+        {
+          name: "وزارة البيئة والمياه والزراعة",
+          role: "بيئة وزراعة",
+          logo: "/assets/logos/وزارة البيئة والمياه والزراعة.jpg",
+          flow: "يقدم: برامج بيئية\nيستفيد: مشاركة مجتمعية",
         },
         {
           name: "وزارة الموارد البشرية والتنمية الاجتماعية",
           role: "تنمية اجتماعية",
-          icon: Users,
-          color: "bg-pink-500",
+          logo: "/assets/logos/وزارة الموارد البشرية.png",
           flow: "يقدم: برامج تنموية\nيستفيد: مشاركة مجتمعية",
         },
         {
-          name: "إدارة الدفاع المدني",
-          role: "استجابة طوارئ",
-          icon: Shield,
-          color: "bg-orange-600",
+          name: "مستشفى حريملاء العام",
+          role: "خدمات طبية",
+          logo: "/assets/logos/مستشفى حريملاء العام.jpg",
+          flow: "يقدم: رعاية طبية\nيستفيد: تقارير الصحة",
+        },
+        {
+          name: "الدفاع المدني السعودي",
+          role: "حماية مدنية",
+          logo: "/assets/logos/الدفاع_المدني_السعودي.png",
           flow: "يقدم: حماية وأمان\nيستفيد: بلاغات المواطنين",
         },
         {
-          name: "الهلال الأحمر",
-          role: "إغاثة طبية",
-          icon: Heart,
-          color: "bg-red-500",
-          flow: "يقدم: خدمات إغاثية\nيستفيد: استجابة مجتمعية",
+          name: "شركة المياه الوطنية",
+          role: "خدمات مياه",
+          logo: "/assets/logos/شعار_شركة_المياه_الوطنية.jpeg",
+          flow: "يقدم: مياه صحية\nيستفيد: تقارير الجودة",
         },
         {
-          name: "نادي الحي",
-          role: "أنشطة حي",
-          icon: Home,
-          color: "bg-blue-600",
-          flow: "يقدم: برامج حي\nيستفيد: مشاركة أهالي",
+          name: "الداخلية محافظة حريملاء",
+          role: "إدارة محلية",
+          logo: "/assets/logos/الداخلية محافظة حريملاء.png",
+          flow: "يقدم: خدمات إدارية\nيستفيد: ملاحظات المواطنين",
         },
         {
-          name: "الجمعيات الخيرية والأهلية",
+          name: "أمانة الرياض",
+          role: "خدمات بلدية",
+          logo: "/assets/logos/امانة الرياض.ico",
+          flow: "يقدم: خدمات بلدية\nيستفيد: تقارير مجتمعية",
+        },
+        {
+          name: "القوة الخاصة للأمن البيئي",
+          role: "أمن بيئي",
+          logo: "/assets/logos/القوة الخاصة للامن البيئي.jpg",
+          flow: "يقدم: حماية بيئية\nيستفيد: تقارير البيئة",
+        },
+        {
+          name: "الشرطة",
+          role: "أمن عام",
+          logo: "/assets/logos/الشرطة.jpg",
+          flow: "يقدم: أمن وحماية\nيستفيد: بلاغات المواطنين",
+        },
+        {
+          name: "المرور",
+          role: "إدارة مرور",
+          logo: "/assets/logos/المرور.png",
+          flow: "يقدم: تنظيم المرور\nيستفيد: بيانات المرور",
+        },
+        {
+          name: "جمعية حريملاء الخيرية",
           role: "دعم اجتماعي",
-          icon: HandHeart,
-          color: "bg-pink-600",
+          logo: "/assets/logos/جمعية حريملاء الخيرية.jpg",
           flow: "يقدم: برامج خيرية\nيستفيد: تطوع المجتمع",
         },
         {
-          name: "المؤسسة العامة للتدريب التقني والمهني",
-          role: "تدريب مهني",
-          icon: Briefcase,
-          color: "bg-indigo-600",
-          flow: "يقدم: برامج تدريبية\nيستفيد: مشاركة المتطوعين",
-        },
-        {
-          name: "وزارة التعليم",
-          role: "تعليم شامل",
-          icon: GraduationCap,
-          color: "bg-green-700",
-          flow: "يقدم: برامج تعليمية\nيستفيد: مشاركة مجتمعية",
-        },
-        {
-          name: "الضمان الاجتماعي",
-          role: "ضمان اجتماعي",
-          icon: Star,
-          color: "bg-purple-600",
-          flow: "يقدم: خدمات ضمانية\nيستفيد: بيانات مجتمعية",
+          name: "جمعية التنمية الأهلية بحريملاء",
+          role: "تنمية محلية",
+          logo: "/assets/logos/جمعية التنمية الاهلية بحريملاء.jpg",
+          flow: "يقدم: برامج تنموية\nيستفيد: مشاركة أهالي",
         },
       ],
     },
@@ -205,151 +148,94 @@ const PartnersSection = () => {
       },
       connections: [
         {
-          name: "Healthy City Program Coordination Office",
-          role: "Health coordination",
-          icon: Activity,
-          color: "bg-red-500",
-          flow: "Provides: Health program coordination\nReceives: Community reports",
-        },
-        {
-          name: "Urban Observatory",
-          role: "Urban monitoring",
-          icon: BarChart3,
-          color: "bg-blue-500",
-          flow: "Provides: Urban data\nReceives: Citizen needs",
-        },
-        {
-          name: "Ministry of Municipal and Rural Affairs",
-          role: "Municipal services",
-          icon: Building,
-          color: "bg-green-500",
-          flow: "Provides: Municipal services\nReceives: Citizen feedback",
-        },
-        {
-          name: "General Authority for Statistics",
-          role: "Statistics",
-          icon: FileText,
-          color: "bg-purple-500",
-          flow: "Provides: Statistical data\nReceives: Community reports",
-        },
-        {
-          name: "Cultural Centers",
-          role: "Culture & arts",
-          icon: BookOpen,
-          color: "bg-amber-500",
-          flow: "Provides: Cultural programs\nReceives: Community participation",
-        },
-        {
-          name: "Civil Defense",
-          role: "Civil protection",
-          icon: Shield,
-          color: "bg-orange-500",
-          flow: "Provides: Protection & safety\nReceives: Citizen reports",
-        },
-        {
-          name: "Environmental Associations",
-          role: "Environmental protection",
-          icon: Leaf,
-          color: "bg-emerald-500",
-          flow: "Provides: Environmental programs\nReceives: Environmental participation",
-        },
-        {
-          name: "National Water Company",
-          role: "Water services",
-          icon: Droplets,
-          color: "bg-cyan-500",
-          flow: "Provides: Clean water\nReceives: Quality reports",
-        },
-        {
-          name: "Ministry of Environment, Water and Agriculture",
-          role: "Environment & agriculture",
-          icon: Globe,
-          color: "bg-teal-500",
-          flow: "Provides: Environmental programs\nReceives: Community participation",
-        },
-        {
-          name: "Food and Drug Authority",
-          role: "Food safety",
-          icon: Shield,
-          color: "bg-indigo-500",
-          flow: "Provides: Food oversight\nReceives: Safety reports",
-        },
-        {
-          name: "General Authority for Meteorology and Environmental Protection",
-          role: "Weather forecasting",
-          icon: Zap,
-          color: "bg-sky-500",
-          flow: "Provides: Weather forecasts\nReceives: Community data",
+          name: "Saudi Vision 2030",
+          role: "Strategic Vision",
+          logo: "/assets/logos/رؤية المملكة 2030.png",
+          flow: "Provides: Strategic guidance\nReceives: Progress reports",
         },
         {
           name: "Ministry of Health",
           role: "Health services",
-          icon: Stethoscope,
-          color: "bg-red-600",
+          logo: "/assets/logos/وزارة الصحة.png",
           flow: "Provides: Health programs\nReceives: Community reports",
         },
         {
-          name: "Education Department",
+          name: "Ministry of Education",
           role: "Education & training",
-          icon: School,
-          color: "bg-green-600",
+          logo: "/assets/logos/وزارة التعليم.png",
           flow: "Provides: Educational programs\nReceives: Volunteer participation",
+        },
+        {
+          name: "Ministry of Environment, Water and Agriculture",
+          role: "Environment & agriculture",
+          logo: "/assets/logos/وزارة البيئة والمياه والزراعة.jpg",
+          flow: "Provides: Environmental programs\nReceives: Community participation",
         },
         {
           name: "Ministry of Human Resources and Social Development",
           role: "Social development",
-          icon: Users,
-          color: "bg-pink-500",
+          logo: "/assets/logos/وزارة الموارد البشرية.png",
           flow: "Provides: Development programs\nReceives: Community participation",
         },
         {
-          name: "Civil Defense Administration",
-          role: "Emergency response",
-          icon: Shield,
-          color: "bg-orange-600",
+          name: "Huraymila General Hospital",
+          role: "Medical services",
+          logo: "/assets/logos/مستشفى حريملاء العام.jpg",
+          flow: "Provides: Medical care\nReceives: Health reports",
+        },
+        {
+          name: "Saudi Civil Defense",
+          role: "Civil protection",
+          logo: "/assets/logos/الدفاع_المدني_السعودي.png",
           flow: "Provides: Protection & safety\nReceives: Citizen reports",
         },
         {
-          name: "Red Crescent",
-          role: "Medical relief",
-          icon: Heart,
-          color: "bg-red-500",
-          flow: "Provides: Relief services\nReceives: Community response",
+          name: "National Water Company",
+          role: "Water services",
+          logo: "/assets/logos/شعار_شركة_المياه_الوطنية.jpeg",
+          flow: "Provides: Clean water\nReceives: Quality reports",
         },
         {
-          name: "Neighborhood Club",
-          role: "Neighborhood activities",
-          icon: Home,
-          color: "bg-blue-600",
-          flow: "Provides: Neighborhood programs\nReceives: Resident participation",
+          name: "Huraymila Governorate Interior",
+          role: "Local administration",
+          logo: "/assets/logos/الداخلية محافظة حريملاء.png",
+          flow: "Provides: Administrative services\nReceives: Citizen feedback",
         },
         {
-          name: "Charity and Civil Society Organizations",
+          name: "Riyadh Municipality",
+          role: "Municipal services",
+          logo: "/assets/logos/امانة الرياض.ico",
+          flow: "Provides: Municipal services\nReceives: Community reports",
+        },
+        {
+          name: "Special Forces for Environmental Security",
+          role: "Environmental security",
+          logo: "/assets/logos/القوة الخاصة للامن البيئي.jpg",
+          flow: "Provides: Environmental protection\nReceives: Environmental reports",
+        },
+        {
+          name: "Police",
+          role: "Public security",
+          logo: "/assets/logos/الشرطة.jpg",
+          flow: "Provides: Security & protection\nReceives: Citizen reports",
+        },
+        {
+          name: "Traffic Department",
+          role: "Traffic management",
+          logo: "/assets/logos/المرور.png",
+          flow: "Provides: Traffic regulation\nReceives: Traffic data",
+        },
+        {
+          name: "Huraymila Charity Association",
           role: "Social support",
-          icon: HandHeart,
-          color: "bg-pink-600",
+          logo: "/assets/logos/جمعية حريملاء الخيرية.jpg",
           flow: "Provides: Charity programs\nReceives: Community volunteering",
         },
         {
-          name: "Technical and Vocational Training Corporation",
-          role: "Vocational training",
-          icon: Briefcase,
-          color: "bg-indigo-600",
-          flow: "Provides: Training programs\nReceives: Volunteer participation",
-        },
-        {
-          name: "Ministry of Education",
-          role: "Comprehensive education",
-          icon: GraduationCap,
-          color: "bg-green-700",
-          flow: "Provides: Educational programs\nReceives: Community participation",
-        },
-        {
-          name: "Social Security",
-          role: "Social security",
-          icon: Star,
-          color: "bg-purple-600",
-          flow: "Provides: Social security services\nReceives: Community data",
+          name: "Huraymila Community Development Association",
+          role: "Local development",
+          logo: "/assets/logos/جمعية التنمية الاهلية بحريملاء.jpg",
+          flow: "Provides: Development programs\nReceives: Resident participation",
         },
       ],
     },
@@ -358,7 +244,7 @@ const PartnersSection = () => {
   const isRTL = language === "ar";
 
   return (
-    <section className="py-20 bg-muted/30 overflow-hidden">
+    <section className="py-20 bg-primary/10 overflow-hidden">
       <div className="container mx-auto px-4">
         {/* Header */}
         <div className="text-center mb-16">
@@ -379,14 +265,11 @@ const PartnersSection = () => {
         </div>
 
         {/* Hexagonal Network */}
-        <div className="relative w-full max-w-7xl mx-auto h-[900px] mb-16">
+        <div className="relative w-full max-w-7xl mx-auto h-[800px] mb-16">
           {/* Central Hub - Community */}
           <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-20">
-            {/* Background Effect without shadow */}
-            <div className="absolute inset-0 w-64 h-64 rounded-full bg-gradient-to-br from-amber-400/30 to-orange-400/20 animate-pulse"></div>
-
             {/* Central Community Hub without shadow */}
-            <div className="w-56 h-56 rounded-full border-4 border-amber-400/80 bg-gradient-to-br from-amber-100/95 to-orange-100/85 flex items-center justify-center relative overflow-hidden">
+            <div className="w-56 h-56 rounded-full border-4 border-amber-400/80 bg-gradient-to-br from-amber-100/95 to-orange-100/85 dark:from-amber-900/95 dark:to-orange-900/85 flex items-center justify-center relative overflow-hidden">
               {/* Animated Inner Rings */}
               <div
                 className="absolute w-48 h-48 rounded-full border-2 border-amber-300/40 animate-ping"
@@ -418,11 +301,11 @@ const PartnersSection = () => {
                   )}>
                   {current.centerEntity.description}
                 </p>
-                <div className="text-amber-600 font-bold text-sm mb-1">
+                <div className="text-amber-600 dark:text-amber-400 font-bold text-sm mb-1">
                   {current.centerEntity.stats}
                 </div>
-                <div className="text-amber-700 font-bold text-xs">
-                  {isRTL ? "21 جهات شريكة" : "21 Organizations"}
+                <div className="text-amber-700 dark:text-amber-300 font-bold text-xs">
+                  {isRTL ? "15 جهة شريكة" : "15 Organizations"}
                 </div>
               </div>
             </div>
@@ -430,8 +313,8 @@ const PartnersSection = () => {
 
           {/* Connection Lines - Rendered from Center */}
           {current.connections.map((connection, index) => {
-            const angle = index * 17.14 * (Math.PI / 180); // 21 positions (360/21 ≈ 17.14)
-            const radius = 380;
+            const angle = index * 24 * (Math.PI / 180); // 15 positions (360/15 = 24)
+            const radius = 350;
             return (
               <div key={`line-${index}`}>
                 {/* Static Connection Line to Center */}
@@ -482,8 +365,8 @@ const PartnersSection = () => {
 
           {/* Partner Organizations in Network Pattern */}
           {current.connections.map((connection, index) => {
-            const angle = index * 17.14 * (Math.PI / 180); // 21 positions (360/21 ≈ 17.14)
-            const radius = 380;
+            const angle = index * 24 * (Math.PI / 180); // 15 positions (360/15 = 24)
+            const radius = 350;
             const x = Math.cos(angle) * radius;
             const y = Math.sin(angle) * radius;
             return (
@@ -500,7 +383,7 @@ const PartnersSection = () => {
                   const nextIndex =
                     (index + direction + current.connections.length) %
                     current.connections.length;
-                  const nextAngle = nextIndex * 17.14 * (Math.PI / 180);
+                  const nextAngle = nextIndex * 24 * (Math.PI / 180);
                   const nextX = Math.cos(nextAngle) * radius;
                   const nextY = Math.sin(nextAngle) * radius;
                   const connectionLength = Math.sqrt(
@@ -523,18 +406,30 @@ const PartnersSection = () => {
                 })}
 
                 {/* Partner Card */}
-                <Card className="w-40 h-32 group-hover:shadow-xl transition-all duration-300 border-2 border-amber-200/60 hover:border-amber-300/80 cursor-pointer relative overflow-hidden bg-white/90 backdrop-blur-sm shadow-md">
+                <Card className="w-32 h-24 group-hover:shadow-xl transition-all duration-300 border-2 border-amber-200/60 hover:border-amber-300/80 cursor-pointer relative overflow-hidden bg-white/90 backdrop-blur-sm shadow-md">
                   {/* Clear Background */}
                   <div className="absolute inset-0 bg-gradient-to-br from-amber-50/80 to-orange-50/60"></div>
 
-                  <CardContent className="p-3 text-center relative z-10 h-full flex flex-col justify-center">
-                    <div
-                      className={`w-8 h-8 rounded-full ${connection.color} flex items-center justify-center mb-3 mx-auto group-hover:scale-110 transition-transform duration-300`}>
-                      <connection.icon className="h-4 w-4 text-white" />
+                  <CardContent className="p-2 text-center relative z-10 h-full flex flex-col justify-center">
+                    <div className="w-10 h-10 mx-auto mb-2 group-hover:scale-110 transition-transform duration-300 flex items-center justify-center">
+                      <img
+                        src={connection.logo}
+                        alt={connection.name}
+                        className="max-w-full max-h-full object-contain"
+                        onError={(e) => {
+                          e.target.style.display = "none";
+                          e.target.nextSibling.style.display = "flex";
+                        }}
+                      />
+                      <div
+                        className="w-full h-full bg-muted rounded-full flex items-center justify-center text-xs text-muted-foreground"
+                        style={{ display: "none" }}>
+                        {connection.name.charAt(0)}
+                      </div>
                     </div>
                     <h4
                       className={cn(
-                        "font-semibold text-amber-700 group-hover:text-black transition-colors text-sm leading-tight",
+                        "font-semibold text-amber-700 group-hover:text-black transition-colors text-xs leading-tight",
                         isRTL ? "font-arabic" : "font-english"
                       )}>
                       {connection.name}
@@ -542,7 +437,7 @@ const PartnersSection = () => {
                   </CardContent>
 
                   {/* Active Connection Indicator */}
-                  <div className="absolute top-1 right-1 w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+                  <div className="absolute top-1 right-1 w-1.5 h-1.5 bg-green-400 rounded-full animate-pulse"></div>
                 </Card>
               </div>
             );
@@ -566,7 +461,7 @@ const PartnersSection = () => {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
           <Card className="text-center p-6 bg-gradient-to-br from-primary/10 to-primary/5 border-primary/20">
             <Users className="h-8 w-8 text-primary mx-auto mb-3" />
-            <div className="text-3xl font-bold text-primary mb-1">21</div>
+            <div className="text-3xl font-bold text-primary mb-1">15</div>
             <p
               className={cn(
                 "text-sm text-muted-foreground",

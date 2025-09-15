@@ -57,7 +57,7 @@ const QuickLinksSection = () => {
   const isRTL = language === "ar";
 
   return (
-    <section className="py-20 bg-background">
+    <section className="py-20 bg-secondary/15">
       <div className="container mx-auto px-4">
         {/* Header */}
         <div className="text-center mb-16">

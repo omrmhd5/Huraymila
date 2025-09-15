@@ -45,7 +45,6 @@ const HeroSection = () => {
       description:
         "نعمل معاً لبناء مدينة صحية ومستدامة من خلال المبادرات المجتمعية والشراكات الاستراتيجية مع الجهات الحكومية والمؤسسات الصحية.",
       cta: "انضم إلينا",
-      learnMore: "اعرف المزيد",
       stats: [
         { value: "25+", label: "مبادرة صحية", icon: Heart },
         { value: "500+", label: "متطوع نشط", icon: Users },
@@ -54,62 +53,65 @@ const HeroSection = () => {
       ],
       partners: [
         {
-          name: "مكتب تنسيق برنامج المدينة الصحية",
-          icon: Activity,
-          color: "bg-red-500",
-        },
-        { name: "المرصد الحضري", icon: BarChart3, color: "bg-blue-500" },
-        {
-          name: "وزارة الشؤون البلدية والقروية",
-          icon: Building2,
-          color: "bg-green-500",
+          name: "رؤية المملكة 2030",
+          logo: "/assets/logos/رؤية المملكة 2030.png",
         },
         {
-          name: "الهيئة العامة للاحصاء",
-          icon: FileText,
-          color: "bg-purple-500",
+          name: "وزارة الصحة",
+          logo: "/assets/logos/وزارة الصحة.png",
         },
-        { name: "المراكز الثقافية", icon: BookOpen, color: "bg-amber-500" },
-        { name: "الدفاع المدني", icon: Shield, color: "bg-orange-500" },
-        { name: "الجمعيات البيئية", icon: Leaf, color: "bg-emerald-500" },
-        { name: "شركة المياه الوطنية", icon: Droplets, color: "bg-cyan-500" },
+        {
+          name: "وزارة التعليم",
+          logo: "/assets/logos/وزارة التعليم.png",
+        },
         {
           name: "وزارة البيئة والمياه والزراعة",
-          icon: Globe,
-          color: "bg-teal-500",
+          logo: "/assets/logos/وزارة البيئة والمياه والزراعة.jpg",
         },
-        {
-          name: "الهيئة العامة للغذاء والدواء",
-          icon: Shield,
-          color: "bg-indigo-500",
-        },
-        {
-          name: "الهيئة العامة للأرصاد وحماية البيئة",
-          icon: Zap,
-          color: "bg-sky-500",
-        },
-        { name: "وزارة الصحة", icon: Stethoscope, color: "bg-red-600" },
-        { name: "إدارة التعليم", icon: School, color: "bg-green-600" },
         {
           name: "وزارة الموارد البشرية والتنمية الاجتماعية",
-          icon: Users,
-          color: "bg-pink-500",
-        },
-        { name: "إدارة الدفاع المدني", icon: Shield, color: "bg-orange-600" },
-        { name: "الهلال الأحمر", icon: Heart, color: "bg-red-500" },
-        { name: "نادي الحي", icon: Home, color: "bg-blue-600" },
-        {
-          name: "الجمعيات الخيرية والأهلية",
-          icon: HandHeart,
-          color: "bg-pink-600",
+          logo: "/assets/logos/وزارة الموارد البشرية.png",
         },
         {
-          name: "المؤسسة العامة للتدريب التقني والمهني",
-          icon: Briefcase,
-          color: "bg-indigo-600",
+          name: "مستشفى حريملاء العام",
+          logo: "/assets/logos/مستشفى حريملاء العام.jpg",
         },
-        { name: "وزارة التعليم", icon: GraduationCap, color: "bg-green-700" },
-        { name: "الضمان الاجتماعي", icon: Star, color: "bg-purple-600" },
+        {
+          name: "الدفاع المدني السعودي",
+          logo: "/assets/logos/الدفاع_المدني_السعودي.png",
+        },
+        {
+          name: "شركة المياه الوطنية",
+          logo: "/assets/logos/شعار_شركة_المياه_الوطنية.jpeg",
+        },
+        {
+          name: "الداخلية محافظة حريملاء",
+          logo: "/assets/logos/الداخلية محافظة حريملاء.png",
+        },
+        {
+          name: "أمانة الرياض",
+          logo: "/assets/logos/امانة الرياض.ico",
+        },
+        {
+          name: "القوة الخاصة للأمن البيئي",
+          logo: "/assets/logos/القوة الخاصة للامن البيئي.jpg",
+        },
+        {
+          name: "الشرطة",
+          logo: "/assets/logos/الشرطة.jpg",
+        },
+        {
+          name: "المرور",
+          logo: "/assets/logos/المرور.png",
+        },
+        {
+          name: "جمعية حريملاء الخيرية",
+          logo: "/assets/logos/جمعية حريملاء الخيرية.jpg",
+        },
+        {
+          name: "جمعية التنمية الأهلية بحريملاء",
+          logo: "/assets/logos/جمعية التنمية الاهلية بحريملاء.jpg",
+        },
       ],
     },
     en: {
@@ -118,7 +120,6 @@ const HeroSection = () => {
       description:
         "We work together to build a healthy and sustainable city through community initiatives and strategic partnerships with government agencies and health institutions.",
       cta: "Join Us",
-      learnMore: "Learn More",
       stats: [
         { value: "25+", label: "Health Initiatives", icon: Heart },
         { value: "500+", label: "Active Volunteers", icon: Users },
@@ -127,78 +128,65 @@ const HeroSection = () => {
       ],
       partners: [
         {
-          name: "Healthy City Program Coordination Office",
-          icon: Activity,
-          color: "bg-red-500",
-        },
-        { name: "Urban Observatory", icon: BarChart3, color: "bg-blue-500" },
-        {
-          name: "Ministry of Municipal and Rural Affairs",
-          icon: Building2,
-          color: "bg-green-500",
+          name: "Saudi Vision 2030",
+          logo: "/assets/logos/رؤية المملكة 2030.png",
         },
         {
-          name: "General Authority for Statistics",
-          icon: FileText,
-          color: "bg-purple-500",
-        },
-        { name: "Cultural Centers", icon: BookOpen, color: "bg-amber-500" },
-        { name: "Civil Defense", icon: Shield, color: "bg-orange-500" },
-        {
-          name: "Environmental Associations",
-          icon: Leaf,
-          color: "bg-emerald-500",
-        },
-        {
-          name: "National Water Company",
-          icon: Droplets,
-          color: "bg-cyan-500",
-        },
-        {
-          name: "Ministry of Environment, Water and Agriculture",
-          icon: Globe,
-          color: "bg-teal-500",
-        },
-        {
-          name: "Food and Drug Authority",
-          icon: Shield,
-          color: "bg-indigo-500",
-        },
-        {
-          name: "General Authority for Meteorology and Environmental Protection",
-          icon: Zap,
-          color: "bg-sky-500",
-        },
-        { name: "Ministry of Health", icon: Stethoscope, color: "bg-red-600" },
-        { name: "Education Department", icon: School, color: "bg-green-600" },
-        {
-          name: "Ministry of Human Resources and Social Development",
-          icon: Users,
-          color: "bg-pink-500",
-        },
-        {
-          name: "Civil Defense Administration",
-          icon: Shield,
-          color: "bg-orange-600",
-        },
-        { name: "Red Crescent", icon: Heart, color: "bg-red-500" },
-        { name: "Neighborhood Club", icon: Home, color: "bg-blue-600" },
-        {
-          name: "Charity and Civil Society Organizations",
-          icon: HandHeart,
-          color: "bg-pink-600",
-        },
-        {
-          name: "Technical and Vocational Training Corporation",
-          icon: Briefcase,
-          color: "bg-indigo-600",
+          name: "Ministry of Health",
+          logo: "/assets/logos/وزارة الصحة.png",
         },
         {
           name: "Ministry of Education",
-          icon: GraduationCap,
-          color: "bg-green-700",
+          logo: "/assets/logos/وزارة التعليم.png",
         },
-        { name: "Social Security", icon: Star, color: "bg-purple-600" },
+        {
+          name: "Ministry of Environment, Water and Agriculture",
+          logo: "/assets/logos/وزارة البيئة والمياه والزراعة.jpg",
+        },
+        {
+          name: "Ministry of Human Resources and Social Development",
+          logo: "/assets/logos/وزارة الموارد البشرية.png",
+        },
+        {
+          name: "Huraymila General Hospital",
+          logo: "/assets/logos/مستشفى حريملاء العام.jpg",
+        },
+        {
+          name: "Saudi Civil Defense",
+          logo: "/assets/logos/الدفاع_المدني_السعودي.png",
+        },
+        {
+          name: "National Water Company",
+          logo: "/assets/logos/شعار_شركة_المياه_الوطنية.jpeg",
+        },
+        {
+          name: "Huraymila Governorate Interior",
+          logo: "/assets/logos/الداخلية محافظة حريملاء.png",
+        },
+        {
+          name: "Riyadh Municipality",
+          logo: "/assets/logos/امانة الرياض.ico",
+        },
+        {
+          name: "Special Forces for Environmental Security",
+          logo: "/assets/logos/القوة الخاصة للامن البيئي.jpg",
+        },
+        {
+          name: "Police",
+          logo: "/assets/logos/الشرطة.jpg",
+        },
+        {
+          name: "Traffic Department",
+          logo: "/assets/logos/المرور.png",
+        },
+        {
+          name: "Huraymila Charity Association",
+          logo: "/assets/logos/جمعية حريملاء الخيرية.jpg",
+        },
+        {
+          name: "Huraymila Community Development Association",
+          logo: "/assets/logos/جمعية التنمية الاهلية بحريملاء.jpg",
+        },
       ],
     },
   };
@@ -221,6 +209,12 @@ const HeroSection = () => {
         {/* Content */}
         <div className="relative z-10 container mx-auto px-4 text-center">
           <div className="max-w-4xl mx-auto">
+            {/* Heritage Pattern Decoration */}
+            <div className="mb-8 flex justify-center">
+              <div className="w-16 h-16 bg-accent/20 rounded-full flex items-center justify-center backdrop-blur-sm">
+                <div className="w-8 h-8 border-2 border-accent rotate-45 rounded-sm"></div>
+              </div>
+            </div>
             {/* Main Title */}
             <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-white mb-6 leading-tight">
               {current.title}
@@ -244,14 +238,6 @@ const HeroSection = () => {
                 className="text-lg px-8 py-6 bg-primary hover:bg-primary/90">
                 {current.cta}
                 <ArrowRight className={`w-5 h-5 ${isRTL ? "mr-2" : "ml-2"}`} />
-              </Button>
-
-              <Button
-                // variant="outline"
-                size="lg"
-                onClick={() => navigateToTop("/about")}
-                className="text-lg px-8 py-6 bg-primary hover:bg-primary/90">
-                {current.learnMore}
               </Button>
             </div>
 
@@ -290,29 +276,40 @@ const HeroSection = () => {
       </section>
 
       {/* Partner Icons - Full Width Section */}
-      <section className="w-full bg-background backdrop-blur-sm py-12">
+      <section className="w-full bg-primary/10 backdrop-blur-sm py-12">
         <div className="w-full px-4">
           <h3
             className={cn(
-              "text-xl md:text-2xl font-bold text-white mb-8 text-center",
+              "text-xl md:text-2xl font-bold text-foreground mb-8 text-center",
               isRTL ? "font-arabic" : "font-english"
             )}>
             {isRTL ? "شركاؤنا في النجاح" : "Our Partners in Success"}
           </h3>
           <div className="flex flex-wrap justify-center gap-4 sm:gap-6 max-w-7xl mx-auto">
             {current.partners.map((partner, index) => {
-              const IconComponent = partner.icon;
               return (
                 <div
                   key={index}
-                  className="w-24 sm:w-28 bg-white/10 backdrop-blur-md rounded-lg p-3 text-center border border-white/20 hover:bg-white/15 transition-all duration-300 group">
-                  <div
-                    className={`w-8 h-8 sm:w-10 sm:h-10 ${partner.color} rounded-full flex items-center justify-center mx-auto mb-2 group-hover:scale-110 transition-transform duration-300`}>
-                    <IconComponent className="h-4 w-4 sm:h-5 sm:w-5 text-white" />
+                  className="w-28 sm:w-32 bg-card backdrop-blur-md rounded-lg p-4 text-center border border-border hover:bg-card/70 transition-all duration-300 group">
+                  <div className="w-12 h-12 sm:w-14 sm:h-14 mx-auto mb-3 group-hover:scale-110 transition-transform duration-300 flex items-center justify-center">
+                    <img
+                      src={partner.logo}
+                      alt={partner.name}
+                      className="max-w-full max-h-full object-contain"
+                      onError={(e) => {
+                        e.target.style.display = "none";
+                        e.target.nextSibling.style.display = "flex";
+                      }}
+                    />
+                    <div
+                      className="w-full h-full bg-muted rounded-full flex items-center justify-center text-xs text-muted-foreground"
+                      style={{ display: "none" }}>
+                      {partner.name.charAt(0)}
+                    </div>
                   </div>
                   <div
                     className={cn(
-                      "text-white/70 text-xs leading-tight",
+                      "text-foreground text-xs leading-tight",
                       isRTL ? "font-arabic" : "font-english"
                     )}>
                     {partner.name}

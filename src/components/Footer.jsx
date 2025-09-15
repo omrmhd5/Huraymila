@@ -5,12 +5,11 @@ import {
   Mail,
   Phone,
   MapPin,
-  Facebook,
   Twitter,
-  Instagram,
-  Linkedin,
   Heart,
   ArrowUp,
+  Youtube,
+  Music,
 } from "lucide-react";
 import { useTheme } from "@/contexts/ThemeContext";
 
@@ -35,16 +34,6 @@ const Footer = () => {
           { name: "اتصل بنا", href: "/contact" },
         ],
       },
-      services: {
-        title: "خدماتنا",
-        links: [
-          { name: "التوعية الصحية", href: "/services/awareness" },
-          { name: "الفحص المبكر", href: "/services/screening" },
-          { name: "الرعاية الوقائية", href: "/services/preventive" },
-          { name: "التثقيف الصحي", href: "/services/education" },
-          { name: "المتابعة الصحية", href: "/services/followup" },
-        ],
-      },
       contact: {
         title: "معلومات التواصل",
         address: "مدينة حريملاء، منطقة الرياض، المملكة العربية السعودية",
@@ -59,8 +48,6 @@ const Footer = () => {
       bottom: {
         copyright: "© 2024 مبادرة مدينة حريملاء الصحية. جميع الحقوق محفوظة.",
         madeWith: "صنع بـ",
-        privacy: "سياسة الخصوصية",
-        terms: "الشروط والأحكام",
       },
     },
     en: {
@@ -74,16 +61,6 @@ const Footer = () => {
           { name: "Initiatives", href: "/initiatives" },
           { name: "Volunteer", href: "/volunteer" },
           { name: "Contact", href: "/contact" },
-        ],
-      },
-      services: {
-        title: "Our Services",
-        links: [
-          { name: "Health Awareness", href: "/services/awareness" },
-          { name: "Early Screening", href: "/services/screening" },
-          { name: "Preventive Care", href: "/services/preventive" },
-          { name: "Health Education", href: "/services/education" },
-          { name: "Health Follow-up", href: "/services/followup" },
         ],
       },
       contact: {
@@ -101,8 +78,6 @@ const Footer = () => {
         copyright:
           "© 2024 Huraymila Healthy City Initiative. All rights reserved.",
         madeWith: "Made with",
-        privacy: "Privacy Policy",
-        terms: "Terms & Conditions",
       },
     },
   };
@@ -114,7 +89,7 @@ const Footer = () => {
     <footer className="bg-background border-t border-border">
       {/* Main Footer Content */}
       <div className="container mx-auto px-4 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {/* About Section */}
           <div className="lg:col-span-1">
             <div className="flex items-center gap-3 mb-4">
@@ -148,24 +123,6 @@ const Footer = () => {
             </h4>
             <ul className="space-y-2">
               {current.quickLinks.links.map((link) => (
-                <li key={link.href}>
-                  <Link
-                    to={link.href}
-                    className="text-sm text-muted-foreground hover:text-primary transition-colors">
-                    {link.name}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Services */}
-          <div>
-            <h4 className="font-semibold text-foreground mb-4">
-              {current.services.title}
-            </h4>
-            <ul className="space-y-2">
-              {current.services.links.map((link) => (
                 <li key={link.href}>
                   <Link
                     to={link.href}
@@ -220,43 +177,20 @@ const Footer = () => {
               <p className="text-sm text-muted-foreground">
                 {current.social.description}
               </p>
+              <p className="text-sm text-muted-foreground text-center md:text-right py-4">
+                {current.bottom.copyright}
+              </p>
             </div>
             <div className="flex items-center gap-3">
-              <Button variant="outline" size="sm" className="w-10 h-10 p-0">
-                <Facebook className="w-4 h-4" />
-              </Button>
               <Button variant="outline" size="sm" className="w-10 h-10 p-0">
                 <Twitter className="w-4 h-4" />
               </Button>
               <Button variant="outline" size="sm" className="w-10 h-10 p-0">
-                <Instagram className="w-4 h-4" />
+                <Youtube className="w-4 h-4" />
               </Button>
               <Button variant="outline" size="sm" className="w-10 h-10 p-0">
-                <Linkedin className="w-4 h-4" />
+                <Music className="w-4 h-4" />
               </Button>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Bottom Footer */}
-      <div className="border-t border-border bg-muted/30">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex flex-col md:flex-row items-center justify-between gap-4">
-            <p className="text-sm text-muted-foreground text-center md:text-right">
-              {current.bottom.copyright}
-            </p>
-            <div className="flex items-center gap-4 text-sm">
-              <Link
-                to="/privacy"
-                className="text-muted-foreground hover:text-primary transition-colors">
-                {current.bottom.privacy}
-              </Link>
-              <Link
-                to="/terms"
-                className="text-muted-foreground hover:text-primary transition-colors">
-                {current.bottom.terms}
-              </Link>
             </div>
           </div>
         </div>
