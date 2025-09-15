@@ -25,6 +25,7 @@ import AllInitiatives from "./pages/AllInitiatives";
 import Initiative from "./pages/Initiative";
 import Report from "./pages/Report";
 import AboutHuraymila from "./pages/AboutHuraymila";
+import FAQ from "./pages/FAQ";
 
 const queryClient = new QueryClient();
 
@@ -53,6 +54,7 @@ const App = () => (
                 <Route path="/initiatives/:id" element={<Initiative />} />
                 <Route path="/report" element={<Report />} />
                 <Route path="/about-huraymila" element={<AboutHuraymila />} />
+                <Route path="/faq" element={<FAQ />} />
               </Route>
 
               <Route path="/admin" element={<AdminLayout />}>

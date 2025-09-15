@@ -68,6 +68,7 @@ const Navbar = () => {
       href: "/success-stories",
       label: language === "ar" ? "قصص النجاح" : "Success Stories",
     },
+    { href: "/faq", label: language === "ar" ? "الأسئلة الشائعة" : "FAQ" },
     { href: "/contact", label: language === "ar" ? "اتصل بنا" : "Contact" },
   ];
 
