@@ -357,7 +357,7 @@ const AllInitiatives = () => {
               className={`text-4xl md:text-5xl font-bold mb-4 ${
                 isRTL ? "font-arabic text-right" : "font-sans text-left"
               }`}>
-              {language === "ar" ? "المبادرات الصحية" : "Health Initiatives"}
+              {language === "ar" ? "المبادرات" : "Health Initiatives"}
             </h1>
             <p
               className={`text-xl text-muted-foreground ${

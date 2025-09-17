@@ -376,4 +376,14 @@
       opacity: 0.1;
     }
   }
+
+  /* Infinite scroll animation for partners slider */
+  @keyframes scroll-infinite {
+    0% {
+      transform: translateX(0%);
+    }
+    100% {
+      transform: translateX(-50%);
+    }
+  }
 }

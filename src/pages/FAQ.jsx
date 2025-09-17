@@ -16,7 +16,6 @@ import {
   Clock,
   Users,
   Heart,
-  Shield,
   Leaf,
   GraduationCap,
   Building,
@@ -103,28 +102,6 @@ const FAQ = () => {
               question: "هل أحصل على شهادة تطوع؟",
               answer:
                 "نعم، يحصل المتطوعون على شهادات تقديرية تثبت ساعات التطوع والمبادرات التي شاركوا فيها، مما يساعد في بناء السيرة الذاتية.",
-            },
-          ],
-        },
-        {
-          title: "الخدمات الصحية",
-          icon: Shield,
-          color: "bg-purple-500",
-          questions: [
-            {
-              question: "ما هي الخدمات الصحية المتاحة؟",
-              answer:
-                "نوفر فحوصات طبية شاملة، استشارات صحية، برامج التوعية، فحوصات الكشف المبكر، وخدمات الصحة النفسية والدعم الاجتماعي.",
-            },
-            {
-              question: "هل الخدمات الصحية مجانية؟",
-              answer:
-                "نعم، جميع الخدمات الصحية المقدمة من خلال البرنامج مجانية تماماً لجميع أفراد المجتمع.",
-            },
-            {
-              question: "كيف يمكنني حجز موعد للفحص الطبي؟",
-              answer:
-                "يمكنك حجز المواعيد من خلال الموقع الإلكتروني أو الاتصال بمركز الخدمات الصحية. سنقوم بتأكيد الموعد وإرسال التذكيرات المناسبة.",
             },
           ],
         },
@@ -256,28 +233,6 @@ const FAQ = () => {
               question: "Do I get a volunteer certificate?",
               answer:
                 "Yes, volunteers receive certificates of appreciation that document volunteer hours and initiatives they participated in, helping build their resumes.",
-            },
-          ],
-        },
-        {
-          title: "Health Services",
-          icon: Shield,
-          color: "bg-purple-500",
-          questions: [
-            {
-              question: "What health services are available?",
-              answer:
-                "We provide comprehensive medical checkups, health consultations, awareness programs, early detection screenings, and mental health and social support services.",
-            },
-            {
-              question: "Are health services free?",
-              answer:
-                "Yes, all health services provided through the program are completely free for all community members.",
-            },
-            {
-              question: "How can I book a medical appointment?",
-              answer:
-                "You can book appointments through the website or by calling the health services center. We will confirm the appointment and send appropriate reminders.",
             },
           ],
         },

@@ -5,6 +5,7 @@ import InteractiveMap from "@/components/Home/InteractiveMap";
 import NewsSection from "@/components/Home/NewsSection";
 import SuccessStories from "@/components/Home/SuccessStories";
 import PartnersSection from "@/components/Home/PartnersSection";
+import SuccessPartners from "@/components/Home/SuccessPartners";
 import QuickLinksSection from "@/components/Home/QuickLinksSection";
 import HealthDashboard from "@/components/Home/HealthDashboard";
 import AnimatedSection from "@/components/animations/AnimatedSection";
@@ -52,6 +53,9 @@ const Home = () => {
         </AnimatedSection>
         <AnimatedSection animation="fadeInDown" delay={300} duration={400}>
           <PartnersSection />
+        </AnimatedSection>
+        <AnimatedSection animation="fadeInUp" delay={325} duration={400}>
+          <SuccessPartners />
         </AnimatedSection>
         <AnimatedSection animation="fadeInLeft" delay={350} duration={400}>
           <QuickLinksSection />

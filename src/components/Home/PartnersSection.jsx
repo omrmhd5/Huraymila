@@ -134,6 +134,24 @@ const PartnersSection = () => {
           logo: "/assets/logos/جمعية التنمية الاهلية بحريملاء.jpg",
           flow: "يقدم: برامج تنموية\nيستفيد: مشاركة أهالي",
         },
+        {
+          name: "جامعة الإمام محمد بن سعود الإسلامية",
+          role: "تعليم وبحث",
+          logo: "/assets/logos/جامعة الامام محمد بن سعود .png",
+          flow: "يقدم: برامج أكاديمية\nيستفيد: مشاركة طلابية",
+        },
+        {
+          name: "منظمة الصحة العالمية",
+          role: "دعم دولي",
+          logo: "/assets/logos/منظمة الصحة العالمية.png",
+          flow: "يقدم: معايير عالمية\nيستفيد: تقارير محلية",
+        },
+        {
+          name: "جمعية أصدقاء المرضى بحريملاء",
+          role: "دعم صحي",
+          logo: "/assets/logos/جمعية اصدقاء المرضى بحريملاء.png",
+          flow: "يقدم: دعم المرضى\nيستفيد: تطوع مجتمعي",
+        },
       ],
     },
     en: {
@@ -237,6 +255,24 @@ const PartnersSection = () => {
           logo: "/assets/logos/جمعية التنمية الاهلية بحريملاء.jpg",
           flow: "Provides: Development programs\nReceives: Resident participation",
         },
+        {
+          name: "Imam Muhammad bin Saud Islamic University",
+          role: "Education & research",
+          logo: "/assets/logos/جامعة الامام محمد بن سعود .png",
+          flow: "Provides: Academic programs\nReceives: Student participation",
+        },
+        {
+          name: "World Health Organization",
+          role: "International support",
+          logo: "/assets/logos/منظمة الصحة العالمية.png",
+          flow: "Provides: Global standards\nReceives: Local reports",
+        },
+        {
+          name: "Huraymila Friends of Patients Association",
+          role: "Health support",
+          logo: "/assets/logos/جمعية اصدقاء المرضى بحريملاء.png",
+          flow: "Provides: Patient support\nReceives: Community volunteering",
+        },
       ],
     },
   };
@@ -305,7 +341,7 @@ const PartnersSection = () => {
                   {current.centerEntity.stats}
                 </div>
                 <div className="text-amber-700 dark:text-amber-300 font-bold text-xs">
-                  {isRTL ? "15 جهة شريكة" : "15 Organizations"}
+                  {isRTL ? "18 جهة شريكة" : "18 Organizations"}
                 </div>
               </div>
             </div>
@@ -313,7 +349,7 @@ const PartnersSection = () => {
 
           {/* Connection Lines - Rendered from Center */}
           {current.connections.map((connection, index) => {
-            const angle = index * 24 * (Math.PI / 180); // 15 positions (360/15 = 24)
+            const angle = index * 20 * (Math.PI / 180); // 18 positions (360/18 = 20)
             const radius = 350;
             return (
               <div key={`line-${index}`}>
@@ -365,7 +401,7 @@ const PartnersSection = () => {
 
           {/* Partner Organizations in Network Pattern */}
           {current.connections.map((connection, index) => {
-            const angle = index * 24 * (Math.PI / 180); // 15 positions (360/15 = 24)
+            const angle = index * 20 * (Math.PI / 180); // 18 positions (360/18 = 20)
             const radius = 350;
             const x = Math.cos(angle) * radius;
             const y = Math.sin(angle) * radius;
@@ -383,7 +419,7 @@ const PartnersSection = () => {
                   const nextIndex =
                     (index + direction + current.connections.length) %
                     current.connections.length;
-                  const nextAngle = nextIndex * 24 * (Math.PI / 180);
+                  const nextAngle = nextIndex * 20 * (Math.PI / 180);
                   const nextX = Math.cos(nextAngle) * radius;
                   const nextY = Math.sin(nextAngle) * radius;
                   const connectionLength = Math.sqrt(
@@ -461,7 +497,7 @@ const PartnersSection = () => {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
           <Card className="text-center p-6 bg-gradient-to-br from-primary/10 to-primary/5 border-primary/20">
             <Users className="h-8 w-8 text-primary mx-auto mb-3" />
-            <div className="text-3xl font-bold text-primary mb-1">15</div>
+            <div className="text-3xl font-bold text-primary mb-1">18</div>
             <p
               className={cn(
                 "text-sm text-muted-foreground",

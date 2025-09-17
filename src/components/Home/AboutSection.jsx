@@ -2,7 +2,6 @@ import { Card, CardContent } from "@/components/ui/card";
 import {
   Check,
   Target,
-  Globe,
   Users,
   Leaf,
   Heart,
@@ -13,7 +12,6 @@ import {
   TrendingUp,
   Shield,
   BookOpen,
-  Handshake,
   ArrowRight,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
@@ -72,10 +70,6 @@ const AboutSection = () => {
         ],
       },
 
-      whoTitle: "شراكة مع منظمة الصحة العالمية",
-      whoDescription:
-        "نفخر بكوننا جزء من الشبكة العالمية للمدن الصحية التابعة لمنظمة الصحة العالمية، مما يضمن تطبيق أفضل الممارسات العالمية وأحدث المعايير في مجال الصحة المجتمعية.",
-
       timeline: {
         title: "الجدول الزمني للبرنامج",
         phases: [
@@ -103,19 +97,6 @@ const AboutSection = () => {
             description: "التقدم للحصول على اعتماد منظمة الصحة العالمية",
             status: "مخطط",
           },
-        ],
-      },
-
-      partnerships: {
-        title: "شركاؤنا الداعمون",
-        description: "نعمل مع مجموعة متنوعة من الشركاء لضمان نجاح البرنامج:",
-        partners: [
-          { name: "وزارة الصحة", type: "حكومي" },
-          { name: "أمانة منطقة الرياض", type: "حكومي" },
-          { name: "جامعة الملك سعود", type: "أكاديمي" },
-          { name: "مؤسسات القطاع الخاص", type: "خاص" },
-          { name: "منظمات المجتمع المدني", type: "مدني" },
-          { name: "منظمة الصحة العالمية", type: "دولي" },
         ],
       },
 
@@ -214,10 +195,6 @@ const AboutSection = () => {
         ],
       },
 
-      whoTitle: "Partnership with WHO",
-      whoDescription:
-        "We are proud to be part of the WHO Global Network of Healthy Cities, ensuring the application of global best practices and latest standards in community health.",
-
       timeline: {
         title: "Program Timeline",
         phases: [
@@ -248,20 +225,6 @@ const AboutSection = () => {
             description: "Apply for WHO accreditation",
             status: "Planned",
           },
-        ],
-      },
-
-      partnerships: {
-        title: "Our Supporting Partners",
-        description:
-          "We work with a diverse group of partners to ensure program success:",
-        partners: [
-          { name: "Ministry of Health", type: "Government" },
-          { name: "Riyadh Region Municipality", type: "Government" },
-          { name: "King Saud University", type: "Academic" },
-          { name: "Private Sector Institutions", type: "Private" },
-          { name: "Civil Society Organizations", type: "Civil" },
-          { name: "World Health Organization", type: "International" },
         ],
       },
 
@@ -494,92 +457,6 @@ const AboutSection = () => {
                     className={`w-4 h-4 ${isRTL ? "rotate-180" : ""}`}
                   />
                 </button>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Partnerships */}
-        <div className="mb-20">
-          <h3
-            className={cn(
-              "text-2xl md:text-3xl font-bold text-center text-foreground mb-6",
-              isRTL ? "font-arabic" : "font-english"
-            )}>
-            {current.partnerships.title}
-          </h3>
-          <p
-            className={cn(
-              "text-center text-muted-foreground mb-12 max-w-3xl mx-auto",
-              isRTL ? "font-arabic" : "font-english"
-            )}>
-            {current.partnerships.description}
-          </p>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {current.partnerships.partners.map((partner, index) => (
-              <Card
-                key={index}
-                className="border border-border hover:border-primary/30 transition-colors">
-                <CardContent className="p-6">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center">
-                      <Handshake className="h-5 w-5 text-primary" />
-                    </div>
-                    <div>
-                      <h4
-                        className={cn(
-                          "font-semibold text-foreground",
-                          isRTL ? "font-arabic" : "font-english"
-                        )}>
-                        {partner.name}
-                      </h4>
-                      <p
-                        className={cn(
-                          "text-sm text-muted-foreground",
-                          isRTL ? "font-arabic" : "font-english"
-                        )}>
-                        {partner.type}
-                      </p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </div>
-
-        {/* WHO Partnership */}
-        <div className="mb-20">
-          <Card className="bg-gradient-card border-0 shadow-card">
-            <CardContent className="p-8 md:p-12">
-              <div className="flex flex-col md:flex-row items-center gap-8">
-                <div className="flex-1">
-                  <div className="flex items-center gap-4 mb-6">
-                    <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
-                      <Globe className="h-6 w-6 text-primary" />
-                    </div>
-                    <h3
-                      className={cn(
-                        "text-2xl font-bold text-foreground",
-                        isRTL ? "font-arabic" : "font-english"
-                      )}>
-                      {current.whoTitle}
-                    </h3>
-                  </div>
-                  <p
-                    className={cn(
-                      "text-lg text-foreground/80 leading-relaxed",
-                      isRTL ? "font-arabic" : "font-english"
-                    )}>
-                    {current.whoDescription}
-                  </p>
-                </div>
-                <div className="w-32 h-32 bg-primary/5 rounded-full flex items-center justify-center">
-                  <div className="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center">
-                    <Globe className="h-10 w-10 text-primary" />
-                  </div>
-                </div>
               </div>
             </CardContent>
           </Card>

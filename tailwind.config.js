@@ -125,15 +125,50 @@ export default {
             boxShadow: "0 0 40px hsl(var(--primary) / 0.6)",
           },
         },
+        scroll: {
+          "0%": {
+            transform: "translateX(0)",
+          },
+          "100%": {
+            transform: "translateX(-50%)",
+          },
+        },
+        "scroll-slow": {
+          "0%": {
+            transform: "translateX(0)",
+          },
+          "100%": {
+            transform: "translateX(-50%)",
+          },
+        },
+        "scroll-infinite": {
+          "0%": {
+            transform: "translateX(0%)",
+          },
+          "100%": {
+            transform: "translateX(-50%)",
+          },
+        },
+        "scroll-infinite-rtl": {
+          "0%": {
+            transform: "translateX(0%)",
+          },
+          "100%": {
+            transform: "translateX(50%)",
+          },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
         "count-up": "count-up 0.6s ease-out",
         "pulse-glow": "pulse-glow 2s ease-in-out infinite",
+        scroll: "scroll 30s linear infinite",
+        "scroll-slow": "scroll-slow 40s linear infinite",
+        "scroll-infinite": "scroll-infinite 40s linear infinite",
+        "scroll-infinite-rtl": "scroll-infinite-rtl 40s linear infinite",
       },
     },
   },
   plugins: [require("tailwindcss-animate")],
 };
-

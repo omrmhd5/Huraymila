@@ -77,7 +77,7 @@ const About = () => {
         "إنشاء شبكة من الشركاء المحليين والدوليين",
         "تحقيق الاستدامة البيئية في جميع مشاريعنا",
         "تطوير برامج تدريبية متخصصة للعاملين في القطاع الصحي",
-        "إنشاء نظام متكامل لرصد وتقييم المبادرات الصحية",
+        "إنشاء نظام متكامل لرصد وتقييم المبادرات",
       ],
       stats: [
         { value: "2025", label: "سنة التأسيس", icon: Award },
@@ -87,7 +87,7 @@ const About = () => {
       ],
       features: [
         {
-          title: "المبادرات الصحية",
+          title: "المبادرات",
           description: "برامج متنوعة لتعزيز الصحة البدنية والنفسية والاجتماعية",
           icon: Heart,
           color: "bg-red-500",
@@ -110,59 +110,6 @@ const About = () => {
           icon: HandHeart,
           color: "bg-purple-500",
         },
-      ],
-      team: "فريقنا",
-      teamDescription:
-        "نحن فريق من المتخصصين في الصحة العامة والتنمية المجتمعية",
-      teamMembers: [
-        {
-          name: "د. أحمد محمد الصالح",
-          nameEn: "Dr. Ahmed Mohammed Al-Saleh",
-          position: "مدير المبادرة",
-          positionEn: "Initiative Director",
-          specialty: "الصحة العامة",
-          specialtyEn: "Public Health",
-          experience: "15 سنة",
-          experienceEn: "15 years",
-          image: "/assets/team-1.jpg",
-        },
-        {
-          name: "د. فاطمة الزهراني",
-          nameEn: "Dr. Fatima Al-Zahrani",
-          position: "مديرة البرامج الصحية",
-          positionEn: "Health Programs Director",
-          specialty: "الطب الوقائي",
-          specialtyEn: "Preventive Medicine",
-          experience: "12 سنة",
-          experienceEn: "12 years",
-          image: "/assets/team-2.jpg",
-        },
-        {
-          name: "م. سارة العتيبي",
-          nameEn: "Eng. Sara Al-Otaibi",
-          position: "مديرة المشاريع البيئية",
-          positionEn: "Environmental Projects Director",
-          specialty: "الهندسة البيئية",
-          specialtyEn: "Environmental Engineering",
-          experience: "10 سنوات",
-          experienceEn: "10 years",
-          image: "/assets/team-3.jpg",
-        },
-      ],
-      achievements: "إنجازاتنا",
-      achievementsList: [
-        "تحسين مؤشرات الصحة العامة بنسبة 25%",
-        "زراعة أكثر من 1000 شجرة في المدينة",
-        "توعية أكثر من 5000 مواطن",
-        "إنشاء 15 حديقة مجتمعية",
-        "تطوير 10 مسارات للمشي الصحي",
-      ],
-      achievementsListEn: [
-        "Improved public health indicators by 25%",
-        "Planted more than 1000 trees in the city",
-        "Educated more than 5000 citizens",
-        "Created 15 community gardens",
-        "Developed 10 healthy walking paths",
       ],
       contact: "تواصل معنا",
       contactDescription: "نحن هنا لخدمتكم ومساعدتكم في أي وقت",
@@ -240,59 +187,6 @@ const About = () => {
           icon: HandHeart,
           color: "bg-purple-500",
         },
-      ],
-      team: "Our Team",
-      teamDescription:
-        "We are a team of specialists in public health and community development",
-      teamMembers: [
-        {
-          name: "Dr. Ahmed Mohammed Al-Saleh",
-          nameEn: "Dr. Ahmed Mohammed Al-Saleh",
-          position: "Initiative Director",
-          positionEn: "Initiative Director",
-          specialty: "Public Health",
-          specialtyEn: "Public Health",
-          experience: "15 years",
-          experienceEn: "15 years",
-          image: "/assets/team-1.jpg",
-        },
-        {
-          name: "Dr. Fatima Al-Zahrani",
-          nameEn: "Dr. Fatima Al-Zahrani",
-          position: "Health Programs Director",
-          positionEn: "Health Programs Director",
-          specialty: "Preventive Medicine",
-          specialtyEn: "Preventive Medicine",
-          experience: "12 years",
-          experienceEn: "12 years",
-          image: "/assets/team-2.jpg",
-        },
-        {
-          name: "Eng. Sara Al-Otaibi",
-          nameEn: "Eng. Sara Al-Otaibi",
-          position: "Environmental Projects Director",
-          positionEn: "Environmental Projects Director",
-          specialty: "Environmental Engineering",
-          specialtyEn: "Environmental Engineering",
-          experience: "10 years",
-          experienceEn: "10 years",
-          image: "/assets/team-3.jpg",
-        },
-      ],
-      achievements: "Our Achievements",
-      achievementsList: [
-        "Improved public health indicators by 25%",
-        "Planted more than 1000 trees in the city",
-        "Educated more than 5000 citizens",
-        "Created 15 community gardens",
-        "Developed 10 healthy walking paths",
-      ],
-      achievementsListEn: [
-        "Improved public health indicators by 25%",
-        "Planted more than 1000 trees in the city",
-        "Educated more than 5000 citizens",
-        "Created 15 community gardens",
-        "Developed 10 healthy walking paths",
       ],
       contact: "Contact Us",
       contactDescription: "We are here to serve you and help you at any time",
@@ -509,111 +403,6 @@ const About = () => {
                   </Card>
                 );
               })}
-            </StaggeredContainer>
-          </div>
-        </section>
-      </AnimatedSection>
-
-      {/* Team */}
-      <AnimatedSection animation="fadeInUp" delay={800}>
-        <section className="py-20 bg-background">
-          <div className="container mx-auto px-4">
-            <AnimatedSection animation="fadeInDown" delay={1000}>
-              <div className="text-center mb-16">
-                <h2
-                  className={`text-3xl font-bold text-foreground mb-4 ${
-                    isRTL ? "font-arabic" : "font-sans"
-                  }`}>
-                  {current.team}
-                </h2>
-                <p
-                  className={`text-lg text-muted-foreground ${
-                    isRTL ? "font-arabic" : "font-sans"
-                  }`}>
-                  {current.teamDescription}
-                </p>
-              </div>
-            </AnimatedSection>
-            <StaggeredContainer
-              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
-              staggerDelay={200}
-              animation="fadeInUp">
-              {current.teamMembers.map((member, index) => (
-                <Card
-                  key={index}
-                  className="text-center hover:shadow-lg transition-all duration-300 hover:-translate-y-1 hover:scale-105">
-                  <CardContent className="p-6">
-                    <div className="w-24 h-24 bg-muted rounded-full flex items-center justify-center mx-auto mb-4">
-                      <Users className="w-12 h-12 text-muted-foreground" />
-                    </div>
-                    <h3
-                      className={`text-xl font-semibold text-foreground mb-2 ${
-                        isRTL ? "font-arabic" : "font-sans"
-                      }`}>
-                      {isRTL ? member.name : member.nameEn}
-                    </h3>
-                    <p
-                      className={`text-primary font-medium mb-2 ${
-                        isRTL ? "font-arabic" : "font-sans"
-                      }`}>
-                      {isRTL ? member.position : member.positionEn}
-                    </p>
-                    <p
-                      className={`text-sm text-muted-foreground mb-2 ${
-                        isRTL ? "font-arabic" : "font-sans"
-                      }`}>
-                      {isRTL ? member.specialty : member.specialtyEn}
-                    </p>
-                    <p
-                      className={`text-xs text-muted-foreground ${
-                        isRTL ? "font-arabic" : "font-sans"
-                      }`}>
-                      {isRTL ? member.experience : member.experienceEn}{" "}
-                      {language === "ar" ? "خبرة" : "experience"}
-                    </p>
-                  </CardContent>
-                </Card>
-              ))}
-            </StaggeredContainer>
-          </div>
-        </section>
-      </AnimatedSection>
-
-      {/* Achievements */}
-      <AnimatedSection animation="fadeInUp" delay={1000}>
-        <section className="py-20 bg-muted/30">
-          <div className="container mx-auto px-4">
-            <AnimatedSection animation="fadeInDown" delay={1200}>
-              <div className="text-center mb-16">
-                <h2
-                  className={`text-3xl font-bold text-foreground mb-4 ${
-                    isRTL ? "font-arabic" : "font-sans"
-                  }`}>
-                  {current.achievements}
-                </h2>
-              </div>
-            </AnimatedSection>
-            <StaggeredContainer
-              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
-              staggerDelay={100}
-              animation="fadeInLeft">
-              {current.achievementsList.map((achievement, index) => (
-                <Card
-                  key={index}
-                  className="hover:shadow-lg transition-all duration-300 hover:-translate-y-1 hover:scale-105">
-                  <CardContent className="p-6">
-                    <div className="flex items-start gap-3">
-                      <CheckCircle className="w-6 h-6 text-green-500 mt-1" />
-                      <p
-                        className={`text-foreground ${
-                          isRTL ? "font-arabic" : "font-sans"
-                        }`}>
-                        {achievement}
-                      </p>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
             </StaggeredContainer>
           </div>
         </section>
