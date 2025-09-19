@@ -36,7 +36,8 @@ const PartnersSection = () => {
   const content = {
     ar: {
       title: "شبكة التكامل المجتمعي",
-      subtitle: "المجتمع والمتطوعون في المركز، والجهات الشريكة تعمل معهم ولهم",
+      subtitle:
+        "جودة الحياة تتحقق بتكامل المجتمع والجهات في تقديم الخدمات وتطويرها.",
       centerEntity: {
         name: "المجتمع والمتطوعون",
         description: "الركيزة الأساسية لكل المبادرات",
@@ -44,12 +45,6 @@ const PartnersSection = () => {
         stats: "500+ متطوع نشط",
       },
       connections: [
-        {
-          name: "رؤية المملكة 2030",
-          role: "الرؤية الاستراتيجية",
-          logo: "/assets/logos/رؤية المملكة 2030.png",
-          flow: "يقدم: التوجيه الاستراتيجي\nيستفيد: تقارير التقدم",
-        },
         {
           name: "وزارة الصحة",
           role: "خدمات صحية",
@@ -113,7 +108,7 @@ const PartnersSection = () => {
         {
           name: "الشرطة",
           role: "أمن عام",
-          logo: "/assets/logos/الشرطة.jpg",
+          logo: "/assets/logos/الشرطة.png",
           flow: "يقدم: أمن وحماية\nيستفيد: بلاغات المواطنين",
         },
         {
@@ -157,7 +152,7 @@ const PartnersSection = () => {
     en: {
       title: "Community Integration Network",
       subtitle:
-        "Community and volunteers at the center, with partner organizations working with and for them",
+        "Each organization provides services to the community while benefiting from citizen data and feedback to improve performance",
       centerEntity: {
         name: "Community & Volunteers",
         description: "The foundation of all initiatives",
@@ -165,12 +160,6 @@ const PartnersSection = () => {
         stats: "500+ active volunteers",
       },
       connections: [
-        {
-          name: "Saudi Vision 2030",
-          role: "Strategic Vision",
-          logo: "/assets/logos/رؤية المملكة 2030.png",
-          flow: "Provides: Strategic guidance\nReceives: Progress reports",
-        },
         {
           name: "Ministry of Health",
           role: "Health services",
@@ -234,7 +223,7 @@ const PartnersSection = () => {
         {
           name: "Police",
           role: "Public security",
-          logo: "/assets/logos/الشرطة.jpg",
+          logo: "/assets/logos/الشرطة.png",
           flow: "Provides: Security & protection\nReceives: Citizen reports",
         },
         {
@@ -341,7 +330,7 @@ const PartnersSection = () => {
                   {current.centerEntity.stats}
                 </div>
                 <div className="text-amber-700 dark:text-amber-300 font-bold text-xs">
-                  {isRTL ? "18 جهة شريكة" : "18 Organizations"}
+                  {isRTL ? "17 جهة شريكة" : "17 Organizations"}
                 </div>
               </div>
             </div>
@@ -349,7 +338,8 @@ const PartnersSection = () => {
 
           {/* Connection Lines - Rendered from Center */}
           {current.connections.map((connection, index) => {
-            const angle = index * 20 * (Math.PI / 180); // 18 positions (360/18 = 20)
+            const angle =
+              index * (360 / current.connections.length) * (Math.PI / 180); // Dynamic angle based on actual count
             const radius = 350;
             return (
               <div key={`line-${index}`}>
@@ -401,7 +391,8 @@ const PartnersSection = () => {
 
           {/* Partner Organizations in Network Pattern */}
           {current.connections.map((connection, index) => {
-            const angle = index * 20 * (Math.PI / 180); // 18 positions (360/18 = 20)
+            const angle =
+              index * (360 / current.connections.length) * (Math.PI / 180); // Dynamic angle based on actual count
             const radius = 350;
             const x = Math.cos(angle) * radius;
             const y = Math.sin(angle) * radius;
@@ -419,7 +410,10 @@ const PartnersSection = () => {
                   const nextIndex =
                     (index + direction + current.connections.length) %
                     current.connections.length;
-                  const nextAngle = nextIndex * 20 * (Math.PI / 180);
+                  const nextAngle =
+                    nextIndex *
+                    (360 / current.connections.length) *
+                    (Math.PI / 180);
                   const nextX = Math.cos(nextAngle) * radius;
                   const nextY = Math.sin(nextAngle) * radius;
                   const connectionLength = Math.sqrt(
@@ -480,24 +474,11 @@ const PartnersSection = () => {
           })}
         </div>
 
-        {/* Collaboration Flow Indicators */}
-        <div className="text-center mb-12">
-          <p
-            className={cn(
-              "text-sm text-muted-foreground max-w-2xl mx-auto",
-              isRTL ? "font-arabic" : "font-english"
-            )}>
-            {isRTL
-              ? "جودة الحياة تتحقق بتكامل المجتمع والجهات في تقديم الخدمات وتطويرها."
-              : "Each organization provides services to the community while benefiting from citizen data and feedback to improve performance"}
-          </p>
-        </div>
-
         {/* Impact Statistics */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
           <Card className="text-center p-6 bg-gradient-to-br from-primary/10 to-primary/5 border-primary/20">
             <Users className="h-8 w-8 text-primary mx-auto mb-3" />
-            <div className="text-3xl font-bold text-primary mb-1">18</div>
+            <div className="text-3xl font-bold text-primary mb-1">17</div>
             <p
               className={cn(
                 "text-sm text-muted-foreground",

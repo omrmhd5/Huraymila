@@ -144,8 +144,8 @@ const HeroSection = () => {
         </div>
 
         {/* Saudi Vision 2030 Logo - Bottom Left */}
-        <div className="absolute bottom-8 left-8 z-20">
-          <div className="w-24 h-24 bg-white/10 backdrop-blur-md rounded-lg p-3 border border-white/20 hover:bg-white/15 transition-all duration-300">
+        <div className="absolute bottom-8 left-16 z-20">
+          <div className="w-36 h-36">
             <img
               src="/assets/logos/رؤية المملكة 2030.png"
               alt="Saudi Vision 2030"
