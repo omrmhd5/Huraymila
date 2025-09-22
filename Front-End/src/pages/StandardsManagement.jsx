@@ -29,6 +29,7 @@ import {
 import { useTheme } from "@/contexts/ThemeContext";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { getAllStandardsByNumber } from "@/lib/api";
+import { mapBackendStandardsToLanguageContext } from "@/lib/utils";
 import {
   Search,
   Filter,
@@ -51,39 +52,19 @@ const StandardsManagement = () => {
   const [standardsList, setStandardsList] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // Helper function to get standard data from language context by number
-  const getStandardFromLanguageContext = (number) => {
-    const standards = t("standards");
-    return standards.find((standard) => standard.number === number);
-  };
-
   // Fetch standards from backend and map to language context
   useEffect(() => {
     const fetchStandards = async () => {
       try {
         setLoading(true);
         const backendStandards = await getAllStandardsByNumber();
+        const languageStandards = t("standards");
 
-        // Map backend data to language context data
-        const mappedStandards = backendStandards.map((backendStandard) => {
-          const languageStandard = getStandardFromLanguageContext(
-            backendStandard.number
-          );
-          return {
-            id: backendStandard.number,
-            number: backendStandard.number,
-            standard:
-              languageStandard?.standard ||
-              `Standard ${backendStandard.number}`,
-            requirements: languageStandard?.requirements || [],
-            assigned_agencies:
-              backendStandard.assigned_agencies?.map(
-                (agency) => agency.name || agency.name_ar
-              ) || [],
-            status: backendStandard.status,
-            progress: backendStandard.progress,
-          };
-        });
+        // Map backend data to language context data using reusable function
+        const mappedStandards = mapBackendStandardsToLanguageContext(
+          backendStandards,
+          languageStandards
+        );
 
         setStandardsList(mappedStandards);
       } catch (error) {

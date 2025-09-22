@@ -3,7 +3,6 @@ import { useParams, useNavigate } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Select,
   SelectContent,
@@ -19,17 +18,18 @@ import {
 } from "@/components/ui/dialog";
 import { useTheme } from "@/contexts/ThemeContext";
 import { useLanguage } from "@/contexts/LanguageContext";
-import Standards from "@/lib/standards";
+import {
+  getAllStandardsByNumber,
+  getSubmissionsByStandardNumber,
+  updateSubmissionStatus,
+} from "@/lib/api";
+import { mapBackendStandardsToLanguageContext } from "@/lib/utils";
 import {
   ArrowLeft,
   FileText,
-  Image,
-  Video,
-  File,
   Download,
   Eye,
   Calendar,
-  User,
   Building,
   CheckCircle,
   Clock,
@@ -43,150 +43,75 @@ const SubmissionsView = () => {
   const navigate = useNavigate();
   const { language } = useTheme();
   const { t } = useLanguage();
-  const [activeTab, setActiveTab] = useState("all");
   const [selectedSubmission, setSelectedSubmission] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [standards, agencyToStandardsMap] = Standards();
+  const [standardsList, setStandardsList] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [selectedAgency, setSelectedAgency] = useState("all");
 
   // Find the standard by ID
-  const standard = standards.records.find((s) => s.id === parseInt(standardId));
+  const standard = standardsList.find((s) => s.id === parseInt(standardId));
 
-  // Mock submissions data - you can replace this with real data
+  // Real submissions data - will be fetched from backend
   const [submissions, setSubmissions] = useState([]);
+
+  // Fetch standards from backend and map to language context
+  useEffect(() => {
+    const fetchStandards = async () => {
+      try {
+        setLoading(true);
+        const backendStandards = await getAllStandardsByNumber();
+        const languageStandards = t("standards");
+
+        // Map backend data to language context data using reusable function
+        const mappedStandards = mapBackendStandardsToLanguageContext(
+          backendStandards,
+          languageStandards
+        );
+
+        setStandardsList(mappedStandards);
+      } catch (error) {
+        console.error("Error fetching standards:", error);
+        setStandardsList([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchStandards();
+  }, [t]);
 
   // Function to determine agency submission status
   const getAgencySubmissionStatus = (standard) => {
-    // Mock submission status for each agency
-    // In real implementation, this would come from your data
+    // Real implementation would fetch submission status from backend
     const agencyStatuses = {};
     standard.assigned_agencies.forEach((agency) => {
-      // Randomly assign submission status for demo purposes
-      // In real app, this would be based on actual submission data
-      agencyStatuses[agency] =
-        Math.random() > 0.5 ? "submitted" : "not_submitted";
+      // Check if agency has submitted for this standard
+      const hasSubmitted = submissions.some(
+        (submission) => submission.agency === agency
+      );
+      agencyStatuses[agency] = hasSubmitted ? "submitted" : "not_submitted";
     });
     return agencyStatuses;
   };
 
   useEffect(() => {
-    if (standard) {
-      // Generate mock submissions for this standard
-      const mockSubmissions = generateMockSubmissions(standard);
-      setSubmissions(mockSubmissions);
-    }
-  }, []);
-
-  const generateMockSubmissions = (standard) => {
-    const submissionTypes = ["text", "pdf", "image", "video"];
-    const agencies = standard.assigned_agencies;
-    const mockSubmissions = [];
-
-    // Generate 3-8 random submissions
-    const numSubmissions = Math.floor(Math.random() * 6) + 3;
-
-    for (let i = 0; i < numSubmissions; i++) {
-      const type =
-        submissionTypes[Math.floor(Math.random() * submissionTypes.length)];
-      const agency = agencies[Math.floor(Math.random() * agencies.length)];
-      // Initialize with random status from the 3 possible statuses
-      const statuses = ["approved", "pending_approval", "rejected"];
-      const status = statuses[Math.floor(Math.random() * statuses.length)];
-
-      mockSubmissions.push({
-        id: i + 1,
-        type,
-        agency,
-        status,
-        submittedAt: new Date(
-          Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000
-        ),
-        fileName: generateFileName(type, i + 1),
-        description: generateDescription(type, standard),
-        content: generateMockContent(type, i + 1),
-      });
-    }
-
-    return mockSubmissions.sort((a, b) => b.submittedAt - a.submittedAt);
-  };
-
-  const generateMockContent = (type, index) => {
-    switch (type) {
-      case "text":
-        return `هذا هو محتوى النص للمعيار رقم ${index}. يحتوي على تفاصيل شاملة حول تنفيذ المعيار والمتطلبات المطلوبة. يتم تقديم هذا التقرير من قبل الجهة المسؤولة لتوثيق التقدم المحرز في تطبيق المعايير الصحية للمدينة.
-
-This is the text content for standard number ${index}. It contains comprehensive details about the implementation of the standard and the required requirements. This report is submitted by the responsible agency to document the progress made in applying the health standards for the city.`;
-
-      case "pdf":
-        return `محتوى PDF للمعيار ${index} - يحتوي على:
-• تقرير مفصل عن التنفيذ
-• صور توضيحية للمشروع
-• جداول البيانات والإحصائيات
-• الملاحظات والتوصيات
-
-PDF content for standard ${index} - contains:
-• Detailed implementation report
-• Illustrative project photos
-• Data tables and statistics
-• Notes and recommendations`;
-
-      case "image":
-        return `https://picsum.photos/800/600?random=${index}`;
-
-      case "video":
-        return `https://sample-videos.com/zip/10/mp4/SampleVideo_1280x720_1mb.mp4`;
-
-      default:
-        return "";
-    }
-  };
-
-  const generateFileName = (type, index) => {
-    const baseNames = {
-      text: [
-        "تقرير_المعيار",
-        "Standard_Report",
-        "تقييم_الأداء",
-        "Performance_Assessment",
-      ],
-      pdf: [
-        "وثيقة_المعيار",
-        "Standard_Document",
-        "تقرير_مفصل",
-        "Detailed_Report",
-      ],
-      image: [
-        "صورة_المعيار",
-        "Standard_Image",
-        "صورة_الموقع",
-        "Location_Photo",
-      ],
-      video: [
-        "فيديو_المعيار",
-        "Standard_Video",
-        "تسجيل_المشروع",
-        "Project_Recording",
-      ],
+    const fetchSubmissions = async () => {
+      if (standard) {
+        try {
+          const submissionsData = await getSubmissionsByStandardNumber(
+            standard.number
+          );
+          setSubmissions(submissionsData);
+        } catch (error) {
+          console.error("Error fetching submissions:", error);
+          setSubmissions([]);
+        }
+      }
     };
 
-    const baseName =
-      baseNames[type][Math.floor(Math.random() * baseNames[type].length)];
-    const extensions = { text: "txt", pdf: "pdf", image: "jpg", video: "mp4" };
-    return `${baseName}_${index}.${extensions[type]}`;
-  };
-
-  const generateDescription = (type, standard) => {
-    const descriptions = {
-      text: `تقرير تنفيذ المعيار ${standard.id}: ${standard.standard.substring(
-        0,
-        50
-      )}...`,
-      pdf: `وثيقة مفصلة حول تطبيق المعيار ${standard.id} مع الأدلة والملاحظات`,
-      image: `صور توضيحية لتنفيذ المعيار ${standard.id} في الموقع`,
-      video: `تسجيل مرئي لعملية تنفيذ المعيار ${standard.id} والنتائج المحققة`,
-    };
-    return descriptions[type];
-  };
+    fetchSubmissions();
+  }, [standard]);
 
   const getStatusBadge = (submission) => {
     const statuses = [
@@ -198,8 +123,8 @@ PDF content for standard ${index} - contains:
         icon: <CheckCircle className="w-3 h-3 mr-1" />,
       },
       {
-        value: "pending_approval",
-        label: t("submissionsView.pendingApproval"),
+        value: "pending",
+        label: t("submissionsView.pending"),
         variant: "secondary",
         className: "bg-yellow-500",
         icon: <Clock className="w-3 h-3 mr-1" />,
@@ -215,7 +140,7 @@ PDF content for standard ${index} - contains:
 
     // Get status from submission or use default
     const status =
-      statuses.find((s) => s.value === submission.status) || statuses[1]; // Default to "pending_approval"
+      statuses.find((s) => s.value === submission.status) || statuses[1]; // Default to "pending"
 
     return (
       <Badge
@@ -227,17 +152,32 @@ PDF content for standard ${index} - contains:
     );
   };
 
-  const toggleSubmissionStatus = (submission) => {
-    // Create a new submissions list with the updated status
-    const updatedSubmissions = submissions.map((s) =>
-      s.id === submission.id
-        ? {
-            ...s,
-            status: s.status === "approved" ? "rejected" : "approved",
-          }
-        : s
-    );
-    setSubmissions(updatedSubmissions);
+  const toggleSubmissionStatus = async (submission) => {
+    try {
+      // Determine new status based on current status
+      let newStatus;
+      if (submission.status === "approved") {
+        newStatus = "rejected";
+      } else if (submission.status === "rejected") {
+        newStatus = "approved";
+      } else {
+        newStatus = "approved"; // Default pending to approved
+      }
+
+      // Update via API
+      const updatedSubmission = await updateSubmissionStatus(
+        submission._id,
+        newStatus
+      );
+
+      // Update local state
+      const updatedSubmissions = submissions.map((s) =>
+        s._id === submission._id ? updatedSubmission : s
+      );
+      setSubmissions(updatedSubmissions);
+    } catch (error) {
+      console.error("Error updating submission status:", error);
+    }
   };
 
   const openModal = (submission) => {
@@ -250,76 +190,99 @@ PDF content for standard ${index} - contains:
     setSelectedSubmission(null);
   };
 
-  const getTypeIcon = (type) => {
-    const icons = {
-      text: <FileText className="w-5 h-5 text-blue-500" />,
-      pdf: <File className="w-5 h-5 text-red-500" />,
-      image: <Image className="w-5 h-5 text-green-500" />,
-      video: <Video className="w-5 h-5 text-purple-500" />,
-    };
-    return icons[type];
-  };
-
   const renderModalContent = () => {
     if (!selectedSubmission) return null;
 
-    switch (selectedSubmission.type) {
-      case "video":
-        return (
-          <div className="w-full max-w-4xl">
-            <video
-              controls
-              autoPlay
-              className="w-full h-auto max-h-[80vh] rounded-lg"
-              src={selectedSubmission.content}>
-              {t("submissionsView.browserNotSupportVideo")}
-            </video>
-          </div>
-        );
-
-      case "image":
-        return (
-          <div className="w-full max-w-4xl">
-            <img
-              src={selectedSubmission.content}
-              alt={selectedSubmission.fileName}
-              className="w-full h-auto max-h-[80vh] object-contain rounded-lg"
-            />
-          </div>
-        );
-
-      case "text":
-      case "pdf":
-        return (
-          <div className="w-full max-w-4xl max-h-[80vh] overflow-y-auto">
-            <div className="prose prose-sm max-w-none">
-              <pre className="whitespace-pre-wrap text-sm leading-relaxed p-4 bg-muted rounded-lg">
-                {selectedSubmission.content}
-              </pre>
+    return (
+      <div className="w-full max-w-4xl max-h-[80vh] overflow-y-auto">
+        <div className="space-y-6">
+          {/* Submission Details */}
+          <div className="space-y-4">
+            <div>
+              <h3 className="text-lg font-semibold mb-2">
+                {t("submissionsView.title")}
+              </h3>
+              <p className="text-sm leading-relaxed bg-muted p-3 rounded">
+                {selectedSubmission.title}
+              </p>
             </div>
-          </div>
-        );
 
-      default:
-        return null;
-    }
+            <div>
+              <h3 className="text-lg font-semibold mb-2">
+                {t("submissionsView.description")}
+              </h3>
+              <p className="text-sm leading-relaxed bg-muted p-3 rounded">
+                {selectedSubmission.description}
+              </p>
+            </div>
+
+            {selectedSubmission.notes && (
+              <div>
+                <h3 className="text-lg font-semibold mb-2">
+                  {t("submissionsView.notes")}
+                </h3>
+                <p className="text-sm leading-relaxed bg-muted p-3 rounded">
+                  {selectedSubmission.notes}
+                </p>
+              </div>
+            )}
+
+            {/* Files */}
+            {selectedSubmission.filesUrls &&
+              selectedSubmission.filesUrls.length > 0 && (
+                <div>
+                  <h3 className="text-lg font-semibold mb-2">
+                    {t("submissionsView.files")} (
+                    {selectedSubmission.filesUrls.length})
+                  </h3>
+                  <div className="space-y-2">
+                    {selectedSubmission.filesUrls.map((url, index) => (
+                      <div
+                        key={index}
+                        className="flex items-center gap-2 p-2 bg-muted rounded">
+                        <FileText className="w-4 h-4 text-muted-foreground" />
+                        <a
+                          href={url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-sm text-blue-600 hover:underline">
+                          {t("submissionsView.file")} {index + 1}
+                        </a>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+          </div>
+        </div>
+      </div>
+    );
   };
 
   const filteredSubmissions = (() => {
     let filtered = submissions;
 
-    // Filter by type (tab)
-    if (activeTab !== "all") {
-      filtered = filtered.filter((sub) => sub.type === activeTab);
-    }
-
     // Filter by agency
     if (selectedAgency !== "all") {
-      filtered = filtered.filter((sub) => sub.agency === selectedAgency);
+      filtered = filtered.filter((sub) => {
+        const agencyName = sub.agency?.name || sub.agency?.name_ar;
+        return agencyName === selectedAgency;
+      });
     }
 
     return filtered;
   })();
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+          <p className="text-muted-foreground">Loading standard...</p>
+        </div>
+      </div>
+    );
+  }
 
   if (!standard) {
     return (
@@ -446,50 +409,6 @@ PDF content for standard ${index} - contains:
         </CardContent>
       </Card>
 
-      {/* Summary Statistics */}
-      <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
-        {[
-          {
-            type: "text",
-            color: "text-blue-600",
-            label: t("submissionsView.textFiles"),
-          },
-          {
-            type: "pdf",
-            color: "text-red-600",
-            label: t("submissionsView.pdfFiles"),
-          },
-          {
-            type: "image",
-            color: "text-green-600",
-            label: t("submissionsView.images"),
-          },
-          {
-            type: "video",
-            color: "text-purple-600",
-            label: t("submissionsView.videos"),
-          },
-          {
-            type: "total",
-            color: "text-foreground",
-            label: t("submissionsView.totalSubmissions"),
-          },
-        ].map(({ type, color, label }) => (
-          <Card key={type}>
-            <CardContent className="p-4">
-              <div className="text-center">
-                <div className={`text-2xl font-bold ${color}`}>
-                  {type === "total"
-                    ? submissions.length
-                    : submissions.filter((s) => s.type === type).length}
-                </div>
-                <p className="text-sm text-muted-foreground">{label}</p>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
-
       {/* Status Summary */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         {[
@@ -499,9 +418,9 @@ PDF content for standard ${index} - contains:
             label: t("submissionsView.approved"),
           },
           {
-            status: "pending_approval",
+            status: "pending",
             color: "text-yellow-600",
-            label: t("submissionsView.pendingApproval"),
+            label: t("submissionsView.pending"),
           },
           {
             status: "rejected",
@@ -546,7 +465,7 @@ PDF content for standard ${index} - contains:
         </Card>
       </div>
 
-      {/* Submissions Tabs */}
+      {/* Submissions List */}
       <Card>
         <CardHeader>
           <CardTitle>{t("submissionsView.submittedMaterials")}</CardTitle>
@@ -581,135 +500,132 @@ PDF content for standard ${index} - contains:
               </div>
             </div>
           </div>
-          <Tabs value={activeTab} onValueChange={setActiveTab}>
-            <TabsList className="grid w-full grid-cols-5">
-              {[
-                {
-                  value: "all",
-                  label: t("submissionsView.all"),
-                  count: submissions.length,
-                },
-                {
-                  value: "text",
-                  label: t("submissionsView.text"),
-                  count: submissions.filter((s) => s.type === "text").length,
-                },
-                {
-                  value: "pdf",
-                  label: t("submissionsView.pdf"),
-                  count: submissions.filter((s) => s.type === "pdf").length,
-                },
-                {
-                  value: "image",
-                  label: t("submissionsView.image"),
-                  count: submissions.filter((s) => s.type === "image").length,
-                },
-                {
-                  value: "video",
-                  label: t("submissionsView.video"),
-                  count: submissions.filter((s) => s.type === "video").length,
-                },
-              ].map(({ value, label, count }) => (
-                <TabsTrigger key={value} value={value}>
-                  {label} ({count})
-                </TabsTrigger>
-              ))}
-            </TabsList>
 
-            <TabsContent value={activeTab} className="mt-6">
-              {filteredSubmissions.length === 0 ? (
-                <div className="text-center py-12">
-                  <FileText className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
-                  <p className="text-muted-foreground">
-                    {t("submissionsView.noSubmissionsOfThisType")}
-                  </p>
-                </div>
-              ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {filteredSubmissions.map((submission) => (
-                    <Card
-                      key={submission.id}
-                      className="hover:shadow-md transition-shadow">
-                      <CardHeader className="pb-3">
-                        <div className="flex items-center justify-between">
-                          {getTypeIcon(submission.type)}
-                          {getStatusBadge(submission)}
-                        </div>
-                        <CardTitle className="text-lg">
-                          {submission.fileName}
-                        </CardTitle>
-                      </CardHeader>
+          {filteredSubmissions.length === 0 ? (
+            <div className="text-center py-12">
+              <FileText className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
+              <p className="text-muted-foreground">
+                {submissions.length === 0
+                  ? t("submissionsView.noSubmissionsYet")
+                  : t("submissionsView.noSubmissionsForAgency")}
+              </p>
+              {submissions.length === 0 && (
+                <p className="text-sm text-muted-foreground mt-2">
+                  {t("submissionsView.submissionsWillAppearHere")}
+                </p>
+              )}
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {filteredSubmissions.map((submission) => (
+                <Card
+                  key={submission.id}
+                  className="hover:shadow-md transition-shadow">
+                  <CardHeader className="pb-3">
+                    <div className="flex items-center justify-between">
+                      <FileText className="w-5 h-5 text-blue-500" />
+                      {getStatusBadge(submission)}
+                    </div>
+                    <CardTitle className="text-lg">
+                      {submission.title ||
+                        t("submissionsView.untitledSubmission")}
+                    </CardTitle>
+                  </CardHeader>
 
-                      <CardContent className="space-y-3">
-                        <p className="text-sm text-muted-foreground">
-                          {submission.description}
-                        </p>
+                  <CardContent className="space-y-3">
+                    <p className="text-sm text-muted-foreground">
+                      {submission.description ||
+                        t("submissionsView.noDescription")}
+                    </p>
 
-                        <div className="space-y-2 text-xs">
+                    {submission.notes && (
+                      <p className="text-xs text-muted-foreground italic">
+                        {submission.notes}
+                      </p>
+                    )}
+
+                    <div className="space-y-2 text-xs">
+                      <div className="flex items-center gap-2">
+                        <Building className="w-3 h-3 text-muted-foreground" />
+                        <span>
+                          {submission.agency?.name ||
+                            submission.agency?.name_ar ||
+                            t("submissionsView.unknownAgency")}
+                        </span>
+                      </div>
+
+                      <div className="flex items-center gap-2">
+                        <Calendar className="w-3 h-3 text-muted-foreground" />
+                        <span>
+                          {submission.createdAt
+                            ? new Date(
+                                submission.createdAt
+                              ).toLocaleDateString()
+                            : t("submissionsView.noDate")}
+                        </span>
+                      </div>
+
+                      {submission.filesUrls &&
+                        submission.filesUrls.length > 0 && (
                           <div className="flex items-center gap-2">
-                            <Building className="w-3 h-3 text-muted-foreground" />
-                            <span>{submission.agency}</span>
-                          </div>
-
-                          <div className="flex items-center gap-2">
-                            <Calendar className="w-3 h-3 text-muted-foreground" />
+                            <FileText className="w-3 h-3 text-muted-foreground" />
                             <span>
-                              {submission.submittedAt.toLocaleDateString()}
+                              {submission.filesUrls.length}{" "}
+                              {t("submissionsView.files")}
                             </span>
                           </div>
-                        </div>
+                        )}
+                    </div>
 
-                        <div className="flex gap-2">
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            className="flex-1"
-                            onClick={() => openModal(submission)}>
-                            <Eye className="w-4 h-4 mr-1" />
-                            {t("submissionsView.view")}
-                          </Button>
-                          <Button size="sm" variant="outline">
-                            <Download className="w-4 h-4" />
-                          </Button>
-                        </div>
+                    <div className="flex gap-2">
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        className="flex-1"
+                        onClick={() => openModal(submission)}>
+                        <Eye className="w-4 h-4 mr-1" />
+                        {t("submissionsView.view")}
+                      </Button>
+                      <Button size="sm" variant="outline">
+                        <Download className="w-4 h-4" />
+                      </Button>
+                    </div>
 
-                        {/* Status Toggle Button */}
-                        <Button
-                          size="sm"
-                          variant={
-                            submission.status === "approved" ||
-                            submission.status === "rejected"
-                              ? "default"
-                              : "outlined"
-                          }
-                          onClick={() => toggleSubmissionStatus(submission)}
-                          className={`w-full ${
-                            submission.status === "rejected" ||
-                            submission.status === "pending_approval"
-                              ? "bg-green-700 dark:bg-green-600 text-green-50 border-green-200 dark:border-green-500 hover:bg-green-500 dark:hover:bg-green-500"
-                              : submission.status === "approved"
-                              ? "bg-red-700 dark:bg-red-600 text-red-50 border-red-200 dark:border-red-500 hover:bg-red-500 dark:hover:bg-red-500"
-                              : "bg-gray-700 dark:bg-gray-600 text-gray-50 border-gray-200 dark:border-gray-500"
-                          }`}>
-                          {submission.status === "approved" ? (
-                            <XCircle className="w-4 h-4 mr-1" />
-                          ) : (
-                            <CheckCircle className="w-4 h-4 mr-1" />
-                          )}
-                          {submission.status === "rejected" ||
-                          submission.status === "pending_approval"
-                            ? t("submissionsView.approve")
-                            : submission.status === "approved"
-                            ? t("submissionsView.reject")
-                            : ""}
-                        </Button>
-                      </CardContent>
-                    </Card>
-                  ))}
-                </div>
-              )}
-            </TabsContent>
-          </Tabs>
+                    {/* Status Toggle Button */}
+                    <Button
+                      size="sm"
+                      variant={
+                        submission.status === "approved" ||
+                        submission.status === "rejected"
+                          ? "default"
+                          : "outlined"
+                      }
+                      onClick={() => toggleSubmissionStatus(submission)}
+                      className={`w-full ${
+                        submission.status === "rejected" ||
+                        submission.status === "pending"
+                          ? "bg-green-700 dark:bg-green-600 text-green-50 border-green-200 dark:border-green-500 hover:bg-green-500 dark:hover:bg-green-500"
+                          : submission.status === "approved"
+                          ? "bg-red-700 dark:bg-red-600 text-red-50 border-red-200 dark:border-red-500 hover:bg-red-500 dark:hover:bg-red-500"
+                          : "bg-gray-700 dark:bg-gray-600 text-gray-50 border-gray-200 dark:border-gray-500"
+                      }`}>
+                      {submission.status === "approved" ? (
+                        <XCircle className="w-4 h-4 mr-1" />
+                      ) : (
+                        <CheckCircle className="w-4 h-4 mr-1" />
+                      )}
+                      {submission.status === "rejected" ||
+                      submission.status === "pending"
+                        ? t("submissionsView.approve")
+                        : submission.status === "approved"
+                        ? t("submissionsView.reject")
+                        : ""}
+                    </Button>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          )}
         </CardContent>
       </Card>
 
@@ -719,8 +635,8 @@ PDF content for standard ${index} - contains:
           <DialogHeader>
             <div className="flex items-center justify-between">
               <DialogTitle className="flex items-center gap-2">
-                {getTypeIcon(selectedSubmission?.type)}
-                {selectedSubmission?.fileName}
+                <FileText className="w-5 h-5" />
+                {selectedSubmission?.title}
               </DialogTitle>
               <Button
                 variant="ghost"

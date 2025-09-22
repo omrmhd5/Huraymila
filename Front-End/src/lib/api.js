@@ -1,9 +1,9 @@
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
 // Get all standards from backend
 export const getAllStandardsByNumber = async () => {
   try {
-    const response = await fetch(
-      `${import.meta.env.VITE_API_BASE_URL}/standards`
-    );
+    const response = await fetch(`${API_BASE_URL}/standards`);
     if (!response.ok) {
       throw new Error("Failed to fetch standards");
     }
@@ -11,6 +11,47 @@ export const getAllStandardsByNumber = async () => {
     return standards.data; // Returns array of standards with number, status, progress, assigned_agencies
   } catch (error) {
     console.error("Error fetching standards:", error);
+    throw error;
+  }
+};
+
+// Get submissions by standard number
+export const getSubmissionsByStandardNumber = async (standardNumber) => {
+  try {
+    const response = await fetch(
+      `${API_BASE_URL}/submissions/standard/${standardNumber}`
+    );
+    if (!response.ok) {
+      throw new Error("Failed to fetch submissions");
+    }
+    const submissions = await response.json();
+    return submissions.data; // Returns array of submissions
+  } catch (error) {
+    console.error("Error fetching submissions:", error);
+    throw error;
+  }
+};
+
+// Update submission status
+export const updateSubmissionStatus = async (submissionId, status) => {
+  try {
+    const response = await fetch(
+      `${API_BASE_URL}/submissions/${submissionId}/status`,
+      {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ status }),
+      }
+    );
+    if (!response.ok) {
+      throw new Error("Failed to update submission status");
+    }
+    const submission = await response.json();
+    return submission.data; // Returns updated submission
+  } catch (error) {
+    console.error("Error updating submission status:", error);
     throw error;
   }
 };
