@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -28,7 +28,7 @@ import {
 } from "@/components/ui/dialog";
 import { useTheme } from "@/contexts/ThemeContext";
 import { useLanguage } from "@/contexts/LanguageContext";
-import Standards from "@/lib/standards";
+import { getAllStandardsByNumber } from "@/lib/api";
 import {
   Search,
   Filter,
@@ -48,8 +48,54 @@ const StandardsManagement = () => {
 
   const [selectedStandard, setSelectedStandard] = useState(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [standards] = Standards();
-  const [standardsList, setStandardsList] = useState(standards.records);
+  const [standardsList, setStandardsList] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  // Helper function to get standard data from language context by number
+  const getStandardFromLanguageContext = (number) => {
+    const standards = t("standards");
+    return standards.find((standard) => standard.number === number);
+  };
+
+  // Fetch standards from backend and map to language context
+  useEffect(() => {
+    const fetchStandards = async () => {
+      try {
+        setLoading(true);
+        const backendStandards = await getAllStandardsByNumber();
+
+        // Map backend data to language context data
+        const mappedStandards = backendStandards.map((backendStandard) => {
+          const languageStandard = getStandardFromLanguageContext(
+            backendStandard.number
+          );
+          return {
+            id: backendStandard.number,
+            number: backendStandard.number,
+            standard:
+              languageStandard?.standard ||
+              `Standard ${backendStandard.number}`,
+            requirements: languageStandard?.requirements || [],
+            assigned_agencies:
+              backendStandard.assigned_agencies?.map(
+                (agency) => agency.name || agency.name_ar
+              ) || [],
+            status: backendStandard.status,
+            progress: backendStandard.progress,
+          };
+        });
+
+        setStandardsList(mappedStandards);
+      } catch (error) {
+        console.error("Error fetching standards:", error);
+        setStandardsList([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchStandards();
+  }, [t]);
 
   // Get unique agencies from standards
   const allAgencies = Array.from(
@@ -156,6 +202,17 @@ const StandardsManagement = () => {
     );
     setStandardsList(updatedStandardsList);
   };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+          <p className="text-muted-foreground">Loading standards...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
