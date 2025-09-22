@@ -4,6 +4,8 @@ const cors = require("cors");
 require("dotenv").config();
 
 const userRoutes = require("./Routes/userRoutes");
+const standardRoutes = require("./Routes/standardRoutes");
+const agencyRoutes = require("./Routes/agencyRoutes");
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -12,13 +14,19 @@ const PORT = process.env.PORT || 5000;
 app.use(cors());
 app.use(express.json());
 
-// Routes
-app.use("/api/users", userRoutes);
+// Create API router
+const apiRouter = express.Router();
+app.use("/api", apiRouter);
 
 // Basic route
 app.get("/", (req, res) => {
   res.json({ message: "Huraymila Backend API is running!" });
 });
+
+// Routes
+apiRouter.use("/users", userRoutes);
+apiRouter.use("/standards", standardRoutes);
+apiRouter.use("/agencies", agencyRoutes);
 
 // MongoDB connection
 mongoose

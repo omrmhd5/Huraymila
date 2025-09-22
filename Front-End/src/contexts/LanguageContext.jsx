@@ -1042,6 +1042,582 @@ export const LanguageProvider = ({ children }) => {
         of: "من",
         needed: "مطلوب",
       },
+
+      standards: [
+        {
+          number: 1,
+          standard:
+            "اختيار ممثلي المجموعة / المتطوعين وتدريبهم على تقييم الاحتياجات وتحديد الأولويات وتحليل البيانات وإعداد المشروع وآليات الرصد والتسجيل والتقارير.",
+          requirements: [
+            "بيان بأسماء المتطوعين",
+            "بيان بالدورات التدريبيه وعددها والتقارير الخاصه بكل دوره",
+          ],
+        },
+        {
+          number: 2,
+          standard:
+            "تم تشكيل لجنة تنسيق المدينة الصحية، وتسجيلها لدى السلطات المحلية باعتبارها منظمة مجتمعية أو منظمة غير حكومية، وتم توجيه الأعضاء بشأن مهامهم ومسؤولياتهم.",
+          requirements: [
+            "قرار تأسيس لجنة التنسيق و أدوار ومهام أعضائها",
+            "بيان الجان فرعية لتنسيق المبادرات الخاصه بالمدينه الصحيه",
+          ],
+        },
+        {
+          number: 3,
+          standard:
+            "ممثلو المجتمع / المتطوعون هم شركاء نشطين في مجال الصحة المحلية والتخطيط والإجراءات الاجتماعية مع ضمان استخدام الرعاية الصحية الأخرى في الخدمات الاجتماعية في المجموعات الخاصة بهم.",
+          requirements: [
+            "ما يفيد بآليات التواصل مع المتطوعين",
+            "تقارير الأنشطه التي قاموا بها في المجالات المختلفه",
+          ],
+        },
+        {
+          number: 4,
+          standard:
+            "إشراف مراقبو لجنة تنسيق المدينة الصحية على المشاريع الاجتماعية والاقتصادية، وسجلات الإنجازات والمُعوقات ويحددون الحلول المحلية للمشكلات المحلية.",
+          requirements: [
+            "بيان بالخطط التشغيلية من قبل المنسقين من مختلف القطاعات",
+            "تقارير الرصد والتقارير الدوريه",
+          ],
+        },
+        {
+          number: 5,
+          standard:
+            "ه تبحث لجنة تنسيق المدينة الصحية عن الموارد وتبني علاقات مع الشركاء المحتملين لمزيد من التنمية في مناطقهم المحلية.",
+          requirements: [
+            "بيان بالشركاء المحليين",
+            "الاتفاقيات المختلفه. مع الشركاء",
+          ],
+        },
+        {
+          number: 6,
+          standard:
+            "تم إنشاء أو التخطيط لمركز اجتماعي أو لاستخدامات مختلفة وفقاً لاحتياجات المجتمع وإجراء التدريب على سبيل المثال: عقد زيارات ميدانيه، تقديمه بمثابة مركز معلومات للمجتمع أو عقد الفعاليات المحلية الثقافية والوطنية والدينية ... الخ).",
+          requirements: [
+            "معلومات عن المركز المجتمعي وامكانياته",
+            "زيارات ميدانيه",
+          ],
+        },
+        {
+          number: 7,
+          standard:
+            "تم وضع وتسجيل المرأة والمجموعات الشبابية كمساهمون في تدابير التنمية المحلية.",
+          requirements: [
+            "بيان بجماعات المرأه والمجموعات الشبابية المساهمه في أنشطه المدينه الصحيه",
+            "تقارير الأنشطه التي تم المشاركه فيها أو تنفيذها",
+          ],
+        },
+        {
+          number: 8,
+          standard:
+            "تم ترشيح أعضاء لجنة تنسيق المدينة الصحية رسمياً من قبل مختلف القطاعات ذات الصلة بالمعايير.",
+          requirements: ["بيان بالمنسقين رسمياً من مختلف القطاعات"],
+        },
+        {
+          number: 9,
+          standard:
+            "تم تشكيل لجنة تنسيق المدينة الصحية تحت قيادة رئيس بلدية أو محافظ، وتضع أعضاءها من ممثلي جميع القطاعات ذات الصلة. ويتم تسجيل محاضر جميع الاجتماعات وإعداد تقارير بها.",
+          requirements: [
+            "صياغة عضوية اللجنة العليا من قبل جميع مديري القطاعات المختلفة",
+          ],
+        },
+        {
+          number: 10,
+          standard:
+            "تم تعيين منسق رسمي لبرنامج المدينة الصحية وتوفير عدد كاف من الموظفين والحيز المادي والمرافق.",
+          requirements: [
+            "قرار تعيين منسق برنامج المدينة الصحية",
+            "زياره مكتب التنسيق للإطلاع علي المكتب وتجهيزاته",
+          ],
+        },
+        {
+          number: 11,
+          standard:
+            "يجتمع أعضاء فريق القطاعات المشتركة مع لجنة تنسيق المدينة الصحية وتقديم المشورة الفنية والدعم للمجتمع.",
+          requirements: ["تقارير الاجتماعات"],
+        },
+        {
+          number: 12,
+          standard:
+            "تم تحديد الشركاء المحتملين والاتصال بهم ويجري العمل على مشروع مشترك واحد على الأقل مع الشركاء في موقع تنفيذ المدينة الصحية.",
+          requirements: [
+            "بيان بشركاء برنامج المدينة الصحية",
+            "بيان بالبرامج المختلفه التي تم تنفيذها من قبل الشركاء في إطار برنامج المدينه الصحيه",
+          ],
+        },
+        {
+          number: 13,
+          standard:
+            "تم تسجل القضايا المالية المتعلقة بأنشطة مشتركة وإعداد تقارير عنها ومشاركتها مع المجتمع من أجل الشفافية.",
+          requirements: [
+            "بيان تعيين منسق مالي لمتابعة جميع الإجراءات المالية ذات الصلة بالمكتب التنفيذي.",
+          ],
+        },
+        {
+          number: 14,
+          standard:
+            "تم توثيق قصص النجاح ونشرها واستخدامها من أجل وضع استراتيجية وأدوات شاملة للدعوة مع الأخذ بعين الاعتبار للثقافة المحلية ويجري تنفيذها من قبل لجنة تنمية المجتمع المحلي.",
+          requirements: ["بيان بقصص النجاح", "خطه الدعاية والإعلان"],
+        },
+        {
+          number: 15,
+          standard:
+            "تم تحديد ذوي الاحتياج في المجتمع وفقاً لمعايير محددة وافق عليها فريق تنسيق المدينة وتعطى الأولوية لهم في توفير القروض المدرة للدخل.",
+          requirements: [
+            "بيان بذوي الاحتياج الذين يمكن أن يستفيدوا من الدعم المالي",
+            "بيان بما تم عمله لدعم محدودي الدخل",
+          ],
+        },
+        {
+          number: 16,
+          standard:
+            "تم عمل روابط بين المهارات المحلية ومراكز التدريب المهني وأنشطة القروض الصغيرة وضمان أن المنطقة تتجه نحو الاكتفاء الذاتي.",
+          requirements: [
+            "بيان بالبرامج التدريبية وأنشطه القروض الصغيره",
+            "بيان بقصص النجاح وبناء الشراكات",
+            "زيارات ميدانيه",
+          ],
+        },
+        {
+          number: 17,
+          standard:
+            "تم تسجيل جميع القضايا المالية ومتابعتها من قبل أمين الشؤون المالية في لجنة تنسيق المدينة الصحية.",
+          requirements: [
+            "سجلات القضايا المالية لتوضيح المتابعه من قبل المنسق المالي للجنة المدينة الصحية.",
+          ],
+        },
+        {
+          number: 18,
+          standard:
+            "تم تسديد القروض على أساس منتظم، وتم وضع آلية متابعة من قبل لجنة تنسيق المدينة الصحية أو النظام المصرفي المحلي في المكان.",
+          requirements: ["بيان بآليات المتابعه"],
+        },
+        {
+          number: 19,
+          standard:
+            "تم فتح حساب مصرفي للجنة تنسيق المدينة الصحية أو مكتب البرنامج وتذهب جميع التفاعلات المالية المتعلقة بالقروض الصغيرة من خلال البنوك ذات الصلة. منسق البرنامج والمجتمع يدركون ذلك جيداً.",
+          requirements: [
+            "بيانات الحساب المصرفي لمكتب تنسيق برنامج المدينة الصحية وشفاف لكافة اللجان.",
+            "الاتفاقيات التي تم التوقيع عليها مع بعض الشركات التجارية لرعاية ودعم المشاريع (إن وجد)",
+          ],
+        },
+        {
+          number: 20,
+          standard:
+            "يتم أخذ ٥ - ١٠ رسوم خدمة من كل قرض مدر للدخل ويتم تحصيلها في حساب منفصل لاستخدامها في أنشطة التنمية الاجتماعية (أي؛ صناديق التنمية الاجتماعية).",
+          requirements: ["بيان بما يفيد (إن وجد)"],
+        },
+        {
+          number: 21,
+          standard:
+            "يضمن ممثلو المجتمع الإيداع لأقساط شهرية في الوقت المناسب من المستفيدين ضمن مجموعاتهم الخاصة والإبقاء على المال المسدد متجدد للأنشطة المستقبلية.",
+          requirements: ["بيان بما يفيد (إن وجد)"],
+        },
+        {
+          number: 22,
+          standard:
+            "يلتحق جميع الأطفال المستحقين (بنات وبنين) في المدرسة ولم ينقطع أي طالب",
+          requirements: ["بيان بما يفيد"],
+        },
+        {
+          number: 23,
+          standard:
+            "يقوم مديرو المدارس بعقد اجتماعات دورية مع لجان التنمية المجتمعية المحلية والآباء وغيرهم من أصحاب المصلحة لتقييم نوعية التعليم والبيئة المدرسية والحالة الصحية للأطفال والعلاقات بين الآباء والأطفال والمعلمين من أجل التغلب على أوجه القصور أو المشاكل القائمة.",
+          requirements: [
+            "محاضر الاجتماعات مع قادة المجتمع المحلي وأولياء الأمور",
+            "بيان بالاحتياجات والمشاكل الرئيسية المتعلقة بالتعليم والمدارس وما تم عمله من تدخلات ومبادرات",
+          ],
+        },
+        {
+          number: 24,
+          standard:
+            "معايير جودة التعليم في مكانها الصحيح في المدارس الواقعة في مواقع البرنامج.",
+          requirements: [
+            "بيان بمعايير الجودة المتعلقة بالتعليم في المدارس في أنحاء المدينه",
+            "بيان بهيئات الاعتماد والمدارس الحاصلة علي الاعتماد في مواقع تنفيذ برنامج المدينة الصحية",
+          ],
+        },
+        {
+          number: 25,
+          standard:
+            "تم تشكيل لجنة فرعية للتعليم في إطار لجنة تنمية المجتمع ويتم مراقبة المدارس بانتظام. تنسق اللجنة الفرعية مع إدارة التعليم المحلية.",
+          requirements: [
+            "زيارات ميدانيه",
+            "قرار تشكيل اللجنة وما تم عمله",
+            "محاضر الاجتماعات مع مكتب تنسيق برنامج المدينة الصحية.",
+          ],
+        },
+        {
+          number: 26,
+          standard:
+            "تم تشجيع فئات الشباب والنساء ليكونوا أعضاء فاعلين في حملة محو الأمية على أساس تطوعي.",
+          requirements: ["ما يفيد التنفيذ", "زيارات ميدانيه"],
+        },
+        {
+          number: 27,
+          standard:
+            "تم تدريب ممثلي المجتمع ومتطوعي الصحة على المسائل الصحية ذات الأولوية والبرامج ذات الصلة بالصحة. وهم ينشطون في مجال تعزيز الصحة والتعليم ويتابعون الإجراءات من خلال اتصال منتظم مع مزودي الرعاية الصحية المحلية.",
+          requirements: [
+            "بيان ببرامج التدريب المستمرة للعاملين في مجال الصحة",
+            "تقارير التنفيذ",
+          ],
+        },
+        {
+          number: 28,
+          standard:
+            "يعمل ممثلو المجتمع ومتطوعو الصحة على تسجيل والإبلاغ عن المواليد والوفيات والإحصاءات الحيوية الأخرى.",
+          requirements: [
+            "تفاصيل نظام تسجيل والإبلاغ عن المواليد والوفيات والإحصاءات الحيوية.",
+          ],
+        },
+        {
+          number: 29,
+          standard:
+            "أنشأت لجنة تنسيق المدينة الصحية، بالتعاون مع مزودي خدمات الرعاية الصحية، نظم الإحالة المستدامة.",
+          requirements: [
+            "تفاصيل نظام الإحالة في القطاع العام وبين القطاعين العام والخاص.",
+          ],
+        },
+        {
+          number: 30,
+          standard:
+            "يتم تدريب المجتمع بصورة نشطة في مشاريع البحوث وإشراكه القائمة على المشاركة المجتمعية.",
+          requirements: ["تفاصيل إجراء البحوث المجتمعية المشتركة ونتائجها"],
+        },
+        {
+          number: 31,
+          standard:
+            "تم تشكيل لجنة فرعية تابعة للجنة تنسيق المدينة الصحية لإدارة والإشراف على خدمات الرعاية الصحية المحلية.",
+          requirements: [
+            "قرار تشكيل اللجنة الفرعية التابعة للجنة تنسيق المدينة الصحية لإدارة والإشراف على خدمات الرعاية الصحية المحلية",
+          ],
+        },
+        {
+          number: 32,
+          standard:
+            "تتوفر جميع الأدوية الأساسية واللقاحات والأدوات الطبية (حسب احتياجات النظام الصحي المحلي) في المرافق الصحية بالمناطق الحضرية.",
+          requirements: [
+            "تفاصيل النظام وآلية تتفيذه لضمان توافر الأدوية الأساسية واللقاحات على أساس مستمر.",
+          ],
+        },
+        {
+          number: 33,
+          standard:
+            "يتم تقييم جودة خدمات الرعاية الصحية، ورضا العملاء بالخدمات الصحية، ومستوى تدريب موظفي الرعاية الصحية، والتفاعلات بين مزودي الرعاية الصحية والمجتمع واتخاذ الإجراءات وفقاً لذلك.",
+          requirements: [
+            "معايير جوده خدمات الرعايه الصحيه",
+            "بيان بأنشطه عمليات المسح الدورية لقياس الجودة ورضا العملاء.",
+            "زيارات ميدانيه",
+          ],
+        },
+        {
+          number: 34,
+          standard:
+            "تتلقى جميع النساء الحوامل الرعاية قبل الولادة في الوقت المناسب (بما في ذلك لقاحات الكزاز). وقد تم إعداد خطة الولادة الآمنة لجميع النساء الحوامل في المرحلة الثالثة من الحمل وتصل جميع النساء إلى ولادة آمنة ونظيفة حيث يتم ذلك بمساعدة قابلات ماهرات.",
+          requirements: ["بيان بما يفيد", "زيارات ميدانيه"],
+        },
+        {
+          number: 35,
+          standard:
+            "تتلقى جميع الأمهات رعاية ما بعد الولادة لمدة ٤٠ يوماً على الأقل بعد الولادة.",
+          requirements: ["بيان بما يفيد"],
+        },
+        {
+          number: 36,
+          standard:
+            "تم تحصين جميع الأطفال تماماً ضد الأمراض التي يمكن الوقاية منها باللقاحات بعمر سنة واحدة.",
+          requirements: ["بيان بما يفيد"],
+        },
+        {
+          number: 37,
+          standard:
+            "تم تسجيل جميع الأطفال حديثي الولادة من قبل ممثلي المجتمع ومتطوعي الصحة وتم تلقيحهم عند الولادة وخلال السنة الأولى من الحياة وفقاً لجدول برنامج التحصين الوطني الموسع (برنامج التحصين الموسع).",
+          requirements: ["بيان بما يفيد"],
+        },
+        {
+          number: 38,
+          standard:
+            "لجنة تنسيق المدينة الصحية وممثلو المجتمع ومتطوعو الصحة يشاركون بنشاط في حملات شلل الأطفال في حال تم إجراء أي منها.",
+          requirements: ["بيان بما يفيد"],
+        },
+        {
+          number: 39,
+          standard:
+            "لجميع الأطفال تحت سن 5 سنوات حق الحصول على خدمات الرعاية الصحية المنتظمة (بما في ذلك مراقبة النمو ونظام متابعة الأداء في المكان.",
+          requirements: ["بيان بما يفيد", "زيارات ميدانيه"],
+        },
+        {
+          number: 40,
+          standard:
+            "تم تحديد الأطفال المصابين بسوء التغذية والأمهات اللاتي يعانين من نقص فيتامين ألف وأنيميا نقص الحديد وتلقي العلاج والمتابعة والرعاية.",
+          requirements: ["بيان بما يفيد"],
+        },
+        {
+          number: 41,
+          standard:
+            "ويجري تنفيذ استراتيجية المعالجة قصيرة الأمد لمرض السل باستخدام ممثلي المجتمع المدربين أو المتطوعين كشركاء في العلاج.",
+          requirements: ["بيان بما يفيد"],
+        },
+        {
+          number: 42,
+          standard:
+            "يجري تنفيذ برنامج مكافحة الملاريا إذا لزم الأمر بمشاركة نشطة من ممثلي المجتمع أو المتطوعين وقيادة لجان تنمية المجتمع المحلي.",
+          requirements: ["بيان بما يفيد"],
+        },
+        {
+          number: 43,
+          standard:
+            "يقوم ممثلو المجتمع ومتطوعو الصحة بالإبلاغ عن جميع الحالات السل والملاريا المشتبه فيها وفيروس نقص المناعة البشرية وغيره من الأمراض المعدية إلى أقرب مرفق صحي وتنفيذ أنشطة المتابعة وفقاً للتدريب الذي تلقوه من العاملين في المرافق الصحية وضمان أن يشارك أفراد الأسرة في الأنشطة البدنية الصحية الأسبوعية.",
+          requirements: ["بيان بما يفيد"],
+        },
+        {
+          number: 44,
+          standard:
+            "تم إبالغ المجتمعات حول طرق انتقال فيروس نقص المناعة البشرية / اإليدز وتدابير الوقاية منها. ويتم دعم جميع الحاالت التي تم تشخيصها من فيروس نقص المناعة البشرية / اإليدز من قبل ممثلي المجتمع ومتطوعي الصحية.",
+          requirements: ["بيان بأنشطه التوعيه"],
+        },
+        {
+          number: 45,
+          standard:
+            "يتم تحديد جميع المرضى من ذوي األمراض المزمنة (مثل المصابين بداء السكري وارتفاع ضغط الدم وأمراض القلب واألوعية الدموية والسرطان واضطرابات الكلى ... الخ)، وتم وضع خطة لمتابعتهم في مكان ممثلي المجتمع ومتطوعي الصحة، الذين يضمنون بأن يتلقى جميع األفراد الفحوصات الطبية والدواء في الوقت المناسب.",
+          requirements: [
+            "تفاصيل برنامج الفحص للكشف المبكر عن األمراض غير المعدية",
+            "تفاصيل برامج الرعاية الصحية لكبار السن",
+          ],
+        },
+        {
+          number: 46,
+          standard:
+            "تم تحديد جميع حاالت االضطرابات النفسية وتعاطي مواد اإلدمان وتلقي الدعم والمساعدة من المجتمع. وتم تنفيذ األنشطة التعليمية في المجتمع للحد من وصمة العار.",
+          requirements: [
+            "بيان بما يفيد مثل الخط الساخن لتقديم المساعدة الالزمة وإحالة قضايا تعاطي المخدرات.",
+            "الرعاية االجتماعية للحد من االدمان",
+          ],
+        },
+        {
+          number: 47,
+          standard:
+            "تم تحديد كافة األشخاص من ذوي اإلعاقات الجسدية وتلقي الدعم المجتمعي لضمان قدرتهم على كسب العيش.",
+          requirements: [
+            "بيان تلقي الدعم لذوي اإلعاقة العقلية والبدنية",
+            "أنشطه التدريب المهني ة توفير فرص العمل ذات الصلة لهم.",
+          ],
+        },
+        {
+          number: 48,
+          standard:
+            "تم تحديد المناطق الخطرة في مواقع البرنامج وتم اتخاذ اإلجراءات / التدابير المناسبة للحد من الوفيات واإلصابات واإلعاقات الناجمة عن الحوادث.",
+          requirements: ["بيان بما يفيد"],
+        },
+        {
+          number: 49,
+          standard:
+            "منطقة تنفيذ البرنامج خالية من الجريمة والعنف والتمييز ضد النساء والرجال والمجموعات العرقية.",
+          requirements: ["بيان بما يفيد"],
+        },
+        {
+          number: 50,
+          standard:
+            "يتبنى المجتمع ويعزز تنمية الطفولة المبكرة والدور والمجتمعات الصديقة للطفل.",
+          requirements: [
+            "بيان بالمبادرات واألنشطة في هذا الصدد والمبادرات والبرامج المختلفة من قبل الشؤون االجتماعية.",
+          ],
+        },
+        {
+          number: 51,
+          standard:
+            "العمل على مبادرة المدرسة الصحية في جميع المدارس بمواقع تنفيذ البرنامج.",
+          requirements: [
+            "خطة السنوية من قبل دائرة الصحة المدرسية في وزارة الصحة.",
+            "برامج توفير األطعمة الصحية مع حساب السعرات الحرارية في مقاصف المدارس.",
+            "برامج الصحه المدرسيه",
+            "زيارات ميدانيه",
+          ],
+        },
+        {
+          number: 52,
+          standard:
+            "إجراءات الصحة والسالمة المهنية (وخاصة الوقاية من الحوادث) هي المعمول بها في جميع أماكن العمل وتسهيل وتسريع وصول العمال إلى معدات وخدمات اإلسعافات األولية.",
+          requirements: ["بيان بما يفيد", "زيارات ميدانيه"],
+        },
+        {
+          number: 53,
+          standard:
+            "موقع تنفيذ البرنامج نظيف وفيه ما يكفي من المساحات الخضراء.",
+          requirements: ["زيارات ميدانيه"],
+        },
+        {
+          number: 54,
+          standard:
+            "تم وضع نظام فعال إلدارة النفايات الصلبة على مستوى المجتمع في موقع تنفيذ البرنامج.",
+          requirements: ["بيان بما يفيد", "زيارات ميدانيه"],
+        },
+        {
+          number: 55,
+          standard:
+            "تم تعيين وحماية مصادر المياه. تم وضع خطة لمعالجة المياه، ولجنة تنسيق المدينة الصحية على علم بذلك.",
+          requirements: ["بيان بما يفيد"],
+        },
+        {
+          number: 56,
+          standard:
+            "تحصل جميع األسر على وصول مستدام إلى مياه شرب آمنة وخدمات صرف صحي أساسية. وهم يدركون المخاطر المرتبطة بالمياه غير اآلمنة ومعرفة كيفية تنقية المياه باستخدام ما هو متاح محلياً.",
+          requirements: ["بيان بما يفيد"],
+        },
+        {
+          number: 57,
+          standard:
+            "تم تدريب ممثلي المجتمع / المتطوعين في الحفاظ على أوضاع بيئية / صحية سليمة والتدابير ذات الصلة في متناول الجمهور مثل أماكن السوق الصحية والمستشفيات الصحية، والمدارس الصحية ... الخ.",
+          requirements: ["بيان بما يفيد", "زيارات ميدانيه للمبادرات ذات الصله"],
+        },
+        {
+          number: 58,
+          standard:
+            "يشارك المجتمع في مجال سالمة األغذية وتتم مراقبة جميع محالت/أسواق األغذية الصحية من قبل دوائر وطنية للسالمة الغذائية.",
+          requirements: ["بيان بما يفيد", "زيارات ميدانيه للمبادرات ذات الصله"],
+        },
+        {
+          number: 59,
+          standard:
+            "أسواق الغذاء الصحي سهلة الوصول لبيع المنتجات األساسية مثل الملح المعالج باليود.",
+          requirements: ["بيان بما يفيد", "زيارات ميدانيه"],
+        },
+        {
+          number: 60,
+          standard:
+            "يحظر التدخين في األماكن المغلقة واألماكن العامة، وقد تم وضع واعتماد إنشاء مدينة خالية من التدخين.",
+          requirements: [
+            "بيان بقرارات/سياسات عدم التدخين في األماكن العامة وتحديد االنتهاكات.",
+            "بيان بآليات التنفيذ واألنشطه ذات الصله",
+            "زيارات ميدانيه",
+          ],
+        },
+        {
+          number: 61,
+          standard:
+            "تم تأسيس مركز إلدارة نوعية على األساس المجتمعي في موقع تنفيذ برنامج المدينة الصحية (يشمل البلدية) لضمان أن يتم الرصد المنظم لتلوث الهواء. يدرك المجتمع مخاطر تلوث الهواء.",
+          requirements: ["خطة رصد تلوث الهواء", "بيان باألنشطه ذات الصله"],
+        },
+        {
+          number: 62,
+          standard: "يقوم مخططو المدن بتنفيذ التدابير التي تمنع تلوث الهواء.",
+          requirements: ["بيان بالقرارات الداعمه"],
+        },
+        {
+          number: 63,
+          standard:
+            "يجري تقييم ألثر مخططات تقسيم المناطق الحضرية واإلسكان على تلوث الهواء قبل اعتمادها. تضم مشاريع اإلسكان هذه، على سبيل المثال، وصول األسر إلى وقود نظيف وتهوية وتحسين مواقد المطبخ وأجهزة التدفئة.",
+          requirements: ["بيان بالقرارات الداعمه"],
+        },
+        {
+          number: 64,
+          standard:
+            "تم إنشاء مركز المعلومات المجتمعية ويتم تدريب ممثلي المجتمع/المتطوعين وأعضاء الفريق المشترك بين القطاعات لجمع المعلومات األساسية وتحليلها واستخدامها لتخطيط التنمية المحلية.",
+          requirements: [
+            "بيان بالمركز المسئول عن اإلحصاء والمعلومات",
+            "آليه جمع البيانات والتحليل والنشر الستخدامها في التخطيط على المستوى المحلي.",
+          ],
+        },
+        {
+          number: 65,
+          standard:
+            "يتم عرض المعلومات الرئيسية في مركز المعلومات المجتمعية أو المكتب المحلي لبرنامج المدينة الصحية ومشاركتها مع المجتمع والقطاعات/ الشركاء اآلخرين المعنيين.",
+          requirements: [
+            "آليه توزيع البيانات لإلستفاده منها في التخطيط ودعم القرار بالقطاعات المختلفة.",
+          ],
+        },
+        {
+          number: 66,
+          standard:
+            "تم استخدام المعلومات األساسية ألغراض الدعوة والرصد من قبل لجنة تنمية المجتمع المحلي وأصحاب المصلحة اآلخرين.",
+          requirements: [
+            "آليه التواصل بين المركز ومختلف القطاعات لتبادل اإلحصاءات الالزمة لمشاريع التنمية.",
+          ],
+        },
+        {
+          number: 67,
+          standard:
+            "أشكال ونتائج المسح األساسي والمعلومات بشأن المشاريع الحالية موثقة توثيقا ً جيداً حتى اآلن ومتوفرة لدى لجنة تنمية المجتمع المحلي ومركز تنسيق المدينة الصحية.",
+          requirements: ["التقارير ذات الصلة"],
+        },
+        {
+          number: 68,
+          standard:
+            "تم إنشاء ملف تعريف للمدينة، ويتم تحديثه واستخدامه بانتظام ألغراض التخطيط والرصد.",
+          requirements: ["صوره من الملف التعريفي للمدينه"],
+        },
+        {
+          number: 69,
+          standard:
+            "تم تقييم المهارات المحلية، والمصالح والتكنولوجيات المناسبة وتعزيزها.",
+          requirements: ["التقارير ذات الصله."],
+        },
+        {
+          number: 70,
+          standard:
+            "أنشئت مراكز للتدريب على المهارات المرتبطة بالسوق المحلية للذكور واإلناث، واعتمادها من قبل فرق مشترك بين القطاعات.",
+          requirements: ["بيان بما يفيد", "زيارات ميدانيه"],
+        },
+        {
+          number: 71,
+          standard:
+            "لجنة تنسيق المدينة الصحية تعطي األولوية لتوفير قروض صغيرة لطالب مراكز التدريب المهني.",
+          requirements: ["بيان بما يفيد"],
+        },
+        {
+          number: 72,
+          standard:
+            "مراكز التدريب المهني قائمة على التمويل الذاتي واإلدارة الذاتية من قبل المجتمع أو المنظمات المحلية غير الحكومية.",
+          requirements: ["بيان بما يفيد"],
+        },
+        {
+          number: 73,
+          standard:
+            "أنشئت مراكز للتدريب على الحاسوب ودروس اللغة والمرافق الرياضية، وغيرها، يتم إدارتها ذاتيا من قبل المجتمع والمنظمات المحلية غير الحكومية.",
+          requirements: ["بيان بما يفيد", "زيارات ميدانيه"],
+        },
+        {
+          number: 74,
+          standard: "تم تحديد الناس المبتكرين ودعمهم وتشجيعهم.",
+          requirements: ["بيان بقصص النجاح"],
+        },
+        {
+          number: 75,
+          standard:
+            "تم تحديد حاالت الطوارئ المعروفة التي وقعت في السنوات الـ 20 الماضية وتم توثيق عدد الضحايا والبنية التحتية المحلية التي تضررت.",
+          requirements: ["ملفات التوثيق"],
+        },
+        {
+          number: 76,
+          standard:
+            "تشكلت لجنة فرعية للتأهب لحاالت الطوارئ واالستجابة لها، وتم توجيهها وتم تعيين مهام األعضاء.",
+          requirements: ["بيان بتشكيل اللجنة وعضويتها"],
+        },
+        {
+          number: 77,
+          standard:
+            "تم تطوير ملف تعريف للمدينة وتم االحتفاظ بنسخة من هذا الملف خارج منطقة تنفيذ البرنامج.",
+          requirements: ["الملف المطور"],
+        },
+        {
+          number: 78,
+          standard:
+            "تم تدريب ممثلي المجتمع ومتطوعي الصحة على خطط التأهب لحاالت الطوارئ، وكيفية التعامل مع حاالت الطوارئ وتقديم اإلسعافات األولية متى وأينما طلب.",
+          requirements: ["تقارير الدورات التدريبيه"],
+        },
+        {
+          number: 79,
+          standard:
+            "تم إعداد خطة طوارئ ومشاركتها مع السلطات المحلية المختصة لتعبئة الموارد والعمل الالزم. المجتمع على علم بخطة الطوارئ، وماذا يفعل، ومن منهم يقدم التقارير ومن وماذا يفعل أثناء حالة الطوارئ.",
+          requirements: ["بيان بالخطة التفصيليه"],
+        },
+        {
+          number: 80,
+          standard:
+            "تم تحديد الفئات المستضعفة (مثل النساء الحوامل واألشخاص الذين يعانون من إعاقات جسدية والمرضى المزمنين والذين يعانون من سوء التغذية والمسنين واألشخاص الذين يعانون من اضطرابات عقلية، الخ) وتمت مشاركة معلومات الطوارئ هذه مع السلطات المختصة مسبقاً.",
+          requirements: ["نسخه من البيانات"],
+        },
+      ],
     },
 
     en: {
@@ -2126,6 +2702,754 @@ export const LanguageProvider = ({ children }) => {
         submissionUpdated: "Submission updated successfully",
         errorSaving: "Error saving submission",
       },
+
+      standards: [
+        {
+          number: 1,
+          standard:
+            "Selection of group representatives / volunteers and their training on needs assessment, priority setting, data analysis, project preparation, and monitoring, recording and reporting mechanisms.",
+          requirements: [
+            "Statement of volunteers' names",
+            "Statement of training courses, their number and the reports for each course",
+          ],
+        },
+        {
+          number: 2,
+          standard:
+            "The Healthy City Coordination Committee has been formed, registered with local authorities as a community or non-governmental organization, and members have been guided on their tasks and responsibilities.",
+          requirements: [
+            "Decision to establish the Coordination Committee and the roles and responsibilities of its members",
+            "Statement of subcommittees to coordinate initiatives specific to the healthy city",
+          ],
+        },
+        {
+          number: 3,
+          standard:
+            "Community representatives / volunteers are active partners in local health, planning, and social actions, while ensuring the use of other health care in social services within their own groups.",
+          requirements: [
+            "Proof of communication mechanisms with volunteers",
+            "Reports of activities they have carried out in different fields",
+          ],
+        },
+        {
+          number: 4,
+          standard:
+            "Healthy City Coordination Committee monitors social and economic projects, records achievements and obstacles, and identifies local solutions to local problems.",
+          requirements: [
+            "Statement of operational plans from coordinators from various sectors",
+            "Monitoring and periodic reports",
+          ],
+        },
+        {
+          number: 5,
+          standard:
+            "The Healthy City Coordination Committee seeks resources and builds relationships with potential partners for further development in their local areas.",
+          requirements: [
+            "Statement of local partners",
+            "Various agreements with partners",
+          ],
+        },
+        {
+          number: 6,
+          standard:
+            "A community center has been established or planned for various uses according to community needs and training has been conducted, for example: holding field visits, serving as a community information center, or holding local cultural, national, and religious events, etc.).",
+          requirements: [
+            "Information about the community center and its capabilities",
+            "Field visits",
+          ],
+        },
+        {
+          number: 7,
+          standard:
+            "Women and youth groups have been placed and registered as contributors to local development measures.",
+          requirements: [
+            "Statement of women's groups and youth groups contributing to healthy city activities",
+            "Reports of activities participated in or implemented",
+          ],
+        },
+        {
+          number: 8,
+          standard:
+            "Members of the Healthy City Coordination Committee have been officially nominated by the various sectors relevant to the standards.",
+          requirements: [
+            "Statement of coordinators officially from various sectors",
+          ],
+        },
+        {
+          number: 9,
+          standard:
+            "The Healthy City Coordination Committee has been formed under the leadership of a mayor or governor, and its members are representatives from all relevant sectors. Minutes of all meetings are recorded and reports are prepared.",
+          requirements: [
+            "Drafting of the membership of the Higher Committee by all directors of the different sectors",
+          ],
+        },
+        {
+          number: 10,
+          standard:
+            "An official coordinator for the Healthy City program has been appointed and an adequate number of staff, physical space, and facilities have been provided.",
+          requirements: [
+            "Decision to appoint the Healthy City program coordinator",
+            "Visit to the coordination office to view the office and its equipment",
+          ],
+        },
+        {
+          number: 11,
+          standard:
+            "Members of the inter-sectoral team meet with the Healthy City Coordination Committee and provide technical advice and support to the community.",
+          requirements: ["Meeting reports"],
+        },
+        {
+          number: 12,
+          standard:
+            "Potential partners have been identified and contacted, and at least one joint project is underway with partners at the Healthy City implementation site.",
+          requirements: [
+            "Statement of Healthy City program partners",
+            "Statement of the different programs that have been implemented by the partners within the framework of the Healthy City program",
+          ],
+        },
+        {
+          number: 13,
+          standard:
+            "Financial issues related to joint activities have been recorded, reported, and shared with the community for transparency.",
+          requirements: [
+            "Statement appointing a financial coordinator to follow up on all financial procedures related to the Executive Office.",
+          ],
+        },
+        {
+          number: 14,
+          standard:
+            "Success stories have been documented, published, and used to develop a comprehensive advocacy strategy and tools, taking into account the local culture and being implemented by the local community development committee.",
+          requirements: [
+            "Statement of success stories",
+            "Advertising and publicity plan",
+          ],
+        },
+        {
+          number: 15,
+          standard:
+            "The needy in the community have been identified according to specific criteria approved by the City Coordination Team and are given priority in providing income-generating loans.",
+          requirements: [
+            "Statement of needy people who can benefit from financial support",
+            "Statement of what has been done to support low-income individuals",
+          ],
+        },
+        {
+          number: 16,
+          standard:
+            "Links have been made between local skills, vocational training centers, and micro-loan activities, ensuring that the area is moving towards self-sufficiency.",
+          requirements: [
+            "Statement of training programs and micro-loan activities",
+            "Statement of success stories and building partnerships",
+            "Field visits",
+          ],
+        },
+        {
+          number: 17,
+          standard:
+            "All financial issues have been recorded and followed up by the financial secretary of the Healthy City Coordination Committee.",
+          requirements: [
+            "Records of financial issues to clarify follow-up by the financial coordinator of the Healthy City Committee.",
+          ],
+        },
+        {
+          number: 18,
+          standard:
+            "Loans are repaid on a regular basis, and a follow-up mechanism has been put in place by the Healthy City Coordination Committee or the local banking system.",
+          requirements: ["Statement of follow-up mechanisms"],
+        },
+        {
+          number: 19,
+          standard:
+            "A bank account has been opened for the Healthy City Coordination Committee or the program office, and all financial interactions related to micro-loans go through the relevant banks. The program coordinator and the community are well aware of this.",
+          requirements: [
+            "Bank account details of the Healthy City program coordination office and transparent to all committees.",
+            "Agreements signed with some commercial companies to sponsor and support projects (if any)",
+          ],
+        },
+        {
+          number: 20,
+          standard:
+            "5-10% service fees are taken from each income-generating loan and collected in a separate account to be used for social development activities (i.e., social development funds).",
+          requirements: ["Statement proving this (if any)"],
+        },
+        {
+          number: 21,
+          standard:
+            "Community representatives ensure timely monthly installment deposits from beneficiaries within their own groups and keep the repaid money renewed for future activities.",
+          requirements: ["Statement proving this (if any)"],
+        },
+        {
+          number: 22,
+          standard:
+            "All eligible children (girls and boys) are enrolled in school and no student has dropped out.",
+          requirements: ["Statement proving this"],
+        },
+        {
+          number: 23,
+          standard:
+            "School principals hold regular meetings with local community development committees, parents, and other stakeholders to evaluate the quality of education, school environment, health status of children, and relationships between parents, children, and teachers in order to overcome existing shortcomings or problems.",
+          requirements: [
+            "Minutes of meetings with local community leaders and parents",
+            "Statement of key needs and problems related to education and schools and what interventions and initiatives have been done",
+          ],
+        },
+        {
+          number: 24,
+          standard:
+            "Quality education standards are in place in schools located in program sites.",
+          requirements: [
+            "Statement of quality standards related to education in schools throughout the city",
+            "Statement of accreditation bodies and schools that have received accreditation in the Healthy City program implementation sites",
+          ],
+        },
+        {
+          number: 25,
+          standard:
+            "A subcommittee for education has been formed within the Community Development Committee and schools are regularly monitored. The subcommittee coordinates with the local Directorate of Education.",
+          requirements: [
+            "Field visits",
+            "Decision to form the committee and what has been done",
+            "Minutes of meetings with the Healthy City program coordination office.",
+          ],
+        },
+        {
+          number: 26,
+          standard:
+            "Youth and women's groups have been encouraged to be active members of the literacy campaign on a voluntary basis.",
+          requirements: ["Proof of implementation", "Field visits"],
+        },
+        {
+          number: 27,
+          standard:
+            "Community representatives and health volunteers have been trained on priority health issues and health-related programs. They are active in health promotion and education and follow up on actions through regular contact with local health care providers.",
+          requirements: [
+            "Statement of continuous training programs for health workers",
+            "Implementation reports",
+          ],
+        },
+        {
+          number: 28,
+          standard:
+            "Community representatives and health volunteers work to record and report births, deaths, and other vital statistics.",
+          requirements: [
+            "Details of the system for recording and reporting births, deaths, and vital statistics.",
+          ],
+        },
+        {
+          number: 29,
+          standard:
+            "The Healthy City Coordination Committee, in cooperation with health care providers, has established sustainable referral systems.",
+          requirements: [
+            "Details of the referral system in the public sector and between the public and private sectors.",
+          ],
+        },
+        {
+          number: 30,
+          standard:
+            "The community is actively trained in research projects and engaged based on community participation.",
+          requirements: [
+            "Details of the joint community research and its results",
+          ],
+        },
+        {
+          number: 31,
+          standard:
+            "A subcommittee of the Healthy City Coordination Committee has been formed to manage and supervise local health care services.",
+          requirements: [
+            "Decision to form the subcommittee of the Healthy City Coordination Committee to manage and supervise local health care services",
+          ],
+        },
+        {
+          number: 32,
+          standard:
+            "All essential medicines, vaccines, and medical tools (according to the needs of the local health system) are available in health facilities in urban areas.",
+          requirements: [
+            "Details of the system and its implementation mechanism to ensure the continuous availability of essential medicines and vaccines.",
+          ],
+        },
+        {
+          number: 33,
+          standard:
+            "The quality of health care services, customer satisfaction with health services, the level of training of health care staff, and the interactions between health care providers and the community are evaluated and actions are taken accordingly.",
+          requirements: [
+            "Quality standards for health care services",
+            "Statement of periodic survey activities to measure quality and customer satisfaction.",
+            "Field visits",
+          ],
+        },
+        {
+          number: 34,
+          standard:
+            "All pregnant women receive timely prenatal care (including tetanus vaccines). A safe delivery plan has been prepared for all pregnant women in the third trimester of pregnancy, and all women have access to a safe and clean delivery, which is done with the help of skilled midwives.",
+          requirements: ["Statement proving this", "Field visits"],
+        },
+        {
+          number: 35,
+          standard:
+            "All mothers receive postnatal care for at least 40 days after delivery.",
+          requirements: ["Statement proving this"],
+        },
+        {
+          number: 36,
+          standard:
+            "All children are fully immunized against vaccine-preventable diseases by the age of one year.",
+          requirements: ["Statement proving this"],
+        },
+        {
+          number: 37,
+          standard:
+            "All newborns have been registered by community representatives and health volunteers and have been vaccinated at birth and during the first year of life according to the schedule of the National Expanded Immunization Program (Expanded Immunization Program).",
+          requirements: ["Statement proving this"],
+        },
+        {
+          number: 38,
+          standard:
+            "The Healthy City Coordination Committee, community representatives, and health volunteers actively participate in polio campaigns if any are conducted.",
+          requirements: ["Statement proving this"],
+        },
+        {
+          number: 39,
+          standard:
+            "All children under 5 years of age have the right to receive regular health care services (including growth monitoring and a performance follow-up system in place).",
+          requirements: ["Statement proving this", "Field visits"],
+        },
+        {
+          number: 40,
+          standard:
+            "Children with malnutrition and mothers with vitamin A deficiency and iron deficiency anemia have been identified and receive treatment, follow-up, and care.",
+          requirements: ["Statement proving this"],
+        },
+        {
+          id: 41,
+          standard:
+            "A short-term treatment strategy for tuberculosis is being implemented using trained community representatives or volunteers as treatment partners.",
+          assigned_agencies: [
+            "Ministry of Health (Health Affairs - Hospitals - Health Sector - Health Care Centers)",
+          ],
+          requirements: ["Statement proving this"],
+          status: "pending_approval",
+        },
+        {
+          id: 42,
+          standard:
+            "A malaria control program is being implemented if necessary with the active participation of community representatives or volunteers and the leadership of local community development committees.",
+          assigned_agencies: [
+            "Ministry of Health (Health Affairs - Hospitals - Health Sector - Health Care Centers)",
+          ],
+          requirements: ["Statement proving this"],
+          status: "approved",
+        },
+        {
+          id: 43,
+          standard:
+            "Community representatives and health volunteers report all suspected cases of tuberculosis, malaria, HIV, and other infectious diseases to the nearest health facility and carry out follow-up activities in accordance with the training they received from health facility workers and ensure that family members participate in weekly healthy physical activities.",
+          assigned_agencies: [
+            "Ministry of Health (Health Affairs - Hospitals - Health Sector - Health Care Centers)",
+          ],
+          requirements: ["Statement proving this"],
+          status: "didnt_submit",
+        },
+        {
+          id: 44,
+          standard:
+            "Communities have been informed about the ways of transmission of HIV/AIDS and prevention measures. All diagnosed cases of HIV/AIDS are supported by community representatives and health volunteers.",
+          assigned_agencies: [
+            "Ministry of Health (Health Affairs - Hospitals - Health Sector - Health Care Centers)",
+          ],
+          requirements: ["Statement of awareness activities"],
+          status: "didnt_submit",
+        },
+        {
+          id: 45,
+          standard:
+            "All patients with chronic diseases (such as those with diabetes, high blood pressure, cardiovascular diseases, cancer, kidney disorders, etc.) are identified, and a follow-up plan has been put in place by community representatives and health volunteers, who ensure that all individuals receive timely medical examinations and medication.",
+          assigned_agencies: [
+            "Ministry of Health (Health Affairs - Hospitals - Health Sector - Health Care Centers)",
+          ],
+          requirements: [
+            "Details of the screening program for the early detection of non-communicable diseases",
+            "Details of health care programs for the elderly",
+          ],
+          status: "approved",
+        },
+        {
+          id: 46,
+          standard:
+            "All cases of mental disorders and substance abuse have been identified and receive support and assistance from the community. Educational activities have been implemented in the community to reduce stigma.",
+          assigned_agencies: [
+            "Ministry of Health (Health Affairs - Hospitals - Health Sector - Health Care Centers)",
+          ],
+          requirements: [
+            "Statement proving this, such as a hotline for providing necessary assistance and referring drug abuse issues.",
+            "Social care to reduce addiction",
+          ],
+          status: "rejected",
+        },
+        {
+          id: 47,
+          standard:
+            "All persons with physical disabilities have been identified and receive community support to ensure their ability to earn a living.",
+          assigned_agencies: [
+            "Ministry of Health (Health Affairs - Hospitals - Health Sector - Health Care Centers)",
+          ],
+          requirements: [
+            "Statement of receiving support for people with intellectual and physical disabilities",
+            "Vocational training activities and providing relevant employment opportunities for them.",
+          ],
+          status: "pending_approval",
+        },
+        {
+          id: 48,
+          standard:
+            "Dangerous areas at the program sites have been identified and appropriate actions/measures have been taken to reduce deaths, injuries, and disabilities resulting from accidents.",
+          assigned_agencies: [
+            "Ministry of Health (Health Affairs - Hospitals - Health Sector - Health Care Centers)",
+          ],
+          requirements: ["Statement proving this"],
+          status: "rejected",
+        },
+        {
+          id: 49,
+          standard:
+            "The program implementation area is free of crime, violence, and discrimination against women, men, and ethnic groups.",
+          assigned_agencies: [
+            "Ministry of Health (Health Affairs - Hospitals - Health Sector - Health Care Centers)",
+          ],
+          requirements: ["Statement proving this"],
+          status: "rejected",
+        },
+        {
+          id: 50,
+          standard:
+            "The community adopts and promotes early childhood development, roles, and child-friendly communities.",
+          assigned_agencies: [
+            "Ministry of Health (Health Affairs - Hospitals - Health Sector - Health Care Centers)",
+          ],
+          requirements: [
+            "Statement of initiatives and activities in this regard and the various initiatives and programs by Social Affairs.",
+          ],
+          status: "pending_approval",
+        },
+        {
+          id: 51,
+          standard:
+            "Work on the Healthy School initiative in all schools at the program implementation sites.",
+          assigned_agencies: [
+            "Ministry of Health (Health Affairs - Hospitals - Health Sector - Health Care Centers)",
+          ],
+          requirements: [
+            "Annual plan by the School Health Department at the Ministry of Health.",
+            "Programs to provide healthy foods with calorie counting in school cafeterias.",
+            "School health programs",
+            "Field visits",
+          ],
+          status: "didnt_submit",
+        },
+        {
+          id: 52,
+          standard:
+            "Occupational health and safety procedures (especially accident prevention) are in place in all workplaces and facilitate and accelerate workers' access to first aid equipment and services.",
+          assigned_agencies: [
+            "Ministry of Health (Health Affairs - Hospitals - Health Sector - Health Care Centers)",
+          ],
+          requirements: ["Statement proving this", "Field visits"],
+          status: "pending_approval",
+        },
+        {
+          id: 53,
+          standard:
+            "The program implementation site is clean and has enough green spaces.",
+          assigned_agencies: [
+            "Ministry of Health (Health Affairs - Hospitals - Health Sector - Health Care Centers)",
+          ],
+          requirements: ["Field visits"],
+          status: "rejected",
+        },
+        {
+          id: 54,
+          standard:
+            "An effective solid waste management system has been put in place at the community level at the program implementation site.",
+          assigned_agencies: [
+            "Ministry of Health (Health Affairs - Hospitals - Health Sector - Health Care Centers)",
+          ],
+          requirements: ["Statement proving this", "Field visits"],
+          status: "didnt_submit",
+        },
+        {
+          id: 55,
+          standard:
+            "Water sources have been designated and protected. A water treatment plan has been put in place, and the Healthy City Coordination Committee is aware of it.",
+          assigned_agencies: [
+            "Ministry of Health (Health Affairs - Hospitals - Health Sector - Health Care Centers)",
+            "Directorate of Education",
+          ],
+          requirements: ["Statement proving this"],
+          status: "approved",
+        },
+        {
+          id: 56,
+          standard:
+            "All families have sustainable access to safe drinking water and basic sanitation services. They are aware of the risks associated with unsafe water and know how to purify water using what is locally available.",
+          assigned_agencies: [
+            "Ministry of Health (Health Affairs - Hospitals - Health Sector - Health Care Centers)",
+            "Ministry of Human Resources and Social Development",
+          ],
+          requirements: ["Statement proving this"],
+          status: "approved",
+        },
+        {
+          id: 57,
+          standard:
+            "Community representatives / volunteers have been trained in maintaining sound environmental / health conditions and related measures accessible to the public, such as healthy market places, healthy hospitals, healthy schools, etc.",
+          assigned_agencies: ["Civil Defense", "Red Crescent"],
+          requirements: [
+            "Statement proving this",
+            "Field visits for related initiatives",
+          ],
+          status: "pending_approval",
+        },
+        {
+          id: 58,
+          standard:
+            "The community is involved in food safety and all healthy food outlets/markets are monitored by national food safety departments.",
+          assigned_agencies: ["Civil Defense", "Red Crescent"],
+          requirements: [
+            "Statement proving this",
+            "Field visits for related initiatives",
+          ],
+          status: "rejected",
+        },
+        {
+          id: 59,
+          standard:
+            "Healthy food markets are easily accessible for selling basic products such as iodized salt.",
+          assigned_agencies: ["Civil Defense", "Red Crescent"],
+          requirements: ["Statement proving this", "Field visits"],
+          status: "pending_approval",
+        },
+        {
+          id: 60,
+          standard:
+            "Smoking is prohibited in enclosed and public places, and the establishment of a smoke-free city has been put in place and adopted.",
+          assigned_agencies: ["Civil Defense", "Red Crescent"],
+          requirements: [
+            "Statement of non-smoking decisions/policies in public places and identification of violations.",
+            "Statement of implementation mechanisms and related activities",
+            "Field visits",
+          ],
+          status: "didnt_submit",
+        },
+        {
+          id: 61,
+          standard:
+            "A community-based quality management center has been established at the Healthy City program implementation site (including the municipality) to ensure systematic monitoring of air pollution. The community is aware of the risks of air pollution.",
+          assigned_agencies: ["Civil Defense", "Red Crescent"],
+          requirements: [
+            "Air pollution monitoring plan",
+            "Statement of related activities",
+          ],
+          status: "pending_approval",
+        },
+        {
+          id: 62,
+          standard:
+            "City planners implement measures that prevent air pollution.",
+          assigned_agencies: ["Civil Defense", "Red Crescent"],
+          requirements: ["Statement of supporting decisions"],
+          status: "didnt_submit",
+        },
+        {
+          id: 63,
+          standard:
+            "The impact of urban and housing zoning schemes on air pollution is evaluated before they are adopted. These housing projects include, for example, families' access to clean fuel, ventilation, and improved kitchen stoves and heating devices.",
+          assigned_agencies: ["Directorate of Education", "Neighborhood Club"],
+          requirements: ["Statement of supporting decisions"],
+          status: "rejected",
+        },
+        {
+          id: 64,
+          standard:
+            "A community information center has been established and community representatives/volunteers and members of the inter-sectoral team are trained to collect, analyze, and use basic information for local development planning.",
+          assigned_agencies: ["Directorate of Education", "Neighborhood Club"],
+          requirements: [
+            "Statement of the center responsible for statistics and information",
+            "Mechanism for data collection, analysis, and dissemination for use in local-level planning.",
+          ],
+          status: "didnt_submit",
+        },
+        {
+          id: 65,
+          standard:
+            "Key information is displayed at the community information center or the local Healthy City program office and shared with the community and other relevant sectors/partners.",
+          assigned_agencies: ["Directorate of Education", "Neighborhood Club"],
+          requirements: [
+            "Mechanism for distributing data to benefit from it in planning and decision-making in different sectors.",
+          ],
+          status: "didnt_submit",
+        },
+        {
+          id: 66,
+          standard:
+            "Basic information has been used for advocacy and monitoring purposes by the local community development committee and other stakeholders.",
+          assigned_agencies: ["Directorate of Education", "Neighborhood Club"],
+          requirements: [
+            "Mechanism for communication between the center and different sectors to exchange the necessary statistics for development projects.",
+          ],
+          status: "rejected",
+        },
+        {
+          id: 67,
+          standard:
+            "The forms and results of the basic survey and information on current projects are well-documented so far and are available to the local community development committee and the Healthy City coordination center.",
+          assigned_agencies: ["Directorate of Education", "Neighborhood Club"],
+          requirements: ["Relevant reports"],
+          status: "didnt_submit",
+        },
+        {
+          id: 68,
+          standard:
+            "A city profile has been created and is regularly updated and used for planning and monitoring purposes.",
+          assigned_agencies: [
+            "Ministry of Human Resources and Social Development (Charitable Societies - Civil Societies)",
+            "General Organization for Technical and Vocational Training",
+            "Ministry of Education (Universities - Schools - Neighborhood Club - Educational Platforms)",
+          ],
+          requirements: ["A copy of the city profile"],
+          status: "pending_approval",
+        },
+        {
+          id: 69,
+          standard:
+            "Local skills, interests, and appropriate technologies have been evaluated and promoted.",
+          assigned_agencies: [
+            "Ministry of Human Resources and Social Development (Charitable Societies - Civil Societies)",
+            "General Organization for Technical and Vocational Training",
+            "Ministry of Education (Universities - Schools - Neighborhood Club - Educational Platforms)",
+          ],
+          requirements: ["Relevant reports."],
+          status: "approved",
+        },
+        {
+          id: 70,
+          standard:
+            "Training centers for skills related to the local market have been established for males and females and have been approved by inter-sectoral teams.",
+          assigned_agencies: [
+            "Ministry of Human Resources and Social Development (Charitable Societies - Civil Societies)",
+            "General Organization for Technical and Vocational Training",
+            "Ministry of Education (Universities - Schools - Neighborhood Club - Educational Platforms)",
+          ],
+          requirements: ["Statement proving this", "Field visits"],
+          status: "didnt_submit",
+        },
+        {
+          id: 71,
+          standard:
+            "The Healthy City Coordination Committee gives priority to providing micro-loans to students of vocational training centers.",
+          assigned_agencies: [
+            "Ministry of Human Resources and Social Development (Charitable Societies - Civil Societies)",
+            "General Organization for Technical and Vocational Training",
+            "Ministry of Education (Universities - Schools - Neighborhood Club - Educational Platforms)",
+          ],
+          requirements: ["Statement proving this"],
+          status: "didnt_submit",
+        },
+        {
+          id: 72,
+          standard:
+            "Vocational training centers are self-financed and self-managed by the community or local non-governmental organizations.",
+          assigned_agencies: [
+            "Ministry of Human Resources and Social Development (Charitable Societies - Civil Societies)",
+            "General Organization for Technical and Vocational Training",
+            "Ministry of Education (Universities - Schools - Neighborhood Club - Educational Platforms)",
+          ],
+          requirements: ["Statement proving this"],
+          status: "pending_approval",
+        },
+        {
+          id: 73,
+          standard:
+            "Computer training centers, language classes, sports facilities, etc., have been established and are self-managed by the community and local non-governmental organizations.",
+          assigned_agencies: [
+            "Ministry of Human Resources and Social Development (Charitable Societies - Civil Societies)",
+            "General Organization for Technical and Vocational Training",
+            "Ministry of Education (Universities - Schools - Neighborhood Club - Educational Platforms)",
+          ],
+          requirements: ["Statement proving this", "Field visits"],
+          status: "rejected",
+        },
+        {
+          id: 74,
+          standard:
+            "Innovative people have been identified, supported, and encouraged.",
+          assigned_agencies: [
+            "Ministry of Human Resources and Social Development (Social Security - Charitable Societies - Civil Societies)",
+          ],
+          requirements: ["Statement of success stories"],
+          status: "pending_approval",
+        },
+        {
+          id: 75,
+          standard:
+            "Known emergencies that occurred in the past 20 years have been identified, and the number of victims and damaged local infrastructure has been documented.",
+          assigned_agencies: [
+            "Ministry of Human Resources and Social Development (Social Security - Charitable Societies - Civil Societies)",
+          ],
+          requirements: ["Documentation files"],
+          status: "rejected",
+        },
+        {
+          id: 76,
+          standard:
+            "A subcommittee for emergency preparedness and response has been formed, guided, and its members' tasks assigned.",
+          assigned_agencies: [
+            "Ministry of Human Resources and Social Development (Social Security - Charitable Societies - Civil Societies)",
+          ],
+          requirements: [
+            "Statement of the formation of the committee and its membership",
+          ],
+          status: "approved",
+        },
+        {
+          id: 77,
+          standard:
+            "A city profile has been developed and a copy of this file is kept outside the program implementation area.",
+          assigned_agencies: [
+            "Ministry of Human Resources and Social Development (Social Security - Charitable Societies - Civil Societies)",
+          ],
+          requirements: ["The developed file"],
+          status: "didnt_submit",
+        },
+        {
+          id: 78,
+          standard:
+            "Community representatives and health volunteers have been trained on emergency preparedness plans, how to deal with emergencies, and provide first aid whenever and wherever needed.",
+          assigned_agencies: [
+            "Ministry of Human Resources and Social Development (Social Security - Charitable Societies - Civil Societies)",
+          ],
+          requirements: ["Reports of the training courses"],
+          status: "didnt_submit",
+        },
+        {
+          id: 79,
+          standard:
+            "An emergency plan has been prepared and shared with the competent local authorities to mobilize the necessary resources and action. The community is aware of the emergency plan, what to do, who reports what, and what to do during an emergency.",
+          assigned_agencies: [
+            "Ministry of Human Resources and Social Development (Social Security - Charitable Societies - Civil Societies)",
+          ],
+          requirements: ["Statement of the detailed plan"],
+          status: "rejected",
+        },
+        {
+          id: 80,
+          standard:
+            "Vulnerable groups (such as pregnant women, people with physical disabilities, chronic patients, malnourished people, the elderly, people with mental disorders, etc.) have been identified, and this emergency information has been shared with the competent authorities in advance.",
+          assigned_agencies: [
+            "Ministry of Human Resources and Social Development (Social Security - Charitable Societies - Civil Societies)",
+          ],
+          requirements: ["A copy of the data"],
+          status: "rejected",
+        },
+      ],
     },
   };
 
