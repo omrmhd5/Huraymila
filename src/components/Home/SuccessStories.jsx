@@ -19,46 +19,18 @@ import {
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useTheme } from "@/contexts/ThemeContext";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { cn } from "@/lib/utils";
 
 const SuccessStories = () => {
   const { language } = useTheme();
+  const { t } = useLanguage();
   const navigate = useNavigate();
 
   // Function to navigate and scroll to top
   const navigateToTop = (path) => {
     navigate(path);
     window.scrollTo({ top: 0, behavior: "smooth" });
-  };
-
-  const content = {
-    ar: {
-      title: "قصص النجاح",
-      subtitle: "اكتشف كيف غيرت مبادرتنا حياة الناس في مدينة حريملاء",
-      description:
-        "نفخر بنجاحاتنا وإنجازاتنا في تعزيز الصحة العامة وتحسين جودة الحياة في المجتمع.",
-      viewAll: "عرض جميع القصص",
-      categories: {
-        health: "صحة",
-        environment: "بيئة",
-        community: "مجتمع",
-        education: "تعليم",
-      },
-    },
-    en: {
-      title: "Success Stories",
-      subtitle:
-        "Discover how our initiatives have changed people's lives in Huraymila",
-      description:
-        "We are proud of our successes and achievements in promoting public health and improving quality of life in the community.",
-      viewAll: "View All Stories",
-      categories: {
-        health: "Health",
-        environment: "Environment",
-        community: "Community",
-        education: "Education",
-      },
-    },
   };
 
   const stories = [
@@ -184,15 +156,30 @@ const SuccessStories = () => {
     },
   ];
 
-  const current = content[language];
   const isRTL = language === "ar";
 
   const getCategoryBadge = (category) => {
     const categoryLabels = {
-      health: { ar: "صحة", en: "Health", color: "bg-red-500" },
-      environment: { ar: "بيئة", en: "Environment", color: "bg-green-500" },
-      community: { ar: "مجتمع", en: "Community", color: "bg-blue-500" },
-      education: { ar: "تعليم", en: "Education", color: "bg-purple-500" },
+      health: {
+        ar: t("successStories.categories.health"),
+        en: t("successStories.categories.health"),
+        color: "bg-red-500",
+      },
+      environment: {
+        ar: t("successStories.categories.environment"),
+        en: t("successStories.categories.environment"),
+        color: "bg-green-500",
+      },
+      community: {
+        ar: t("successStories.categories.community"),
+        en: t("successStories.categories.community"),
+        color: "bg-blue-500",
+      },
+      education: {
+        ar: t("successStories.categories.education"),
+        en: t("successStories.categories.education"),
+        color: "bg-purple-500",
+      },
     };
 
     const categoryInfo = categoryLabels[category];
@@ -209,16 +196,16 @@ const SuccessStories = () => {
         {/* Header */}
         <div className="text-center mb-16">
           <Badge variant="outline" className="mb-4 px-4 py-2 text-sm">
-            {language === "ar" ? "قصص النجاح" : "Success Stories"}
+            {t("successStories.title")}
           </Badge>
           <h2 className="text-4xl md:text-5xl font-bold text-foreground mb-6">
-            {current.title}
+            {t("successStories.title")}
           </h2>
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
-            {current.subtitle}
+            {t("successStories.subtitle")}
           </p>
           <p className="text-lg text-muted-foreground max-w-4xl mx-auto mt-4 leading-relaxed">
-            {current.description}
+            {t("successStories.description")}
           </p>
         </div>
 
@@ -258,7 +245,7 @@ const SuccessStories = () => {
                   <div className="grid grid-cols-2 gap-4 mb-4">
                     <div className="text-sm">
                       <span className="font-medium text-red-600 dark:text-red-400">
-                        {language === "ar" ? "قبل:" : "Before:"}
+                        {t("successStories.before")}:
                       </span>
                       <p className="text-red-700 dark:text-red-300 text-xs">
                         {language === "ar" ? story.before : story.beforeEn}
@@ -266,7 +253,7 @@ const SuccessStories = () => {
                     </div>
                     <div className="text-sm">
                       <span className="font-medium text-green-600 dark:text-green-400">
-                        {language === "ar" ? "بعد:" : "After:"}
+                        {t("successStories.after")}:
                       </span>
                       <p className="text-green-700 dark:text-green-300 text-xs">
                         {language === "ar" ? story.after : story.afterEn}
@@ -310,7 +297,7 @@ const SuccessStories = () => {
             variant="outline"
             className="px-8 py-6 text-lg"
             onClick={() => navigateToTop("/success-stories")}>
-            {current.viewAll}
+            {t("successStories.viewAll")}
             <ArrowRight className={`w-5 h-5 ${isRTL ? "mr-2" : "ml-2"}`} />
           </Button>
         </div>

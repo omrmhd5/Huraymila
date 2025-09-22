@@ -16,9 +16,11 @@ import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { cn } from "@/lib/utils";
 import { useTheme } from "@/contexts/ThemeContext";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const Auth = () => {
   const { language } = useTheme();
+  const { t } = useLanguage();
   const { user, login } = useAuth();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
@@ -141,54 +143,7 @@ const Auth = () => {
     }
   };
 
-  const content = {
-    ar: {
-      title: "مرحباً بك",
-      subtitle: "سجل دخولك أو سجل كمتطوع جديد",
-      signIn: "تسجيل الدخول",
-      signUp: "سجل كمتطوع",
-      email: "البريد الإلكتروني",
-      password: "كلمة المرور",
-      confirmPassword: "تأكيد كلمة المرور",
-      fullName: "الاسم الكامل",
-      phone: "رقم الهاتف",
-      signInButton: "دخول",
-      signUpButton: "سجل كمتطوع",
-      backToHome: "العودة للصفحة الرئيسية",
-      emailPlaceholder: "your@email.com",
-      passwordPlaceholder: "••••••••",
-      fullNamePlaceholder: "الاسم الكامل",
-      phonePlaceholder: "+966 50 123 4567",
-      hasAccount: "لديك حساب؟",
-      noAccount: "ليس لديك حساب؟",
-      switchToSignIn: "تسجيل الدخول",
-      switchToSignUp: "سجل كمتطوع",
-    },
-    en: {
-      title: "Hello, Welcome",
-      subtitle: "Sign in or sign up as a volunteer",
-      signIn: "Sign In",
-      signUp: "Sign Up as Volunteer",
-      email: "Email",
-      password: "Password",
-      confirmPassword: "Confirm Password",
-      fullName: "Full Name",
-      phone: "Phone Number",
-      signInButton: "Sign In",
-      signUpButton: "Sign Up as Volunteer",
-      backToHome: "Back to Home",
-      emailPlaceholder: "your@email.com",
-      passwordPlaceholder: "••••••••",
-      fullNamePlaceholder: "Full Name",
-      phonePlaceholder: "+966 50 123 4567",
-      hasAccount: "Have an account?",
-      noAccount: "Don't have an account?",
-      switchToSignIn: "Sign In",
-      switchToSignUp: "Sign Up as Volunteer",
-    },
-  };
-
-  const current = content[language];
+  // Content is now handled by the language context
 
   return (
     <div className="min-h-screen bg-background">
@@ -220,13 +175,13 @@ const Auth = () => {
                     "text-2xl",
                     language === "ar" ? "font-arabic" : "font-english"
                   )}>
-                  {current.title}
+                  {t("auth.title")}
                 </CardTitle>
                 <CardDescription
                   className={cn(
                     language === "ar" ? "font-arabic" : "font-english"
                   )}>
-                  {current.subtitle}
+                  {t("auth.subtitle")}
                 </CardDescription>
               </CardHeader>
 
@@ -239,7 +194,7 @@ const Auth = () => {
                         "font-medium",
                         language === "ar" ? "font-arabic" : "font-english"
                       )}>
-                      {current.signIn}
+                      {t("auth.signIn")}
                     </TabsTrigger>
                     <TabsTrigger
                       value="signup"
@@ -247,7 +202,7 @@ const Auth = () => {
                         "font-medium",
                         language === "ar" ? "font-arabic" : "font-english"
                       )}>
-                      {current.signUp}
+                      {t("auth.signUp")}
                     </TabsTrigger>
                   </TabsList>
 
@@ -287,7 +242,7 @@ const Auth = () => {
                           className={cn(
                             language === "ar" ? "font-arabic" : "font-english"
                           )}>
-                          {current.email}
+                          {t("auth.email")}
                         </Label>
                         <div className="relative">
                           <Mail
@@ -302,7 +257,7 @@ const Auth = () => {
                             type="email"
                             value={formData.email}
                             onChange={handleInputChange}
-                            placeholder={current.emailPlaceholder}
+                            placeholder={t("auth.emailPlaceholder")}
                             className={cn(
                               "h-12",
                               language === "ar" ? "pr-10 text-right" : "pl-10"
@@ -319,7 +274,7 @@ const Auth = () => {
                           className={cn(
                             language === "ar" ? "font-arabic" : "font-english"
                           )}>
-                          {current.password}
+                          {t("auth.password")}
                         </Label>
                         <div className="relative">
                           <Lock
@@ -334,7 +289,7 @@ const Auth = () => {
                             type={showPassword ? "text" : "password"}
                             value={formData.password}
                             onChange={handleInputChange}
-                            placeholder={current.passwordPlaceholder}
+                            placeholder={t("auth.passwordPlaceholder")}
                             className={cn(
                               "h-12",
                               language === "ar"
@@ -375,7 +330,7 @@ const Auth = () => {
                               : "Loading..."}
                           </>
                         ) : (
-                          current.signInButton
+                          t("auth.signInButton")
                         )}
                       </Button>
                     </form>
@@ -390,7 +345,7 @@ const Auth = () => {
                           className={cn(
                             language === "ar" ? "font-arabic" : "font-english"
                           )}>
-                          {current.fullName}
+                          {t("auth.fullName")}
                         </Label>
                         <div className="relative">
                           <User
@@ -405,7 +360,7 @@ const Auth = () => {
                             type="text"
                             value={formData.fullName}
                             onChange={handleInputChange}
-                            placeholder={current.fullNamePlaceholder}
+                            placeholder={t("auth.fullNamePlaceholder")}
                             className={cn(
                               "h-12",
                               language === "ar" ? "pr-10 text-right" : "pl-10"
@@ -422,7 +377,7 @@ const Auth = () => {
                           className={cn(
                             language === "ar" ? "font-arabic" : "font-english"
                           )}>
-                          {current.phone}
+                          {t("auth.phone")}
                         </Label>
                         <div className="relative">
                           <Phone
@@ -437,7 +392,7 @@ const Auth = () => {
                             type="tel"
                             value={formData.phone}
                             onChange={handleInputChange}
-                            placeholder={current.phonePlaceholder}
+                            placeholder={t("auth.phonePlaceholder")}
                             className={cn(
                               "h-12",
                               language === "ar" ? "pr-10 text-right" : "pl-10"
@@ -454,7 +409,7 @@ const Auth = () => {
                           className={cn(
                             language === "ar" ? "font-arabic" : "font-english"
                           )}>
-                          {current.email}
+                          {t("auth.email")}
                         </Label>
                         <div className="relative">
                           <Mail
@@ -469,7 +424,7 @@ const Auth = () => {
                             type="email"
                             value={formData.email}
                             onChange={handleInputChange}
-                            placeholder={current.emailPlaceholder}
+                            placeholder={t("auth.emailPlaceholder")}
                             className={cn(
                               "h-12",
                               language === "ar" ? "pr-10 text-right" : "pl-10"
@@ -486,7 +441,7 @@ const Auth = () => {
                           className={cn(
                             language === "ar" ? "font-arabic" : "font-english"
                           )}>
-                          {current.password}
+                          {t("auth.password")}
                         </Label>
                         <div className="relative">
                           <Lock
@@ -501,7 +456,7 @@ const Auth = () => {
                             type={showPassword ? "text" : "password"}
                             value={formData.password}
                             onChange={handleInputChange}
-                            placeholder={current.passwordPlaceholder}
+                            placeholder={t("auth.passwordPlaceholder")}
                             className={cn(
                               "h-12",
                               language === "ar"
@@ -533,7 +488,7 @@ const Auth = () => {
                           className={cn(
                             language === "ar" ? "font-arabic" : "font-english"
                           )}>
-                          {current.confirmPassword}
+                          {t("auth.confirmPassword")}
                         </Label>
                         <div className="relative">
                           <Lock
@@ -548,7 +503,7 @@ const Auth = () => {
                             type={showPassword ? "text" : "password"}
                             value={formData.confirmPassword}
                             onChange={handleInputChange}
-                            placeholder={current.passwordPlaceholder}
+                            placeholder={t("auth.passwordPlaceholder")}
                             className={cn(
                               "h-12",
                               language === "ar" ? "pr-10 text-right" : "pl-10"
@@ -574,7 +529,7 @@ const Auth = () => {
                               : "Loading..."}
                           </>
                         ) : (
-                          current.signUpButton
+                          t("auth.signUpButton")
                         )}
                       </Button>
                     </form>
@@ -590,7 +545,7 @@ const Auth = () => {
                         "w-full",
                         language === "ar" ? "font-arabic" : "font-english"
                       )}>
-                      {current.backToHome}
+                      {t("auth.backToHome")}
                     </Button>
                   </Link>
                 </div>

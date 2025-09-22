@@ -37,12 +37,14 @@ import {
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useTheme } from "@/contexts/ThemeContext";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { toast } from "sonner";
 import Standards from "@/lib/standards";
 
 const AgencyManagement = () => {
   const { user, loading } = useAuth();
   const { language } = useTheme();
+  const { t } = useLanguage();
   const [showAddForm, setShowAddForm] = useState(false);
   const [editingAgency, setEditingAgency] = useState(null);
   const [agenciesList, setAgenciesList] = useState([]);
@@ -76,20 +78,15 @@ const AgencyManagement = () => {
 
   // Page title for better UX
   useEffect(() => {
-    document.title =
-      language === "ar"
-        ? "إدارة الجهات - لوحة التحكم الإدارية"
-        : "Agency Management - Admin Dashboard";
-  }, [language]);
+    document.title = `${t("agencyManagement.title")} - Admin Dashboard`;
+  }, [language, t]);
 
   if (loading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center">
           <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-muted-foreground">
-            {language === "ar" ? "جاري التحميل..." : "Loading..."}
-          </p>
+          <p className="text-muted-foreground">{t("common.loading")}</p>
         </div>
       </div>
     );
@@ -149,11 +146,7 @@ const AgencyManagement = () => {
     e.preventDefault();
 
     if (!formData.name.trim() || !formData.description.trim()) {
-      toast.error(
-        language === "ar"
-          ? "يرجى ملء جميع الحقول المطلوبة"
-          : "Please fill in all required fields"
-      );
+      toast.error(t("agencyManagement.fillRequiredFields"));
       return;
     }
 
@@ -166,11 +159,7 @@ const AgencyManagement = () => {
             agency.id === editingAgency.id ? { ...agency, ...formData } : agency
           )
         );
-        toast.success(
-          language === "ar"
-            ? "تم تحديث بيانات الجهة بنجاح"
-            : "Agency data updated successfully"
-        );
+        toast.success(t("agencyManagement.agencyUpdated"));
       } else {
         // Create new agency
         await new Promise((resolve) => setTimeout(resolve, 1000));
@@ -181,11 +170,7 @@ const AgencyManagement = () => {
           volunteers: Math.floor(Math.random() * 50) + 10,
         };
         setAgenciesList((prev) => [...prev, newAgency]);
-        toast.success(
-          language === "ar"
-            ? "تم إضافة الجهة الجديدة بنجاح"
-            : "New agency added successfully"
-        );
+        toast.success(t("agencyManagement.agencyAdded"));
       }
 
       setFormData({
@@ -201,11 +186,7 @@ const AgencyManagement = () => {
       setShowAddForm(false);
       setEditingAgency(null);
     } catch (error) {
-      toast.error(
-        language === "ar"
-          ? "حدث خطأ في العملية"
-          : "An error occurred during the operation"
-      );
+      toast.error(t("agencyManagement.operationError"));
     }
   };
 
@@ -235,16 +216,10 @@ const AgencyManagement = () => {
       setAgenciesList((prev) =>
         prev.filter((agency) => agency.id !== deleteConfirm.agencyId)
       );
-      toast.success(
-        language === "ar" ? "تم حذف الجهة بنجاح" : "Agency deleted successfully"
-      );
+      toast.success(t("agencyManagement.agencyDeleted"));
       setDeleteConfirm({ show: false, agencyId: null, agencyName: "" });
     } catch (error) {
-      toast.error(
-        language === "ar"
-          ? "حدث خطأ في الحذف"
-          : "An error occurred during deletion"
-      );
+      toast.error(t("agencyManagement.deleteError"));
     }
   };
 
@@ -283,9 +258,9 @@ const AgencyManagement = () => {
     const action = isCurrentlyAssigned ? "unassigned" : "assigned";
 
     toast.success(
-      language === "ar"
-        ? `تم ${isCurrentlyAssigned ? "إلغاء تعيين" : "تعيين"} المعيار بنجاح`
-        : `Standard ${action} successfully`
+      isCurrentlyAssigned
+        ? t("agencyManagement.standardUnassigned")
+        : t("agencyManagement.standardAssigned")
     );
   };
 
@@ -295,19 +270,17 @@ const AgencyManagement = () => {
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-3xl font-bold text-foreground mb-2">
-            {language === "ar" ? "إدارة الجهات " : "Agency Management"}
+            {t("agencyManagement.title")}
           </h1>
           <p className="text-muted-foreground">
-            {language === "ar"
-              ? "إدارة الجهات الحكومية المشاركة في مبادرة المدينة الصحية"
-              : "Manage government agencies participating in the Healthy City initiative"}
+            {t("agencyManagement.subtitle")}
           </p>
         </div>
         <Button
           onClick={() => setShowAddForm(true)}
           className="flex items-center gap-2">
           <Plus className="w-4 h-4" />
-          {language === "ar" ? "إضافة جهة جديدة" : "Add New Agency"}
+          {t("agencyManagement.addNewAgency")}
         </Button>
       </div>
 
@@ -316,13 +289,9 @@ const AgencyManagement = () => {
         <TabsContent value="agencies">
           <Card>
             <CardHeader>
-              <CardTitle>
-                {language === "ar" ? "قائمة الجهات" : "Agencies List"}
-              </CardTitle>
+              <CardTitle>{t("agencyManagement.agenciesList")}</CardTitle>
               <CardDescription>
-                {language === "ar"
-                  ? "إدارة جميع الجهات المشاركة"
-                  : "Manage all participating agencies"}
+                {t("agencyManagement.manageAgencies")}
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -365,9 +334,7 @@ const AgencyManagement = () => {
                               }
                               `}>
                               <span className="font-medium">
-                                {language === "ar"
-                                  ? ":بريد الجهة"
-                                  : "Agency Email:"}
+                                {t("agencyManagement.agencyEmail")}
                               </span>
                               <p>{agency.agencyEmail}</p>
                             </div>
@@ -377,9 +344,7 @@ const AgencyManagement = () => {
                               }
                               `}>
                               <span className="font-medium">
-                                {language === "ar"
-                                  ? ":كلمة مرور الجهة"
-                                  : "Agency Password:"}
+                                {t("agencyManagement.agencyPassword")}
                               </span>
                               <p className="font-mono text-xs bg-muted p-1 rounded">
                                 {agency.agencyPassword ? "••••••••" : ""}
@@ -402,31 +367,25 @@ const AgencyManagement = () => {
                             {[
                               {
                                 key: "contactPerson",
-                                label: {
-                                  en: "Contact Person:",
-                                  ar: "الشخص المسؤول:",
-                                },
+                                label: t("agencyManagement.contactPerson"),
                                 value: agency.contactPerson,
                                 order: 1,
                               },
                               {
                                 key: "email",
-                                label: {
-                                  en: "Person's Email:",
-                                  ar: "البريد الشخص الإلكتروني:",
-                                },
+                                label: t("agencyManagement.personEmail"),
                                 value: agency.email,
                                 order: 2,
                               },
                               {
                                 key: "phone",
-                                label: { en: "Phone:", ar: "الهاتف:" },
+                                label: t("agencyManagement.phone"),
                                 value: agency.phone,
                                 order: 3,
                               },
                               {
                                 key: "address",
-                                label: { en: "Address:", ar: "العنوان:" },
+                                label: t("agencyManagement.address"),
                                 value: agency.address,
                                 order: 4,
                               },
@@ -440,9 +399,7 @@ const AgencyManagement = () => {
                                   key={field.key}
                                   className={`order-${order}`}>
                                   <span className="font-medium">
-                                    {language === "ar"
-                                      ? field.label.ar
-                                      : field.label.en}
+                                    {field.label}
                                   </span>
                                   <p>{field.value}</p>
                                 </div>
@@ -461,7 +418,7 @@ const AgencyManagement = () => {
                             }`}>
                             <Target className="w-4 h-4" />
                             {agency.initiatives}{" "}
-                            {language === "ar" ? "مبادرة" : "initiatives"}
+                            {t("agencyManagement.initiatives")}
                           </span>
                           <span
                             className={`flex items-center gap-1 ${
@@ -470,7 +427,7 @@ const AgencyManagement = () => {
                             {" "}
                             <Users className="w-4 h-4" />
                             {agency.volunteers}{" "}
-                            {language === "ar" ? "متطوع" : "volunteers"}
+                            {t("agencyManagement.volunteers")}
                           </span>
                         </div>
                       </div>
@@ -511,21 +468,13 @@ const AgencyManagement = () => {
             <CardHeader>
               <CardTitle>
                 {editingAgency
-                  ? language === "ar"
-                    ? "تعديل الجهة"
-                    : "Edit Agency"
-                  : language === "ar"
-                  ? "إضافة جهة جديدة"
-                  : "Add New Agency"}
+                  ? t("agencyManagement.editAgency")
+                  : t("agencyManagement.addNewAgencyTitle")}
               </CardTitle>
               <CardDescription>
                 {editingAgency
-                  ? language === "ar"
-                    ? "تحديث بيانات الجهة"
-                    : "Update agency data"
-                  : language === "ar"
-                  ? "إدخال بيانات الجهة الجديدة"
-                  : "Enter new agency data"}
+                  ? t("agencyManagement.updateAgencyData")
+                  : t("agencyManagement.enterNewAgencyData")}
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -533,16 +482,14 @@ const AgencyManagement = () => {
                 <div className="grid grid-cols-1 gap-4">
                   <div className="space-y-2">
                     <Label htmlFor="name">
-                      {language === "ar" ? "اسم الجهة *" : "Agency Name *"}
+                      {t("agencyManagement.agencyName")} *
                     </Label>
                     <Input
                       id="name"
                       name="name"
                       value={formData.name}
                       onChange={handleInputChange}
-                      placeholder={
-                        language === "ar" ? "اسم الجهة" : "Agency name"
-                      }
+                      placeholder={t("agencyManagement.agencyNamePlaceholder")}
                       required
                     />
                   </div>
@@ -550,18 +497,16 @@ const AgencyManagement = () => {
 
                 <div className="space-y-2">
                   <Label htmlFor="description">
-                    {language === "ar" ? "وصف الجهة *" : "Agency Description *"}
+                    {t("agencyManagement.agencyDescription")} *
                   </Label>
                   <Textarea
                     id="description"
                     name="description"
                     value={formData.description}
                     onChange={handleInputChange}
-                    placeholder={
-                      language === "ar"
-                        ? "وصف مختصر عن الجهة ومهامها"
-                        : "Brief description of the agency and its tasks"
-                    }
+                    placeholder={t(
+                      "agencyManagement.agencyDescriptionPlaceholder"
+                    )}
                     rows={3}
                     required
                   />
@@ -570,9 +515,7 @@ const AgencyManagement = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <Label htmlFor="agencyEmail">
-                      {language === "ar"
-                        ? "بريد الجهة الإلكتروني"
-                        : "Agency Email"}
+                      {t("agencyManagement.agencyEmailField")}
                     </Label>
                     <Input
                       id="agencyEmail"
@@ -580,27 +523,19 @@ const AgencyManagement = () => {
                       type="email"
                       value={formData.agencyEmail}
                       onChange={handleInputChange}
-                      placeholder={
-                        language === "ar"
-                          ? "agency@example.gov.sa"
-                          : "agency@example.gov.sa"
-                      }
+                      placeholder={t("agencyManagement.agencyEmailPlaceholder")}
                     />
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="agencyPassword">
-                      {language === "ar"
-                        ? "كلمة مرور الجهة"
-                        : "Agency Password"}
+                      {t("agencyManagement.agencyPasswordField")}
                     </Label>
                     <Input
                       id="agencyPassword"
                       name="agencyPassword"
                       value={formData.agencyPassword}
                       onChange={handleInputChange}
-                      placeholder={
-                        language === "ar" ? "كلمة المرور" : "Password"
-                      }
+                      placeholder={t("agencyManagement.passwordPlaceholder")}
                     />
                   </div>
                 </div>
@@ -608,25 +543,21 @@ const AgencyManagement = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <Label htmlFor="contactPerson">
-                      {language === "ar" ? "الشخص المسؤول" : "Contact Person"}
+                      {t("agencyManagement.contactPersonField")}
                     </Label>
                     <Input
                       id="contactPerson"
                       name="contactPerson"
                       value={formData.contactPerson}
                       onChange={handleInputChange}
-                      placeholder={
-                        language === "ar"
-                          ? "اسم الشخص المسؤول"
-                          : "Contact person name"
-                      }
+                      placeholder={t(
+                        "agencyManagement.contactPersonPlaceholder"
+                      )}
                     />
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="email">
-                      {language === "ar"
-                        ? "البريد الشخص الإلكتروني"
-                        : "Person's Email"}
+                      {t("agencyManagement.personEmailField")}
                     </Label>
                     <Input
                       id="email"
@@ -641,41 +572,35 @@ const AgencyManagement = () => {
 
                 <div className="space-y-2">
                   <Label htmlFor="phone">
-                    {language === "ar" ? "رقم الهاتف" : "Phone Number"}
+                    {t("agencyManagement.phoneNumber")}
                   </Label>
                   <Input
                     id="phone"
                     name="phone"
                     value={formData.phone}
                     onChange={handleInputChange}
-                    placeholder="+966-11-123-4567"
+                    placeholder={t("agencyManagement.phonePlaceholder")}
                   />
                 </div>
 
                 <div className="space-y-2">
                   <Label htmlFor="address">
-                    {language === "ar" ? "العنوان" : "Address"}
+                    {t("agencyManagement.addressField")}
                   </Label>
                   <Input
                     id="address"
                     name="address"
                     value={formData.address}
                     onChange={handleInputChange}
-                    placeholder={
-                      language === "ar" ? "عنوان الجهة" : "Agency address"
-                    }
+                    placeholder={t("agencyManagement.addressPlaceholder")}
                   />
                 </div>
 
                 <div className="flex gap-2 pt-4">
                   <Button type="submit" className="flex-1">
                     {editingAgency
-                      ? language === "ar"
-                        ? "تحديث"
-                        : "Update"
-                      : language === "ar"
-                      ? "إضافة"
-                      : "Add"}
+                      ? t("agencyManagement.update")
+                      : t("agencyManagement.add")}
                   </Button>
                   <Button
                     type="button"
@@ -694,7 +619,7 @@ const AgencyManagement = () => {
                         agencyPassword: "",
                       });
                     }}>
-                    {language === "ar" ? "إلغاء" : "Cancel"}
+                    {t("agencyManagement.cancel")}
                   </Button>
                 </div>
               </form>
@@ -710,18 +635,16 @@ const AgencyManagement = () => {
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-destructive">
                 <AlertCircle className="w-5 h-5" />
-                {language === "ar" ? "تأكيد الحذف" : "Confirm Deletion"}
+                {t("agencyManagement.confirmDeletion")}
               </CardTitle>
               <CardDescription>
-                {language === "ar"
-                  ? "هل أنت متأكد من حذف هذه الجهة؟"
-                  : "Are you sure you want to delete this agency?"}
+                {t("agencyManagement.confirmDeleteMessage")}
               </CardDescription>
             </CardHeader>
             <CardContent>
               <div className="mb-4 p-3 bg-muted rounded-lg">
                 <p className="font-medium">
-                  {language === "ar" ? "اسم الجهة:" : "Agency Name:"}
+                  {t("agencyManagement.agencyNameLabel")}
                 </p>
                 <p className="text-muted-foreground">
                   {deleteConfirm.agencyName}
@@ -733,13 +656,13 @@ const AgencyManagement = () => {
                   variant="destructive"
                   onClick={confirmDelete}
                   className="flex-1">
-                  {language === "ar" ? "حذف" : "Delete"}
+                  {t("agencyManagement.delete")}
                 </Button>
                 <Button
                   variant="outline"
                   onClick={cancelDelete}
                   className="flex-1">
-                  {language === "ar" ? "إلغاء" : "Cancel"}
+                  {t("agencyManagement.cancel")}
                 </Button>
               </div>
             </CardContent>
@@ -754,7 +677,7 @@ const AgencyManagement = () => {
             <div className="flex items-center justify-between">
               <DialogTitle className="flex items-center gap-2">
                 <Building2 className="w-5 h-5" />
-                {language === "ar" ? "المعايير المخصصة" : "Assigned Standards"}
+                {t("agencyManagement.assignedStandards")}
               </DialogTitle>
               <Button
                 variant="ghost"
@@ -782,9 +705,7 @@ const AgencyManagement = () => {
               <div className="space-y-4">
                 <h4 className="text-lg font-semibold flex items-center gap-2">
                   <CheckSquare className="w-5 h-5 text-green-600" />
-                  {language === "ar"
-                    ? "المعايير المخصصة"
-                    : "Assigned Standards"}
+                  {t("agencyManagement.assignedStandards")}
                 </h4>
 
                 {(() => {
@@ -797,9 +718,7 @@ const AgencyManagement = () => {
                       <div className="text-center py-8 bg-muted/50 rounded-lg">
                         <Target className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
                         <p className="text-muted-foreground">
-                          {language === "ar"
-                            ? "لا توجد معايير مخصصة لهذه الجهة"
-                            : "No standards assigned to this agency"}
+                          {t("agencyManagement.noAssignedStandards")}
                         </p>
                       </div>
                     );
@@ -828,7 +747,7 @@ const AgencyManagement = () => {
                                   #{standard.id}
                                 </Badge>
                                 <span className="text-xs text-muted-foreground">
-                                  {language === "ar" ? "معيار" : "Standard"}
+                                  {t("agencyManagement.standard")}
                                 </span>
                               </div>
                               <h5 className="font-medium text-sm leading-relaxed mb-2">
@@ -836,7 +755,7 @@ const AgencyManagement = () => {
                               </h5>
                               <div className="text-xs text-muted-foreground">
                                 {standard.requirements.length}{" "}
-                                {language === "ar" ? "متطلب" : "requirements"}
+                                {t("agencyManagement.requirements")}
                               </div>
                             </div>
                           </div>
@@ -851,9 +770,7 @@ const AgencyManagement = () => {
               <div className="space-y-4">
                 <h4 className="text-lg font-semibold flex items-center gap-2">
                   <Square className="w-5 h-5 text-gray-500" />
-                  {language === "ar"
-                    ? "المعايير غير المخصصة"
-                    : "Unassigned Standards"}
+                  {t("agencyManagement.unassignedStandards")}
                 </h4>
 
                 {(() => {
@@ -866,9 +783,7 @@ const AgencyManagement = () => {
                       <div className="text-center py-8 bg-muted/50 rounded-lg">
                         <CheckCircle className="w-12 h-12 text-green-500 mx-auto mb-4" />
                         <p className="text-muted-foreground">
-                          {language === "ar"
-                            ? "جميع المعايير مخصصة لهذه الجهة"
-                            : "All standards are assigned to this agency"}
+                          {t("agencyManagement.allStandardsAssigned")}
                         </p>
                       </div>
                     );
@@ -897,7 +812,7 @@ const AgencyManagement = () => {
                                   #{standard.id}
                                 </Badge>
                                 <span className="text-xs text-muted-foreground">
-                                  {language === "ar" ? "معيار" : "Standard"}
+                                  {t("agencyManagement.standard")}
                                 </span>
                               </div>
                               <h5 className="font-medium text-sm leading-relaxed mb-2">
@@ -905,7 +820,7 @@ const AgencyManagement = () => {
                               </h5>
                               <div className="text-xs text-muted-foreground">
                                 {standard.requirements.length}{" "}
-                                {language === "ar" ? "متطلب" : "requirements"}
+                                {t("agencyManagement.requirements")}
                               </div>
                             </div>
                           </div>

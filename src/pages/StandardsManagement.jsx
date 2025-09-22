@@ -27,6 +27,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { useTheme } from "@/contexts/ThemeContext";
+import { useLanguage } from "@/contexts/LanguageContext";
 import Standards from "@/lib/standards";
 import {
   Search,
@@ -39,6 +40,7 @@ import {
 
 const StandardsManagement = () => {
   const { language } = useTheme();
+  const { t } = useLanguage();
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedAgency, setSelectedAgency] = useState("all");
@@ -78,25 +80,25 @@ const StandardsManagement = () => {
     const statuses = [
       {
         value: "approved",
-        label: { ar: "تمت الموافقة", en: "Approved" },
+        label: t("standardsManagement.approved"),
         variant: "default",
         className: "bg-green-500",
       },
       {
         value: "pending_approval",
-        label: { ar: "في انتظار الموافقة", en: "Pending Approval" },
+        label: t("standardsManagement.pendingApproval"),
         variant: "secondary",
         className: "bg-yellow-500",
       },
       {
         value: "didnt_submit",
-        label: { ar: "لم يتم التقديم", en: "Didn't Submit" },
+        label: t("standardsManagement.didntSubmit"),
         variant: "outline",
         className: "bg-gray-300 text-black",
       },
       {
         value: "rejected",
-        label: { ar: "مرفوض", en: "Rejected" },
+        label: t("standardsManagement.rejected"),
         variant: "destructive",
         className: "bg-red-500",
       },
@@ -110,7 +112,7 @@ const StandardsManagement = () => {
       <Badge
         variant={status.variant}
         className={`text-center ${status.className}`}>
-        {language === "ar" ? status.label.ar : status.label.en}
+        {status.label}
       </Badge>
     );
   };
@@ -160,14 +162,10 @@ const StandardsManagement = () => {
       {/* Page Header */}
       <div className="space-y-2">
         <h1 className="text-3xl font-bold text-foreground">
-          {language === "ar"
-            ? "إدارة معايير المدينة الصحية"
-            : "Health City Standards Management"}
+          {t("standardsManagement.title")}
         </h1>
         <p className="text-muted-foreground">
-          {language === "ar"
-            ? "مراقبة وإدارة المعايير الصحية الـ 80 مع متطلباتها والجهات المسؤولة عنها"
-            : "Monitor and manage the 80 health standards with their requirements and responsible agencies"}
+          {t("standardsManagement.subtitle")}
         </p>
       </div>
 
@@ -178,29 +176,29 @@ const StandardsManagement = () => {
         {[
           {
             value: standardsList.length,
-            label: { en: "Total Standards", ar: "إجمالي المعايير" },
+            label: t("standardsManagement.totalStandards"),
             color: "text-foreground",
           },
           {
             value: standardsList.filter((s) => s.status === "approved").length,
-            label: { en: "Approved", ar: "تمت الموافقة" },
+            label: t("standardsManagement.approved"),
             color: "text-green-600",
           },
           {
             value: standardsList.filter((s) => s.status === "pending_approval")
               .length,
-            label: { en: "Pending Approval", ar: "في انتظار الموافقة" },
+            label: t("standardsManagement.pendingApproval"),
             color: "text-yellow-600",
           },
           {
             value: standardsList.filter((s) => s.status === "rejected").length,
-            label: { en: "Rejected", ar: "مرفوض" },
+            label: t("standardsManagement.rejected"),
             color: "text-red-500",
           },
           {
             value: standardsList.filter((s) => s.status === "didnt_submit")
               .length,
-            label: { en: "Didn't Submit", ar: "لم يتم التقديم" },
+            label: t("standardsManagement.didntSubmit"),
             color: "text-gray-400",
           },
         ]
@@ -213,9 +211,7 @@ const StandardsManagement = () => {
                   <div className={`text-2xl font-bold ${stat.color}`}>
                     {stat.value}
                   </div>
-                  <p className="text-sm text-muted-foreground">
-                    {language === "ar" ? stat.label.ar : stat.label.en}
-                  </p>
+                  <p className="text-sm text-muted-foreground">{stat.label}</p>
                 </div>
               </CardContent>
             </Card>
@@ -227,23 +223,19 @@ const StandardsManagement = () => {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Filter className="w-5 h-5" />
-            {language === "ar" ? "البحث والتصفية" : "Search & Filters"}
+            {t("standardsManagement.searchAndFilters")}
           </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="space-y-2">
               <label className="text-sm font-medium">
-                {language === "ar" ? "البحث في المعايير" : "Search Standards"}
+                {t("standardsManagement.searchStandards")}
               </label>
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                 <Input
-                  placeholder={
-                    language === "ar"
-                      ? "ابحث في المعايير أو المتطلبات..."
-                      : "Search standards or requirements..."
-                  }
+                  placeholder={t("standardsManagement.searchPlaceholder")}
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   className="pl-10"
@@ -253,19 +245,17 @@ const StandardsManagement = () => {
 
             <div className="space-y-2">
               <label className="text-sm font-medium">
-                {language === "ar" ? "الجهة المسؤولة" : "Responsible Agency"}
+                {t("standardsManagement.responsibleAgency")}
               </label>
               <Select value={selectedAgency} onValueChange={setSelectedAgency}>
                 <SelectTrigger>
                   <SelectValue
-                    placeholder={
-                      language === "ar" ? "اختر الجهة" : "Select Agency"
-                    }
+                    placeholder={t("standardsManagement.selectAgency")}
                   />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">
-                    {language === "ar" ? "جميع الجهات" : "All Agencies"}
+                    {t("standardsManagement.allAgencies")}
                   </SelectItem>
                   {allAgencies.map((agency) => (
                     <SelectItem key={agency} value={agency}>
@@ -278,34 +268,39 @@ const StandardsManagement = () => {
 
             <div className="space-y-2">
               <label className="text-sm font-medium">
-                {language === "ar" ? "حالة التقديم" : "Submission Status"}
+                {t("standardsManagement.submissionStatus")}
               </label>
               <Select value={selectedStatus} onValueChange={setSelectedStatus}>
                 <SelectTrigger>
                   <SelectValue
-                    placeholder={
-                      language === "ar" ? "اختر الحالة" : "Select Status"
-                    }
+                    placeholder={t("standardsManagement.selectStatus")}
                   />
                 </SelectTrigger>
                 <SelectContent>
                   {[
-                    { value: "all", en: "All Statuses", ar: "جميع الحالات" },
-                    { value: "approved", en: "Approved", ar: "تمت الموافقة" },
+                    {
+                      value: "all",
+                      label: t("standardsManagement.allStatuses"),
+                    },
+                    {
+                      value: "approved",
+                      label: t("standardsManagement.approved"),
+                    },
                     {
                       value: "pending_approval",
-                      en: "Pending Approval",
-                      ar: "في انتظار الموافقة",
+                      label: t("standardsManagement.pendingApproval"),
                     },
                     {
                       value: "didnt_submit",
-                      en: "Didn't Submit",
-                      ar: "لم يتم التقديم",
+                      label: t("standardsManagement.didntSubmit"),
                     },
-                    { value: "rejected", en: "Rejected", ar: "مرفوض" },
+                    {
+                      value: "rejected",
+                      label: t("standardsManagement.rejected"),
+                    },
                   ].map((status) => (
                     <SelectItem key={status.value} value={status.value}>
-                      {language === "ar" ? status.ar : status.en}
+                      {status.label}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -319,14 +314,9 @@ const StandardsManagement = () => {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center justify-between">
-            <span>
-              {language === "ar"
-                ? "جدول المعايير الصحية"
-                : "Health Standards Table"}
-            </span>
+            <span>{t("standardsManagement.healthStandardsTable")}</span>
             <Badge variant="outline">
-              {filteredStandards.length}{" "}
-              {language === "ar" ? "معيار" : "Standards"}
+              {filteredStandards.length} {t("standardsManagement.standards")}
             </Badge>
           </CardTitle>
         </CardHeader>
@@ -336,41 +326,39 @@ const StandardsManagement = () => {
               <TableHeader>
                 <TableRow>
                   {[
-                    { key: "id", en: "ID", ar: "الرقم", className: "w-16" },
+                    {
+                      key: "id",
+                      label: t("standardsManagement.id"),
+                      className: "w-16",
+                    },
                     {
                       key: "standard",
-                      en: "Standard",
-                      ar: "المعيار",
+                      label: t("standardsManagement.standard"),
                       className: "min-w-[300px]",
                     },
                     {
                       key: "requirements",
-                      en: "Requirements",
-                      ar: "المتطلبات",
+                      label: t("standardsManagement.requirements"),
                       className: "min-w-[200px]",
                     },
                     {
                       key: "agencies",
-                      en: "Responsible Agencies",
-                      ar: "الجهات المسؤولة",
+                      label: t("standardsManagement.responsibleAgencies"),
                       className: "min-w-[200px]",
                     },
                     {
                       key: "status",
-                      en: "Status",
-                      ar: "الحالة",
+                      label: t("standardsManagement.status"),
                       className: "w-24",
                     },
                     {
                       key: "submissions",
-                      en: "Submissions",
-                      ar: "التقديمات",
+                      label: t("standardsManagement.submissions"),
                       className: "w-24",
                     },
                     {
                       key: "actions",
-                      en: "Actions",
-                      ar: "الإجراءات",
+                      label: t("standardsManagement.actions"),
                       className: "w-32",
                     },
                   ]
@@ -382,7 +370,7 @@ const StandardsManagement = () => {
                         className={`${header.className} ${
                           language === "ar" ? "text-right" : ""
                         }`}>
-                        {language === "ar" ? header.ar : header.en}
+                        {header.label}
                       </TableHead>
                     ))}
                 </TableRow>
@@ -454,7 +442,7 @@ const StandardsManagement = () => {
                           onClick={() => viewSubmissions(standard.id)}
                           className="w-full">
                           <Eye className="w-4 h-4 mr-1" />
-                          {language === "ar" ? "عرض" : "View"}
+                          {t("standardsManagement.view")}
                         </Button>
                       </div>
                     </TableCell>
@@ -471,7 +459,7 @@ const StandardsManagement = () => {
         <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>
-              {language === "ar" ? "تفاصيل المعيار" : "Standard Details"}
+              {t("standardsManagement.standardDetails")}
             </DialogTitle>
           </DialogHeader>
 
@@ -481,7 +469,7 @@ const StandardsManagement = () => {
               <div className="space-y-4">
                 <div>
                   <h3 className="text-lg font-semibold mb-2">
-                    {language === "ar" ? "المعيار" : "Standard"}
+                    {t("standardsManagement.standard")}
                   </h3>
                   <p className="text-sm leading-relaxed bg-muted p-3 rounded">
                     {selectedStandard.standard}
@@ -490,7 +478,7 @@ const StandardsManagement = () => {
 
                 <div>
                   <h3 className="text-lg font-semibold mb-2">
-                    {language === "ar" ? "المتطلبات" : "Requirements"}
+                    {t("standardsManagement.requirementsLabel")}
                   </h3>
                   <div className="space-y-2">
                     {selectedStandard.requirements.map((req, index) => (
@@ -506,9 +494,7 @@ const StandardsManagement = () => {
 
                 <div>
                   <h3 className="text-lg font-semibold mb-2">
-                    {language === "ar"
-                      ? "الجهات المسؤولة"
-                      : "Responsible Agencies"}
+                    {t("standardsManagement.responsibleAgenciesLabel")}
                   </h3>
                   <div className="space-y-4">
                     {/* Agencies with color coding */}
@@ -540,7 +526,7 @@ const StandardsManagement = () => {
                           variant="outline"
                           className="bg-green-100 text-green-800 border-green-300 dark:bg-green-900 dark:text-green-200 dark:border-green-700"></Badge>
                         <span className="text-green-700 dark:text-green-300">
-                          {language === "ar" ? "قدمت التقديم" : "Submitted"}
+                          {t("standardsManagement.submitted")}
                         </span>
                       </div>
                       <div className="flex items-center gap-2">
@@ -548,9 +534,7 @@ const StandardsManagement = () => {
                           variant="outline"
                           className="bg-red-100 text-red-800 border-red-300 dark:bg-red-900 dark:text-red-200 dark:border-red-700"></Badge>
                         <span className="text-red-700 dark:text-red-300">
-                          {language === "ar"
-                            ? "لم تقدم التقديم"
-                            : "Not Submitted"}
+                          {t("standardsManagement.notSubmitted")}
                         </span>
                       </div>
                     </div>
@@ -560,15 +544,13 @@ const StandardsManagement = () => {
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <h3 className="text-lg font-semibold mb-2">
-                      {language === "ar" ? "الحالة" : "Status"}
+                      {t("standardsManagement.status")}
                     </h3>
                     {getStatusBadge(selectedStandard)}
                   </div>
                   <div>
                     <h3 className="text-lg font-semibold mb-2">
-                      {language === "ar"
-                        ? "نسبة التقديمات المعتمدة"
-                        : "Approved Submissions"}
+                      {t("standardsManagement.approvedSubmissions")}
                     </h3>
                     <Badge variant="secondary" className="text-sm">
                       {(() => {
@@ -601,9 +583,7 @@ const StandardsManagement = () => {
                     }
                     className="w-full bg-blue-50 hover:bg-blue-100 border-blue-200 text-blue-700 hover:text-blue-800 dark:bg-blue-900 dark:hover:bg-blue-800 dark:border-blue-700 dark:text-blue-200 dark:hover:text-blue-100 transition-colors duration-200">
                     <Eye className="w-5 h-5 mr-2" />
-                    {language === "ar"
-                      ? "عرض التقديمات التفصيلية"
-                      : "View Detailed Submissions"}
+                    {t("standardsManagement.viewDetailedSubmissions")}
                   </Button>
                 </div>
               </div>

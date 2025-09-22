@@ -22,10 +22,12 @@ import {
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useTheme } from "@/contexts/ThemeContext";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { cn } from "@/lib/utils";
 
 const AboutHuraymila = () => {
   const { language } = useTheme();
+  const { t } = useLanguage();
   const navigate = useNavigate();
   const [currentSlide, setCurrentSlide] = useState(0);
 
@@ -66,225 +68,84 @@ const AboutHuraymila = () => {
       title: "طريق الصعود إلى حافة العالم حريملاء",
       description: "مسار ترابي يقود الزوار نحو القمم العالية.",
     },
+  ];
+
+  const features = [
     {
-      name: "المطل الشمالي في حافة العالم حريملاء",
-      src: "/assets/slideshow/6.jpg",
-      alt: "المطل الشمالي في حافة العالم حريملاء",
-      title: "المطل الشمالي في حافة العالم حريملاء",
-      description: "زاوية مختلفة تكشف عمق الجبال وتفاصيل الطبيعة.",
+      icon: Mountain,
+      title: t("aboutHuraymila.features.scenicNature"),
+      description: t("aboutHuraymila.features.scenicNatureDesc"),
     },
     {
-      name: "هايكنج مطل حافة العالم حريملاء",
-      src: "/assets/slideshow/7.jpg",
-      alt: "هايكنج مطل حافة العالم حريملاء",
-      title: "هايكنج مطل حافة العالم حريملاء",
-      description: "رحلة مشي ممتعة لعشاق الرياضة في أجواء جبلية.",
+      icon: Sun,
+      title: t("aboutHuraymila.features.moderateClimate"),
+      description: t("aboutHuraymila.features.moderateClimateDesc"),
     },
     {
-      name: "تسلق جبال حافة العالم حريملاء",
-      src: "/assets/slideshow/8.jpg",
-      alt: "تسلق جبال حافة العالم حريملاء",
-      title: "تسلق جبال حافة العالم حريملاء",
-      description: "تجربة فريدة لعشاق التحدي وتسلق الصخور.",
+      icon: Leaf,
+      title: t("aboutHuraymila.features.thrivingAgriculture"),
+      description: t("aboutHuraymila.features.thrivingAgricultureDesc"),
     },
     {
-      name: "التخييم قرب حافة نهاية العالم حريملاء",
-      src: "/assets/slideshow/9.jpg",
-      alt: "التخييم قرب حافة نهاية العالم حريملاء",
-      title: "التخييم قرب حافة نهاية العالم حريملاء",
-      description: "خيام تحت سماء صافية بجوار الجرف العظيم.",
-    },
-    {
-      name: "غروب الشمس من حافة العالم حريملاء",
-      src: "/assets/slideshow/10.jpg",
-      alt: "غروب الشمس من حافة العالم حريملاء",
-      title: "غروب الشمس من حافة العالم حريملاء",
-      description: "ألوان غروب خلابة تزين أفق الصحراء.",
-    },
-    {
-      name: "المطل الغربي حافة نهاية العالم حريملاء",
-      src: "/assets/slideshow/11.jpg",
-      alt: "المطل الغربي حافة نهاية العالم حريملاء",
-      title: "المطل الغربي حافة نهاية العالم حريملاء",
-      description: "إطلالة على الجهة الغربية بأجواء هادئة.",
-    },
-    {
-      name: "رحلات المغامرة في حافة العالم حريملاء",
-      src: "/assets/slideshow/12.jpg",
-      alt: "رحلات المغامرة في حافة العالم حريملاء",
-      title: "رحلات المغامرة في حافة العالم حريملاء",
-      description: "جولات جماعية لعشاق الاكتشاف والمغامرة.",
-    },
-    {
-      name: "جولات استكشافية في حافة العالم حريملاء",
-      src: "/assets/slideshow/13.jpg",
-      alt: "جولات استكشافية في حافة العالم حريملاء",
-      title: "جولات استكشافية في حافة العالم حريملاء",
-      description: "أنشطة سياحية لاستكشاف الطبيعة والمطل.",
-    },
-    {
-      name: "المطل الجنوبي حافة العالم حريملاء",
-      src: "/assets/slideshow/14.jpg",
-      alt: "المطل الجنوبي حافة العالم حريملاء",
-      title: "المطل الجنوبي حافة العالم حريملاء",
-      description: "زاوية أخرى تكشف عن امتداد الصخور والوديان.",
-    },
-    {
-      name: "مطل السماء في حافة العالم حريملاء",
-      src: "/assets/slideshow/15.jpg",
-      alt: "مطل السماء في حافة العالم حريملاء",
-      title: "مطل السماء في حافة العالم حريملاء",
-      description: "موقع مرتفع يمنحك شعوراً وكأنك تلمس السماء.",
+      icon: Building2,
+      title: t("aboutHuraymila.features.continuousDevelopment"),
+      description: t("aboutHuraymila.features.continuousDevelopmentDesc"),
     },
   ];
 
-  const content = {
-    ar: {
-      title: "عن محافظة حريملاء",
-      subtitle: "جوهرة منطقة الرياض",
-      description:
-        "تقع محافظة حريملاء في منطقة الرياض شمال غرب مدينة الرياض على بعد 86 كيلومتراً. تتميز بموقعها الاستراتيجي وتراثها العريق وتشتهر بالزراعة والمواقع التاريخية.",
-
-      history: {
-        title: "التاريخ والتراث",
-        description:
-          "تتمتع حريملاء بتاريخ عريق يعود إلى قرون عديدة، حيث كانت محطة مهمة على طرق التجارة القديمة. تشتهر بتراثها المعماري التقليدي والمواقع الأثرية التي تعكس عراقة المنطقة.",
-      },
-
-      geography: {
-        title: "الموقع الجغرافي",
-        description:
-          "تقع حريملاء في منطقة الرياض على ارتفاع 650 متر فوق مستوى سطح البحر، وتتميز بمناخها المعتدل وطبيعتها الخلابة التي تجمع بين الجبال والسهول الخضراء.",
-      },
-
-      economy: {
-        title: "الاقتصاد والتنمية",
-        description:
-          "تعتمد حريملاء على الزراعة كركيزة أساسية للاقتصاد المحلي، بالإضافة إلى السياحة التراثية والتنمية الصناعية الحديثة التي تساهم في دفع عجلة التطوير.",
-      },
-
-      culture: {
-        title: "الثقافة والمجتمع",
-        description:
-          "يتميز مجتمع حريملاء بالترابط الاجتماعي القوي والحفاظ على العادات والتقاليد الأصيلة، مع الانفتاح على التطورات الحديثة في مختلف المجالات.",
-      },
-
-      features: [
-        {
-          icon: Mountain,
-          title: "الطبيعة الخلابة",
-          description: "جبال وسهول تتميز بجمالها الطبيعي",
-        },
-        {
-          icon: Sun,
-          title: "المناخ المعتدل",
-          description: "مناخ صحراوي معتدل على مدار السنة",
-        },
-        {
-          icon: Leaf,
-          title: "الزراعة المزدهرة",
-          description: "أراضي زراعية خصبة ومنتجة",
-        },
-        {
-          icon: Building2,
-          title: "التطوير المستمر",
-          description: "مشاريع تنموية حديثة ومستدامة",
-        },
-      ],
-
-      stats: [
-        { label: "عدد السكان (2022)", value: "21,758 نسمة", icon: Users },
-        { label: "سنة التأسيس", value: "1400 هـ", icon: Calendar },
-        { label: "الارتفاع", value: "650 م", icon: Mountain },
-        { label: "المساحة", value: "1,480 كم²", icon: Globe },
-        { label: "الكثافة السكانية", value: "15 نسمة/كم²", icon: Users },
-        { label: "السعوديون", value: "12,724 (58.48%)", icon: Heart },
-        { label: "غير السعوديين", value: "9,034 (41.52%)", icon: Globe },
-        { label: "عدد الأسر (2010)", value: "3,617 أسرة", icon: Building2 },
-        { label: "خطة ترقيم الهواتف", value: "011", icon: Phone },
-        { label: "الإحداثيات", value: "25°07′01″N 46°06′01″E", icon: MapPin },
-      ],
-
-      cta: "اكتشف المزيد",
-      backButton: "العودة للصفحة الرئيسية",
+  const stats = [
+    {
+      label: t("aboutHuraymila.stats.population"),
+      value: t("aboutHuraymila.stats.populationValue"),
+      icon: Users,
     },
-    en: {
-      title: "About Huraymila Governorate",
-      subtitle: "The Jewel of Riyadh Region",
-      description:
-        "Huraymila Governorate is located in Riyadh region, 86 km northwest of Riyadh city. It is distinguished by its strategic location, rich heritage, and is known for agriculture and historical sites.",
-
-      history: {
-        title: "History & Heritage",
-        description:
-          "Huraymila boasts a rich history spanning centuries, having been an important stop on ancient trade routes. It is renowned for its traditional architectural heritage and archaeological sites that reflect the region's antiquity.",
-      },
-
-      geography: {
-        title: "Geographic Location",
-        description:
-          "Located in Riyadh region at an elevation of 650 meters above sea level, Huraymila is characterized by its moderate climate and picturesque nature that combines mountains and green plains.",
-      },
-
-      economy: {
-        title: "Economy & Development",
-        description:
-          "Huraymila relies on agriculture as a fundamental pillar of the local economy, in addition to heritage tourism and modern industrial development that contribute to driving development forward.",
-      },
-
-      culture: {
-        title: "Culture & Society",
-        description:
-          "Huraymila's community is distinguished by strong social cohesion and preservation of authentic customs and traditions, while being open to modern developments in various fields.",
-      },
-
-      features: [
-        {
-          icon: Mountain,
-          title: "Scenic Nature",
-          description:
-            "Mountains and plains distinguished by their natural beauty",
-        },
-        {
-          icon: Sun,
-          title: "Moderate Climate",
-          description: "Moderate desert climate throughout the year",
-        },
-        {
-          icon: Leaf,
-          title: "Thriving Agriculture",
-          description: "Fertile and productive agricultural lands",
-        },
-        {
-          icon: Building2,
-          title: "Continuous Development",
-          description: "Modern and sustainable development projects",
-        },
-      ],
-
-      stats: [
-        { label: "Population (2022)", value: "21,758 residents", icon: Users },
-        { label: "Founded", value: "1980", icon: Calendar },
-        { label: "Elevation", value: "650 m", icon: Mountain },
-        { label: "Area", value: "1,480 km²", icon: Globe },
-        { label: "Population Density", value: "15 residents/km²", icon: Users },
-        { label: "Saudis", value: "12,724 (58.48%)", icon: Heart },
-        { label: "Non-Saudis", value: "9,034 (41.52%)", icon: Globe },
-        {
-          label: "Households (2010)",
-          value: "3,617 households",
-          icon: Building2,
-        },
-        { label: "Dialing Code", value: "011", icon: Phone },
-        { label: "Coordinates", value: "25°07′01″N 46°06′01″E", icon: MapPin },
-      ],
-
-      cta: "Discover More",
-      backButton: "Back to Home",
+    {
+      label: t("aboutHuraymila.stats.founded"),
+      value: t("aboutHuraymila.stats.foundedValue"),
+      icon: Calendar,
     },
-  };
+    {
+      label: t("aboutHuraymila.stats.elevation"),
+      value: t("aboutHuraymila.stats.elevationValue"),
+      icon: Mountain,
+    },
+    {
+      label: t("aboutHuraymila.stats.area"),
+      value: t("aboutHuraymila.stats.areaValue"),
+      icon: Globe,
+    },
+    {
+      label: t("aboutHuraymila.stats.populationDensity"),
+      value: t("aboutHuraymila.stats.populationDensityValue"),
+      icon: Users,
+    },
+    {
+      label: t("aboutHuraymila.stats.saudis"),
+      value: t("aboutHuraymila.stats.saudisValue"),
+      icon: Heart,
+    },
+    {
+      label: t("aboutHuraymila.stats.nonSaudis"),
+      value: t("aboutHuraymila.stats.nonSaudisValue"),
+      icon: Globe,
+    },
+    {
+      label: t("aboutHuraymila.stats.households"),
+      value: t("aboutHuraymila.stats.householdsValue"),
+      icon: Building2,
+    },
+    {
+      label: t("aboutHuraymila.stats.dialingCode"),
+      value: t("aboutHuraymila.stats.dialingCodeValue"),
+      icon: Phone,
+    },
+    {
+      label: t("aboutHuraymila.stats.coordinates"),
+      value: t("aboutHuraymila.stats.coordinatesValue"),
+      icon: MapPin,
+    },
+  ];
 
-  const current = content[language];
   const isRTL = language === "ar";
 
   // Auto-advance slideshow
@@ -319,7 +180,7 @@ const AboutHuraymila = () => {
                     "text-4xl md:text-6xl font-bold mb-4",
                     isRTL ? "font-arabic" : "font-english"
                   )}>
-                  {current.title}
+                  {t("aboutHuraymila.title")}
                 </h1>
               </AnimatedSection>
               <AnimatedSection animation="fadeInUp" delay={400}>
@@ -328,7 +189,7 @@ const AboutHuraymila = () => {
                     "text-xl md:text-2xl opacity-90",
                     isRTL ? "font-arabic" : "font-english"
                   )}>
-                  {current.subtitle}
+                  {t("aboutHuraymila.subtitle")}
                 </p>
               </AnimatedSection>
             </div>
@@ -348,7 +209,7 @@ const AboutHuraymila = () => {
                 isRTL ? "font-arabic" : "font-english"
               )}>
               <ArrowLeft className={`w-4 h-4 ${isRTL ? "rotate-180" : ""}`} />
-              {current.backButton}
+              {t("common.backToHome")}
             </Button>
           </div>
         </AnimatedSection>
@@ -428,7 +289,7 @@ const AboutHuraymila = () => {
                     "text-lg text-foreground/80 leading-relaxed text-center max-w-4xl mx-auto",
                     isRTL ? "font-arabic" : "font-english"
                   )}>
-                  {current.description}
+                  {t("aboutHuraymila.description")}
                 </p>
               </CardContent>
             </Card>
@@ -452,7 +313,7 @@ const AboutHuraymila = () => {
                       "text-2xl font-bold text-foreground",
                       isRTL ? "font-arabic" : "font-english"
                     )}>
-                    {current.history.title}
+                    {t("aboutHuraymila.history.title")}
                   </h3>
                 </div>
                 <p
@@ -460,7 +321,7 @@ const AboutHuraymila = () => {
                     "text-foreground/80 leading-relaxed",
                     isRTL ? "font-arabic" : "font-english"
                   )}>
-                  {current.history.description}
+                  {t("aboutHuraymila.history.description")}
                 </p>
               </CardContent>
             </Card>
@@ -476,7 +337,7 @@ const AboutHuraymila = () => {
                       "text-2xl font-bold text-foreground",
                       isRTL ? "font-arabic" : "font-english"
                     )}>
-                    {current.geography.title}
+                    {t("aboutHuraymila.geography.title")}
                   </h3>
                 </div>
                 <p
@@ -484,7 +345,7 @@ const AboutHuraymila = () => {
                     "text-foreground/80 leading-relaxed",
                     isRTL ? "font-arabic" : "font-english"
                   )}>
-                  {current.geography.description}
+                  {t("aboutHuraymila.geography.description")}
                 </p>
               </CardContent>
             </Card>
@@ -500,7 +361,7 @@ const AboutHuraymila = () => {
                       "text-2xl font-bold text-foreground",
                       isRTL ? "font-arabic" : "font-english"
                     )}>
-                    {current.economy.title}
+                    {t("aboutHuraymila.economy.title")}
                   </h3>
                 </div>
                 <p
@@ -508,7 +369,7 @@ const AboutHuraymila = () => {
                     "text-foreground/80 leading-relaxed",
                     isRTL ? "font-arabic" : "font-english"
                   )}>
-                  {current.economy.description}
+                  {t("aboutHuraymila.economy.description")}
                 </p>
               </CardContent>
             </Card>
@@ -524,7 +385,7 @@ const AboutHuraymila = () => {
                       "text-2xl font-bold text-foreground",
                       isRTL ? "font-arabic" : "font-english"
                     )}>
-                    {current.culture.title}
+                    {t("aboutHuraymila.culture.title")}
                   </h3>
                 </div>
                 <p
@@ -532,7 +393,7 @@ const AboutHuraymila = () => {
                     "text-foreground/80 leading-relaxed",
                     isRTL ? "font-arabic" : "font-english"
                   )}>
-                  {current.culture.description}
+                  {t("aboutHuraymila.culture.description")}
                 </p>
               </CardContent>
             </Card>
@@ -548,14 +409,14 @@ const AboutHuraymila = () => {
                   "text-3xl font-bold text-center mb-12",
                   isRTL ? "font-arabic" : "font-english"
                 )}>
-                {isRTL ? "المميزات الرئيسية" : "Key Features"}
+                {t("aboutHuraymila.keyFeatures")}
               </h2>
             </AnimatedSection>
             <StaggeredContainer
               className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"
               staggerDelay={100}
               animation="scaleIn">
-              {current.features.map((feature, index) => {
+              {features.map((feature, index) => {
                 const IconComponent = feature.icon;
                 return (
                   <Card
@@ -596,14 +457,14 @@ const AboutHuraymila = () => {
                   "text-3xl font-bold text-center mb-12",
                   isRTL ? "font-arabic" : "font-english"
                 )}>
-                {isRTL ? "الإحصائيات" : "Statistics"}
+                {t("aboutHuraymila.statistics")}
               </h2>
             </AnimatedSection>
             <StaggeredContainer
               className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-6"
               staggerDelay={80}
               animation="fadeInUp">
-              {current.stats.map((stat, index) => {
+              {stats.map((stat, index) => {
                 const IconComponent = stat.icon;
                 return (
                   <Card

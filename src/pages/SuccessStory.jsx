@@ -18,11 +18,13 @@ import {
   Users,
 } from "lucide-react";
 import { useTheme } from "@/contexts/ThemeContext";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const SuccessStory = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { language } = useTheme();
+  const { t } = useLanguage();
 
   // Mock success stories data - in real app, this would come from API
   const storiesData = {
@@ -159,10 +161,10 @@ const SuccessStory = () => {
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center">
           <h1 className="text-2xl font-bold mb-4">
-            {language === "ar" ? "القصة غير موجودة" : "Story Not Found"}
+            {t("successStory.notFound")}
           </h1>
           <Button onClick={() => navigate("/success-stories")}>
-            {language === "ar" ? "العودة للقصص" : "Back to Stories"}
+            {t("successStory.backToStories")}
           </Button>
         </div>
       </div>
@@ -190,7 +192,7 @@ const SuccessStory = () => {
             onClick={() => navigate("/success-stories")}
             className={`${isRTL ? "mr-4" : "ml-4"}`}>
             <ArrowLeft className={`w-4 h-4 ${isRTL ? "ml-2" : "mr-2"}`} />
-            {language === "ar" ? "العودة للقصص" : "Back to Stories"}
+            {t("successStory.backToStories")}
           </Button>
         </div>
 
@@ -266,12 +268,12 @@ const SuccessStory = () => {
                   className={`text-xl font-semibold mb-4 ${
                     isRTL ? "font-arabic text-right" : "font-sans text-left"
                   }`}>
-                  {language === "ar" ? "قبل وبعد" : "Before & After"}
+                  {t("successStory.beforeAfter")}
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className={`${isRTL ? "text-right" : "text-left"}`}>
                     <h4 className="font-semibold text-red-600 mb-2">
-                      {language === "ar" ? "قبل" : "Before"}
+                      {t("successStory.before")}
                     </h4>
                     <p className="text-muted-foreground">
                       {language === "ar" ? story.before : story.beforeEn}
@@ -279,7 +281,7 @@ const SuccessStory = () => {
                   </div>
                   <div className={`${isRTL ? "text-right" : "text-left"}`}>
                     <h4 className="font-semibold text-green-600 mb-2">
-                      {language === "ar" ? "بعد" : "After"}
+                      {t("successStory.after")}
                     </h4>
                     <p className="text-muted-foreground">
                       {language === "ar" ? story.after : story.afterEn}
@@ -298,7 +300,7 @@ const SuccessStory = () => {
                   className={`text-xl font-semibold mb-4 ${
                     isRTL ? "font-arabic text-right" : "font-sans text-left"
                   }`}>
-                  {language === "ar" ? "النتائج المحققة" : "Achieved Results"}
+                  {t("successStory.achievedResults")}
                 </h3>
                 <div className="flex items-center gap-2">
                   <TrendingUp className="w-5 h-5 text-green-600" />
@@ -361,7 +363,7 @@ const SuccessStory = () => {
               className={`text-lg font-semibold mb-4 ${
                 isRTL ? "font-arabic text-right" : "font-sans text-left"
               }`}>
-              {language === "ar" ? "العلامات" : "Tags"}
+              {t("successStory.tags")}
             </h3>
             <div className="flex flex-wrap gap-2">
               {(language === "ar" ? story.tags : story.tagsEn).map(
@@ -373,7 +375,7 @@ const SuccessStory = () => {
               )}
               <Button variant="outline" size="sm">
                 <Share2 className="w-4 h-4 mr-2" />
-                {language === "ar" ? "مشاركة" : "Share"}
+                {t("successStory.share")}
               </Button>
             </div>
           </div>

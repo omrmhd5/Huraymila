@@ -1,90 +1,80 @@
 import React from "react";
 import { cn } from "@/lib/utils";
 import { useTheme } from "@/contexts/ThemeContext";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const SuccessPartners = () => {
   const { language } = useTheme();
+  const { t } = useLanguage();
   const isRTL = language === "ar";
 
   const partners = [
     {
-      name: isRTL ? "وزارة الصحة" : "Ministry of Health",
+      name: t("successPartners.partners.ministryOfHealth"),
       logo: "/assets/logos/وزارة الصحة.png",
     },
     {
-      name: isRTL ? "وزارة التعليم" : "Ministry of Education",
+      name: t("successPartners.partners.ministryOfEducation"),
       logo: "/assets/logos/وزارة التعليم.png",
     },
     {
-      name: isRTL
-        ? "وزارة البيئة والمياه والزراعة"
-        : "Ministry of Environment, Water and Agriculture",
+      name: t("successPartners.partners.ministryOfEnvironment"),
       logo: "/assets/logos/وزارة البيئة والمياه والزراعة.jpg",
     },
     {
-      name: isRTL
-        ? "وزارة الموارد البشرية والتنمية الاجتماعية"
-        : "Ministry of Human Resources and Social Development",
+      name: t("successPartners.partners.ministryOfHumanResources"),
       logo: "/assets/logos/وزارة الموارد البشرية.png",
     },
     {
-      name: isRTL ? "مستشفى حريملاء العام" : "Huraymila General Hospital",
+      name: t("successPartners.partners.huraymilaHospital"),
       logo: "/assets/logos/مستشفى حريملاء العام.jpg",
     },
     {
-      name: isRTL ? "الدفاع المدني" : "Saudi Civil Defense",
+      name: t("successPartners.partners.civilDefense"),
       logo: "/assets/logos/الدفاع_المدني_السعودي.png",
     },
     {
-      name: isRTL ? "شركة المياه الوطنية" : "National Water Company",
+      name: t("successPartners.partners.nationalWaterCompany"),
       logo: "/assets/logos/شعار_شركة_المياه_الوطنية.jpeg",
     },
     {
-      name: isRTL ? "محافظة حريملاء" : "Huraymila Governorate Interior",
+      name: t("successPartners.partners.huraymilaGovernorate"),
       logo: "/assets/logos/الداخلية محافظة حريملاء.png",
     },
     {
-      name: isRTL ? "بلدية حريملاء" : "Riyadh Municipality",
+      name: t("successPartners.partners.riyadhMunicipality"),
       logo: "/assets/logos/امانة الرياض.ico",
     },
     {
-      name: isRTL
-        ? "القوة الخاصة للأمن البيئي"
-        : "Special Forces for Environmental Security",
+      name: t("successPartners.partners.environmentalSecurity"),
       logo: "/assets/logos/القوة الخاصة للامن البيئي.jpg",
     },
     {
-      name: isRTL ? "الشرطة" : "Police",
+      name: t("successPartners.partners.police"),
       logo: "/assets/logos/الشرطة.png",
     },
     {
-      name: isRTL ? "المرور" : "Traffic Department",
+      name: t("successPartners.partners.trafficDepartment"),
       logo: "/assets/logos/المرور.png",
     },
     {
-      name: isRTL ? "جمعية حريملاء الخيرية" : "Huraymila Charity Association",
+      name: t("successPartners.partners.charityAssociation"),
       logo: "/assets/logos/جمعية حريملاء الخيرية.jpg",
     },
     {
-      name: isRTL
-        ? "جمعية التنمية الأهلية بحريملاء"
-        : "Huraymila Community Development Association",
+      name: t("successPartners.partners.developmentAssociation"),
       logo: "/assets/logos/جمعية التنمية الاهلية بحريملاء.jpg",
     },
     {
-      name: isRTL
-        ? "جامعة الإمام محمد بن سعود الإسلامية"
-        : "Imam Muhammad bin Saud Islamic University",
+      name: t("successPartners.partners.imamUniversity"),
       logo: "/assets/logos/جامعة الامام محمد بن سعود .png",
     },
     {
-      name: isRTL ? "منظمة الصحة العالمية" : "World Health Organization",
+      name: t("successPartners.partners.who"),
       logo: "/assets/logos/منظمة الصحة العالمية.png",
     },
     {
-      name: isRTL
-        ? "جمعية أصدقاء المرضى بحريملاء"
-        : "Huraymila Friends of Patients Association",
+      name: t("successPartners.partners.friendsOfPatients"),
       logo: "/assets/logos/جمعية اصدقاء المرضى بحريملاء.png",
     },
   ];
@@ -97,7 +87,7 @@ const SuccessPartners = () => {
             "text-xl md:text-2xl font-bold text-foreground text-center",
             isRTL ? "font-arabic" : "font-english"
           )}>
-          {isRTL ? "شركاؤنا في النجاح" : "Our Partners in Success"}
+          {t("successPartners.title")}
         </h3>
       </div>
 

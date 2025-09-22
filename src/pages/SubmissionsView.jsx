@@ -18,6 +18,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { useTheme } from "@/contexts/ThemeContext";
+import { useLanguage } from "@/contexts/LanguageContext";
 import Standards from "@/lib/standards";
 import {
   ArrowLeft,
@@ -41,6 +42,7 @@ const SubmissionsView = () => {
   const { standardId } = useParams();
   const navigate = useNavigate();
   const { language } = useTheme();
+  const { t } = useLanguage();
   const [activeTab, setActiveTab] = useState("all");
   const [selectedSubmission, setSelectedSubmission] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -190,21 +192,21 @@ PDF content for standard ${index} - contains:
     const statuses = [
       {
         value: "approved",
-        label: { ar: "تمت الموافقة", en: "Approved" },
+        label: t("submissionsView.approved"),
         variant: "default",
         className: "bg-green-500",
         icon: <CheckCircle className="w-3 h-3 mr-1" />,
       },
       {
         value: "pending_approval",
-        label: { ar: "في انتظار الموافقة", en: "Pending Approval" },
+        label: t("submissionsView.pendingApproval"),
         variant: "secondary",
         className: "bg-yellow-500",
         icon: <Clock className="w-3 h-3 mr-1" />,
       },
       {
         value: "rejected",
-        label: { ar: "مرفوض", en: "Rejected" },
+        label: t("submissionsView.rejected"),
         variant: "destructive",
         className: "bg-red-500",
         icon: <XCircle className="w-3 h-3 mr-1" />,
@@ -220,7 +222,7 @@ PDF content for standard ${index} - contains:
         variant={status.variant}
         className={`text-center ${status.className}`}>
         {status.icon}
-        {language === "ar" ? status.label.ar : status.label.en}
+        {status.label}
       </Badge>
     );
   };
@@ -270,9 +272,7 @@ PDF content for standard ${index} - contains:
               autoPlay
               className="w-full h-auto max-h-[80vh] rounded-lg"
               src={selectedSubmission.content}>
-              {language === "ar"
-                ? "متصفحك لا يدعم تشغيل الفيديو"
-                : "Your browser does not support video playback"}
+              {t("submissionsView.browserNotSupportVideo")}
             </video>
           </div>
         );
@@ -327,15 +327,13 @@ PDF content for standard ${index} - contains:
         <div className="text-center">
           <AlertCircle className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
           <h2 className="text-2xl font-bold text-foreground mb-2">
-            {language === "ar" ? "المعيار غير موجود" : "Standard Not Found"}
+            {t("submissionsView.standardNotFound")}
           </h2>
           <p className="text-muted-foreground mb-4">
-            {language === "ar"
-              ? "المعيار المطلوب غير موجود في النظام"
-              : "The requested standard was not found in the system"}
+            {t("submissionsView.standardNotFoundDescription")}
           </p>
           <Button onClick={() => navigate("/admin/standards")}>
-            {language === "ar" ? "العودة للمعايير" : "Back to Standards"}
+            {t("submissionsView.backToStandards")}
           </Button>
         </div>
       </div>
@@ -352,11 +350,11 @@ PDF content for standard ${index} - contains:
             onClick={() => navigate("/admin/standards")}
             className="mb-4">
             <ArrowLeft className="w-4 h-4 mr-2" />
-            {language === "ar" ? "العودة للمعايير" : "Back to Standards"}
+            {t("submissionsView.backToStandards")}
           </Button>
 
           <h1 className="text-3xl font-bold text-foreground">
-            {language === "ar" ? "عرض التقديمات" : "View Submissions"}
+            {t("submissionsView.viewSubmissions")}
           </h1>
         </div>
 
@@ -364,7 +362,7 @@ PDF content for standard ${index} - contains:
           <Badge
             variant="outline"
             className="text-lg px-4 py-2 whitespace-nowrap">
-            {submissions.length} {language === "ar" ? "تقديمات" : "Submissions"}
+            {submissions.length} {t("submissionsView.submissions")}
           </Badge>
         </div>
       </div>
@@ -374,16 +372,14 @@ PDF content for standard ${index} - contains:
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <FileText className="w-5 h-5" />
-            {language === "ar" ? "تفاصيل المعيار" : "Standard Details"}
+            {t("submissionsView.standardDetails")}
           </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
               <h4 className="font-semibold mb-2">
-                {language === "ar"
-                  ? `معيار ${standard.id}:`
-                  : `Standard ${standard.id}:`}
+                {`${t("submissionsView.standardLabel")} ${standard.id}:`}
               </h4>
               <p className="text-sm text-muted-foreground leading-relaxed">
                 {standard.standard}
@@ -392,9 +388,7 @@ PDF content for standard ${index} - contains:
 
             <div>
               <h4 className="font-semibold mb-2">
-                {language === "ar"
-                  ? "الجهات المسؤولة:"
-                  : "Responsible Agencies:"}
+                {t("submissionsView.responsibleAgencies")}
               </h4>
               <div className="space-y-3">
                 {/* Agencies with color coding */}
@@ -423,7 +417,7 @@ PDF content for standard ${index} - contains:
                       variant="outline"
                       className="bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 border-green-300 dark:border-green-700"></Badge>
                     <span className="text-green-700 dark:text-green-300">
-                      {language === "ar" ? "قدمت التقديم" : "Submitted"}
+                      {t("submissionsView.submitted")}
                     </span>
                   </div>
                   <div className="flex items-center gap-2">
@@ -431,7 +425,7 @@ PDF content for standard ${index} - contains:
                       variant="outline"
                       className="bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-200 border-red-300 dark:border-red-700"></Badge>
                     <span className="text-red-700 dark:text-red-300">
-                      {language === "ar" ? "لم تقدم التقديم" : "Not Submitted"}
+                      {t("submissionsView.notSubmitted")}
                     </span>
                   </div>
                 </div>
@@ -441,7 +435,7 @@ PDF content for standard ${index} - contains:
 
           <div className="mt-4">
             <h4 className="font-semibold mb-2">
-              {language === "ar" ? "المتطلبات:" : "Requirements:"}
+              {t("submissionsView.requirements")}
             </h4>
             <ul className="list-disc list-inside space-y-1 text-sm text-muted-foreground">
               {standard.requirements.map((req, index) => (
@@ -458,27 +452,27 @@ PDF content for standard ${index} - contains:
           {
             type: "text",
             color: "text-blue-600",
-            label: { ar: "ملفات نصية", en: "Text Files" },
+            label: t("submissionsView.textFiles"),
           },
           {
             type: "pdf",
             color: "text-red-600",
-            label: { ar: "ملفات PDF", en: "PDF Files" },
+            label: t("submissionsView.pdfFiles"),
           },
           {
             type: "image",
             color: "text-green-600",
-            label: { ar: "صور", en: "Images" },
+            label: t("submissionsView.images"),
           },
           {
             type: "video",
             color: "text-purple-600",
-            label: { ar: "فيديوهات", en: "Videos" },
+            label: t("submissionsView.videos"),
           },
           {
             type: "total",
             color: "text-foreground",
-            label: { ar: "إجمالي التقديمات", en: "Total Submissions" },
+            label: t("submissionsView.totalSubmissions"),
           },
         ].map(({ type, color, label }) => (
           <Card key={type}>
@@ -489,9 +483,7 @@ PDF content for standard ${index} - contains:
                     ? submissions.length
                     : submissions.filter((s) => s.type === type).length}
                 </div>
-                <p className="text-sm text-muted-foreground">
-                  {language === "ar" ? label.ar : label.en}
-                </p>
+                <p className="text-sm text-muted-foreground">{label}</p>
               </div>
             </CardContent>
           </Card>
@@ -504,17 +496,17 @@ PDF content for standard ${index} - contains:
           {
             status: "approved",
             color: "text-green-600",
-            label: { ar: "تمت الموافقة", en: "Approved" },
+            label: t("submissionsView.approved"),
           },
           {
             status: "pending_approval",
             color: "text-yellow-600",
-            label: { ar: "في انتظار الموافقة", en: "Pending Approval" },
+            label: t("submissionsView.pendingApproval"),
           },
           {
             status: "rejected",
             color: "text-red-600",
-            label: { ar: "مرفوض", en: "Rejected" },
+            label: t("submissionsView.rejected"),
           },
         ].map(({ status, color, label }) => (
           <Card key={status}>
@@ -523,9 +515,7 @@ PDF content for standard ${index} - contains:
                 <div className={`text-2xl font-bold ${color}`}>
                   {submissions.filter((s) => s.status === status).length}
                 </div>
-                <p className="text-sm text-muted-foreground">
-                  {language === "ar" ? label.ar : label.en}
-                </p>
+                <p className="text-sm text-muted-foreground">{label}</p>
               </div>
             </CardContent>
           </Card>
@@ -549,7 +539,7 @@ PDF content for standard ${index} - contains:
                 })()}
               </div>
               <p className="text-sm text-muted-foreground">
-                {language === "ar" ? "نسبة القبول" : "Acceptance Rate"}
+                {t("submissionsView.acceptanceRate")}
               </p>
             </div>
           </CardContent>
@@ -559,9 +549,7 @@ PDF content for standard ${index} - contains:
       {/* Submissions Tabs */}
       <Card>
         <CardHeader>
-          <CardTitle>
-            {language === "ar" ? "التقديمات المقدمة" : "Submitted Materials"}
-          </CardTitle>
+          <CardTitle>{t("submissionsView.submittedMaterials")}</CardTitle>
         </CardHeader>
         <CardContent>
           {/* Agency Filter */}
@@ -569,21 +557,19 @@ PDF content for standard ${index} - contains:
             <div className="flex items-center gap-4">
               <div className="space-y-2">
                 <label className="text-sm font-medium">
-                  {language === "ar" ? "تصفية حسب الجهة" : "Filter by Agency"}
+                  {t("submissionsView.filterByAgency")}
                 </label>
                 <Select
                   value={selectedAgency}
                   onValueChange={setSelectedAgency}>
                   <SelectTrigger className="w-64">
                     <SelectValue
-                      placeholder={
-                        language === "ar" ? "اختر الجهة" : "Select Agency"
-                      }
+                      placeholder={t("submissionsView.selectAgency")}
                     />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="all">
-                      {language === "ar" ? "جميع الجهات" : "All Agencies"}
+                      {t("submissionsView.allAgencies")}
                     </SelectItem>
                     {standard?.assigned_agencies.map((agency) => (
                       <SelectItem key={agency} value={agency}>
@@ -600,32 +586,32 @@ PDF content for standard ${index} - contains:
               {[
                 {
                   value: "all",
-                  label: { ar: "الكل", en: "All" },
+                  label: t("submissionsView.all"),
                   count: submissions.length,
                 },
                 {
                   value: "text",
-                  label: { ar: "نصوص", en: "Text" },
+                  label: t("submissionsView.text"),
                   count: submissions.filter((s) => s.type === "text").length,
                 },
                 {
                   value: "pdf",
-                  label: { ar: "ملفات PDF", en: "PDF" },
+                  label: t("submissionsView.pdf"),
                   count: submissions.filter((s) => s.type === "pdf").length,
                 },
                 {
                   value: "image",
-                  label: { ar: "صور", en: "Images" },
+                  label: t("submissionsView.image"),
                   count: submissions.filter((s) => s.type === "image").length,
                 },
                 {
                   value: "video",
-                  label: { ar: "فيديوهات", en: "Videos" },
+                  label: t("submissionsView.video"),
                   count: submissions.filter((s) => s.type === "video").length,
                 },
               ].map(({ value, label, count }) => (
                 <TabsTrigger key={value} value={value}>
-                  {language === "ar" ? label.ar : label.en} ({count})
+                  {label} ({count})
                 </TabsTrigger>
               ))}
             </TabsList>
@@ -635,9 +621,7 @@ PDF content for standard ${index} - contains:
                 <div className="text-center py-12">
                   <FileText className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
                   <p className="text-muted-foreground">
-                    {language === "ar"
-                      ? "لا توجد تقديمات من هذا النوع"
-                      : "No submissions of this type"}
+                    {t("submissionsView.noSubmissionsOfThisType")}
                   </p>
                 </div>
               ) : (
@@ -682,7 +666,7 @@ PDF content for standard ${index} - contains:
                             className="flex-1"
                             onClick={() => openModal(submission)}>
                             <Eye className="w-4 h-4 mr-1" />
-                            {language === "ar" ? "عرض" : "View"}
+                            {t("submissionsView.view")}
                           </Button>
                           <Button size="sm" variant="outline">
                             <Download className="w-4 h-4" />
@@ -714,13 +698,9 @@ PDF content for standard ${index} - contains:
                           )}
                           {submission.status === "rejected" ||
                           submission.status === "pending_approval"
-                            ? language === "ar"
-                              ? "موافقة"
-                              : "Approve"
+                            ? t("submissionsView.approve")
                             : submission.status === "approved"
-                            ? language === "ar"
-                              ? "رفض"
-                              : "Reject"
+                            ? t("submissionsView.reject")
                             : ""}
                         </Button>
                       </CardContent>

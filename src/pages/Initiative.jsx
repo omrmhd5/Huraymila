@@ -20,11 +20,13 @@ import {
   TrendingUp,
 } from "lucide-react";
 import { useTheme } from "@/contexts/ThemeContext";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const Initiative = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { language } = useTheme();
+  const { t } = useLanguage();
   const [isApplying, setIsApplying] = useState(false);
 
   // Mock initiatives data - in real app, this would come from API
@@ -192,10 +194,10 @@ const Initiative = () => {
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center">
           <h1 className="text-2xl font-bold mb-4">
-            {language === "ar" ? "المبادرة غير موجودة" : "Initiative Not Found"}
+            {t("initiative.notFound")}
           </h1>
           <Button onClick={() => navigate("/initiatives")}>
-            {language === "ar" ? "العودة للمبادرات" : "Back to Initiatives"}
+            {t("initiative.backToInitiatives")}
           </Button>
         </div>
       </div>
@@ -217,19 +219,19 @@ const Initiative = () => {
     const statusConfig = {
       active: {
         color: "bg-green-500",
-        text: language === "ar" ? "نشط" : "Active",
+        text: t("initiative.active"),
       },
       completed: {
         color: "bg-blue-500",
-        text: language === "ar" ? "مكتمل" : "Completed",
+        text: t("initiative.completed"),
       },
       cancelled: {
         color: "bg-red-500",
-        text: language === "ar" ? "ملغي" : "Cancelled",
+        text: t("initiative.cancelled"),
       },
       "gathering volunteers": {
         color: "bg-yellow-500",
-        text: language === "ar" ? "جمع متطوعين" : "Gathering Volunteers",
+        text: t("initiative.gatheringVolunteers"),
       },
     };
 
@@ -243,19 +245,19 @@ const Initiative = () => {
     const categoryConfig = {
       health: {
         color: "bg-blue-100 text-blue-800",
-        text: language === "ar" ? "صحة" : "Health",
+        text: t("initiative.health"),
       },
       environment: {
         color: "bg-green-100 text-green-800",
-        text: language === "ar" ? "بيئة" : "Environment",
+        text: t("initiative.environment"),
       },
       community: {
         color: "bg-purple-100 text-purple-800",
-        text: language === "ar" ? "مجتمع" : "Community",
+        text: t("initiative.community"),
       },
       education: {
         color: "bg-orange-100 text-orange-800",
-        text: language === "ar" ? "تعليم" : "Education",
+        text: t("initiative.education"),
       },
     };
 
@@ -293,7 +295,7 @@ const Initiative = () => {
             onClick={() => navigate("/initiatives")}
             className={`${isRTL ? "mr-4" : "ml-4"}`}>
             <ArrowLeft className={`w-4 h-4 ${isRTL ? "ml-2" : "mr-2"}`} />
-            {language === "ar" ? "العودة للمبادرات" : "Back to Initiatives"}
+            {t("initiative.backToInitiatives")}
           </Button>
         </div>
 
@@ -345,7 +347,7 @@ const Initiative = () => {
                 <Users className="w-4 h-4" />
                 <span>
                   {initiative.volunteers} / {initiative.maxVolunteers}{" "}
-                  {language === "ar" ? "متطوع" : "volunteers"}
+                  {t("initiative.volunteers")}
                 </span>
               </div>
             </div>
@@ -368,7 +370,7 @@ const Initiative = () => {
                   className={`text-xl font-semibold mb-4 ${
                     isRTL ? "font-arabic text-right" : "font-sans text-left"
                   }`}>
-                  {language === "ar" ? "تقدم المتطوعين" : "Volunteer Progress"}
+                  {t("initiative.volunteerProgress")}
                 </h3>
                 <div
                   className={`space-y-4 ${isRTL ? "rtl" : "ltr"}`}
@@ -378,9 +380,8 @@ const Initiative = () => {
                       className={`text-sm font-medium ${
                         isRTL ? "font-arabic" : "font-sans"
                       }`}>
-                      {initiative.volunteers} {language === "ar" ? "من" : "of"}{" "}
-                      {initiative.maxVolunteers}{" "}
-                      {language === "ar" ? "متطوع" : "volunteers"}
+                      {initiative.volunteers} {t("initiative.of")}{" "}
+                      {initiative.maxVolunteers} {t("initiative.volunteers")}
                     </span>
                     <span className="text-sm text-muted-foreground">
                       {Math.round(volunteerProgress)}%
@@ -400,7 +401,7 @@ const Initiative = () => {
                       isRTL ? "font-arabic text-right" : "font-sans text-left"
                     }`}>
                     {initiative.maxVolunteers - initiative.volunteers}{" "}
-                    {language === "ar" ? "متطوع مطلوب" : "volunteers needed"}
+                    {t("initiative.volunteersNeeded")}
                   </p>
                 </div>
               </CardContent>
@@ -429,7 +430,7 @@ const Initiative = () => {
                   className={`text-xl font-semibold mb-4 ${
                     isRTL ? "font-arabic text-right" : "font-sans text-left"
                   }`}>
-                  {language === "ar" ? "المتطلبات" : "Requirements"}
+                  {t("initiative.requirements")}
                 </h3>
                 <ul
                   className={`space-y-2 ${
@@ -455,7 +456,7 @@ const Initiative = () => {
                   className={`text-xl font-semibold mb-4 ${
                     isRTL ? "font-arabic text-right" : "font-sans text-left"
                   }`}>
-                  {language === "ar" ? "الفوائد" : "Benefits"}
+                  {t("initiative.benefits")}
                 </h3>
                 <ul
                   className={`space-y-2 ${
@@ -515,7 +516,7 @@ const Initiative = () => {
               className={`text-lg font-semibold mb-4 ${
                 isRTL ? "font-arabic text-right" : "font-sans text-left"
               }`}>
-              {language === "ar" ? "العلامات" : "Tags"}
+              {t("initiative.tags")}
             </h3>
             <div className="flex flex-wrap gap-2">
               {(language === "ar" ? initiative.tags : initiative.tagsEn).map(

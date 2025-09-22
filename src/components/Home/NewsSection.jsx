@@ -22,10 +22,12 @@ import {
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useTheme } from "@/contexts/ThemeContext";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { cn } from "@/lib/utils";
 
 const NewsSection = () => {
   const { language } = useTheme();
+  const { t } = useLanguage();
   const navigate = useNavigate();
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isPlaying, setIsPlaying] = useState(true);
@@ -155,47 +157,30 @@ const NewsSection = () => {
     },
   ];
 
-  const content = {
-    ar: {
-      title: "أحدث الأخبار",
-      subtitle: "تابع آخر التحديثات والمبادرات في مدينة حريملاء الصحية",
-      description:
-        "نوفر لك أحدث الأخبار والتطورات في مجال الصحة العامة والمبادرات المجتمعية.",
-      viewAll: "عرض جميع الأخبار",
-      readMore: "اقرأ المزيد",
-      categories: {
-        health: "صحة",
-        environment: "بيئة",
-        community: "مجتمع",
-        education: "تعليم",
-      },
-    },
-    en: {
-      title: "Latest News",
-      subtitle:
-        "Follow the latest updates and initiatives in Huraymila Healthy City",
-      description:
-        "We provide you with the latest news and developments in public health and community initiatives.",
-      viewAll: "View All News",
-      readMore: "Read More",
-      categories: {
-        health: "Health",
-        environment: "Environment",
-        community: "Community",
-        education: "Education",
-      },
-    },
-  };
-
-  const current = content[language];
   const isRTL = language === "ar";
 
   const getCategoryBadge = (category) => {
     const categoryLabels = {
-      health: { ar: "صحة", en: "Health", color: "bg-red-500" },
-      environment: { ar: "بيئة", en: "Environment", color: "bg-green-500" },
-      community: { ar: "مجتمع", en: "Community", color: "bg-blue-500" },
-      education: { ar: "تعليم", en: "Education", color: "bg-purple-500" },
+      health: {
+        ar: t("newsSection.categories.health"),
+        en: t("newsSection.categories.health"),
+        color: "bg-red-500",
+      },
+      environment: {
+        ar: t("newsSection.categories.environment"),
+        en: t("newsSection.categories.environment"),
+        color: "bg-green-500",
+      },
+      community: {
+        ar: t("newsSection.categories.community"),
+        en: t("newsSection.categories.community"),
+        color: "bg-blue-500",
+      },
+      education: {
+        ar: t("newsSection.categories.education"),
+        en: t("newsSection.categories.education"),
+        color: "bg-purple-500",
+      },
     };
 
     const categoryInfo = categoryLabels[category];
@@ -217,29 +202,22 @@ const NewsSection = () => {
     );
   };
 
-  const formatReadTime = (readTime) => {
-    if (language === "ar") {
-      return readTime;
-    }
-    return readTimeEn;
-  };
-
   return (
     <section className="py-20 bg-secondary/15">
       <div className="container mx-auto px-4">
         {/* Header */}
         <div className="text-center mb-16">
           <Badge variant="outline" className="mb-4 px-4 py-2 text-sm">
-            {language === "ar" ? "الأخبار" : "News"}
+            {t("newsSection.title")}
           </Badge>
           <h2 className="text-4xl md:text-5xl font-bold text-foreground mb-6">
-            {current.title}
+            {t("newsSection.title")}
           </h2>
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
-            {current.subtitle}
+            {t("newsSection.subtitle")}
           </p>
           <p className="text-lg text-muted-foreground max-w-4xl mx-auto mt-4 leading-relaxed">
-            {current.description}
+            {t("newsSection.description")}
           </p>
         </div>
 
@@ -307,8 +285,7 @@ const NewsSection = () => {
                           <div className="flex items-center gap-2 text-sm text-muted-foreground">
                             <Eye className="w-4 h-4" />
                             <span>
-                              {newsItem.views}{" "}
-                              {language === "ar" ? "مشاهد" : "views"}
+                              {newsItem.views} {t("newsSection.views")}
                             </span>
                           </div>
                         </div>
@@ -337,7 +314,7 @@ const NewsSection = () => {
                           size="lg"
                           className="w-fit"
                           onClick={() => navigateToTop(`/news/${newsItem.id}`)}>
-                          {current.readMore}
+                          {t("newsSection.readMore")}
                           <ArrowRight
                             className={`w-4 h-4 ${isRTL ? "mr-2" : "ml-2"}`}
                           />
@@ -364,7 +341,7 @@ const NewsSection = () => {
                 isRTL ? "flex-row-reverse" : ""
               }`}>
               <ChevronLeft className="w-5 h-5" />
-              {language === "ar" ? "السابق" : "Previous"}
+              {t("newsSection.previous")}
             </Button>
 
             {/* Play/Pause Button */}
@@ -378,12 +355,12 @@ const NewsSection = () => {
               {isPlaying ? (
                 <>
                   <Pause className="w-5 h-5" />
-                  {language === "ar" ? "إيقاف" : "Pause"}
+                  {t("newsSection.pause")}
                 </>
               ) : (
                 <>
                   <Play className="w-5 h-5" />
-                  {language === "ar" ? "تشغيل" : "Play"}
+                  {t("newsSection.play")}
                 </>
               )}
             </Button>
@@ -396,7 +373,7 @@ const NewsSection = () => {
               className={`flex items-center gap-2 px-6 py-3 ${
                 isRTL ? "flex-row-reverse" : ""
               }`}>
-              {language === "ar" ? "التالي" : "Next"}
+              {t("newsSection.next")}
               <ChevronRight className="w-5 h-5" />
             </Button>
           </div>
@@ -432,7 +409,7 @@ const NewsSection = () => {
             variant="outline"
             className="px-8 py-6 text-lg"
             onClick={() => navigateToTop("/news")}>
-            {current.viewAll}
+            {t("newsSection.viewAll")}
             <ArrowRight className={`w-5 h-5 ${isRTL ? "mr-2" : "ml-2"}`} />
           </Button>
         </div>

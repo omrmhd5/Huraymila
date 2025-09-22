@@ -14,11 +14,13 @@ import {
   Eye,
 } from "lucide-react";
 import { useTheme } from "@/contexts/ThemeContext";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const NewsArticle = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { language } = useTheme();
+  const { t } = useLanguage();
 
   // Mock news data - in real app, this would come from API
   const newsData = {
@@ -127,10 +129,10 @@ const NewsArticle = () => {
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center">
           <h1 className="text-2xl font-bold mb-4">
-            {language === "ar" ? "المقال غير موجود" : "Article Not Found"}
+            {t("newsArticle.notFound")}
           </h1>
           <Button onClick={() => navigate("/news")}>
-            {language === "ar" ? "العودة للأخبار" : "Back to News"}
+            {t("newsArticle.backToNews")}
           </Button>
         </div>
       </div>
@@ -158,7 +160,7 @@ const NewsArticle = () => {
             onClick={() => navigate("/news")}
             className={`${isRTL ? "mr-4" : "ml-4"}`}>
             <ArrowLeft className={`w-4 h-4 ${isRTL ? "ml-2" : "mr-2"}`} />
-            {language === "ar" ? "العودة للأخبار" : "Back to News"}
+            {t("newsArticle.backToNews")}
           </Button>
         </div>
 
@@ -203,8 +205,7 @@ const NewsArticle = () => {
               <div className="flex items-center gap-2">
                 <Clock className="w-4 h-4" />
                 <span>
-                  {article.readTime}{" "}
-                  {language === "ar" ? "دقائق قراءة" : "min read"}
+                  {article.readTime} {t("newsArticle.minRead")}
                 </span>
               </div>
               <div className="flex items-center gap-2">
@@ -241,7 +242,7 @@ const NewsArticle = () => {
               className={`text-lg font-semibold mb-4 ${
                 isRTL ? "font-arabic text-right" : "font-sans text-left"
               }`}>
-              {language === "ar" ? "العلامات" : "Tags"}
+              {t("newsArticle.tags")}
             </h3>
             <div className="flex flex-wrap gap-2">
               {(language === "ar" ? article.tags : article.tagsEn).map(
@@ -253,7 +254,7 @@ const NewsArticle = () => {
               )}
               <Button variant="outline" size="sm">
                 <Share2 className="w-4 h-4 mr-2" />
-                {language === "ar" ? "مشاركة" : "Share"}
+                {t("newsArticle.share")}
               </Button>
             </div>
           </div>

@@ -18,8 +18,11 @@ import {
 import { Eye, Edit, Plus } from "lucide-react";
 import SubmissionModal from "@/components/AgencyDashboard/Modals/SubmissionModal";
 import { toast } from "sonner";
+import { useLanguage } from "@/contexts/LanguageContext";
 
-const RequiredStandards = ({ language, assignedStandards }) => {
+const RequiredStandards = ({ assignedStandards }) => {
+  const { t, language } = useLanguage();
+  
   // Component-specific state
   const [statusFilter, setStatusFilter] = useState("all");
   const [searchTerm, setSearchTerm] = useState("");
@@ -59,7 +62,7 @@ const RequiredStandards = ({ language, assignedStandards }) => {
             className={`bg-green-500 ${
               language === "ar" ? "font-arabic" : "font-sans"
             }`}>
-            {language === "ar" ? "موافق عليه" : "Approved"}
+            {t("requiredStandards.approved")}
           </Badge>
         );
       case "rejected":
@@ -67,7 +70,7 @@ const RequiredStandards = ({ language, assignedStandards }) => {
           <Badge
             variant="destructive"
             className={language === "ar" ? "font-arabic" : "font-sans"}>
-            {language === "ar" ? "مرفوض" : "Rejected"}
+            {t("requiredStandards.rejected")}
           </Badge>
         );
       case "pending_approval":
@@ -77,7 +80,7 @@ const RequiredStandards = ({ language, assignedStandards }) => {
             className={`bg-yellow-100 text-yellow-800 border-yellow-200 ${
               language === "ar" ? "font-arabic" : "font-sans"
             }`}>
-            {language === "ar" ? "في انتظار الموافقة" : "Pending Approval"}
+            {t("requiredStandards.pendingApproval")}
           </Badge>
         );
       case "didnt_submit":
@@ -87,7 +90,7 @@ const RequiredStandards = ({ language, assignedStandards }) => {
             className={`bg-gray-100 text-gray-700 border-gray-300 ${
               language === "ar" ? "font-arabic" : "font-sans"
             }`}>
-            {language === "ar" ? "لم يقدم" : "Didn't Submit"}
+            {t("requiredStandards.didntSubmit")}
           </Badge>
         );
       default:
@@ -104,15 +107,15 @@ const RequiredStandards = ({ language, assignedStandards }) => {
   const getSubmissionTypeText = (type) => {
     switch (type) {
       case "text":
-        return language === "ar" ? "نص" : "Text";
+        return t("requiredStandards.text");
       case "pdf":
-        return language === "ar" ? "ملف PDF" : "PDF File";
+        return t("requiredStandards.pdfFile");
       case "photo":
-        return language === "ar" ? "صورة" : "Photo";
+        return t("requiredStandards.photo");
       case "video":
-        return language === "ar" ? "فيديو" : "Video";
+        return t("requiredStandards.video");
       default:
-        return language === "ar" ? "غير محدد" : "Undefined";
+        return t("requiredStandards.undefined");
     }
   };
 
@@ -150,28 +153,18 @@ const RequiredStandards = ({ language, assignedStandards }) => {
           ...prev,
           [submissionData.standardId]: submissionData,
         }));
-        toast.success(
-          language === "ar"
-            ? "تم إضافة التقديم بنجاح"
-            : "Submission added successfully"
-        );
+        toast.success(t("requiredStandards.submissionAdded"));
       } else if (submissionModal.mode === "edit") {
         // Update existing submission
         setSubmissions((prev) => ({
           ...prev,
           [submissionData.standardId]: submissionData,
         }));
-        toast.success(
-          language === "ar"
-            ? "تم تحديث التقديم بنجاح"
-            : "Submission updated successfully"
-        );
+        toast.success(t("requiredStandards.submissionUpdated"));
       }
     } catch (error) {
       console.error("Error handling submission:", error);
-      toast.error(
-        language === "ar" ? "حدث خطأ في حفظ التقديم" : "Error saving submission"
-      );
+      toast.error(t("requiredStandards.errorSaving"));
     }
   };
 
@@ -190,9 +183,7 @@ const RequiredStandards = ({ language, assignedStandards }) => {
                 ? "font-arabic text-right"
                 : "font-sans text-left"
             }>
-            {language === "ar"
-              ? "ملخص المعايير المطلوبة"
-              : "Required Standards Summary"}
+            {t("requiredStandards.title")}
           </CardTitle>
           <CardDescription
             className={
@@ -200,9 +191,7 @@ const RequiredStandards = ({ language, assignedStandards }) => {
                 ? "font-arabic text-right"
                 : "font-sans text-left"
             }>
-            {language === "ar"
-              ? "المعايير المخصصة للجهة وحالة التنفيذ"
-              : "Standards assigned to the agency and implementation status"}
+            {t("requiredStandards.subtitle")}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -221,7 +210,7 @@ const RequiredStandards = ({ language, assignedStandards }) => {
                 className={`text-sm text-green-600 ${
                   language === "ar" ? "font-arabic" : "font-sans"
                 }`}>
-                {language === "ar" ? "موافق عليه" : "Approved"}
+                {t("requiredStandards.approved")}
               </div>
             </div>
             <div className="text-center p-4 bg-red-50 rounded-lg">
@@ -238,7 +227,7 @@ const RequiredStandards = ({ language, assignedStandards }) => {
                 className={`text-sm text-red-600 ${
                   language === "ar" ? "font-arabic" : "font-sans"
                 }`}>
-                {language === "ar" ? "مرفوض" : "Rejected"}
+                {t("requiredStandards.rejected")}
               </div>
             </div>
             <div className="text-center p-4 bg-yellow-50 rounded-lg">
@@ -256,7 +245,7 @@ const RequiredStandards = ({ language, assignedStandards }) => {
                 className={`text-sm text-yellow-600 ${
                   language === "ar" ? "font-arabic" : "font-sans"
                 }`}>
-                {language === "ar" ? "في انتظار الموافقة" : "Pending Approval"}
+                {t("requiredStandards.pendingApproval")}
               </div>
             </div>
             <div className="text-center p-4 bg-gray-50 rounded-lg">
@@ -273,7 +262,7 @@ const RequiredStandards = ({ language, assignedStandards }) => {
                 className={`text-sm text-gray-600 ${
                   language === "ar" ? "font-arabic" : "font-sans"
                 }`}>
-                {language === "ar" ? "لم يتم التقديم" : "Didn't Submit"}
+                {t("requiredStandards.didntSubmit")}
               </div>
             </div>
           </div>
@@ -289,9 +278,7 @@ const RequiredStandards = ({ language, assignedStandards }) => {
                 ? "font-arabic text-right"
                 : "font-sans text-left"
             }>
-            {language === "ar"
-              ? "المعايير المخصصة للجهة"
-              : "Assigned Standards"}
+            {t("requiredStandards.assignedStandards")}
           </CardTitle>
           <CardDescription
             className={
@@ -299,9 +286,7 @@ const RequiredStandards = ({ language, assignedStandards }) => {
                 ? "font-arabic text-right"
                 : "font-sans text-left"
             }>
-            {language === "ar"
-              ? "قائمة المعايير التي يجب على الجهة تنفيذها"
-              : "List of standards that the agency must implement"}
+            {t("requiredStandards.assignedStandardsDesc")}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -317,7 +302,7 @@ const RequiredStandards = ({ language, assignedStandards }) => {
                       : "font-sans text-left"
                   }>
                   <SelectValue
-                    placeholder={language === "ar" ? "الكل" : "All"}
+                    placeholder={t("requiredStandards.all")}
                   />
                 </SelectTrigger>
                 <SelectContent>
@@ -328,7 +313,7 @@ const RequiredStandards = ({ language, assignedStandards }) => {
                         ? "font-arabic text-right"
                         : "font-sans text-left"
                     }>
-                    {language === "ar" ? "الكل" : "All"}
+                    {t("requiredStandards.all")}
                   </SelectItem>
                   <SelectItem
                     value="approved"
@@ -337,7 +322,7 @@ const RequiredStandards = ({ language, assignedStandards }) => {
                         ? "font-arabic text-right"
                         : "font-sans text-left"
                     }>
-                    {language === "ar" ? "موافق عليه" : "Approved"}
+                    {t("requiredStandards.approved")}
                   </SelectItem>
                   <SelectItem
                     value="rejected"
@@ -346,7 +331,7 @@ const RequiredStandards = ({ language, assignedStandards }) => {
                         ? "font-arabic text-right"
                         : "font-sans text-left"
                     }>
-                    {language === "ar" ? "مرفوض" : "Rejected"}
+                    {t("requiredStandards.rejected")}
                   </SelectItem>
                   <SelectItem
                     value="pending_approval"

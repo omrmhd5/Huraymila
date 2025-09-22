@@ -29,243 +29,168 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useTheme } from "@/contexts/ThemeContext";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const PartnersSection = () => {
   const { language } = useTheme();
+  const { t } = useLanguage();
 
-  const content = {
-    ar: {
-      title: "شبكة التكامل المجتمعي",
-      subtitle:
-        "جودة الحياة تتحقق بتكامل المجتمع والجهات في تقديم الخدمات وتطويرها.",
-      centerEntity: {
-        name: "المجتمع والمتطوعون",
-        description: "الركيزة الأساسية لكل المبادرات",
-        icon: Users,
-        stats: "500+ متطوع نشط",
-      },
-      connections: [
-        {
-          name: "وزارة الصحة",
-          role: "خدمات صحية",
-          logo: "/assets/logos/وزارة الصحة.png",
-          flow: "يقدم: برامج صحية\nيستفيد: تقارير المجتمع",
-        },
-        {
-          name: "وزارة التعليم",
-          role: "تعليم وتدريب",
-          logo: "/assets/logos/وزارة التعليم.png",
-          flow: "يقدم: برامج تعليمية\nيستفيد: مشاركة المتطوعين",
-        },
-        {
-          name: "وزارة البيئة والمياه والزراعة",
-          role: "بيئة وزراعة",
-          logo: "/assets/logos/وزارة البيئة والمياه والزراعة.jpg",
-          flow: "يقدم: برامج بيئية\nيستفيد: مشاركة مجتمعية",
-        },
-        {
-          name: "وزارة الموارد البشرية والتنمية الاجتماعية",
-          role: "تنمية اجتماعية",
-          logo: "/assets/logos/وزارة الموارد البشرية.png",
-          flow: "يقدم: برامج تنموية\nيستفيد: مشاركة مجتمعية",
-        },
-        {
-          name: "مستشفى حريملاء العام",
-          role: "خدمات طبية",
-          logo: "/assets/logos/مستشفى حريملاء العام.jpg",
-          flow: "يقدم: رعاية طبية\nيستفيد: تقارير الصحة",
-        },
-        {
-          name: "الدفاع المدني السعودي",
-          role: "حماية مدنية",
-          logo: "/assets/logos/الدفاع_المدني_السعودي.png",
-          flow: "يقدم: حماية وأمان\nيستفيد: بلاغات المواطنين",
-        },
-        {
-          name: "شركة المياه الوطنية",
-          role: "خدمات مياه",
-          logo: "/assets/logos/شعار_شركة_المياه_الوطنية.jpeg",
-          flow: "يقدم: مياه صحية\nيستفيد: تقارير الجودة",
-        },
-        {
-          name: "الداخلية محافظة حريملاء",
-          role: "إدارة محلية",
-          logo: "/assets/logos/الداخلية محافظة حريملاء.png",
-          flow: "يقدم: خدمات إدارية\nيستفيد: ملاحظات المواطنين",
-        },
-        {
-          name: "أمانة الرياض",
-          role: "خدمات بلدية",
-          logo: "/assets/logos/امانة الرياض.ico",
-          flow: "يقدم: خدمات بلدية\nيستفيد: تقارير مجتمعية",
-        },
-        {
-          name: "القوة الخاصة للأمن البيئي",
-          role: "أمن بيئي",
-          logo: "/assets/logos/القوة الخاصة للامن البيئي.jpg",
-          flow: "يقدم: حماية بيئية\nيستفيد: تقارير البيئة",
-        },
-        {
-          name: "الشرطة",
-          role: "أمن عام",
-          logo: "/assets/logos/الشرطة.png",
-          flow: "يقدم: أمن وحماية\nيستفيد: بلاغات المواطنين",
-        },
-        {
-          name: "المرور",
-          role: "إدارة مرور",
-          logo: "/assets/logos/المرور.png",
-          flow: "يقدم: تنظيم المرور\nيستفيد: بيانات المرور",
-        },
-        {
-          name: "جمعية حريملاء الخيرية",
-          role: "دعم اجتماعي",
-          logo: "/assets/logos/جمعية حريملاء الخيرية.jpg",
-          flow: "يقدم: برامج خيرية\nيستفيد: تطوع المجتمع",
-        },
-        {
-          name: "جمعية التنمية الأهلية بحريملاء",
-          role: "تنمية محلية",
-          logo: "/assets/logos/جمعية التنمية الاهلية بحريملاء.jpg",
-          flow: "يقدم: برامج تنموية\nيستفيد: مشاركة أهالي",
-        },
-        {
-          name: "جامعة الإمام محمد بن سعود الإسلامية",
-          role: "تعليم وبحث",
-          logo: "/assets/logos/جامعة الامام محمد بن سعود .png",
-          flow: "يقدم: برامج أكاديمية\nيستفيد: مشاركة طلابية",
-        },
-        {
-          name: "منظمة الصحة العالمية",
-          role: "دعم دولي",
-          logo: "/assets/logos/منظمة الصحة العالمية.png",
-          flow: "يقدم: معايير عالمية\nيستفيد: تقارير محلية",
-        },
-        {
-          name: "جمعية أصدقاء المرضى بحريملاء",
-          role: "دعم صحي",
-          logo: "/assets/logos/جمعية اصدقاء المرضى بحريملاء.png",
-          flow: "يقدم: دعم المرضى\nيستفيد: تطوع مجتمعي",
-        },
-      ],
+  const connections = [
+    {
+      name: t("successPartners.partners.ministryOfHealth"),
+      role: language === "ar" ? "خدمات صحية" : "Health Services",
+      logo: "/assets/logos/وزارة الصحة.png",
+      flow:
+        language === "ar"
+          ? "يقدم: برامج صحية\nيستفيد: تقارير المجتمع"
+          : "Provides: Health Programs\nBenefits: Community Reports",
     },
-    en: {
-      title: "Community Integration Network",
-      subtitle:
-        "Each organization provides services to the community while benefiting from citizen data and feedback to improve performance",
-      centerEntity: {
-        name: "Community & Volunteers",
-        description: "The foundation of all initiatives",
-        icon: Users,
-        stats: "500+ active volunteers",
-      },
-      connections: [
-        {
-          name: "Ministry of Health",
-          role: "Health services",
-          logo: "/assets/logos/وزارة الصحة.png",
-          flow: "Provides: Health programs\nReceives: Community reports",
-        },
-        {
-          name: "Ministry of Education",
-          role: "Education & training",
-          logo: "/assets/logos/وزارة التعليم.png",
-          flow: "Provides: Educational programs\nReceives: Volunteer participation",
-        },
-        {
-          name: "Ministry of Environment, Water and Agriculture",
-          role: "Environment & agriculture",
-          logo: "/assets/logos/وزارة البيئة والمياه والزراعة.jpg",
-          flow: "Provides: Environmental programs\nReceives: Community participation",
-        },
-        {
-          name: "Ministry of Human Resources and Social Development",
-          role: "Social development",
-          logo: "/assets/logos/وزارة الموارد البشرية.png",
-          flow: "Provides: Development programs\nReceives: Community participation",
-        },
-        {
-          name: "Huraymila General Hospital",
-          role: "Medical services",
-          logo: "/assets/logos/مستشفى حريملاء العام.jpg",
-          flow: "Provides: Medical care\nReceives: Health reports",
-        },
-        {
-          name: "Saudi Civil Defense",
-          role: "Civil protection",
-          logo: "/assets/logos/الدفاع_المدني_السعودي.png",
-          flow: "Provides: Protection & safety\nReceives: Citizen reports",
-        },
-        {
-          name: "National Water Company",
-          role: "Water services",
-          logo: "/assets/logos/شعار_شركة_المياه_الوطنية.jpeg",
-          flow: "Provides: Clean water\nReceives: Quality reports",
-        },
-        {
-          name: "Huraymila Governorate Interior",
-          role: "Local administration",
-          logo: "/assets/logos/الداخلية محافظة حريملاء.png",
-          flow: "Provides: Administrative services\nReceives: Citizen feedback",
-        },
-        {
-          name: "Riyadh Municipality",
-          role: "Municipal services",
-          logo: "/assets/logos/امانة الرياض.ico",
-          flow: "Provides: Municipal services\nReceives: Community reports",
-        },
-        {
-          name: "Special Forces for Environmental Security",
-          role: "Environmental security",
-          logo: "/assets/logos/القوة الخاصة للامن البيئي.jpg",
-          flow: "Provides: Environmental protection\nReceives: Environmental reports",
-        },
-        {
-          name: "Police",
-          role: "Public security",
-          logo: "/assets/logos/الشرطة.png",
-          flow: "Provides: Security & protection\nReceives: Citizen reports",
-        },
-        {
-          name: "Traffic Department",
-          role: "Traffic management",
-          logo: "/assets/logos/المرور.png",
-          flow: "Provides: Traffic regulation\nReceives: Traffic data",
-        },
-        {
-          name: "Huraymila Charity Association",
-          role: "Social support",
-          logo: "/assets/logos/جمعية حريملاء الخيرية.jpg",
-          flow: "Provides: Charity programs\nReceives: Community volunteering",
-        },
-        {
-          name: "Huraymila Community Development Association",
-          role: "Local development",
-          logo: "/assets/logos/جمعية التنمية الاهلية بحريملاء.jpg",
-          flow: "Provides: Development programs\nReceives: Resident participation",
-        },
-        {
-          name: "Imam Muhammad bin Saud Islamic University",
-          role: "Education & research",
-          logo: "/assets/logos/جامعة الامام محمد بن سعود .png",
-          flow: "Provides: Academic programs\nReceives: Student participation",
-        },
-        {
-          name: "World Health Organization",
-          role: "International support",
-          logo: "/assets/logos/منظمة الصحة العالمية.png",
-          flow: "Provides: Global standards\nReceives: Local reports",
-        },
-        {
-          name: "Huraymila Friends of Patients Association",
-          role: "Health support",
-          logo: "/assets/logos/جمعية اصدقاء المرضى بحريملاء.png",
-          flow: "Provides: Patient support\nReceives: Community volunteering",
-        },
-      ],
+    {
+      name: t("successPartners.partners.ministryOfEducation"),
+      role: language === "ar" ? "تعليم وتدريب" : "Education & Training",
+      logo: "/assets/logos/وزارة التعليم.png",
+      flow:
+        language === "ar"
+          ? "يقدم: برامج تعليمية\nيستفيد: مشاركة المتطوعين"
+          : "Provides: Educational Programs\nBenefits: Volunteer Participation",
     },
-  };
-  const current = content[language];
+    {
+      name: t("successPartners.partners.ministryOfEnvironment"),
+      role: language === "ar" ? "بيئة وزراعة" : "Environment & Agriculture",
+      logo: "/assets/logos/وزارة البيئة والمياه والزراعة.jpg",
+      flow:
+        language === "ar"
+          ? "يقدم: برامج بيئية\nيستفيد: مشاركة مجتمعية"
+          : "Provides: Environmental Programs\nBenefits: Community Participation",
+    },
+    {
+      name: t("successPartners.partners.ministryOfHumanResources"),
+      role: language === "ar" ? "تنمية اجتماعية" : "Social Development",
+      logo: "/assets/logos/وزارة الموارد البشرية.png",
+      flow:
+        language === "ar"
+          ? "يقدم: برامج تنموية\nيستفيد: مشاركة مجتمعية"
+          : "Provides: Development Programs\nBenefits: Community Participation",
+    },
+    {
+      name: t("successPartners.partners.huraymilaHospital"),
+      role: language === "ar" ? "خدمات طبية" : "Medical Services",
+      logo: "/assets/logos/مستشفى حريملاء العام.jpg",
+      flow:
+        language === "ar"
+          ? "يقدم: رعاية طبية\nيستفيد: تقارير الصحة"
+          : "Provides: Medical Care\nBenefits: Health Reports",
+    },
+    {
+      name: t("successPartners.partners.civilDefense"),
+      role: language === "ar" ? "حماية مدنية" : "Civil Protection",
+      logo: "/assets/logos/الدفاع_المدني_السعودي.png",
+      flow:
+        language === "ar"
+          ? "يقدم: حماية وأمان\nيستفيد: بلاغات المواطنين"
+          : "Provides: Protection & Safety\nBenefits: Citizen Reports",
+    },
+    {
+      name: t("successPartners.partners.nationalWaterCompany"),
+      role: language === "ar" ? "خدمات مياه" : "Water Services",
+      logo: "/assets/logos/شعار_شركة_المياه_الوطنية.jpeg",
+      flow:
+        language === "ar"
+          ? "يقدم: مياه صحية\nيستفيد: تقارير الجودة"
+          : "Provides: Clean Water\nBenefits: Quality Reports",
+    },
+    {
+      name: t("successPartners.partners.huraymilaGovernorate"),
+      role: language === "ar" ? "إدارة محلية" : "Local Administration",
+      logo: "/assets/logos/الداخلية محافظة حريملاء.png",
+      flow:
+        language === "ar"
+          ? "يقدم: خدمات إدارية\nيستفيد: ملاحظات المواطنين"
+          : "Provides: Administrative Services\nBenefits: Citizen Feedback",
+    },
+    {
+      name: t("successPartners.partners.riyadhMunicipality"),
+      role: language === "ar" ? "خدمات بلدية" : "Municipal Services",
+      logo: "/assets/logos/امانة الرياض.ico",
+      flow:
+        language === "ar"
+          ? "يقدم: خدمات بلدية\nيستفيد: تقارير مجتمعية"
+          : "Provides: Municipal Services\nBenefits: Community Reports",
+    },
+    {
+      name: t("successPartners.partners.environmentalSecurity"),
+      role: language === "ar" ? "أمن بيئي" : "Environmental Security",
+      logo: "/assets/logos/القوة الخاصة للامن البيئي.jpg",
+      flow:
+        language === "ar"
+          ? "يقدم: حماية بيئية\nيستفيد: تقارير البيئة"
+          : "Provides: Environmental Protection\nBenefits: Environmental Reports",
+    },
+    {
+      name: t("successPartners.partners.police"),
+      role: language === "ar" ? "أمن عام" : "Public Security",
+      logo: "/assets/logos/الشرطة.png",
+      flow:
+        language === "ar"
+          ? "يقدم: أمن وحماية\nيستفيد: بلاغات المواطنين"
+          : "Provides: Security & Protection\nBenefits: Citizen Reports",
+    },
+    {
+      name: t("successPartners.partners.trafficDepartment"),
+      role: language === "ar" ? "إدارة مرور" : "Traffic Management",
+      logo: "/assets/logos/المرور.png",
+      flow:
+        language === "ar"
+          ? "يقدم: تنظيم المرور\nيستفيد: بيانات المرور"
+          : "Provides: Traffic Regulation\nBenefits: Traffic Data",
+    },
+    {
+      name: t("successPartners.partners.charityAssociation"),
+      role: language === "ar" ? "دعم اجتماعي" : "Social Support",
+      logo: "/assets/logos/جمعية حريملاء الخيرية.jpg",
+      flow:
+        language === "ar"
+          ? "يقدم: برامج خيرية\nيستفيد: تطوع المجتمع"
+          : "Provides: Charitable Programs\nBenefits: Community Volunteering",
+    },
+    {
+      name: t("successPartners.partners.developmentAssociation"),
+      role: language === "ar" ? "تنمية محلية" : "Local Development",
+      logo: "/assets/logos/جمعية التنمية الاهلية بحريملاء.jpg",
+      flow:
+        language === "ar"
+          ? "يقدم: برامج تنموية\nيستفيد: مشاركة أهالي"
+          : "Provides: Development Programs\nBenefits: Local Participation",
+    },
+    {
+      name: t("successPartners.partners.imamUniversity"),
+      role: language === "ar" ? "تعليم وبحث" : "Education & Research",
+      logo: "/assets/logos/جامعة الامام محمد بن سعود .png",
+      flow:
+        language === "ar"
+          ? "يقدم: برامج أكاديمية\nيستفيد: مشاركة طلابية"
+          : "Provides: Academic Programs\nBenefits: Student Participation",
+    },
+    {
+      name: t("successPartners.partners.who"),
+      role: language === "ar" ? "دعم دولي" : "International Support",
+      logo: "/assets/logos/منظمة الصحة العالمية.png",
+      flow:
+        language === "ar"
+          ? "يقدم: معايير عالمية\nيستفيد: تقارير محلية"
+          : "Provides: Global Standards\nBenefits: Local Reports",
+    },
+    {
+      name: t("successPartners.partners.friendsOfPatients"),
+      role: language === "ar" ? "دعم صحي" : "Health Support",
+      logo: "/assets/logos/جمعية اصدقاء المرضى بحريملاء.png",
+      flow:
+        language === "ar"
+          ? "يقدم: دعم المرضى\nيستفيد: تطوع مجتمعي"
+          : "Provides: Patient Support\nBenefits: Community Volunteering",
+    },
+  ];
+
   const isRTL = language === "ar";
 
   return (
@@ -278,14 +203,14 @@ const PartnersSection = () => {
               "text-4xl font-bold text-foreground mb-4",
               isRTL ? "font-arabic" : "font-english"
             )}>
-            {current.title}
+            {t("partnersSection.title")}
           </h2>
           <p
             className={cn(
               "text-lg text-muted-foreground max-w-4xl mx-auto",
               isRTL ? "font-arabic" : "font-english"
             )}>
-            {current.subtitle}
+            {t("partnersSection.subtitle")}
           </p>
         </div>
 
@@ -310,36 +235,35 @@ const PartnersSection = () => {
 
               <div className="text-center z-10 relative">
                 <div className="w-14 h-14 rounded-full bg-gradient-to-br from-amber-500 to-orange-500 flex items-center justify-center mb-3 mx-auto animate-pulse">
-                  <current.centerEntity.icon className="h-7 w-7 text-" />
+                  <Users className="h-7 w-7 text-white" />
                 </div>
                 <h3
                   className={cn(
                     "text-lg font-bold text-foreground mb-2",
                     isRTL ? "font-arabic" : "font-english"
                   )}>
-                  {current.centerEntity.name}
+                  {t("partnersSection.centerEntity.name")}
                 </h3>
                 <p
                   className={cn(
                     "text-sm text-muted-foreground mb-2",
                     isRTL ? "font-arabic" : "font-english"
                   )}>
-                  {current.centerEntity.description}
+                  {t("partnersSection.centerEntity.description")}
                 </p>
                 <div className="text-amber-600 dark:text-amber-400 font-bold text-sm mb-1">
-                  {current.centerEntity.stats}
+                  {t("partnersSection.centerEntity.stats")}
                 </div>
                 <div className="text-amber-700 dark:text-amber-300 font-bold text-xs">
-                  {isRTL ? "17 جهة شريكة" : "17 Organizations"}
+                  {t("partnersSection.centerEntity.organizations")}
                 </div>
               </div>
             </div>
           </div>
 
           {/* Connection Lines - Rendered from Center */}
-          {current.connections.map((connection, index) => {
-            const angle =
-              index * (360 / current.connections.length) * (Math.PI / 180); // Dynamic angle based on actual count
+          {connections.map((connection, index) => {
+            const angle = index * (360 / connections.length) * (Math.PI / 180); // Dynamic angle based on actual count
             const radius = 350;
             return (
               <div key={`line-${index}`}>
@@ -390,9 +314,8 @@ const PartnersSection = () => {
           })}
 
           {/* Partner Organizations in Network Pattern */}
-          {current.connections.map((connection, index) => {
-            const angle =
-              index * (360 / current.connections.length) * (Math.PI / 180); // Dynamic angle based on actual count
+          {connections.map((connection, index) => {
+            const angle = index * (360 / connections.length) * (Math.PI / 180); // Dynamic angle based on actual count
             const radius = 350;
             const x = Math.cos(angle) * radius;
             const y = Math.sin(angle) * radius;
@@ -408,12 +331,10 @@ const PartnersSection = () => {
                 {/* Secondary Connections to Adjacent Partners */}
                 {[1, -1].map((direction, dirIndex) => {
                   const nextIndex =
-                    (index + direction + current.connections.length) %
-                    current.connections.length;
+                    (index + direction + connections.length) %
+                    connections.length;
                   const nextAngle =
-                    nextIndex *
-                    (360 / current.connections.length) *
-                    (Math.PI / 180);
+                    nextIndex * (360 / connections.length) * (Math.PI / 180);
                   const nextX = Math.cos(nextAngle) * radius;
                   const nextY = Math.sin(nextAngle) * radius;
                   const connectionLength = Math.sqrt(
@@ -484,7 +405,7 @@ const PartnersSection = () => {
                 "text-sm text-muted-foreground",
                 isRTL ? "font-arabic" : "font-english"
               )}>
-              {isRTL ? "جهات شريكة" : "Partner Organizations"}
+              {t("partnersSection.stats.partnerOrganizations")}
             </p>
           </Card>
 
@@ -496,7 +417,7 @@ const PartnersSection = () => {
                 "text-sm text-muted-foreground",
                 isRTL ? "font-arabic" : "font-english"
               )}>
-              {isRTL ? "مبادرة تكاملية" : "Integrated Initiatives"}
+              {t("partnersSection.stats.integratedInitiatives")}
             </p>
           </Card>
 
@@ -508,7 +429,7 @@ const PartnersSection = () => {
                 "text-sm text-muted-foreground",
                 isRTL ? "font-arabic" : "font-english"
               )}>
-              {isRTL ? "متطوع نشط" : "Active Volunteers"}
+              {t("partnersSection.stats.activeVolunteers")}
             </p>
           </Card>
 
@@ -520,7 +441,7 @@ const PartnersSection = () => {
                 "text-sm text-muted-foreground",
                 isRTL ? "font-arabic" : "font-english"
               )}>
-              {isRTL ? "رضا المجتمع" : "Community Satisfaction"}
+              {t("partnersSection.stats.communitySatisfaction")}
             </p>
           </Card>
         </div>

@@ -7,9 +7,11 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { ArrowLeft, Upload, X, FileImage, FileVideo } from "lucide-react";
 import { useTheme } from "@/contexts/ThemeContext";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const Report = () => {
   const { language } = useTheme();
+  const { t } = useLanguage();
   const navigate = useNavigate();
   const isRTL = language === "ar";
 
@@ -64,11 +66,7 @@ const Report = () => {
     await new Promise((resolve) => setTimeout(resolve, 2000));
 
     // Show success message (you can replace this with actual API call)
-    alert(
-      language === "ar"
-        ? "تم إرسال البلاغ بنجاح!"
-        : "Report submitted successfully!"
-    );
+    alert(t("report.reportSubmitted"));
 
     setIsSubmitting(false);
     navigate("/");
@@ -84,22 +82,20 @@ const Report = () => {
             onClick={() => navigate(-1)}
             className={`mb-4 ${isRTL ? "mr-0" : "ml-0"}`}>
             <ArrowLeft className={`w-4 h-4 ${isRTL ? "ml-2" : "mr-2"}`} />
-            {language === "ar" ? "العودة" : "Back"}
+            {t("report.back")}
           </Button>
 
           <h1
             className={`text-4xl font-bold text-foreground mb-4 ${
               isRTL ? "font-arabic text-right" : "font-sans text-left"
             }`}>
-            {language === "ar" ? "تقديم بلاغ" : "Submit Report"}
+            {t("report.title")}
           </h1>
           <p
             className={`text-lg text-muted-foreground ${
               isRTL ? "font-arabic text-right" : "font-sans text-left"
             }`}>
-            {language === "ar"
-              ? "شاركنا ملاحظاتك وبلاغاتك لتحسين الخدمات في مدينة حريملاء الصحية"
-              : "Share your observations and reports to improve services in Huraymila Healthy City"}
+            {t("report.subtitle")}
           </p>
         </div>
 
@@ -112,7 +108,7 @@ const Report = () => {
                   className={`text-xl ${
                     isRTL ? "font-arabic text-right" : "font-sans text-left"
                   }`}>
-                  {language === "ar" ? "معلوماتك الشخصية" : "Your Information"}
+                  {t("report.yourInformation")}
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-6">
@@ -122,7 +118,7 @@ const Report = () => {
                     className={`text-sm font-medium ${
                       isRTL ? "font-arabic" : "font-sans"
                     }`}>
-                    {language === "ar" ? "الاسم الكامل" : "Full Name"} *
+                    {t("report.fullName")} *
                   </Label>
                   <Input
                     id="name"
@@ -132,11 +128,7 @@ const Report = () => {
                     onChange={handleInputChange}
                     required
                     className={`mt-2 ${isRTL ? "text-right" : "text-left"}`}
-                    placeholder={
-                      language === "ar"
-                        ? "أدخل اسمك الكامل"
-                        : "Enter your full name"
-                    }
+                    placeholder={t("report.fullNamePlaceholder")}
                   />
                 </div>
 
@@ -146,8 +138,7 @@ const Report = () => {
                     className={`text-sm font-medium ${
                       isRTL ? "font-arabic" : "font-sans"
                     }`}>
-                    {language === "ar" ? "البريد الإلكتروني" : "Email Address"}{" "}
-                    *
+                    {t("report.emailAddress")} *
                   </Label>
                   <Input
                     id="email"
@@ -157,11 +148,7 @@ const Report = () => {
                     onChange={handleInputChange}
                     required
                     className={`mt-2 ${isRTL ? "text-right" : "text-left"}`}
-                    placeholder={
-                      language === "ar"
-                        ? "أدخل بريدك الإلكتروني"
-                        : "Enter your email address"
-                    }
+                    placeholder={t("report.emailPlaceholder")}
                   />
                 </div>
 
@@ -171,7 +158,7 @@ const Report = () => {
                     className={`text-sm font-medium ${
                       isRTL ? "font-arabic" : "font-sans"
                     }`}>
-                    {language === "ar" ? "كلمة المرور" : "Password"} *
+                    {t("report.password")} *
                   </Label>
                   <Input
                     id="password"
@@ -181,11 +168,7 @@ const Report = () => {
                     onChange={handleInputChange}
                     required
                     className={`mt-2 ${isRTL ? "text-right" : "text-left"}`}
-                    placeholder={
-                      language === "ar"
-                        ? "أدخل كلمة المرور"
-                        : "Enter your password"
-                    }
+                    placeholder={t("report.passwordPlaceholder")}
                   />
                 </div>
               </CardContent>
@@ -198,7 +181,7 @@ const Report = () => {
                   className={`text-xl ${
                     isRTL ? "font-arabic text-right" : "font-sans text-left"
                   }`}>
-                  {language === "ar" ? "تفاصيل البلاغ" : "Report Details"}
+                  {t("report.reportDetails")}
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-6">
@@ -208,7 +191,7 @@ const Report = () => {
                     className={`text-sm font-medium ${
                       isRTL ? "font-arabic" : "font-sans"
                     }`}>
-                    {language === "ar" ? "عنوان البلاغ" : "Report Title"} *
+                    {t("report.reportTitle")} *
                   </Label>
                   <Input
                     id="reportName"
@@ -218,11 +201,7 @@ const Report = () => {
                     onChange={handleInputChange}
                     required
                     className={`mt-2 ${isRTL ? "text-right" : "text-left"}`}
-                    placeholder={
-                      language === "ar"
-                        ? "أدخل عنوان البلاغ"
-                        : "Enter report title"
-                    }
+                    placeholder={t("report.reportTitlePlaceholder")}
                   />
                 </div>
 
@@ -232,7 +211,7 @@ const Report = () => {
                     className={`text-sm font-medium ${
                       isRTL ? "font-arabic" : "font-sans"
                     }`}>
-                    {language === "ar" ? "وصف البلاغ" : "Report Description"} *
+                    {t("report.reportDescription")} *
                   </Label>
                   <Textarea
                     id="description"
@@ -242,11 +221,7 @@ const Report = () => {
                     required
                     rows={4}
                     className={`mt-2 ${isRTL ? "text-right" : "text-left"}`}
-                    placeholder={
-                      language === "ar"
-                        ? "اكتب وصفاً مفصلاً للبلاغ أو المشكلة التي تريد الإبلاغ عنها"
-                        : "Write a detailed description of the report or issue you want to report"
-                    }
+                    placeholder={t("report.reportDescriptionPlaceholder")}
                   />
                 </div>
               </CardContent>
@@ -260,15 +235,13 @@ const Report = () => {
                 className={`text-xl ${
                   isRTL ? "font-arabic text-right" : "font-sans text-left"
                 }`}>
-                {language === "ar" ? "رفع الملفات" : "Upload Files"}
+                {t("report.uploadFiles")}
               </CardTitle>
               <p
                 className={`text-sm text-muted-foreground ${
                   isRTL ? "font-arabic text-right" : "font-sans text-left"
                 }`}>
-                {language === "ar"
-                  ? "يمكنك رفع الصور أو الفيديوهات لدعم بلاغك (اختياري)"
-                  : "You can upload photos or videos to support your report (optional)"}
+                {t("report.uploadDescription")}
               </p>
             </CardHeader>
             <CardContent>
@@ -281,14 +254,10 @@ const Report = () => {
                       className={`text-lg font-medium ${
                         isRTL ? "font-arabic" : "font-sans"
                       }`}>
-                      {language === "ar"
-                        ? "اسحب الملفات هنا أو انقر للرفع"
-                        : "Drag files here or click to upload"}
+                      {t("report.dragFiles")}
                     </p>
                     <p className="text-sm text-muted-foreground">
-                      {language === "ar"
-                        ? "يدعم: JPG, PNG, MP4, MOV (حد أقصى 10 ميجابايت لكل ملف)"
-                        : "Supports: JPG, PNG, MP4, MOV (max 10MB per file)"}
+                      {t("report.supportedFormats")}
                     </p>
                   </div>
                   <input
@@ -307,9 +276,7 @@ const Report = () => {
                       className={`font-medium ${
                         isRTL ? "font-arabic text-right" : "font-sans text-left"
                       }`}>
-                      {language === "ar"
-                        ? "الملفات المرفوعة:"
-                        : "Uploaded Files:"}
+                      {t("report.uploadedFiles")}
                     </h4>
                     <div className="space-y-2">
                       {files.map((file) => (
@@ -358,13 +325,7 @@ const Report = () => {
               size="lg"
               disabled={isSubmitting}
               className="px-12 py-6 text-lg">
-              {isSubmitting
-                ? language === "ar"
-                  ? "جاري الإرسال..."
-                  : "Submitting..."
-                : language === "ar"
-                ? "إرسال البلاغ"
-                : "Submit Report"}
+              {isSubmitting ? t("report.submitting") : t("report.submitReport")}
             </Button>
           </div>
         </form>

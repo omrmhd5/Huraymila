@@ -26,10 +26,12 @@ import {
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useTheme } from "@/contexts/ThemeContext";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { cn } from "@/lib/utils";
 
 const HeroSection = () => {
   const { language } = useTheme();
+  const { t } = useLanguage();
   const navigate = useNavigate();
 
   // Function to navigate and scroll to top
@@ -38,36 +40,12 @@ const HeroSection = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  const content = {
-    ar: {
-      title: "مدينة حريملاء الصحية",
-      subtitle: "مبادرة وطنية لتعزيز الصحة العامة وتحسين جودة الحياة",
-      description:
-        "نعمل معاً لبناء مدينة صحية ومستدامة من خلال المبادرات المجتمعية والشراكات الاستراتيجية مع الجهات الحكومية والمؤسسات الصحية.",
-      cta: "انضم إلينا",
-      stats: [
-        { value: "25+", label: "مبادرة صحية", icon: Heart },
-        { value: "500+", label: "متطوع نشط", icon: Users },
-        { value: "15+", label: "مشروع بيئي", icon: Leaf },
-        { value: "21", label: "جهة شريكة", icon: Building2 },
-      ],
-    },
-    en: {
-      title: "Huraymila Healthy City",
-      subtitle: "A National Initiative for Public Health and Quality of Life",
-      description:
-        "We work together to build a healthy and sustainable city through community initiatives and strategic partnerships with government agencies and health institutions.",
-      cta: "Join Us",
-      stats: [
-        { value: "25+", label: "Health Initiatives", icon: Heart },
-        { value: "500+", label: "Active Volunteers", icon: Users },
-        { value: "15+", label: "Environmental Projects", icon: Leaf },
-        { value: "21", label: "Partner Organizations", icon: Building2 },
-      ],
-    },
-  };
-
-  const current = content[language];
+  const stats = [
+    { value: "25+", label: t("home.healthInitiatives"), icon: Heart },
+    { value: "500+", label: t("home.activeVolunteers"), icon: Users },
+    { value: "15+", label: t("home.environmentalProjects"), icon: Leaf },
+    { value: "21", label: t("home.partnerOrganizations"), icon: Building2 },
+  ];
   const isRTL = language === "ar";
 
   return (
@@ -93,17 +71,17 @@ const HeroSection = () => {
             </div>
             {/* Main Title */}
             <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-white mb-6 leading-tight">
-              {current.title}
+              {t("home.title")}
             </h1>
 
             {/* Subtitle */}
             <p className="text-xl md:text-2xl text-white/90 mb-8 max-w-3xl mx-auto leading-relaxed">
-              {current.subtitle}
+              {t("home.subtitle")}
             </p>
 
             {/* Description */}
             <p className="text-lg text-white/80 mb-12 max-w-4xl mx-auto leading-relaxed">
-              {current.description}
+              {t("home.description")}
             </p>
 
             {/* Call to Action Buttons */}
@@ -112,14 +90,14 @@ const HeroSection = () => {
                 size="lg"
                 onClick={() => navigateToTop("/volunteer")}
                 className="text-lg px-8 py-6 bg-primary hover:bg-primary/90">
-                {current.cta}
+                {t("home.joinUs")}
                 <ArrowRight className={`w-5 h-5 ${isRTL ? "mr-2" : "ml-2"}`} />
               </Button>
             </div>
 
             {/* Statistics Cards */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8 max-w-5xl mx-auto px-4 mb-12">
-              {current.stats.map((stat, index) => {
+              {stats.map((stat, index) => {
                 const IconComponent = stat.icon;
                 return (
                   <div

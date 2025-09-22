@@ -14,11 +14,13 @@ import {
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useTheme } from "@/contexts/ThemeContext";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 
 const Navbar = () => {
   const { user, signOut } = useAuth();
   const { language, theme, setLanguage, setTheme } = useTheme();
+  const { t } = useLanguage();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const location = useLocation();
@@ -53,23 +55,14 @@ const Navbar = () => {
   };
 
   const navigationItems = [
-    { href: "/", label: language === "ar" ? "الرئيسية" : "Home" },
-    { href: "/about", label: language === "ar" ? " عن البرنامج" : "About" },
-    {
-      href: "/about-huraymila",
-      label: language === "ar" ? "عن حريملاء" : "About Huraymila",
-    },
-    {
-      href: "/initiatives",
-      label: language === "ar" ? "المبادرات" : "Initiatives",
-    },
-    { href: "/news", label: language === "ar" ? "الأخبار" : "News" },
-    {
-      href: "/success-stories",
-      label: language === "ar" ? "قصص النجاح" : "Success Stories",
-    },
-    { href: "/faq", label: language === "ar" ? "الأسئلة الشائعة" : "FAQ" },
-    { href: "/contact", label: language === "ar" ? "اتصل بنا" : "Contact" },
+    { href: "/", label: t("nav.home") },
+    { href: "/about", label: t("nav.about") },
+    { href: "/about-huraymila", label: t("nav.aboutHuraymila") },
+    { href: "/initiatives", label: t("nav.initiatives") },
+    { href: "/news", label: t("nav.news") },
+    { href: "/success-stories", label: t("nav.successStories") },
+    { href: "/faq", label: t("nav.faq") },
+    { href: "/contact", label: t("nav.contact") },
   ];
 
   const isActive = (href) => location.pathname === href;
@@ -85,12 +78,10 @@ const Navbar = () => {
             </div>
             <div className="hidden sm:block">
               <h1 className="text-xl font-bold text-primary">
-                {language === "ar"
-                  ? "مدينة حريملاء الصحية"
-                  : "Huraymila Healthy City"}
+                {t("nav.healthyCity")}
               </h1>
               <p className="text-xs text-muted-foreground">
-                {language === "ar" ? "مبادرة وطنية" : "National Initiative"}
+                {t("nav.nationalInitiative")}
               </p>
             </div>
           </div>
@@ -166,7 +157,7 @@ const Navbar = () => {
                       }}
                       className="flex items-center gap-2 px-4 py-2 text-sm hover:bg-muted transition-colors w-full text-left">
                       <User className="w-4 h-4" />
-                      {language === "ar" ? "لوحة التحكم" : "Dashboard"}
+                      {t("nav.dashboard")}
                     </button>
 
                     <button
@@ -176,7 +167,7 @@ const Navbar = () => {
                       }}
                       className="flex items-center gap-2 px-4 py-2 text-sm hover:bg-muted transition-colors w-full text-left text-destructive">
                       <LogOut className="w-4 h-4" />
-                      {language === "ar" ? "تسجيل الخروج" : "Sign Out"}
+                      {t("nav.signOut")}
                     </button>
                   </div>
                 )}
@@ -184,9 +175,7 @@ const Navbar = () => {
             ) : (
               <div className="flex items-center gap-2">
                 <Button size="sm" onClick={() => navigateToTop("/auth")}>
-                  {language === "ar"
-                    ? "تسجيل الدخول / إنشاء حساب"
-                    : "Sign In / Sign Up"}
+                  {t("nav.signInSignUp")}
                 </Button>
               </div>
             )}

@@ -27,8 +27,10 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { Trash2, Search } from "lucide-react";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const Volunteers = ({ language, volunteers }) => {
+  const { t } = useLanguage();
   // Search state
   const [searchTerm, setSearchTerm] = useState("");
 
@@ -100,13 +102,11 @@ const Volunteers = ({ language, volunteers }) => {
           <div>
             <CardTitle
               className={language === "ar" ? "font-arabic" : "font-sans"}>
-              {language === "ar" ? "المتطوعين" : "Volunteers"}
+              {t("volunteers.title")}
             </CardTitle>
             <CardDescription
               className={language === "ar" ? "font-arabic" : "font-sans"}>
-              {language === "ar"
-                ? "إدارة المتطوعين والمتطوعات"
-                : "Manage volunteers"}
+              {t("volunteers.description")}
             </CardDescription>
           </div>
         </div>
@@ -122,11 +122,7 @@ const Volunteers = ({ language, volunteers }) => {
               }`}
             />
             <Input
-              placeholder={
-                language === "ar"
-                  ? "البحث بالاسم أو البريد الإلكتروني أو رقم الهاتف..."
-                  : "Search by name, email, or phone number..."
-              }
+              placeholder={t("volunteers.searchPlaceholder")}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className={`${
@@ -150,7 +146,7 @@ const Volunteers = ({ language, volunteers }) => {
                       ? "font-arabic text-right"
                       : "font-sans text-left"
                   }`}>
-                  {language === "ar" ? "الاسم الكامل" : "Full Name"}
+                  {t("volunteers.fullName")}
                 </TableHead>
                 <TableHead
                   className={`${
@@ -158,7 +154,7 @@ const Volunteers = ({ language, volunteers }) => {
                       ? "font-arabic text-right"
                       : "font-sans text-left"
                   }`}>
-                  {language === "ar" ? "البريد الإلكتروني" : "Email"}
+                  {t("volunteers.email")}
                 </TableHead>
                 <TableHead
                   className={`${
@@ -166,7 +162,7 @@ const Volunteers = ({ language, volunteers }) => {
                       ? "font-arabic text-right"
                       : "font-sans text-left"
                   }`}>
-                  {language === "ar" ? "رقم الهاتف" : "Phone Number"}
+                  {t("volunteers.phoneNumber")}
                 </TableHead>
                 <TableHead
                   className={`${
@@ -174,9 +170,7 @@ const Volunteers = ({ language, volunteers }) => {
                       ? "font-arabic text-right"
                       : "font-sans text-left"
                   }`}>
-                  {language === "ar"
-                    ? "المبادرات المتطوع فيها"
-                    : "Volunteered Initiatives"}
+                  {t("volunteers.volunteeredInitiatives")}
                 </TableHead>
                 <TableHead
                   className={`${
@@ -184,7 +178,7 @@ const Volunteers = ({ language, volunteers }) => {
                       ? "font-arabic text-right"
                       : "font-sans text-left"
                   }`}>
-                  {language === "ar" ? "تاريخ الانضمام" : "Join Date"}
+                  {t("volunteers.joinDate")}
                 </TableHead>
                 <TableHead
                   className={`${
@@ -192,7 +186,7 @@ const Volunteers = ({ language, volunteers }) => {
                       ? "font-arabic text-right"
                       : "font-sans text-left"
                   }`}>
-                  {language === "ar" ? "الإجراءات" : "Actions"}
+                  {t("volunteers.actions")}
                 </TableHead>
               </TableRow>
             </TableHeader>
@@ -244,9 +238,7 @@ const Volunteers = ({ language, volunteers }) => {
                           ))
                         ) : (
                           <span className="text-muted-foreground">
-                            {language === "ar"
-                              ? "لا توجد مبادرات"
-                              : "No initiatives"}
+                            {t("volunteers.noInitiatives")}
                           </span>
                         )}
                       </div>
@@ -277,9 +269,7 @@ const Volunteers = ({ language, volunteers }) => {
                     className={`text-center py-8 ${
                       language === "ar" ? "font-arabic" : "font-sans"
                     }`}>
-                    {language === "ar"
-                      ? "لا توجد نتائج للبحث"
-                      : "No search results found"}
+                    {t("volunteers.noSearchResults")}
                   </TableCell>
                 </TableRow>
               )}
@@ -297,28 +287,20 @@ const Volunteers = ({ language, volunteers }) => {
             }`}>
             <AlertDialogHeader>
               <AlertDialogTitle>
-                {language === "ar" ? "تأكيد الحذف" : "Confirm Delete"}
+                {t("volunteers.confirmDelete")}
               </AlertDialogTitle>
               <AlertDialogDescription>
-                {language === "ar"
-                  ? `هل أنت متأكد من حذف المتطوع "${
-                      deleteModal.volunteer?.fullName ||
-                      deleteModal.volunteer?.name
-                    }"؟ لا يمكن التراجع عن هذا الإجراء.`
-                  : `Are you sure you want to delete the volunteer "${
-                      deleteModal.volunteer?.fullName ||
-                      deleteModal.volunteer?.name
-                    }"? This action cannot be undone.`}
+                {`${t("volunteers.confirmDeleteMessage")} "${
+                  deleteModal.volunteer?.fullName || deleteModal.volunteer?.name
+                }"${t("volunteers.confirmDeleteMessageEnd")}`}
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
-              <AlertDialogCancel>
-                {language === "ar" ? "إلغاء" : "Cancel"}
-              </AlertDialogCancel>
+              <AlertDialogCancel>{t("volunteers.cancel")}</AlertDialogCancel>
               <AlertDialogAction
                 onClick={handleDelete}
                 className="bg-red-600 hover:bg-red-700">
-                {language === "ar" ? "حذف" : "Delete"}
+                {t("volunteers.delete")}
               </AlertDialogAction>
             </AlertDialogFooter>
           </AlertDialogContent>

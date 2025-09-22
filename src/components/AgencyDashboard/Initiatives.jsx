@@ -20,8 +20,10 @@ import InitiativeModal from "./Modals/InitiativeModal";
 import DeleteInitiativeModal from "./Modals/DeleteInitiativeModal";
 import ViewVolunteersModal from "./Modals/ViewVolunteersModal";
 import { Eye, Edit, Trash2, Plus } from "lucide-react";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const Initiatives = ({ language, initiatives }) => {
+  const { t } = useLanguage();
   // Modal state management
   const [deleteModal, setDeleteModal] = useState({
     isOpen: false,
@@ -190,37 +192,37 @@ const Initiatives = ({ language, initiatives }) => {
   const statsConfig = [
     {
       key: "total",
-      label: language === "ar" ? "إجمالي المبادرات" : "Total Initiatives",
+      label: t("initiatives.totalInitiatives"),
       value: totalInitiatives,
       color: "",
     },
     {
       key: "completed",
-      label: language === "ar" ? "المكتملة" : "Completed",
+      label: t("initiatives.completed"),
       value: completedInitiatives,
       color: "text-green-600",
     },
     {
       key: "active",
-      label: language === "ar" ? "النشطة" : "Active",
+      label: t("initiatives.active"),
       value: activeInitiatives,
       color: "text-blue-600",
     },
     {
       key: "cancelled",
-      label: language === "ar" ? "الملغية" : "Cancelled",
+      label: t("initiatives.cancelled"),
       value: cancelledInitiatives,
       color: "text-red-600",
     },
     {
       key: "gathering",
-      label: language === "ar" ? "جمع المتطوعين" : "Gathering Volunteers",
+      label: t("initiatives.gatheringVolunteers"),
       value: gatheringVolunteersInitiatives,
       color: "text-yellow-600",
     },
     {
       key: "volunteers",
-      label: language === "ar" ? "المتطوعين" : "Volunteers",
+      label: t("initiatives.volunteers"),
       value: `${totalVolunteers}/${maxVolunteers}`,
       color: "text-purple-600",
     },
@@ -270,20 +272,18 @@ const Initiatives = ({ language, initiatives }) => {
             <div>
               <CardTitle
                 className={language === "ar" ? "font-arabic" : "font-sans"}>
-                {language === "ar" ? "المبادرات" : "Initiatives"}
+                {t("initiatives.title")}
               </CardTitle>
               <CardDescription
                 className={language === "ar" ? "font-arabic" : "font-sans"}>
-                {language === "ar"
-                  ? "إدارة جميع المبادرات النشطة"
-                  : "Manage all active initiatives"}
+                {t("initiatives.description")}
               </CardDescription>
             </div>
             <Button
               onClick={() => openInitiativeModal("add")}
               className={language === "ar" ? "mr-4" : "ml-4"}>
               <Plus className="w-4 h-4" />
-              {language === "ar" ? "إضافة مبادرة" : "Add Initiative"}
+              {t("initiatives.addInitiative")}
             </Button>
           </div>
         </CardHeader>
@@ -294,11 +294,7 @@ const Initiatives = ({ language, initiatives }) => {
             }`}>
             <div className="flex-1">
               <Input
-                placeholder={
-                  language === "ar"
-                    ? "البحث في المبادرات..."
-                    : "Search initiatives..."
-                }
+                placeholder={t("initiatives.searchPlaceholder")}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className={
@@ -316,11 +312,7 @@ const Initiatives = ({ language, initiatives }) => {
                       ? "font-arabic text-right"
                       : "font-sans text-left"
                   }>
-                  <SelectValue
-                    placeholder={
-                      language === "ar" ? "جميع الحالات" : "All Status"
-                    }
-                  />
+                  <SelectValue placeholder={t("initiatives.allStatuses")} />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem
@@ -330,7 +322,7 @@ const Initiatives = ({ language, initiatives }) => {
                         ? "font-arabic text-right"
                         : "font-sans text-left"
                     }>
-                    {language === "ar" ? "جميع الحالات" : "All Status"}
+                    {t("initiatives.allStatuses")}
                   </SelectItem>
                   <SelectItem
                     value="completed"
@@ -339,7 +331,7 @@ const Initiatives = ({ language, initiatives }) => {
                         ? "font-arabic text-right"
                         : "font-sans text-left"
                     }>
-                    {language === "ar" ? "مكتمل" : "Completed"}
+                    {t("initiatives.completed")}
                   </SelectItem>
                   <SelectItem
                     value="active"
@@ -348,7 +340,7 @@ const Initiatives = ({ language, initiatives }) => {
                         ? "font-arabic text-right"
                         : "font-sans text-left"
                     }>
-                    {language === "ar" ? "نشط" : "Active"}
+                    {t("initiatives.active")}
                   </SelectItem>
                   <SelectItem
                     value="cancelled"
@@ -357,7 +349,7 @@ const Initiatives = ({ language, initiatives }) => {
                         ? "font-arabic text-right"
                         : "font-sans text-left"
                     }>
-                    {language === "ar" ? "ملغي" : "Cancelled"}
+                    {t("initiatives.cancelled")}
                   </SelectItem>
                   <SelectItem
                     value="gathering volunteers"
@@ -366,9 +358,7 @@ const Initiatives = ({ language, initiatives }) => {
                         ? "font-arabic text-right"
                         : "font-sans text-left"
                     }>
-                    {language === "ar"
-                      ? "جمع المتطوعين"
-                      : "Gathering Volunteers"}
+                    {t("initiatives.gatheringVolunteers")}
                   </SelectItem>
                 </SelectContent>
               </Select>
@@ -389,9 +379,7 @@ const Initiatives = ({ language, initiatives }) => {
                     : "font-sans text-left"
                 }`}>
                 <p className="text-muted-foreground">
-                  {language === "ar"
-                    ? "لا توجد مبادرات تطابق البحث"
-                    : "No initiatives match the search"}
+                  {t("initiatives.noSearchResults")}
                 </p>
               </div>
             ) : (
@@ -434,9 +422,7 @@ const Initiatives = ({ language, initiatives }) => {
                             className={`font-medium ${
                               language === "ar" ? "font-arabic" : "font-sans"
                             }`}>
-                            {language === "ar"
-                              ? "تاريخ البداية:"
-                              : "Start Date:"}
+                            {t("initiatives.startDate")}
                           </span>
                           <p
                             className={
@@ -451,9 +437,7 @@ const Initiatives = ({ language, initiatives }) => {
                             className={`font-medium ${
                               language === "ar" ? "font-arabic" : "font-sans"
                             }`}>
-                            {language === "ar"
-                              ? "تاريخ الانتهاء:"
-                              : "End Date:"}
+                            {t("initiatives.endDate")}
                           </span>
                           <p
                             className={
@@ -475,11 +459,11 @@ const Initiatives = ({ language, initiatives }) => {
                             className={`font-medium ${
                               language === "ar" ? "font-arabic" : "font-sans"
                             }`}>
-                            {language === "ar" ? "المتطوعين:" : "Volunteers:"}
+                            {t("initiatives.volunteers")}
                           </span>
                           <span className="font-medium">
                             {initiative.volunteers || 0}{" "}
-                            {language === "ar" ? "/" : "out of"}{" "}
+                            {t("initiatives.outOf")}{" "}
                             {initiative.maxVolunteers || 10}
                           </span>
                         </div>

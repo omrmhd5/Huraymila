@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { ThemeProvider } from "@/contexts/ThemeContext";
+import { LanguageProvider } from "@/contexts/LanguageContext";
 import Layout from "./pages/Layout";
 import Home from "./pages/Home";
 import About from "./pages/About";
@@ -33,52 +34,57 @@ const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
       <ThemeProvider>
-        <AuthProvider>
-          <Toaster />
-          <Sonner />
-          <BrowserRouter>
-            <Routes>
-              <Route path="/" element={<Layout />}>
-                <Route index element={<Home />} />
-                <Route path="/about" element={<About />} />
-                <Route path="/contact" element={<Contact />} />
-                <Route path="/auth" element={<Auth />} />
-                <Route path="/news" element={<AllNews />} />
-                <Route path="/news/:id" element={<NewsArticle />} />
-                <Route
-                  path="/success-stories"
-                  element={<AllSuccessStories />}
-                />
-                <Route path="/success-stories/:id" element={<SuccessStory />} />
-                <Route path="/initiatives" element={<AllInitiatives />} />
-                <Route path="/initiatives/:id" element={<Initiative />} />
-                <Route path="/report" element={<Report />} />
-                <Route path="/about-huraymila" element={<AboutHuraymila />} />
-                <Route path="/faq" element={<FAQ />} />
-              </Route>
+        <LanguageProvider>
+          <AuthProvider>
+            <Toaster />
+            <Sonner />
+            <BrowserRouter>
+              <Routes>
+                <Route path="/" element={<Layout />}>
+                  <Route index element={<Home />} />
+                  <Route path="/about" element={<About />} />
+                  <Route path="/contact" element={<Contact />} />
+                  <Route path="/auth" element={<Auth />} />
+                  <Route path="/news" element={<AllNews />} />
+                  <Route path="/news/:id" element={<NewsArticle />} />
+                  <Route
+                    path="/success-stories"
+                    element={<AllSuccessStories />}
+                  />
+                  <Route
+                    path="/success-stories/:id"
+                    element={<SuccessStory />}
+                  />
+                  <Route path="/initiatives" element={<AllInitiatives />} />
+                  <Route path="/initiatives/:id" element={<Initiative />} />
+                  <Route path="/report" element={<Report />} />
+                  <Route path="/about-huraymila" element={<AboutHuraymila />} />
+                  <Route path="/faq" element={<FAQ />} />
+                </Route>
 
-              <Route path="/admin" element={<AdminLayout />}>
-                <Route index element={<AdminDashboard />} />
-                <Route
-                  path="agency-management"
-                  element={<AgencyManagement />}
-                />
-                <Route path="standards" element={<StandardsManagement />} />
-                <Route
-                  path="standards/:standardId"
-                  element={<SubmissionsView />}
-                />
-              </Route>
+                <Route path="/admin" element={<AdminLayout />}>
+                  <Route index element={<AdminDashboard />} />
+                  <Route
+                    path="agency-management"
+                    element={<AgencyManagement />}
+                  />
+                  <Route path="standards" element={<StandardsManagement />} />
+                  <Route
+                    path="standards/:standardId"
+                    element={<SubmissionsView />}
+                  />
+                </Route>
 
-              <Route path="/agency-dashboard" element={<AgencyDashboard />}>
-                {" "}
-              </Route>
+                <Route path="/agency-dashboard" element={<AgencyDashboard />}>
+                  {" "}
+                </Route>
 
-              {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-          </BrowserRouter>
-        </AuthProvider>
+                {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </BrowserRouter>
+          </AuthProvider>
+        </LanguageProvider>
       </ThemeProvider>
     </TooltipProvider>
   </QueryClientProvider>

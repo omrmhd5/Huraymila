@@ -38,9 +38,11 @@ import {
   UserPlus,
 } from "lucide-react";
 import { useTheme } from "@/contexts/ThemeContext";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const AllInitiatives = () => {
   const { language } = useTheme();
+  const { t } = useLanguage();
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("all");
@@ -357,15 +359,13 @@ const AllInitiatives = () => {
               className={`text-4xl md:text-5xl font-bold mb-4 ${
                 isRTL ? "font-arabic text-right" : "font-sans text-left"
               }`}>
-              {language === "ar" ? "المبادرات" : "Health Initiatives"}
+              {t("initiatives.title")}
             </h1>
             <p
               className={`text-xl text-muted-foreground ${
                 isRTL ? "font-arabic text-right" : "font-sans text-left"
               }`}>
-              {language === "ar"
-                ? "اكتشف المبادرات النشطة في مدينة حريملاء الصحية"
-                : "Discover Active Initiatives in Huraymila Healthy City"}
+              {t("initiatives.subtitle")}
             </p>
           </div>
         </AnimatedSection>
@@ -383,11 +383,7 @@ const AllInitiatives = () => {
                     }`}
                   />
                   <Input
-                    placeholder={
-                      language === "ar"
-                        ? "البحث في المبادرات..."
-                        : "Search initiatives..."
-                    }
+                    placeholder={t("initiatives.searchPlaceholder")}
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                     className={`${
@@ -408,9 +404,7 @@ const AllInitiatives = () => {
                     className={
                       isRTL ? "font-arabic text-right" : "font-sans text-left"
                     }>
-                    <SelectValue
-                      placeholder={language === "ar" ? "التصنيف" : "Category"}
-                    />
+                    <SelectValue placeholder={t("initiatives.category")} />
                   </SelectTrigger>
                   <SelectContent>
                     {categories.map((category) => (
@@ -436,9 +430,7 @@ const AllInitiatives = () => {
                     className={
                       isRTL ? "font-arabic text-right" : "font-sans text-left"
                     }>
-                    <SelectValue
-                      placeholder={language === "ar" ? "الحالة" : "Status"}
-                    />
+                    <SelectValue placeholder={t("initiatives.status")} />
                   </SelectTrigger>
                   <SelectContent>
                     {statusOptions.map((status) => (
@@ -464,9 +456,7 @@ const AllInitiatives = () => {
                     className={
                       isRTL ? "font-arabic text-right" : "font-sans text-left"
                     }>
-                    <SelectValue
-                      placeholder={language === "ar" ? "ترتيب" : "Sort"}
-                    />
+                    <SelectValue placeholder={t("common.sort")} />
                   </SelectTrigger>
                   <SelectContent>
                     {sortOptions.map((option) => (

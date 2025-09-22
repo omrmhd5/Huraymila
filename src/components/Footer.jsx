@@ -12,77 +12,22 @@ import {
   Music,
 } from "lucide-react";
 import { useTheme } from "@/contexts/ThemeContext";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const Footer = () => {
   const { language } = useTheme();
+  const { t } = useLanguage();
 
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  const content = {
-    ar: {
-      description:
-        "مبادرة مدينة حريملاء الصحية هي مشروع وطني يهدف إلى تعزيز الصحة العامة وتحسين جودة الحياة في المدينة من خلال مجموعة من البرامج والمبادرات المتنوعة.",
-      quickLinks: {
-        title: "روابط سريعة",
-        links: [
-          { name: "الرئيسية", href: "/" },
-          { name: "من نحن", href: "/about" },
-          { name: "المبادرات", href: "/initiatives" },
-          { name: "التطوع", href: "/volunteer" },
-          { name: "اتصل بنا", href: "/contact" },
-        ],
-      },
-      contact: {
-        title: "معلومات التواصل",
-        address: "مدينة حريملاء، منطقة الرياض، المملكة العربية السعودية",
-        phone: "+966 11 234 5678",
-        email: "info@huraymila-healthy.sa",
-        workingHours: "الأحد - الخميس: 8:00 ص - 4:00 م",
-      },
-      social: {
-        title: "تابعنا على وسائل التواصل",
-        description: "للحصول على آخر الأخبار والتحديثات",
-      },
-      bottom: {
-        copyright: "© 2024 مبادرة مدينة حريملاء الصحية. جميع الحقوق محفوظة.",
-        madeWith: "صنع بـ",
-      },
-    },
-    en: {
-      description:
-        "Huraymila Healthy City Initiative is a national project aimed at promoting public health and improving quality of life in the city through a variety of programs and initiatives.",
-      quickLinks: {
-        title: "Quick Links",
-        links: [
-          { name: "Home", href: "/" },
-          { name: "About", href: "/about" },
-          { name: "Initiatives", href: "/initiatives" },
-          { name: "Volunteer", href: "/volunteer" },
-          { name: "Contact", href: "/contact" },
-        ],
-      },
-      contact: {
-        title: "Contact Information",
-        address: "Huraymila City, Riyadh Region, Saudi Arabia",
-        phone: "+966 11 234 5678",
-        email: "info@huraymila-healthy.sa",
-        workingHours: "Sunday - Thursday: 8:00 AM - 4:00 PM",
-      },
-      social: {
-        title: "Follow Us on Social Media",
-        description: "For latest news and updates",
-      },
-      bottom: {
-        copyright:
-          "© 2024 Huraymila Healthy City Initiative. All rights reserved.",
-        madeWith: "Made with",
-      },
-    },
-  };
-
-  const current = content[language];
+  const quickLinks = [
+    { name: t("nav.home"), href: "/" },
+    { name: t("nav.about"), href: "/about" },
+    { name: t("nav.initiatives"), href: "/initiatives" },
+    { name: t("nav.contact"), href: "/contact" },
+  ];
   const isRTL = language === "ar";
 
   return (
@@ -97,32 +42,26 @@ const Footer = () => {
                 <span className="text-white font-bold text-lg">ح</span>
               </div>
               <h3 className="text-lg font-bold text-primary">
-                {language === "ar"
-                  ? "مدينة حريملاء الصحية"
-                  : "Huraymila Healthy City"}
+                {t("nav.healthyCity")}
               </h3>
             </div>
             <p className="text-muted-foreground text-sm leading-relaxed mb-4">
-              {current.description}
+              {t("footer.description")}
             </p>
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
-              <span>{current.bottom.madeWith}</span>
+              <span>{t("footer.madeWith")}</span>
               <Heart className="w-4 h-4 text-red-500 fill-current" />
-              <span>
-                {language === "ar"
-                  ? "في المملكة العربية السعودية"
-                  : "in Saudi Arabia"}
-              </span>
+              <span>{t("footer.inSaudiArabia")}</span>
             </div>
           </div>
 
           {/* Quick Links */}
           <div>
             <h4 className="font-semibold text-foreground mb-4">
-              {current.quickLinks.title}
+              {t("footer.quickLinks")}
             </h4>
             <ul className="space-y-2">
-              {current.quickLinks.links.map((link) => (
+              {quickLinks.map((link) => (
                 <li key={link.href}>
                   <Link
                     to={link.href}
@@ -137,30 +76,30 @@ const Footer = () => {
           {/* Contact Information */}
           <div>
             <h4 className="font-semibold text-foreground mb-4">
-              {current.contact.title}
+              {t("footer.contactInfo")}
             </h4>
             <div className="space-y-3">
               <div className="flex items-start gap-3">
                 <MapPin className="w-4 h-4 text-primary mt-1 flex-shrink-0" />
                 <p className="text-sm text-muted-foreground">
-                  {current.contact.address}
+                  {t("footer.address")}
                 </p>
               </div>
               <div className="flex items-center gap-3">
                 <Phone className="w-4 h-4 text-primary flex-shrink-0" />
                 <p className="text-sm text-muted-foreground">
-                  {current.contact.phone}
+                  {t("footer.phone")}
                 </p>
               </div>
               <div className="flex items-center gap-3">
                 <Mail className="w-4 h-4 text-primary flex-shrink-0" />
                 <p className="text-sm text-muted-foreground">
-                  {current.contact.email}
+                  {t("footer.email")}
                 </p>
               </div>
               <div className="pt-2">
                 <p className="text-xs text-muted-foreground">
-                  {current.contact.workingHours}
+                  {t("footer.workingHours")}
                 </p>
               </div>
             </div>
@@ -172,13 +111,13 @@ const Footer = () => {
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
             <div className="text-center md:text-right">
               <h4 className="font-semibold text-foreground mb-2">
-                {current.social.title}
+                {t("footer.socialMedia")}
               </h4>
               <p className="text-sm text-muted-foreground">
-                {current.social.description}
+                {t("footer.socialMediaDesc")}
               </p>
               <p className="text-sm text-muted-foreground text-center md:text-right py-4">
-                {current.bottom.copyright}
+                {t("footer.copyright")}
               </p>
             </div>
             <div className="flex items-center gap-3">

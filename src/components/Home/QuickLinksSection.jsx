@@ -4,9 +4,11 @@ import { Button } from "@/components/ui/button";
 import { FileText, Users, LogIn, ArrowRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useTheme } from "@/contexts/ThemeContext";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const QuickLinksSection = () => {
   const { language } = useTheme();
+  const { t } = useLanguage();
   const navigate = useNavigate();
 
   // Navigation helper function
@@ -15,45 +17,29 @@ const QuickLinksSection = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  const content = {
-    ar: {
-      title: "روابط سريعة",
-      subtitle: "الوصول السريع للخدمات المهمة",
-    },
-    en: {
-      title: "Quick Links",
-      subtitle: "Quick access to important services",
-    },
-  };
-
   const quickLinks = [
     {
       id: 1,
-      title: "تقديم بلاغ",
-      titleEn: "Submit Report",
+      title: t("quickLinksSection.links.submitReport"),
       icon: FileText,
       color: "bg-red-500",
       href: "/report",
     },
     {
       id: 2,
-      title: "تطوع في مبادرات",
-      titleEn: "Volunteer in Initiatives",
+      title: t("quickLinksSection.links.volunteerInInitiatives"),
       icon: Users,
       color: "bg-green-500",
       href: "/initiatives",
     },
     {
       id: 3,
-      title: "تسجيل الدخول",
-      titleEn: "Login",
+      title: t("quickLinksSection.links.login"),
       icon: LogIn,
       color: "bg-blue-500",
       href: "/login",
     },
   ];
-
-  const current = content[language];
   const isRTL = language === "ar";
 
   return (
@@ -62,10 +48,10 @@ const QuickLinksSection = () => {
         {/* Header */}
         <div className="text-center mb-16">
           <h2 className="text-4xl md:text-5xl font-bold text-foreground mb-6">
-            {current.title}
+            {t("quickLinksSection.title")}
           </h2>
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
-            {current.subtitle}
+            {t("quickLinksSection.subtitle")}
           </p>
         </div>
 
@@ -84,13 +70,13 @@ const QuickLinksSection = () => {
                   </div>
 
                   <h3 className="text-xl font-semibold text-foreground mb-6">
-                    {language === "ar" ? link.title : link.titleEn}
+                    {link.title}
                   </h3>
 
                   <Button
                     className="w-full group-hover:bg-primary group-hover:text-primary-foreground transition-colors"
                     onClick={() => navigateToTop(link.href)}>
-                    {language === "ar" ? "ابدأ الآن" : "Get Started"}
+                    {t("quickLinksSection.getStarted")}
                     <ArrowRight
                       className={`w-4 h-4 ${isRTL ? "mr-2" : "ml-2"}`}
                     />

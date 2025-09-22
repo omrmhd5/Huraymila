@@ -34,6 +34,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useTheme } from "@/contexts/ThemeContext";
+import { useLanguage } from "@/contexts/LanguageContext";
 // Commented out useAuth for development
 // import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
@@ -48,6 +49,7 @@ import {
 
 const AdminDashboard = () => {
   const { language } = useTheme();
+  const { t } = useLanguage();
   // Commented out useAuth for development
   // const { user, signOut } = useAuth();
   const navigate = useNavigate();

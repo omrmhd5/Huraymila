@@ -1,4 +1,5 @@
 import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import {
   Check,
   Target,
@@ -16,10 +17,12 @@ import {
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useTheme } from "@/contexts/ThemeContext";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { cn } from "@/lib/utils";
 
 const AboutSection = () => {
   const { language } = useTheme();
+  const { t } = useLanguage();
   const navigate = useNavigate();
 
   // Function to navigate and scroll to top
@@ -28,263 +31,36 @@ const AboutSection = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  const content = {
-    ar: {
-      title: "عن برنامج مدينة حريملاء الصحية",
-      subtitle: "مبادرة وطنية رائدة ضمن برنامج المدن الصحية السعودي",
-      description:
-        "برنامج مدينة حريملاء الصحية هو مبادرة وطنية طموحة تهدف إلى تحويل محافظة حريملاء إلى نموذج متقدم للمدن الصحية في المملكة العربية السعودية، من خلال تطبيق أحدث المعايير العالمية وأفضل الممارسات في مجال الصحة المجتمعية والتنمية المستدامة.",
-
-      vision: {
-        title: "رؤيتنا",
-        description:
-          "أن تكون حريملاء مدينة صحية نموذجية تحقق أعلى معايير جودة الحياة لسكانها وزوارها، وتساهم في تحقيق رؤية المملكة 2030.",
-      },
-
-      mission: {
-        title: "رسالتنا",
-        description:
-          "تطوير وتنفيذ مبادرات صحية مبتكرة ومستدامة تعزز من صحة المجتمع ورفاهيته من خلال الشراكة الفعالة بين القطاعات الحكومية والخاصة والمجتمع المدني.",
-      },
-
-      objectives: {
-        title: "أهدافنا الاستراتيجية",
-        list: [
-          "تحسين المؤشرات الصحية العامة بنسبة 25% خلال 5 سنوات",
-          "زيادة المساحات الخضراء والمرافق الرياضية بنسبة 40%",
-          "تعزيز الوعي الصحي لدى 90% من السكان",
-          "تطوير شراكات استراتيجية مع 20 جهة محلية ودولية",
-          "تحقيق الاعتماد كمدينة صحية من منظمة الصحة العالمية",
-        ],
-      },
-
-      aboutHuraymila: {
-        title: "عن محافظة حريملاء",
-        description:
-          "تقع محافظة حريملاء في منطقة الرياض شمال غرب مدينة الرياض على بعد 86 كيلومتراً. تتميز بموقعها الاستراتيجي وتراثها العريق وتشتهر بالزراعة والمواقع التاريخية.",
-        facts: [
-          { label: "عدد السكان", value: "21,758 نسمة" },
-          { label: "المساحة", value: "1,480 كم²" },
-          { label: "المرافق الصحية", value: "5 مراكز" },
-          { label: "المدارس", value: "18 مدرسة" },
-        ],
-      },
-
-      timeline: {
-        title: "الجدول الزمني للبرنامج",
-        phases: [
-          {
-            year: "2024",
-            title: "إطلاق البرنامج",
-            description: "بداية المبادرات الأساسية وتأسيس الشراكات",
-            status: "مكتمل",
-          },
-          {
-            year: "2025",
-            title: "التوسع والتطوير",
-            description: "تنفيذ المشاريع الكبرى وزيادة المشاركة المجتمعية",
-            status: "قيد التنفيذ",
-          },
-          {
-            year: "2026",
-            title: "التقييم والتحسين",
-            description: "تقييم النتائج وتطوير المبادرات القائمة",
-            status: "مخطط",
-          },
-          {
-            year: "2027",
-            title: "الاعتماد العالمي",
-            description: "التقدم للحصول على اعتماد منظمة الصحة العالمية",
-            status: "مخطط",
-          },
-        ],
-      },
-
-      phases: {
-        title: "مراحل التطوير",
-        phase1: {
-          title: "المرحلة الأولى",
-          subtitle: "التقييم والتخطيط",
-          description: "تحليل الوضع الحالي ووضع الخطط الاستراتيجية الشاملة",
-        },
-        phase2: {
-          title: "المرحلة الثانية",
-          subtitle: "التنفيذ والمبادرات",
-          description:
-            "تطبيق المبادرات المجتمعية والصحية وتطوير البنية التحتية",
-        },
-        phase3: {
-          title: "المرحلة الثالثة",
-          subtitle: "التقييم والاعتماد",
-          description:
-            "التقييم الشامل والحصول على الاعتماد العالمي كمدينة صحية",
-        },
-      },
-      features: [
-        {
-          icon: Heart,
-          title: "الصحة العامة",
-          description: "تعزيز الصحة الجسدية والنفسية للمجتمع",
-        },
-        {
-          icon: Leaf,
-          title: "البيئة المستدامة",
-          description: "حماية البيئة وتطوير المساحات الخضراء",
-        },
-        {
-          icon: Users,
-          title: "المشاركة المجتمعية",
-          description: "إشراك جميع فئات المجتمع في التطوير",
-        },
-        {
-          icon: Target,
-          title: "التنمية المستدامة",
-          description: "تحقيق أهداف التنمية المستدامة 2030",
-        },
-        {
-          icon: Building2,
-          title: "البنية التحتية",
-          description: "تطوير مرافق صحية ورياضية متقدمة",
-        },
-        {
-          icon: BookOpen,
-          title: "التعليم الصحي",
-          description: "برامج تثقيفية شاملة لجميع الأعمار",
-        },
-      ],
+  const features = [
+    {
+      icon: Heart,
+      title: t("about.features.healthInitiatives"),
+      description: t("about.features.healthInitiativesDesc"),
     },
-    en: {
-      title: "About Huraymila Healthy City Program",
-      subtitle:
-        "A Leading National Initiative within Saudi Healthy Cities Program",
-      description:
-        "Huraymila Healthy City Program is an ambitious national initiative aimed at transforming Huraymila Governorate into an advanced model of healthy cities in Saudi Arabia, through implementing the latest global standards and best practices in community health and sustainable development.",
-
-      vision: {
-        title: "Our Vision",
-        description:
-          "To make Huraymila an exemplary healthy city that achieves the highest standards of quality of life for its residents and visitors, contributing to Saudi Vision 2030.",
-      },
-
-      mission: {
-        title: "Our Mission",
-        description:
-          "Develop and implement innovative and sustainable health initiatives that enhance community health and well-being through effective partnerships between government, private sectors, and civil society.",
-      },
-
-      objectives: {
-        title: "Our Strategic Objectives",
-        list: [
-          "Improve general health indicators by 25% within 5 years",
-          "Increase green spaces and sports facilities by 40%",
-          "Enhance health awareness among 90% of residents",
-          "Develop strategic partnerships with 20 local and international entities",
-          "Achieve accreditation as a healthy city from WHO",
-        ],
-      },
-
-      aboutHuraymila: {
-        title: "About Huraymila Governorate",
-        description:
-          "Huraymila Governorate is located in Riyadh region, 86 km northwest of Riyadh city. It is distinguished by its strategic location, rich heritage, and is known for agriculture and historical sites.",
-        facts: [
-          { label: "Population", value: "21,758 residents" },
-          { label: "Area", value: "1,480 km²" },
-          { label: "Health Facilities", value: "5 centers" },
-          { label: "Schools", value: "18 schools" },
-        ],
-      },
-
-      timeline: {
-        title: "Program Timeline",
-        phases: [
-          {
-            year: "2024",
-            title: "Program Launch",
-            description:
-              "Start of basic initiatives and establishing partnerships",
-            status: "Completed",
-          },
-          {
-            year: "2025",
-            title: "Expansion & Development",
-            description:
-              "Implementation of major projects and increased community participation",
-            status: "In Progress",
-          },
-          {
-            year: "2026",
-            title: "Evaluation & Improvement",
-            description:
-              "Results evaluation and development of existing initiatives",
-            status: "Planned",
-          },
-          {
-            year: "2027",
-            title: "Global Accreditation",
-            description: "Apply for WHO accreditation",
-            status: "Planned",
-          },
-        ],
-      },
-
-      phases: {
-        title: "Development Phases",
-        phase1: {
-          title: "Phase One",
-          subtitle: "Assessment & Planning",
-          description:
-            "Analyzing current situation and setting comprehensive strategic plans",
-        },
-        phase2: {
-          title: "Phase Two",
-          subtitle: "Implementation & Initiatives",
-          description:
-            "Implementing community and health initiatives and developing infrastructure",
-        },
-        phase3: {
-          title: "Phase Three",
-          subtitle: "Evaluation & Accreditation",
-          description:
-            "Comprehensive evaluation and obtaining global accreditation as a healthy city",
-        },
-      },
-      features: [
-        {
-          icon: Heart,
-          title: "Public Health",
-          description: "Enhancing physical and mental health of the community",
-        },
-        {
-          icon: Leaf,
-          title: "Sustainable Environment",
-          description: "Environmental protection and green space development",
-        },
-        {
-          icon: Users,
-          title: "Community Participation",
-          description: "Engaging all community segments in development",
-        },
-        {
-          icon: Target,
-          title: "Sustainable Development",
-          description: "Achieving Sustainable Development Goals 2030",
-        },
-        {
-          icon: Building2,
-          title: "Infrastructure",
-          description: "Developing advanced health and sports facilities",
-        },
-        {
-          icon: BookOpen,
-          title: "Health Education",
-          description: "Comprehensive educational programs for all ages",
-        },
-      ],
+    {
+      icon: Leaf,
+      title: t("about.features.environmentalSustainability"),
+      description: t("about.features.environmentalSustainabilityDesc"),
     },
-  };
+    {
+      icon: Users,
+      title: t("about.features.communityPartnership"),
+      description: t("about.features.communityPartnershipDesc"),
+    },
+    {
+      icon: Building2,
+      title: t("about.features.innovation"),
+      description: t("about.features.innovationDesc"),
+    },
+  ];
 
-  const current = content[language];
+  const stats = [
+    { value: "2025", label: t("about.stats.founded"), icon: Award },
+    { value: "50+", label: t("about.stats.healthInitiatives"), icon: Target },
+    { value: "10K+", label: t("about.stats.beneficiaries"), icon: Users },
+    { value: "21", label: t("about.stats.partnerOrganizations"), icon: Shield },
+  ];
+
   const isRTL = language === "ar";
 
   return (
@@ -292,37 +68,35 @@ const AboutSection = () => {
       <div className="container mx-auto px-4">
         {/* Header */}
         <div className="text-center mb-16">
-          <h1
+          <h2
             className={cn(
-              "text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-6",
+              "text-4xl md:text-5xl font-bold text-foreground mb-6",
               isRTL ? "font-arabic" : "font-english"
             )}>
-            {current.title}
-          </h1>
+            {t("about.title")}
+          </h2>
           <p
             className={cn(
               "text-xl text-muted-foreground mb-8 max-w-4xl mx-auto",
               isRTL ? "font-arabic" : "font-english"
             )}>
-            {current.subtitle}
+            {t("about.subtitle")}
           </p>
-          <div className="max-w-5xl mx-auto">
-            <p
-              className={cn(
-                "text-lg text-foreground/80 leading-relaxed mb-8",
-                isRTL ? "font-arabic" : "font-english"
-              )}>
-              {current.description}
-            </p>
-          </div>
+          <p
+            className={cn(
+              "text-lg text-foreground/80 leading-relaxed max-w-5xl mx-auto",
+              isRTL ? "font-arabic" : "font-english"
+            )}>
+            {t("about.description")}
+          </p>
         </div>
 
         {/* Vision & Mission */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-20">
-          <Card className="bg-gradient-to-br from-primary/5 to-primary/10 border border-primary/20">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-16">
+          <Card className="hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
             <CardContent className="p-8">
               <div className="flex items-center gap-3 mb-4">
-                <div className="w-12 h-12 bg-primary/20 rounded-full flex items-center justify-center">
+                <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
                   <Target className="h-6 w-6 text-primary" />
                 </div>
                 <h3
@@ -330,7 +104,7 @@ const AboutSection = () => {
                     "text-2xl font-bold text-foreground",
                     isRTL ? "font-arabic" : "font-english"
                   )}>
-                  {current.vision.title}
+                  {t("about.vision.title")}
                 </h3>
               </div>
               <p
@@ -338,15 +112,15 @@ const AboutSection = () => {
                   "text-foreground/80 leading-relaxed",
                   isRTL ? "font-arabic" : "font-english"
                 )}>
-                {current.vision.description}
+                {t("about.vision.description")}
               </p>
             </CardContent>
           </Card>
 
-          <Card className="bg-gradient-to-br from-secondary/5 to-secondary/10 border border-secondary/20">
+          <Card className="hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
             <CardContent className="p-8">
               <div className="flex items-center gap-3 mb-4">
-                <div className="w-12 h-12 bg-secondary/20 rounded-full flex items-center justify-center">
+                <div className="w-12 h-12 bg-secondary/10 rounded-full flex items-center justify-center">
                   <Heart className="h-6 w-6 text-secondary" />
                 </div>
                 <h3
@@ -354,7 +128,7 @@ const AboutSection = () => {
                     "text-2xl font-bold text-foreground",
                     isRTL ? "font-arabic" : "font-english"
                   )}>
-                  {current.mission.title}
+                  {t("about.mission.title")}
                 </h3>
               </div>
               <p
@@ -362,104 +136,126 @@ const AboutSection = () => {
                   "text-foreground/80 leading-relaxed",
                   isRTL ? "font-arabic" : "font-english"
                 )}>
-                {current.mission.description}
+                {t("about.mission.description")}
               </p>
             </CardContent>
           </Card>
         </div>
 
-        {/* Objectives */}
-        <div className="mb-20">
-          <Card className="bg-gradient-to-br from-accent/5 to-accent/10 border border-accent/20">
-            <CardContent className="p-8">
-              <div className="flex items-center gap-3 mb-6">
-                <div className="w-12 h-12 bg-accent/20 rounded-full flex items-center justify-center">
-                  <Award className="h-6 w-6 text-accent" />
+        {/* Strategic Objectives */}
+        <Card className="mb-16 hover:shadow-lg transition-all duration-300">
+          <CardContent className="p-8">
+            <h3
+              className={cn(
+                "text-3xl font-bold text-foreground mb-8 text-center",
+                isRTL ? "font-arabic" : "font-english"
+              )}>
+              {t("about.objectives.title")}
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {t("about.objectives.list").map((objective, index) => (
+                <div key={index} className="flex items-start gap-3">
+                  <Check className="h-5 w-5 text-primary mt-1 flex-shrink-0" />
+                  <p
+                    className={cn(
+                      "text-foreground/80",
+                      isRTL ? "font-arabic" : "font-english"
+                    )}>
+                    {objective}
+                  </p>
                 </div>
-                <h3
-                  className={cn(
-                    "text-2xl font-bold text-foreground",
-                    isRTL ? "font-arabic" : "font-english"
-                  )}>
-                  {current.objectives.title}
-                </h3>
-              </div>
-              <ul className="space-y-3">
-                {current.objectives.list.map((objective, index) => (
-                  <li key={index} className="flex items-start gap-3">
-                    <div className="w-6 h-6 bg-accent/20 rounded-full flex items-center justify-center mt-0.5 flex-shrink-0">
-                      <Check className="h-4 w-4 text-accent" />
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Features Grid */}
+        <div className="mb-16">
+          <h3
+            className={cn(
+              "text-3xl font-bold text-foreground mb-12 text-center",
+              isRTL ? "font-arabic" : "font-english"
+            )}>
+            {isRTL ? "المميزات الرئيسية" : "Key Features"}
+          </h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {features.map((feature, index) => {
+              const IconComponent = feature.icon;
+              return (
+                <Card
+                  key={index}
+                  className="text-center hover:shadow-lg transition-all duration-300 hover:-translate-y-1 hover:scale-105">
+                  <CardContent className="p-6">
+                    <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                      <IconComponent className="h-8 w-8 text-primary" />
                     </div>
-                    <p
+                    <h4
                       className={cn(
-                        "text-foreground/80 leading-relaxed",
+                        "text-lg font-semibold mb-2",
                         isRTL ? "font-arabic" : "font-english"
                       )}>
-                      {objective}
+                      {feature.title}
+                    </h4>
+                    <p
+                      className={cn(
+                        "text-sm text-muted-foreground",
+                        isRTL ? "font-arabic" : "font-english"
+                      )}>
+                      {feature.description}
                     </p>
-                  </li>
-                ))}
-              </ul>
-            </CardContent>
-          </Card>
+                  </CardContent>
+                </Card>
+              );
+            })}
+          </div>
         </div>
 
-        {/* About Huraymila */}
-        <div className="mb-20">
-          <Card className="bg-gradient-card border-0 shadow-card">
-            <CardContent className="p-8 md:p-12">
-              <div className="flex items-center gap-4 mb-8">
-                <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
-                  <MapPin className="h-6 w-6 text-primary" />
-                </div>
-                <h3
-                  className={cn(
-                    "text-2xl md:text-3xl font-bold text-foreground",
-                    isRTL ? "font-arabic" : "font-english"
-                  )}>
-                  {current.aboutHuraymila.title}
-                </h3>
-              </div>
-              <p
-                className={cn(
-                  "text-lg text-foreground/80 leading-relaxed mb-8",
-                  isRTL ? "font-arabic" : "font-english"
-                )}>
-                {current.aboutHuraymila.description}
-              </p>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-8">
-                {current.aboutHuraymila.facts.map((fact, index) => (
-                  <div key={index} className="text-center">
-                    <div className="text-2xl font-bold text-primary mb-2">
-                      {fact.value}
+        {/* Statistics */}
+        <div className="mb-16">
+          <h3
+            className={cn(
+              "text-3xl font-bold text-foreground mb-12 text-center",
+              isRTL ? "font-arabic" : "font-english"
+            )}>
+            {isRTL ? "إحصائيات البرنامج" : "Program Statistics"}
+          </h3>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+            {stats.map((stat, index) => {
+              const IconComponent = stat.icon;
+              return (
+                <Card
+                  key={index}
+                  className="text-center hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
+                  <CardContent className="p-6">
+                    <div className="w-12 h-12 bg-accent/10 rounded-full flex items-center justify-center mx-auto mb-3">
+                      <IconComponent className="h-6 w-6 text-accent" />
+                    </div>
+                    <div className="text-3xl font-bold text-foreground mb-2">
+                      {stat.value}
                     </div>
                     <div
                       className={cn(
                         "text-sm text-muted-foreground",
                         isRTL ? "font-arabic" : "font-english"
                       )}>
-                      {fact.label}
+                      {stat.label}
                     </div>
-                  </div>
-                ))}
-              </div>
-              <div className="text-center">
-                <button
-                  onClick={() => navigateToTop("/about-huraymila")}
-                  className={cn(
-                    "inline-flex items-center gap-2 px-6 py-3 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors font-medium",
-                    isRTL ? "font-arabic" : "font-english"
-                  )}>
-                  {isRTL
-                    ? "اعرف المزيد عن حريملاء"
-                    : "Learn More About Huraymila"}
-                  <ArrowRight
-                    className={`w-4 h-4 ${isRTL ? "rotate-180" : ""}`}
-                  />
-                </button>
-              </div>
-            </CardContent>
-          </Card>
+                  </CardContent>
+                </Card>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Call to Action */}
+        <div className="text-center">
+          <Button
+            size="lg"
+            onClick={() => navigateToTop("/about")}
+            className="text-lg px-8 py-6">
+            {t("about.discoverMore")}
+            <ArrowRight className={`w-5 h-5 ${isRTL ? "mr-2" : "ml-2"}`} />
+          </Button>
         </div>
       </div>
     </section>

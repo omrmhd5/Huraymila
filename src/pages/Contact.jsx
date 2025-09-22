@@ -23,11 +23,13 @@ import {
 import { Mail, Phone, MapPin, Clock, Send, MessageSquare } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useTheme } from "@/contexts/ThemeContext";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { toast } from "sonner";
 
 const Contact = () => {
   const { user, loading } = useAuth();
   const { language } = useTheme();
+  const { t } = useLanguage();
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -42,9 +44,7 @@ const Contact = () => {
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center">
           <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-muted-foreground">
-            {language === "ar" ? "جاري التحميل..." : "Loading..."}
-          </p>
+          <p className="text-muted-foreground">{t("common.loading")}</p>
         </div>
       </div>
     );
@@ -65,11 +65,7 @@ const Contact = () => {
       !formData.email.trim() ||
       !formData.message.trim()
     ) {
-      toast.error(
-        language === "ar"
-          ? "يرجى ملء جميع الحقول المطلوبة"
-          : "Please fill in all required fields"
-      );
+      toast.error(t("common.fillRequiredFields"));
       return;
     }
 
@@ -79,11 +75,7 @@ const Contact = () => {
       // Mock implementation - simulate contact form submission
       await new Promise((resolve) => setTimeout(resolve, 1000));
 
-      toast.success(
-        language === "ar"
-          ? "تم إرسال رسالتك بنجاح! سنتواصل معك قريباً"
-          : "Your message has been sent successfully! We'll contact you soon"
-      );
+      toast.success(t("common.messageSent"));
       setFormData({
         name: "",
         email: "",
@@ -92,11 +84,7 @@ const Contact = () => {
         message: "",
       });
     } catch (error) {
-      toast.error(
-        language === "ar"
-          ? "حدث خطأ في إرسال الرسالة"
-          : "An error occurred while sending the message"
-      );
+      toast.error(t("common.errorSending"));
     } finally {
       setSubmitting(false);
     }
@@ -105,27 +93,21 @@ const Contact = () => {
   const contactInfo = [
     {
       icon: Mail,
-      title: language === "ar" ? "البريد الإلكتروني" : "Email",
-      value: "info@huraymila-healthy.city",
-      description:
-        language === "ar"
-          ? "راسلنا عبر البريد الإلكتروني"
-          : "Contact us via email",
+      title: t("contact.emailContact"),
+      value: t("contact.emailAddress"),
+      description: t("contact.emailContactDesc"),
     },
     {
       icon: Phone,
-      title: language === "ar" ? "الهاتف" : "Phone",
-      value: "+966-11-123-4567",
-      description: language === "ar" ? "اتصل بنا مباشرة" : "Call us directly",
+      title: t("contact.phoneContact"),
+      value: t("contact.phoneNumber"),
+      description: t("contact.phoneContactDesc"),
     },
     {
       icon: MapPin,
-      title: language === "ar" ? "العنوان" : "Address",
-      value: "مدينة حريملاء، الرياض، المملكة العربية السعودية",
-      description:
-        language === "ar"
-          ? "موقع مبادرة المدينة الصحية"
-          : "Location of the Healthy City initiative",
+      title: t("contact.addressContact"),
+      value: t("contact.address"),
+      description: t("contact.addressContactDesc"),
     },
   ];
 
@@ -135,12 +117,10 @@ const Contact = () => {
         <AnimatedSection animation="fadeInUp" delay={0}>
           <div className="text-center mb-8">
             <h1 className="text-4xl font-bold text-primary mb-4">
-              {language === "ar" ? "اتصل بنا" : "Contact Us"}
+              {t("contact.title")}
             </h1>
             <p className="text-lg text-muted-foreground">
-              {language === "ar"
-                ? "نحن هنا للإجابة على استفساراتك ومساعدتك"
-                : "We are here to answer your questions and help you"}
+              {t("contact.subtitle")}
             </p>
           </div>
         </AnimatedSection>
@@ -153,14 +133,10 @@ const Contact = () => {
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <MessageSquare className="w-5 h-5" />
-                    {language === "ar"
-                      ? "معلومات التواصل"
-                      : "Contact Information"}
+                    {t("contact.contactInformation")}
                   </CardTitle>
                   <CardDescription>
-                    {language === "ar"
-                      ? "طرق مختلفة للتواصل مع فريق مبادرة المدينة الصحية"
-                      : "Different ways to contact the Healthy City initiative team"}
+                    {t("contact.contactInformationDesc")}
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
@@ -192,13 +168,9 @@ const Contact = () => {
             <div className="lg:col-span-2">
               <Card className="hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
                 <CardHeader>
-                  <CardTitle>
-                    {language === "ar" ? "أرسل لنا رسالة" : "Send Us a Message"}
-                  </CardTitle>
+                  <CardTitle>{t("contact.sendMessage")}</CardTitle>
                   <CardDescription>
-                    {language === "ar"
-                      ? "املأ النموذج أدناه وسنرد عليك في أقرب وقت ممكن"
-                      : "Fill out the form below and we'll get back to you as soon as possible"}
+                    {t("contact.sendMessageDesc")}
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
@@ -208,40 +180,26 @@ const Contact = () => {
                       staggerDelay={50}
                       animation="fadeInUp">
                       <div className="space-y-2">
-                        <Label htmlFor="name">
-                          {language === "ar" ? "الاسم الكامل *" : "Full Name *"}
-                        </Label>
+                        <Label htmlFor="name">{t("contact.fullName")} *</Label>
                         <Input
                           id="name"
                           name="name"
                           value={formData.name}
                           onChange={handleInputChange}
-                          placeholder={
-                            language === "ar"
-                              ? "أدخل اسمك الكامل"
-                              : "Enter your full name"
-                          }
+                          placeholder={t("contact.fullNamePlaceholder")}
                           required
                           className="transition-all duration-300 focus:scale-105"
                         />
                       </div>
                       <div className="space-y-2">
-                        <Label htmlFor="email">
-                          {language === "ar"
-                            ? "البريد الإلكتروني *"
-                            : "Email *"}
-                        </Label>
+                        <Label htmlFor="email">{t("contact.email")} *</Label>
                         <Input
                           id="email"
                           name="email"
                           type="email"
                           value={formData.email}
                           onChange={handleInputChange}
-                          placeholder={
-                            language === "ar"
-                              ? "example@email.com"
-                              : "example@email.com"
-                          }
+                          placeholder={t("contact.emailPlaceholder")}
                           required
                           className="transition-all duration-300 focus:scale-105"
                         />
@@ -253,26 +211,18 @@ const Contact = () => {
                       staggerDelay={100}
                       animation="fadeInUp">
                       <div className="space-y-2">
-                        <Label htmlFor="phone">
-                          {language === "ar" ? "رقم الهاتف" : "Phone Number"}
-                        </Label>
+                        <Label htmlFor="phone">{t("contact.phone")}</Label>
                         <Input
                           id="phone"
                           name="phone"
                           value={formData.phone}
                           onChange={handleInputChange}
-                          placeholder={
-                            language === "ar"
-                              ? "+966-50-123-4567"
-                              : "+966-50-123-4567"
-                          }
+                          placeholder={t("contact.phonePlaceholder")}
                           className="transition-all duration-300 focus:scale-105"
                         />
                       </div>
                       <div className="space-y-2">
-                        <Label htmlFor="subject">
-                          {language === "ar" ? "الموضوع" : "Subject"}
-                        </Label>
+                        <Label htmlFor="subject">{t("contact.subject")}</Label>
                         <Select
                           value={formData.subject}
                           onValueChange={(value) =>
@@ -280,34 +230,24 @@ const Contact = () => {
                           }>
                           <SelectTrigger className="transition-all duration-300 focus:scale-105">
                             <SelectValue
-                              placeholder={
-                                language === "ar"
-                                  ? "اختر موضوع الرسالة"
-                                  : "Select a subject"
-                              }
+                              placeholder={t("contact.subjectPlaceholder")}
                             />
                           </SelectTrigger>
                           <SelectContent>
-                            <SelectItem value="استفسار عام">
-                              {language === "ar"
-                                ? "استفسار عام"
-                                : "General Inquiry"}
+                            <SelectItem value="general">
+                              {t("contact.generalInquiry")}
                             </SelectItem>
-                            <SelectItem value="معلومات عن المبادرات">
-                              {language === "ar"
-                                ? "معلومات عن المبادرات"
-                                : "Information about initiatives"}
+                            <SelectItem value="initiatives">
+                              {t("contact.initiativeInfo")}
                             </SelectItem>
-                            <SelectItem value="التطوع">
-                              {language === "ar" ? "التطوع" : "Volunteering"}
+                            <SelectItem value="volunteering">
+                              {t("contact.volunteering")}
                             </SelectItem>
-                            <SelectItem value="شكوى أو اقتراح">
-                              {language === "ar"
-                                ? "شكوى أو اقتراح"
-                                : "Complaint or Suggestion"}
+                            <SelectItem value="complaint">
+                              {t("contact.complaintSuggestion")}
                             </SelectItem>
-                            <SelectItem value="أخرى">
-                              {language === "ar" ? "أخرى" : "Other"}
+                            <SelectItem value="other">
+                              {t("contact.other")}
                             </SelectItem>
                           </SelectContent>
                         </Select>
@@ -317,18 +257,14 @@ const Contact = () => {
                     <AnimatedSection animation="fadeInUp" delay={600}>
                       <div className="space-y-2">
                         <Label htmlFor="message">
-                          {language === "ar" ? "الرسالة *" : "Message *"}
+                          {t("contact.message")} *
                         </Label>
                         <Textarea
                           id="message"
                           name="message"
                           value={formData.message}
                           onChange={handleInputChange}
-                          placeholder={
-                            language === "ar"
-                              ? "اكتب رسالتك هنا..."
-                              : "Write your message here..."
-                          }
+                          placeholder={t("contact.messagePlaceholder")}
                           rows={5}
                           required
                           className="transition-all duration-300 focus:scale-105"
@@ -344,16 +280,12 @@ const Contact = () => {
                         {submitting ? (
                           <>
                             <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
-                            {language === "ar"
-                              ? "جاري الإرسال..."
-                              : "Sending..."}
+                            {t("common.sending")}
                           </>
                         ) : (
                           <>
                             <Send className="w-4 h-4 mr-2" />
-                            {language === "ar"
-                              ? "إرسال الرسالة"
-                              : "Send Message"}
+                            {t("common.sendMessage")}
                           </>
                         )}
                       </Button>

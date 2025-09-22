@@ -48,9 +48,11 @@ import {
   X,
 } from "lucide-react";
 import { useTheme } from "@/contexts/ThemeContext";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const AllSuccessStories = () => {
   const { language } = useTheme();
+  const { t } = useLanguage();
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("all");
@@ -226,29 +228,29 @@ const AllSuccessStories = () => {
   ];
 
   const categories = [
-    { value: "all", label: language === "ar" ? "الكل" : "All" },
-    { value: "صحة", label: language === "ar" ? "صحة" : "Health" },
-    { value: "بيئة", label: language === "ar" ? "بيئة" : "Environment" },
-    { value: "تعليم", label: language === "ar" ? "تعليم" : "Education" },
-    { value: "مجتمع", label: language === "ar" ? "مجتمع" : "Community" },
-    { value: "تقنية", label: language === "ar" ? "تقنية" : "Technology" },
-    { value: "تغذية", label: language === "ar" ? "تغذية" : "Nutrition" },
+    { value: "all", label: t("allSuccessStories.all") },
+    { value: "صحة", label: t("allSuccessStories.health") },
+    { value: "بيئة", label: t("allSuccessStories.environment") },
+    { value: "تعليم", label: t("allSuccessStories.education") },
+    { value: "مجتمع", label: t("allSuccessStories.community") },
+    { value: "تقنية", label: t("allSuccessStories.technology") },
+    { value: "تغذية", label: t("allSuccessStories.nutrition") },
   ];
 
   const sortOptions = [
-    { value: "newest", label: language === "ar" ? "الأحدث" : "Newest" },
-    { value: "oldest", label: language === "ar" ? "الأقدم" : "Oldest" },
+    { value: "newest", label: t("allSuccessStories.newest") },
+    { value: "oldest", label: t("allSuccessStories.oldest") },
     {
       value: "most_viewed",
-      label: language === "ar" ? "الأكثر مشاهدة" : "Most Viewed",
+      label: t("allSuccessStories.mostViewed"),
     },
     {
       value: "most_liked",
-      label: language === "ar" ? "الأكثر إعجاباً" : "Most Liked",
+      label: t("allSuccessStories.mostLiked"),
     },
     {
       value: "highest_rated",
-      label: language === "ar" ? "الأعلى تقييماً" : "Highest Rated",
+      label: t("allSuccessStories.highestRated"),
     },
   ];
 
@@ -347,7 +349,7 @@ const AllSuccessStories = () => {
               className={`text-4xl md:text-5xl font-bold mb-4 ${
                 isRTL ? "font-arabic text-right" : "font-sans text-left"
               }`}>
-              {language === "ar" ? "قصص النجاح" : "Success Stories"}
+              {t("allSuccessStories.title")}
             </h1>
             <p
               className={`text-xl text-muted-foreground ${
@@ -367,7 +369,7 @@ const AllSuccessStories = () => {
               <DialogTrigger asChild>
                 <Button className="bg-primary hover:bg-primary/90">
                   <Plus className="w-4 h-4 mr-2" />
-                  {language === "ar" ? "إضافة قصة نجاح" : "Add Success Story"}
+                  {t("allSuccessStories.addStory")}
                 </Button>
               </DialogTrigger>
               <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
@@ -388,7 +390,7 @@ const AllSuccessStories = () => {
                     {/* Title */}
                     <div className="space-y-2">
                       <Label htmlFor="title">
-                        {language === "ar" ? "العنوان" : "Title"}
+                        {t("allSuccessStories.titleField")}
                       </Label>
                       <Input
                         id="title"
@@ -431,7 +433,7 @@ const AllSuccessStories = () => {
                     {/* Author */}
                     <div className="space-y-2">
                       <Label htmlFor="author">
-                        {language === "ar" ? "المؤلف" : "Author"}
+                        {t("allSuccessStories.author")}
                       </Label>
                       <Input
                         id="author"
@@ -451,7 +453,7 @@ const AllSuccessStories = () => {
                     {/* Before */}
                     <div className="space-y-2">
                       <Label htmlFor="before">
-                        {language === "ar" ? "قبل" : "Before"}
+                        {t("allSuccessStories.before")}
                       </Label>
                       <Textarea
                         id="before"
@@ -472,7 +474,7 @@ const AllSuccessStories = () => {
                     {/* After */}
                     <div className="space-y-2">
                       <Label htmlFor="after">
-                        {language === "ar" ? "بعد" : "After"}
+                        {t("allSuccessStories.after")}
                       </Label>
                       <Textarea
                         id="after"
@@ -493,7 +495,7 @@ const AllSuccessStories = () => {
                     {/* Body/Actual Text */}
                     <div className="space-y-2">
                       <Label htmlFor="body">
-                        {language === "ar" ? "النص الكامل" : "Full Story Text"}
+                        {t("allSuccessStories.fullStory")}
                       </Label>
                       <Textarea
                         id="body"
@@ -539,12 +541,12 @@ const AllSuccessStories = () => {
                       type="button"
                       variant="outline"
                       onClick={() => setIsModalOpen(false)}>
-                      {language === "ar" ? "إلغاء" : "Cancel"}
+                      {t("allSuccessStories.cancel")}
                     </Button>
                     <Button
                       type="submit"
                       className="bg-primary hover:bg-primary/90">
-                      {language === "ar" ? "إضافة القصة" : "Add Story"}
+                      {t("allSuccessStories.addStoryButton")}
                     </Button>
                   </div>
                 </form>
@@ -592,7 +594,7 @@ const AllSuccessStories = () => {
                       isRTL ? "font-arabic text-right" : "font-sans text-left"
                     }>
                     <SelectValue
-                      placeholder={language === "ar" ? "التصنيف" : "Category"}
+                      placeholder={t("allSuccessStories.category")}
                     />
                   </SelectTrigger>
                   <SelectContent>
@@ -619,9 +621,7 @@ const AllSuccessStories = () => {
                     className={
                       isRTL ? "font-arabic text-right" : "font-sans text-left"
                     }>
-                    <SelectValue
-                      placeholder={language === "ar" ? "ترتيب" : "Sort"}
-                    />
+                    <SelectValue placeholder={t("allSuccessStories.sort")} />
                   </SelectTrigger>
                   <SelectContent>
                     {sortOptions.map((option) => (
@@ -673,7 +673,7 @@ const AllSuccessStories = () => {
                 />
                 {story.featured && (
                   <Badge className="absolute top-4 left-4 bg-red-500">
-                    {language === "ar" ? "مميز" : "Featured"}
+                    {t("allSuccessStories.featured")}
                   </Badge>
                 )}
                 <Badge
@@ -761,7 +761,7 @@ const AllSuccessStories = () => {
                 <Button
                   className="w-full group-hover:bg-primary/90 transition-colors"
                   onClick={() => navigateToTop(`/success-stories/${story.id}`)}>
-                  {language === "ar" ? "اقرأ القصة" : "Read Story"}
+                  {t("allSuccessStories.readStory")}
                   <ArrowRight
                     className={`w-4 h-4 ${isRTL ? "mr-2" : "ml-2"}`}
                   />
@@ -779,15 +779,13 @@ const AllSuccessStories = () => {
                 className={`text-xl font-semibold mb-2 ${
                   isRTL ? "font-arabic" : "font-sans"
                 }`}>
-                {language === "ar" ? "لا توجد نتائج" : "No Results Found"}
+                {t("common.noResults")}
               </h3>
               <p
                 className={`text-muted-foreground ${
                   isRTL ? "font-arabic" : "font-sans"
                 }`}>
-                {language === "ar"
-                  ? "جرب البحث بكلمات مختلفة أو تغيير الفلاتر"
-                  : "Try searching with different keywords or changing the filters"}
+                {t("common.tryDifferentFilters")}
               </p>
             </div>
           </AnimatedSection>

@@ -21,54 +21,17 @@ import {
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useTheme } from "@/contexts/ThemeContext";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const InitiativesSection = () => {
   const { language } = useTheme();
+  const { t } = useLanguage();
   const navigate = useNavigate();
 
   // Function to navigate and scroll to top
   const navigateToTop = (path) => {
     navigate(path);
     window.scrollTo({ top: 0, behavior: "smooth" });
-  };
-
-  const content = {
-    ar: {
-      title: "المبادرات",
-      subtitle: "اكتشف المبادرات النشطة في مدينة حريملاء الصحية",
-      description:
-        "نقدم مجموعة متنوعة من المبادرات التي تهدف إلى تعزيز الصحة العامة وتحسين جودة الحياة في المجتمع.",
-      viewAll: "عرض جميع المبادرات",
-      categories: {
-        health: "صحة",
-        environment: "بيئة",
-        community: "مجتمع",
-        education: "تعليم",
-      },
-      status: {
-        active: "نشط",
-        completed: "مكتمل",
-        planning: "قيد التخطيط",
-      },
-    },
-    en: {
-      title: "Health Initiatives",
-      subtitle: "Discover Active Initiatives in Huraymila Healthy City",
-      description:
-        "We offer a variety of health initiatives aimed at promoting public health and improving quality of life in the community.",
-      viewAll: "View All Initiatives",
-      categories: {
-        health: "Health",
-        environment: "Environment",
-        community: "Community",
-        education: "Education",
-      },
-      status: {
-        active: "Active",
-        completed: "Completed",
-        planning: "Planning",
-      },
-    },
   };
 
   const initiatives = [
@@ -147,15 +110,30 @@ const InitiativesSection = () => {
     },
   ];
 
-  const current = content[language];
   const isRTL = language === "ar";
 
   const getCategoryBadge = (category) => {
     const categoryLabels = {
-      health: { ar: "صحة", en: "Health", color: "bg-red-500" },
-      environment: { ar: "بيئة", en: "Environment", color: "bg-green-500" },
-      community: { ar: "مجتمع", en: "Community", color: "bg-blue-500" },
-      education: { ar: "تعليم", en: "Education", color: "bg-purple-500" },
+      health: {
+        ar: t("initiativesSection.categories.health"),
+        en: t("initiativesSection.categories.health"),
+        color: "bg-red-500",
+      },
+      environment: {
+        ar: t("initiativesSection.categories.environment"),
+        en: t("initiativesSection.categories.environment"),
+        color: "bg-green-500",
+      },
+      community: {
+        ar: t("initiativesSection.categories.community"),
+        en: t("initiativesSection.categories.community"),
+        color: "bg-blue-500",
+      },
+      education: {
+        ar: t("initiativesSection.categories.education"),
+        en: t("initiativesSection.categories.education"),
+        color: "bg-purple-500",
+      },
     };
 
     const categoryInfo = categoryLabels[category];
@@ -168,9 +146,21 @@ const InitiativesSection = () => {
 
   const getStatusBadge = (status) => {
     const statusLabels = {
-      active: { ar: "نشط", en: "Active", color: "bg-green-500" },
-      completed: { ar: "مكتمل", en: "Completed", color: "bg-blue-500" },
-      planning: { ar: "قيد التخطيط", en: "Planning", color: "bg-yellow-500" },
+      active: {
+        ar: t("initiativesSection.status.active"),
+        en: t("initiativesSection.status.active"),
+        color: "bg-green-500",
+      },
+      completed: {
+        ar: t("initiativesSection.status.completed"),
+        en: t("initiativesSection.status.completed"),
+        color: "bg-blue-500",
+      },
+      planning: {
+        ar: t("initiativesSection.status.planning"),
+        en: t("initiativesSection.status.planning"),
+        color: "bg-yellow-500",
+      },
     };
 
     const statusInfo = statusLabels[status];
@@ -198,16 +188,16 @@ const InitiativesSection = () => {
         {/* Header */}
         <div className="text-center mb-16">
           <Badge variant="outline" className="mb-4 px-4 py-2 text-sm">
-            {language === "ar" ? "المبادرات" : "Initiatives"}
+            {t("initiativesSection.title")}
           </Badge>
           <h2 className="text-4xl md:text-5xl font-bold text-foreground mb-6">
-            {current.title}
+            {t("initiativesSection.title")}
           </h2>
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
-            {current.subtitle}
+            {t("initiativesSection.subtitle")}
           </p>
           <p className="text-lg text-muted-foreground max-w-4xl mx-auto mt-4 leading-relaxed">
-            {current.description}
+            {t("initiativesSection.description")}
           </p>
         </div>
 
@@ -250,9 +240,9 @@ const InitiativesSection = () => {
                     <div className="flex items-center justify-between text-sm">
                       <span className="text-muted-foreground">
                         {initiative.participants}{" "}
-                        {language === "ar" ? "من" : "of"}{" "}
+                        {t("initiativesSection.details.of")}{" "}
                         {initiative.maxParticipants}{" "}
-                        {language === "ar" ? "مشارك" : "participants"}
+                        {t("initiativesSection.details.participants")}
                       </span>
                       <span className="font-medium">
                         {Math.round(
@@ -279,9 +269,7 @@ const InitiativesSection = () => {
                         isRTL ? "font-arabic text-right" : "font-sans text-left"
                       }`}>
                       {initiative.maxParticipants - initiative.participants}{" "}
-                      {language === "ar"
-                        ? "مشارك مطلوب"
-                        : "participants needed"}
+                      {t("initiativesSection.details.participantsNeeded")}
                     </p>
                   </div>
                 )}
@@ -292,7 +280,7 @@ const InitiativesSection = () => {
                     <Calendar className="w-4 h-4 text-muted-foreground" />
                     <div>
                       <p className="font-medium">
-                        {language === "ar" ? "تاريخ البداية" : "Start Date"}
+                        {t("initiativesSection.details.startDate")}
                       </p>
                       <p className="text-muted-foreground">
                         {formatDate(initiative.startDate)}
@@ -304,7 +292,7 @@ const InitiativesSection = () => {
                     <Clock className="w-4 h-4 text-muted-foreground" />
                     <div>
                       <p className="font-medium">
-                        {language === "ar" ? "تاريخ الانتهاء" : "End Date"}
+                        {t("initiativesSection.details.endDate")}
                       </p>
                       <p className="text-muted-foreground">
                         {formatDate(initiative.endDate)}
@@ -318,7 +306,7 @@ const InitiativesSection = () => {
                     <MapPin className="w-4 h-4 text-muted-foreground" />
                     <div>
                       <p className="font-medium">
-                        {language === "ar" ? "الموقع" : "Location"}
+                        {t("initiativesSection.details.location")}
                       </p>
                       <p className="text-muted-foreground">
                         {language === "ar"
@@ -332,7 +320,7 @@ const InitiativesSection = () => {
                     <Users className="w-4 h-4 text-muted-foreground" />
                     <div>
                       <p className="font-medium">
-                        {language === "ar" ? "المشاركون" : "Participants"}
+                        {t("initiativesSection.details.participantsLabel")}
                       </p>
                       <p className="text-muted-foreground">
                         {initiative.participants}
@@ -347,7 +335,7 @@ const InitiativesSection = () => {
                   onClick={() =>
                     navigateToTop(`/initiatives/${initiative.id}`)
                   }>
-                  {language === "ar" ? "عرض التفاصيل" : "View Details"}
+                  {t("initiativesSection.details.viewDetails")}
                   <ArrowRight
                     className={`w-4 h-4 ${isRTL ? "mr-2" : "ml-2"}`}
                   />
@@ -364,7 +352,7 @@ const InitiativesSection = () => {
             variant="outline"
             className="px-8 py-6 text-lg"
             onClick={() => navigateToTop("/initiatives")}>
-            {current.viewAll}
+            {t("initiativesSection.viewAll")}
             <ArrowRight className={`w-5 h-5 ${isRTL ? "mr-2" : "ml-2"}`} />
           </Button>
         </div>

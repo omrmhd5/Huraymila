@@ -32,9 +32,11 @@ import {
   ArrowRight,
 } from "lucide-react";
 import { useTheme } from "@/contexts/ThemeContext";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const AllNews = () => {
   const { language } = useTheme();
+  const { t } = useLanguage();
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("all");
@@ -251,15 +253,13 @@ const AllNews = () => {
               className={`text-4xl md:text-5xl font-bold mb-4 ${
                 isRTL ? "font-arabic text-right" : "font-sans text-left"
               }`}>
-              {language === "ar" ? "الأخبار" : "News"}
+              {t("news.title")}
             </h1>
             <p
               className={`text-xl text-muted-foreground ${
                 isRTL ? "font-arabic text-right" : "font-sans text-left"
               }`}>
-              {language === "ar"
-                ? "تابع آخر الأخبار والتطورات في مدينة حريملاء الصحية"
-                : "Stay updated with the latest news and developments in Huraymila Healthy City"}
+              {t("news.subtitle")}
             </p>
           </div>
         </AnimatedSection>
@@ -277,11 +277,7 @@ const AllNews = () => {
                     }`}
                   />
                   <Input
-                    placeholder={
-                      language === "ar"
-                        ? "البحث في الأخبار..."
-                        : "Search news..."
-                    }
+                    placeholder={t("news.searchPlaceholder")}
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                     className={`${
@@ -302,9 +298,7 @@ const AllNews = () => {
                     className={
                       isRTL ? "font-arabic text-right" : "font-sans text-left"
                     }>
-                    <SelectValue
-                      placeholder={language === "ar" ? "التصنيف" : "Category"}
-                    />
+                    <SelectValue placeholder={t("news.category")} />
                   </SelectTrigger>
                   <SelectContent>
                     {categories.map((category) => (
@@ -330,9 +324,7 @@ const AllNews = () => {
                     className={
                       isRTL ? "font-arabic text-right" : "font-sans text-left"
                     }>
-                    <SelectValue
-                      placeholder={language === "ar" ? "ترتيب" : "Sort"}
-                    />
+                    <SelectValue placeholder={t("common.sort")} />
                   </SelectTrigger>
                   <SelectContent>
                     {sortOptions.map((option) => (

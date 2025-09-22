@@ -17,6 +17,7 @@ import {
 // Commented out useAuth for development
 // import { useAuth } from "@/contexts/AuthContext";
 import { useTheme } from "@/contexts/ThemeContext";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { useNavigate } from "react-router-dom";
 import Standards from "@/lib/standards";
 import RequiredStandards from "@/components/AgencyDashboard/RequiredStandards";
@@ -27,81 +28,12 @@ const AgencyDashboard = () => {
   // Commented out useAuth for development
   // const { user, loading } = useAuth();
   const { language, theme, setLanguage, setTheme } = useTheme();
+  const { t } = useLanguage();
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("overview");
   const [showAddForm, setShowAddForm] = useState(false);
 
   const isRTL = language === "ar";
-
-  const content = {
-    ar: {
-      timeline: {
-        title: "الجدول الزمني للبرنامج",
-        phases: [
-          {
-            year: "2024",
-            title: "إطلاق البرنامج",
-            description: "بداية المبادرات الأساسية وتأسيس الشراكات",
-            status: "مكتمل",
-          },
-          {
-            year: "2025",
-            title: "التوسع والتطوير",
-            description: "تنفيذ المشاريع الكبرى وزيادة المشاركة المجتمعية",
-            status: "قيد التنفيذ",
-          },
-          {
-            year: "2026",
-            title: "التقييم والتحسين",
-            description: "تقييم النتائج وتطوير المبادرات القائمة",
-            status: "مخطط",
-          },
-          {
-            year: "2027",
-            title: "الاعتماد العالمي",
-            description: "التقدم للحصول على اعتماد منظمة الصحة العالمية",
-            status: "مخطط",
-          },
-        ],
-      },
-    },
-    en: {
-      timeline: {
-        title: "Program Timeline",
-        phases: [
-          {
-            year: "2024",
-            title: "Program Launch",
-            description:
-              "Start of basic initiatives and establishing partnerships",
-            status: "Completed",
-          },
-          {
-            year: "2025",
-            title: "Expansion & Development",
-            description:
-              "Implementation of major projects and increased community participation",
-            status: "In Progress",
-          },
-          {
-            year: "2026",
-            title: "Evaluation & Improvement",
-            description:
-              "Results evaluation and development of existing initiatives",
-            status: "Planned",
-          },
-          {
-            year: "2027",
-            title: "Global Accreditation",
-            description: "Apply for WHO accreditation",
-            status: "Planned",
-          },
-        ],
-      },
-    },
-  };
-
-  const current = content[language];
 
   // Note: Submission modal state is now handled in RequiredStandards component
 
@@ -396,11 +328,16 @@ const AgencyDashboard = () => {
               className={`text-2xl md:text-3xl font-bold text-center text-foreground mb-12 ${
                 isRTL ? "font-arabic" : "font-english"
               }`}>
-              {current.timeline.title}
+              {t("agencyDashboard.timeline.title")}
             </h3>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-              {current.timeline.phases.map((phase, index) => (
+              {[
+                t("agencyDashboard.timeline.phases.launch"),
+                t("agencyDashboard.timeline.phases.expansion"),
+                t("agencyDashboard.timeline.phases.evaluation"),
+                t("agencyDashboard.timeline.phases.accreditation"),
+              ].map((phase, index) => (
                 <Card
                   key={index}
                   className={`relative overflow-hidden ${
