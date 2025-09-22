@@ -22,7 +22,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 
 const RequiredStandards = ({ assignedStandards }) => {
   const { t, language } = useLanguage();
-  
+
   // Component-specific state
   const [statusFilter, setStatusFilter] = useState("all");
   const [searchTerm, setSearchTerm] = useState("");
@@ -301,9 +301,7 @@ const RequiredStandards = ({ assignedStandards }) => {
                       ? "font-arabic text-right"
                       : "font-sans text-left"
                   }>
-                  <SelectValue
-                    placeholder={t("requiredStandards.all")}
-                  />
+                  <SelectValue placeholder={t("requiredStandards.all")} />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem
