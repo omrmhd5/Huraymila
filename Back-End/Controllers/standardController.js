@@ -84,6 +84,39 @@ const updateStandard = async (req, res) => {
   }
 };
 
+// Update standard status and progress based on submissions
+const updateStandardFromSubmissions = async (req, res) => {
+  try {
+    const { number } = req.params;
+    const { status, progress } = req.body;
+
+    const standard = await Standard.findOneAndUpdate(
+      { number },
+      { status, progress },
+      { new: true, runValidators: true }
+    ).populate("assigned_agencies", "name name_ar");
+
+    if (!standard) {
+      return res.status(404).json({
+        success: false,
+        message: "Standard not found",
+      });
+    }
+
+    res.json({
+      success: true,
+      message: "Standard status and progress updated successfully",
+      data: standard,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Error updating standard status and progress",
+      error: error.message,
+    });
+  }
+};
+
 // Get standards by status
 const getStandardsByStatus = async (req, res) => {
   try {
@@ -110,5 +143,6 @@ module.exports = {
   getStandards,
   getStandardByNumber,
   updateStandard,
+  updateStandardFromSubmissions,
   getStandardsByStatus,
 };

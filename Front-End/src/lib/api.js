@@ -55,3 +55,31 @@ export const updateSubmissionStatus = async (submissionId, status) => {
     throw error;
   }
 };
+
+// Update standard status and progress from submissions
+export const updateStandardFromSubmissions = async (
+  standardNumber,
+  status,
+  progress
+) => {
+  try {
+    const response = await fetch(
+      `${API_BASE_URL}/standards/${standardNumber}/from-submissions`,
+      {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ status, progress }),
+      }
+    );
+    if (!response.ok) {
+      throw new Error("Failed to update standard from submissions");
+    }
+    const standard = await response.json();
+    return standard.data; // Returns updated standard
+  } catch (error) {
+    console.error("Error updating standard from submissions:", error);
+    throw error;
+  }
+};

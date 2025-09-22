@@ -28,8 +28,14 @@ import {
 } from "@/components/ui/dialog";
 import { useTheme } from "@/contexts/ThemeContext";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { getAllStandardsByNumber } from "@/lib/api";
-import { mapBackendStandardsToLanguageContext } from "@/lib/utils";
+import {
+  getAllStandardsByNumber,
+  getSubmissionsByStandardNumber,
+} from "@/lib/api";
+import {
+  mapBackendStandardsToLanguageContext,
+  updateStandardsFromSubmissions,
+} from "@/lib/utils";
 import {
   Search,
   Filter,
@@ -51,6 +57,7 @@ const StandardsManagement = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [standardsList, setStandardsList] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [submissionsData, setSubmissionsData] = useState({});
 
   // Fetch standards from backend and map to language context
   useEffect(() => {
@@ -67,6 +74,33 @@ const StandardsManagement = () => {
         );
 
         setStandardsList(mappedStandards);
+
+        // Fetch submissions for each standard
+        const submissionsPromises = mappedStandards.map(async (standard) => {
+          try {
+            const submissions = await getSubmissionsByStandardNumber(
+              standard.number
+            );
+            return { standardNumber: standard.number, submissions };
+          } catch (error) {
+            console.error(
+              `Error fetching submissions for standard ${standard.number}:`,
+              error
+            );
+            return { standardNumber: standard.number, submissions: [] };
+          }
+        });
+
+        const submissionsResults = await Promise.all(submissionsPromises);
+        const submissionsMap = {};
+        submissionsResults.forEach(({ standardNumber, submissions }) => {
+          submissionsMap[standardNumber] = submissions;
+        });
+
+        setSubmissionsData(submissionsMap);
+
+        // Update standards with calculated status and progress
+        await updateStandardsFromSubmissions(mappedStandards, submissionsMap);
       } catch (error) {
         console.error("Error fetching standards:", error);
         setStandardsList([]);
@@ -95,7 +129,7 @@ const StandardsManagement = () => {
       selectedAgency === "all" ||
       standard.assigned_agencies.includes(selectedAgency);
 
-    // Status filtering logic
+    // Status filtering logic based on database status
     const matchesStatus =
       selectedStatus === "all" || standard.status === selectedStatus;
 
@@ -103,7 +137,6 @@ const StandardsManagement = () => {
   });
 
   const getStatusBadge = (standard) => {
-    // Mock status - you can implement real status logic based on submissions
     const statuses = [
       {
         value: "approved",
@@ -131,9 +164,8 @@ const StandardsManagement = () => {
       },
     ];
 
-    // Get status from standard or use default
     const status =
-      statuses.find((s) => s.value === standard.status) || statuses[2]; // Default to "didnt_submit"
+      statuses.find((s) => s.value === standard.status) || statuses[2];
 
     return (
       <Badge
@@ -145,20 +177,24 @@ const StandardsManagement = () => {
   };
 
   const getSubmissionCount = (standard) => {
-    // Mock submission count - you can implement real logic
-    return Math.floor(Math.random() * 5);
+    const submissions = submissionsData[standard.number] || [];
+    return submissions.length;
   };
 
   const getAgencySubmissionStatus = (standard) => {
-    // Mock submission status for each agency
-    // In real implementation, this would come from your data
+    const submissions = submissionsData[standard.number] || [];
     const agencyStatuses = {};
+
     standard.assigned_agencies.forEach((agency) => {
-      // Randomly assign submission status for demo purposes
-      // In real app, this would be based on actual submission data
-      agencyStatuses[agency] =
-        Math.random() > 0.5 ? "submitted" : "not_submitted";
+      // Check if agency has submitted for this standard
+      const hasSubmitted = submissions.some((submission) => {
+        const agencyName =
+          submission.agency?.name || submission.agency?.name_ar;
+        return agencyName === agency;
+      });
+      agencyStatuses[agency] = hasSubmitted ? "submitted" : "not_submitted";
     });
+
     return agencyStatuses;
   };
 
@@ -451,24 +487,7 @@ const StandardsManagement = () => {
                     <TableCell>
                       <div className="flex justify-center gap-1">
                         <Badge variant="secondary" className="text-xs">
-                          {(() => {
-                            const totalAgencies =
-                              standard.assigned_agencies.length;
-
-                            if (totalAgencies === 0) return "0%";
-
-                            // Count only approved submissions
-                            const approvedCount =
-                              standard.status === "approved" ? 1 : 0;
-
-                            const rawPercentage =
-                              (approvedCount / totalAgencies) * 100;
-                            const percentage = Math.max(
-                              0,
-                              Math.min(100, Math.round(rawPercentage))
-                            );
-                            return `${percentage}%`;
-                          })()}
+                          {standard.progress || 0}%
                         </Badge>
                       </div>
                     </TableCell>
@@ -591,20 +610,7 @@ const StandardsManagement = () => {
                       {t("standardsManagement.approvedSubmissions")}
                     </h3>
                     <Badge variant="secondary" className="text-sm">
-                      {(() => {
-                        const totalAgencies =
-                          selectedStandard.assigned_agencies.length;
-                        if (totalAgencies === 0) return "0%";
-                        const approvedCount =
-                          selectedStandard.status === "approved" ? 1 : 0;
-                        const rawPercentage =
-                          (approvedCount / totalAgencies) * 100;
-                        const percentage = Math.max(
-                          0,
-                          Math.min(100, Math.round(rawPercentage))
-                        );
-                        return `${percentage}%`;
-                      })()}
+                      {selectedStandard.progress || 0}%
                     </Badge>
                   </div>
                 </div>
