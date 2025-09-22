@@ -27,6 +27,10 @@ import {
   Car,
   Recycle,
   Award,
+  Eye,
+  Edit,
+  Trash2,
+  Star,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useTheme } from "@/contexts/ThemeContext";
@@ -186,13 +190,24 @@ const AdminDashboard = () => {
           status: ["active", "completed", "draft"][i % 3],
           category: ["صحة", "بيئة", "تعليم"][i % 3],
           title: `مبادرة ${i + 1}`,
+          volunteers: Math.floor(Math.random() * 15) + 5,
+          max_volunteers: Math.floor(Math.random() * 20) + 20,
+          organized_agency: [
+            "وزارة الصحة",
+            "أمانة الرياض",
+            "جمعية حريملاء الخيرية",
+            "مستشفى حريملاء العام",
+          ][i % 4],
           created_at: new Date(Date.now() - i * 86400000).toISOString(),
         })),
         news: Array.from({ length: 10 }, (_, i) => ({
           id: i + 1,
+          title: `خبر ${i + 1}`,
+          author: `الكاتب ${i + 1}`,
+          date: new Date(Date.now() - i * 86400000).toISOString(),
           is_published: i % 2 === 0,
           category: ["صحة", "بيئة", "تعليم"][i % 3],
-          title: `خبر ${i + 1}`,
+          priority: i < 3 ? i + 1 : null, // Top 3 get priority 1, 2, 3
           created_at: new Date(Date.now() - i * 86400000).toISOString(),
         })),
         agencies: Array.from({ length: 10 }, (_, i) => ({
@@ -204,6 +219,10 @@ const AdminDashboard = () => {
         })),
         volunteers: Array.from({ length: 10 }, (_, i) => ({
           id: i + 1,
+          full_name: `المتطوع ${i + 1}`,
+          email: `volunteer${i + 1}@example.com`,
+          phone_number: `+966501234${i.toString().padStart(3, "0")}`,
+          volunteering_initiative: `مبادرة ${i + 1}`,
           status: ["pending", "approved", "rejected"][i % 3],
           availability: ["صباحاً", "مساءً", "أي وقت"][i % 3],
           reviewed_at:
@@ -214,9 +233,15 @@ const AdminDashboard = () => {
         })),
         success_stories: Array.from({ length: 10 }, (_, i) => ({
           id: i + 1,
+          title: `قصة نجاح ${i + 1}`,
+          description: `وصف قصة النجاح ${
+            i + 1
+          } - هذا مثال على وصف مفصل لقصة نجاح ملهمة في مجتمع حريملاء`,
+          author: `الكاتب ${i + 1}`,
+          date: new Date(Date.now() - i * 86400000).toISOString(),
           is_published: i % 2 === 0,
           category: ["صحة", "بيئة", "تعليم"][i % 3],
-          title: `قصة نجاح ${i + 1}`,
+          priority: i < 3 ? i + 1 : null, // Top 3 get priority 1, 2, 3
           created_at: new Date(Date.now() - i * 86400000).toISOString(),
         })),
         reports: Array.from({ length: 10 }, (_, i) => ({
@@ -301,6 +326,180 @@ const AdminDashboard = () => {
         )
       );
     }
+  };
+
+  // Initiative action handlers
+  const handleViewInitiative = (id) => {
+    console.log(`Viewing initiative ${id}`);
+    // Navigate to initiative details page
+    navigate(`/initiative/${id}`);
+  };
+
+  const handleEditInitiative = (id) => {
+    console.log(`Editing initiative ${id}`);
+    // Navigate to edit initiative page or open edit modal
+    navigate(`/admin/initiatives/edit/${id}`);
+  };
+
+  const handleDeleteInitiative = (id) => {
+    console.log(`Deleting initiative ${id}`);
+    // Show confirmation dialog and delete initiative
+    if (
+      window.confirm(
+        language === "ar"
+          ? "هل أنت متأكد من حذف هذه المبادرة؟"
+          : "Are you sure you want to delete this initiative?"
+      )
+    ) {
+      // Delete logic here
+      setData((prev) => ({
+        ...prev,
+        initiatives: prev.initiatives.filter((init) => init.id !== id),
+      }));
+    }
+  };
+
+  // Volunteer action handlers
+  const handleEditVolunteer = (id) => {
+    console.log(`Editing volunteer ${id}`);
+    // Navigate to edit volunteer page or open edit modal
+    navigate(`/admin/volunteers/edit/${id}`);
+  };
+
+  const handleDeleteVolunteer = (id) => {
+    console.log(`Deleting volunteer ${id}`);
+    // Show confirmation dialog and delete volunteer
+    if (
+      window.confirm(
+        language === "ar"
+          ? "هل أنت متأكد من حذف هذا المتطوع؟"
+          : "Are you sure you want to delete this volunteer?"
+      )
+    ) {
+      // Delete logic here
+      setData((prev) => ({
+        ...prev,
+        volunteers: prev.volunteers.filter((vol) => vol.id !== id),
+      }));
+    }
+  };
+
+  // News action handlers
+  const handleViewNews = (id) => {
+    console.log(`Viewing news ${id}`);
+    // Navigate to news article page
+    navigate(`/news/${id}`);
+  };
+
+  const handleEditNews = (id) => {
+    console.log(`Editing news ${id}`);
+    // Navigate to edit news page or open edit modal
+    navigate(`/admin/news/edit/${id}`);
+  };
+
+  const handleDeleteNews = (id) => {
+    console.log(`Deleting news ${id}`);
+    // Show confirmation dialog and delete news
+    if (
+      window.confirm(
+        language === "ar"
+          ? "هل أنت متأكد من حذف هذا الخبر؟"
+          : "Are you sure you want to delete this news?"
+      )
+    ) {
+      // Delete logic here
+      setData((prev) => ({
+        ...prev,
+        news: prev.news.filter((article) => article.id !== id),
+      }));
+    }
+  };
+
+  const handleTogglePriority = (id) => {
+    console.log(`Toggling priority for news ${id}`);
+    setData((prev) => ({
+      ...prev,
+      news: prev.news.map((article) => {
+        if (article.id === id) {
+          // If already has priority, remove it
+          if (article.priority) {
+            return { ...article, priority: null };
+          }
+          // If no priority, assign the next available priority (1-3)
+          const usedPriorities = prev.news
+            .filter((a) => a.id !== id && a.priority)
+            .map((a) => a.priority);
+          const availablePriorities = [1, 2, 3].filter(
+            (p) => !usedPriorities.includes(p)
+          );
+          return {
+            ...article,
+            priority: availablePriorities[0] || null,
+          };
+        }
+        return article;
+      }),
+    }));
+  };
+
+  // Success Stories action handlers
+  const handleViewSuccessStory = (id) => {
+    console.log(`Viewing success story ${id}`);
+    // Navigate to success story page
+    navigate(`/success-story/${id}`);
+  };
+
+  const handleEditSuccessStory = (id) => {
+    console.log(`Editing success story ${id}`);
+    // Navigate to edit success story page or open edit modal
+    navigate(`/admin/success-stories/edit/${id}`);
+  };
+
+  const handleDeleteSuccessStory = (id) => {
+    console.log(`Deleting success story ${id}`);
+    // Show confirmation dialog and delete success story
+    if (
+      window.confirm(
+        language === "ar"
+          ? "هل أنت متأكد من حذف قصة النجاح هذه؟"
+          : "Are you sure you want to delete this success story?"
+      )
+    ) {
+      // Delete logic here
+      setData((prev) => ({
+        ...prev,
+        success_stories: prev.success_stories.filter(
+          (story) => story.id !== id
+        ),
+      }));
+    }
+  };
+
+  const handleToggleSuccessStoryPriority = (id) => {
+    console.log(`Toggling priority for success story ${id}`);
+    setData((prev) => ({
+      ...prev,
+      success_stories: prev.success_stories.map((story) => {
+        if (story.id === id) {
+          // If already has priority, remove it
+          if (story.priority) {
+            return { ...story, priority: null };
+          }
+          // If no priority, assign the next available priority (1-3)
+          const usedPriorities = prev.success_stories
+            .filter((s) => s.id !== id && s.priority)
+            .map((s) => s.priority);
+          const availablePriorities = [1, 2, 3].filter(
+            (p) => !usedPriorities.includes(p)
+          );
+          return {
+            ...story,
+            priority: availablePriorities[0] || null,
+          };
+        }
+        return story;
+      }),
+    }));
   };
 
   const statCards = [
@@ -435,64 +634,14 @@ const AdminDashboard = () => {
         ))}
       </div>
 
-      {/* Quick Actions */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-        <Card className="hover:shadow-lg transition-shadow cursor-pointer">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Database className="w-5 h-5 text-green-600" />
-              {language === "ar" ? "إدارة المعايير" : "Standards Management"}
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-muted-foreground mb-4">
-              {language === "ar"
-                ? "مراقبة وإدارة المعايير الصحية الـ 80 مع متطلباتها والجهات المسؤولة"
-                : "Monitor and manage the 80 health standards with their requirements and responsible agencies"}
-            </p>
-            <Button
-              className="w-full"
-              onClick={() => navigate("/admin/standards")}>
-              {language === "ar" ? "إدارة المعايير" : "Manage Standards"}
-            </Button>
-          </CardContent>
-        </Card>
-
-        <Card className="hover:shadow-lg transition-shadow cursor-pointer">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Building2 className="w-5 h-5 text-blue-600" />
-              {language === "ar" ? "إدارة الجهات" : "Agency Management"}
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-muted-foreground mb-4">
-              {language === "ar"
-                ? "إدارة الشركاء والجهات الحكومية والمنظمات المشاركة في المبادرة"
-                : "Manage partner government agencies and organizations participating in the initiative"}
-            </p>
-            <Button
-              className="w-full"
-              onClick={() => navigate("/admin/agency-management")}>
-              {language === "ar" ? "إدارة الجهات" : "Manage Agencies"}
-            </Button>
-          </CardContent>
-        </Card>
-      </div>
-
       {/* Data Tables */}
       <Tabs defaultValue="health" className="space-y-6">
-        <TabsList className="grid w-full grid-cols-3 lg:grid-cols-7">
+        <TabsList className="grid w-full grid-cols-3 lg:grid-cols-6">
           {[
             {
               value: "health",
               ar: "الصحة",
               en: "Health",
-            },
-            {
-              value: "agencies",
-              ar: "الجهات",
-              en: "Agencies",
             },
             {
               value: "initiatives",
@@ -807,156 +956,258 @@ const AdminDashboard = () => {
           </div>
         </TabsContent>
 
-        {/* Agencies Tab */}
-        <TabsContent value="agencies">
-          <Card>
-            <CardHeader>
-              <CardTitle
-                className={`text-right ${
-                  language === "ar" ? "font-arabic" : "font-english"
-                }`}>
-                {language === "ar" ? "الجهات" : "Agencies"}
-              </CardTitle>
-              <CardDescription
-                className={`text-right ${
-                  language === "ar" ? "font-arabic" : "font-english"
-                }`}>
-                {language === "ar"
-                  ? "جميع الجهات والشركاء المتعاونين"
-                  : "All agencies and cooperating partners"}
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead
-                      className={`text-right ${
-                        language === "ar" ? "font-arabic" : "font-english"
-                      }`}>
-                      {language === "ar" ? "الحالة" : "Status"}
-                    </TableHead>
-                    <TableHead
-                      className={`text-right ${
-                        language === "ar" ? "font-arabic" : "font-english"
-                      }`}>
-                      {language === "ar" ? "نوع الجهة" : "Agency Type"}
-                    </TableHead>
-                    <TableHead
-                      className={`text-right ${
-                        language === "ar" ? "font-arabic" : "font-english"
-                      }`}>
-                      {language === "ar" ? "الاسم" : "Name"}
-                    </TableHead>
-                    <TableHead
-                      className={`text-right ${
-                        language === "ar" ? "font-arabic" : "font-english"
-                      }`}>
-                      {language === "ar" ? "تاريخ الإضافة" : "Date Added"}
-                    </TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {data.agencies.slice(0, 10).map((agency) => (
-                    <TableRow key={agency.id}>
-                      <TableCell className="text-right">
-                        <Badge
-                          variant={agency.is_active ? "default" : "secondary"}
-                          className={
-                            language === "ar" ? "font-arabic" : "font-english"
-                          }>
-                          {agency.is_active
-                            ? language === "ar"
-                              ? "نشط"
-                              : "Active"
-                            : language === "ar"
-                            ? "غير نشط"
-                            : "Inactive"}
-                        </Badge>
-                      </TableCell>
-                      <TableCell
-                        className={`text-right ${
-                          language === "ar" ? "font-arabic" : "font-english"
-                        }`}>
-                        {agency.agency_type ||
-                          (language === "ar" ? "غير محدد" : "Not specified")}
-                      </TableCell>
-                      <TableCell
-                        className={`text-right ${
-                          language === "ar" ? "font-arabic" : "font-english"
-                        }`}>
-                        {agency.name}
-                      </TableCell>
-                      <TableCell
-                        className={`text-right ${
-                          language === "ar" ? "font-arabic" : "font-english"
-                        }`}>
-                        {formatDate(agency.created_at)}
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </CardContent>
-          </Card>
-        </TabsContent>
-
         {/* Initiatives Tab */}
         <TabsContent value="initiatives">
           <Card>
             <CardHeader>
-              <CardTitle className="font-arabic text-right">
-                المبادرات
+              <CardTitle
+                className={`${
+                  language === "ar"
+                    ? "text-right font-arabic"
+                    : "text-left font-english"
+                }`}>
+                {language === "ar" ? "المبادرات" : "Initiatives"}
               </CardTitle>
-              <CardDescription className="font-arabic text-right">
-                جميع المبادرات المنشورة في الموقع
+              <CardDescription
+                className={`${
+                  language === "ar"
+                    ? "text-right font-arabic"
+                    : "text-left font-english"
+                }`}>
+                {language === "ar"
+                  ? "جميع المبادرات المنشورة في الموقع"
+                  : "All initiatives published on the website"}
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead className="text-right font-arabic">
-                      الحالة
-                    </TableHead>
-                    <TableHead className="text-right font-arabic">
-                      الفئة
-                    </TableHead>
-                    <TableHead className="text-right font-arabic">
-                      العنوان
-                    </TableHead>
-                    <TableHead className="text-right font-arabic">
-                      تاريخ الإنشاء
-                    </TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {data.initiatives.slice(0, 10).map((initiative) => (
-                    <TableRow key={initiative.id}>
-                      <TableCell className="text-right">
-                        <Badge
-                          variant={
-                            initiative.status === "active"
-                              ? "default"
-                              : "secondary"
-                          }
-                          className="font-arabic">
-                          {initiative.status}
-                        </Badge>
-                      </TableCell>
-                      <TableCell className="text-right font-arabic">
-                        {initiative.category}
-                      </TableCell>
-                      <TableCell className="text-right font-arabic">
-                        {initiative.title}
-                      </TableCell>
-                      <TableCell className="text-right font-arabic">
-                        {formatDate(initiative.created_at)}
-                      </TableCell>
+              <div className="overflow-x-auto">
+                <Table className="w-full">
+                  <TableHeader>
+                    <TableRow>
+                      {language === "ar" ? (
+                        // Arabic order: right to left
+                        <>
+                          <TableHead className="text-center font-arabic">
+                            الإجراءات
+                          </TableHead>
+                          <TableHead className="text-right font-arabic">
+                            الجهة المنظمة
+                          </TableHead>
+                          <TableHead className="text-right font-arabic">
+                            المتطوعين
+                          </TableHead>
+                          <TableHead className="text-right font-arabic">
+                            الفئة
+                          </TableHead>
+                          <TableHead className="text-right font-arabic">
+                            الحالة
+                          </TableHead>
+                          <TableHead className="text-right font-arabic">
+                            العنوان
+                          </TableHead>
+                        </>
+                      ) : (
+                        // English order: left to right
+                        <>
+                          <TableHead className="text-left font-english">
+                            Title
+                          </TableHead>
+                          <TableHead className="text-center font-english">
+                            Status
+                          </TableHead>
+                          <TableHead className="text-center font-english">
+                            Category
+                          </TableHead>
+                          <TableHead className="text-center font-english">
+                            Volunteers
+                          </TableHead>
+                          <TableHead className="text-left font-english">
+                            Organized Agency
+                          </TableHead>
+                          <TableHead className="text-center font-english">
+                            Actions
+                          </TableHead>
+                        </>
+                      )}
                     </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
+                  </TableHeader>
+                  <TableBody>
+                    {data.initiatives.slice(0, 10).map((initiative) => (
+                      <TableRow key={initiative.id}>
+                        {language === "ar" ? (
+                          // Arabic order: right to left
+                          <>
+                            <TableCell className="text-center">
+                              <div className="flex items-center justify-center gap-1">
+                                <Button
+                                  size="sm"
+                                  variant="outline"
+                                  className="h-8 w-8 p-0"
+                                  onClick={() =>
+                                    handleViewInitiative(initiative.id)
+                                  }>
+                                  <Eye className="h-4 w-4" />
+                                </Button>
+                                <Button
+                                  size="sm"
+                                  variant="outline"
+                                  className="h-8 w-8 p-0"
+                                  onClick={() =>
+                                    handleEditInitiative(initiative.id)
+                                  }>
+                                  <Edit className="h-4 w-4" />
+                                </Button>
+                                <Button
+                                  size="sm"
+                                  variant="outline"
+                                  className="h-8 w-8 p-0 text-destructive hover:text-destructive"
+                                  onClick={() =>
+                                    handleDeleteInitiative(initiative.id)
+                                  }>
+                                  <Trash2 className="h-4 w-4" />
+                                </Button>
+                              </div>
+                            </TableCell>
+                            <TableCell className="text-right font-arabic">
+                              {initiative.organized_agency}
+                            </TableCell>
+                            <TableCell className="text-right font-arabic">
+                              <div className="flex items-center justify-end gap-2">
+                                <span className="font-semibold text-primary">
+                                  {initiative.volunteers}
+                                </span>
+                                <span className="text-muted-foreground">/</span>
+                                <span className="text-muted-foreground">
+                                  {initiative.max_volunteers}
+                                </span>
+                                <div className="w-16 bg-muted rounded-full h-2">
+                                  <div
+                                    className="bg-primary h-2 rounded-full transition-all duration-300"
+                                    style={{
+                                      width: `${
+                                        (initiative.volunteers /
+                                          initiative.max_volunteers) *
+                                        100
+                                      }%`,
+                                    }}
+                                  />
+                                </div>
+                              </div>
+                            </TableCell>
+                            <TableCell className="text-right font-arabic">
+                              {initiative.category}
+                            </TableCell>
+                            <TableCell className="text-right">
+                              <Badge
+                                variant={
+                                  initiative.status === "active"
+                                    ? "default"
+                                    : initiative.status === "completed"
+                                    ? "secondary"
+                                    : "outline"
+                                }
+                                className="font-arabic">
+                                {initiative.status === "active"
+                                  ? "نشط"
+                                  : initiative.status === "completed"
+                                  ? "مكتمل"
+                                  : "مسودة"}
+                              </Badge>
+                            </TableCell>
+                            <TableCell className="text-right font-arabic">
+                              {initiative.title}
+                            </TableCell>
+                          </>
+                        ) : (
+                          // English order: left to right
+                          <>
+                            <TableCell className="text-left font-english">
+                              {initiative.title}
+                            </TableCell>
+                            <TableCell className="text-center">
+                              <Badge
+                                variant={
+                                  initiative.status === "active"
+                                    ? "default"
+                                    : initiative.status === "completed"
+                                    ? "secondary"
+                                    : "outline"
+                                }
+                                className="font-english">
+                                {initiative.status === "active"
+                                  ? "Active"
+                                  : initiative.status === "completed"
+                                  ? "Completed"
+                                  : "Draft"}
+                              </Badge>
+                            </TableCell>
+                            <TableCell className="text-center font-english">
+                              {initiative.category}
+                            </TableCell>
+                            <TableCell className="text-center font-english">
+                              <div className="flex items-center justify-center gap-2">
+                                <span className="font-semibold text-primary">
+                                  {initiative.volunteers}
+                                </span>
+                                <span className="text-muted-foreground">/</span>
+                                <span className="text-muted-foreground">
+                                  {initiative.max_volunteers}
+                                </span>
+                                <div className="w-16 bg-muted rounded-full h-2">
+                                  <div
+                                    className="bg-primary h-2 rounded-full transition-all duration-300"
+                                    style={{
+                                      width: `${
+                                        (initiative.volunteers /
+                                          initiative.max_volunteers) *
+                                        100
+                                      }%`,
+                                    }}
+                                  />
+                                </div>
+                              </div>
+                            </TableCell>
+                            <TableCell className="text-left font-english">
+                              {initiative.organized_agency}
+                            </TableCell>
+                            <TableCell className="text-center">
+                              <div className="flex items-center justify-center gap-1">
+                                <Button
+                                  size="sm"
+                                  variant="outline"
+                                  className="h-8 w-8 p-0"
+                                  onClick={() =>
+                                    handleViewInitiative(initiative.id)
+                                  }>
+                                  <Eye className="h-4 w-4" />
+                                </Button>
+                                <Button
+                                  size="sm"
+                                  variant="outline"
+                                  className="h-8 w-8 p-0"
+                                  onClick={() =>
+                                    handleEditInitiative(initiative.id)
+                                  }>
+                                  <Edit className="h-4 w-4" />
+                                </Button>
+                                <Button
+                                  size="sm"
+                                  variant="outline"
+                                  className="h-8 w-8 p-0 text-destructive hover:text-destructive"
+                                  onClick={() =>
+                                    handleDeleteInitiative(initiative.id)
+                                  }>
+                                  <Trash2 className="h-4 w-4" />
+                                </Button>
+                              </div>
+                            </TableCell>
+                          </>
+                        )}
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
             </CardContent>
           </Card>
         </TabsContent>
@@ -965,108 +1216,208 @@ const AdminDashboard = () => {
         <TabsContent value="news">
           <Card>
             <CardHeader>
-              <CardTitle className="font-arabic text-right">الأخبار</CardTitle>
-              <CardDescription className="font-arabic text-right">
-                جميع المقالات الإخبارية
+              <CardTitle
+                className={`${
+                  language === "ar"
+                    ? "text-right font-arabic"
+                    : "text-left font-english"
+                }`}>
+                {language === "ar" ? "الأخبار" : "News"}
+              </CardTitle>
+              <CardDescription
+                className={`${
+                  language === "ar"
+                    ? "text-right font-arabic"
+                    : "text-left font-english"
+                }`}>
+                {language === "ar"
+                  ? "جميع المقالات الإخبارية"
+                  : "All news articles"}
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead className="text-right font-arabic">
-                      النشر
-                    </TableHead>
-                    <TableHead className="text-right font-arabic">
-                      الفئة
-                    </TableHead>
-                    <TableHead className="text-right font-arabic">
-                      العنوان
-                    </TableHead>
-                    <TableHead className="text-right font-arabic">
-                      تاريخ الإنشاء
-                    </TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {data.news.slice(0, 10).map((article) => (
-                    <TableRow key={article.id}>
-                      <TableCell className="text-right">
-                        <Badge
-                          variant={
-                            article.is_published ? "default" : "secondary"
-                          }
-                          className="font-arabic">
-                          {article.is_published ? "منشور" : "مسودة"}
-                        </Badge>
-                      </TableCell>
-                      <TableCell className="text-right font-arabic">
-                        {article.category}
-                      </TableCell>
-                      <TableCell className="text-right font-arabic">
-                        {article.title}
-                      </TableCell>
-                      <TableCell className="text-right font-arabic">
-                        {formatDate(article.created_at)}
-                      </TableCell>
+              <div className="overflow-x-auto">
+                <Table className="w-full">
+                  <TableHeader>
+                    <TableRow>
+                      {language === "ar" ? (
+                        // Arabic order: right to left
+                        <>
+                          <TableHead className="text-center font-arabic">
+                            الإجراءات
+                          </TableHead>
+                          <TableHead className="text-center font-arabic">
+                            الأولوية
+                          </TableHead>
+                          <TableHead className="text-right font-arabic">
+                            التاريخ
+                          </TableHead>
+                          <TableHead className="text-right font-arabic">
+                            الكاتب
+                          </TableHead>
+                          <TableHead className="text-right font-arabic">
+                            العنوان
+                          </TableHead>
+                        </>
+                      ) : (
+                        // English order: left to right
+                        <>
+                          <TableHead className="text-left font-english">
+                            Title
+                          </TableHead>
+                          <TableHead className="text-left font-english">
+                            Author
+                          </TableHead>
+                          <TableHead className="text-left font-english">
+                            Date
+                          </TableHead>
+                          <TableHead className="text-center font-english">
+                            Priority
+                          </TableHead>
+                          <TableHead className="text-center font-english">
+                            Actions
+                          </TableHead>
+                        </>
+                      )}
                     </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        {/* Agencies Tab */}
-        <TabsContent value="agencies">
-          <Card>
-            <CardHeader>
-              <CardTitle className="font-arabic text-right">الجهات</CardTitle>
-              <CardDescription className="font-arabic text-right">
-                جميع الجهات والشركاء المتعاونين
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead className="text-right font-arabic">
-                      الحالة
-                    </TableHead>
-                    <TableHead className="text-right font-arabic">
-                      نوع الجهة
-                    </TableHead>
-                    <TableHead className="text-right font-arabic">
-                      الاسم
-                    </TableHead>
-                    <TableHead className="text-right font-arabic">
-                      تاريخ الإضافة
-                    </TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {data.agencies.slice(0, 10).map((agency) => (
-                    <TableRow key={agency.id}>
-                      <TableCell className="text-right">
-                        <Badge
-                          variant={agency.is_active ? "default" : "secondary"}
-                          className="font-arabic">
-                          {agency.is_active ? "نشط" : "غير نشط"}
-                        </Badge>
-                      </TableCell>
-                      <TableCell className="text-right font-arabic">
-                        {agency.agency_type || "غير محدد"}
-                      </TableCell>
-                      <TableCell className="text-right font-arabic">
-                        {agency.name}
-                      </TableCell>
-                      <TableCell className="text-right font-arabic">
-                        {formatDate(agency.created_at)}
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
+                  </TableHeader>
+                  <TableBody>
+                    {data.news.slice(0, 10).map((article) => (
+                      <TableRow key={article.id}>
+                        {language === "ar" ? (
+                          // Arabic order: right to left
+                          <>
+                            <TableCell className="text-center">
+                              <div className="flex items-center justify-center gap-1">
+                                <Button
+                                  size="sm"
+                                  variant="outline"
+                                  className="h-8 w-8 p-0"
+                                  onClick={() => handleViewNews(article.id)}>
+                                  <Eye className="h-4 w-4" />
+                                </Button>
+                                <Button
+                                  size="sm"
+                                  variant="outline"
+                                  className="h-8 w-8 p-0"
+                                  onClick={() => handleEditNews(article.id)}>
+                                  <Edit className="h-4 w-4" />
+                                </Button>
+                                <Button
+                                  size="sm"
+                                  variant="outline"
+                                  className="h-8 w-8 p-0 text-destructive hover:text-destructive"
+                                  onClick={() => handleDeleteNews(article.id)}>
+                                  <Trash2 className="h-4 w-4" />
+                                </Button>
+                              </div>
+                            </TableCell>
+                            <TableCell className="text-center">
+                              <Button
+                                size="sm"
+                                variant={
+                                  article.priority ? "default" : "outline"
+                                }
+                                className={`h-8 w-8 p-0 ${
+                                  article.priority
+                                    ? "bg-yellow-500 hover:bg-yellow-600 text-white"
+                                    : ""
+                                }`}
+                                onClick={() =>
+                                  handleTogglePriority(article.id)
+                                }>
+                                <Star
+                                  className={`h-4 w-4 ${
+                                    article.priority ? "fill-current" : ""
+                                  }`}
+                                />
+                              </Button>
+                              {article.priority && (
+                                <div className="text-xs text-center mt-1 font-bold">
+                                  {article.priority}
+                                </div>
+                              )}
+                            </TableCell>
+                            <TableCell className="text-right font-arabic">
+                              {formatDate(article.date)}
+                            </TableCell>
+                            <TableCell className="text-right font-arabic">
+                              {article.author}
+                            </TableCell>
+                            <TableCell className="text-right font-arabic">
+                              {article.title}
+                            </TableCell>
+                          </>
+                        ) : (
+                          // English order: left to right
+                          <>
+                            <TableCell className="text-left font-english">
+                              {article.title}
+                            </TableCell>
+                            <TableCell className="text-left font-english">
+                              {article.author}
+                            </TableCell>
+                            <TableCell className="text-left font-english">
+                              {formatDate(article.date)}
+                            </TableCell>
+                            <TableCell className="text-center">
+                              <Button
+                                size="sm"
+                                variant={
+                                  article.priority ? "default" : "outline"
+                                }
+                                className={`h-8 w-8 p-0 ${
+                                  article.priority
+                                    ? "bg-yellow-500 hover:bg-yellow-600 text-white"
+                                    : ""
+                                }`}
+                                onClick={() =>
+                                  handleTogglePriority(article.id)
+                                }>
+                                <Star
+                                  className={`h-4 w-4 ${
+                                    article.priority ? "fill-current" : ""
+                                  }`}
+                                />
+                              </Button>
+                              {article.priority && (
+                                <div className="text-xs text-center mt-1 font-bold">
+                                  {article.priority}
+                                </div>
+                              )}
+                            </TableCell>
+                            <TableCell className="text-center">
+                              <div className="flex items-center justify-center gap-1">
+                                <Button
+                                  size="sm"
+                                  variant="outline"
+                                  className="h-8 w-8 p-0"
+                                  onClick={() => handleViewNews(article.id)}>
+                                  <Eye className="h-4 w-4" />
+                                </Button>
+                                <Button
+                                  size="sm"
+                                  variant="outline"
+                                  className="h-8 w-8 p-0"
+                                  onClick={() => handleEditNews(article.id)}>
+                                  <Edit className="h-4 w-4" />
+                                </Button>
+                                <Button
+                                  size="sm"
+                                  variant="outline"
+                                  className="h-8 w-8 p-0 text-destructive hover:text-destructive"
+                                  onClick={() => handleDeleteNews(article.id)}>
+                                  <Trash2 className="h-4 w-4" />
+                                </Button>
+                              </div>
+                            </TableCell>
+                          </>
+                        )}
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
             </CardContent>
           </Card>
         </TabsContent>
@@ -1075,62 +1426,156 @@ const AdminDashboard = () => {
         <TabsContent value="volunteers">
           <Card>
             <CardHeader>
-              <CardTitle className="font-arabic text-right">
-                المتطوعين
+              <CardTitle
+                className={`${
+                  language === "ar"
+                    ? "text-right font-arabic"
+                    : "text-left font-english"
+                }`}>
+                {language === "ar" ? "المتطوعين" : "Volunteers"}
               </CardTitle>
-              <CardDescription className="font-arabic text-right">
-                جميع طلبات التطوع المقدمة
+              <CardDescription
+                className={`${
+                  language === "ar"
+                    ? "text-right font-arabic"
+                    : "text-left font-english"
+                }`}>
+                {language === "ar"
+                  ? "جميع طلبات التطوع المقدمة"
+                  : "All volunteer applications submitted"}
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead className="text-right font-arabic">
-                      الحالة
-                    </TableHead>
-                    <TableHead className="text-right font-arabic">
-                      التوفر
-                    </TableHead>
-                    <TableHead className="text-right font-arabic">
-                      تاريخ المراجعة
-                    </TableHead>
-                    <TableHead className="text-right font-arabic">
-                      تاريخ التقديم
-                    </TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {data.volunteers.slice(0, 10).map((volunteer) => (
-                    <TableRow key={volunteer.id}>
-                      <TableCell className="text-right">
-                        <Badge
-                          variant={
-                            volunteer.status === "approved"
-                              ? "default"
-                              : volunteer.status === "rejected"
-                              ? "destructive"
-                              : "secondary"
-                          }
-                          className="font-arabic">
-                          {volunteer.status}
-                        </Badge>
-                      </TableCell>
-                      <TableCell className="text-right font-arabic">
-                        {volunteer.availability || "غير محدد"}
-                      </TableCell>
-                      <TableCell className="text-right font-arabic">
-                        {volunteer.reviewed_at
-                          ? formatDate(volunteer.reviewed_at)
-                          : "لم تتم المراجعة"}
-                      </TableCell>
-                      <TableCell className="text-right font-arabic">
-                        {formatDate(volunteer.created_at)}
-                      </TableCell>
+              <div className="overflow-x-auto">
+                <Table className="w-full">
+                  <TableHeader>
+                    <TableRow>
+                      {language === "ar" ? (
+                        // Arabic order: right to left
+                        <>
+                          <TableHead className="text-center font-arabic">
+                            الإجراءات
+                          </TableHead>
+                          <TableHead className="text-right font-arabic">
+                            مبادرة التطوع
+                          </TableHead>
+                          <TableHead className="text-right font-arabic">
+                            رقم الهاتف
+                          </TableHead>
+                          <TableHead className="text-right font-arabic">
+                            البريد الإلكتروني
+                          </TableHead>
+                          <TableHead className="text-right font-arabic">
+                            الاسم الكامل
+                          </TableHead>
+                        </>
+                      ) : (
+                        // English order: left to right
+                        <>
+                          <TableHead className="text-left font-english">
+                            Full Name
+                          </TableHead>
+                          <TableHead className="text-left font-english">
+                            Email
+                          </TableHead>
+                          <TableHead className="text-left font-english">
+                            Phone Number
+                          </TableHead>
+                          <TableHead className="text-left font-english">
+                            Volunteering Initiative
+                          </TableHead>
+                          <TableHead className="text-center font-english">
+                            Actions
+                          </TableHead>
+                        </>
+                      )}
                     </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
+                  </TableHeader>
+                  <TableBody>
+                    {data.volunteers.slice(0, 10).map((volunteer) => (
+                      <TableRow key={volunteer.id}>
+                        {language === "ar" ? (
+                          // Arabic order: right to left
+                          <>
+                            <TableCell className="text-center">
+                              <div className="flex items-center justify-center gap-1">
+                                <Button
+                                  size="sm"
+                                  variant="outline"
+                                  className="h-8 w-8 p-0"
+                                  onClick={() =>
+                                    handleEditVolunteer(volunteer.id)
+                                  }>
+                                  <Edit className="h-4 w-4" />
+                                </Button>
+                                <Button
+                                  size="sm"
+                                  variant="outline"
+                                  className="h-8 w-8 p-0 text-destructive hover:text-destructive"
+                                  onClick={() =>
+                                    handleDeleteVolunteer(volunteer.id)
+                                  }>
+                                  <Trash2 className="h-4 w-4" />
+                                </Button>
+                              </div>
+                            </TableCell>
+                            <TableCell className="text-right font-arabic">
+                              {volunteer.volunteering_initiative}
+                            </TableCell>
+                            <TableCell className="text-right font-arabic">
+                              {volunteer.phone_number}
+                            </TableCell>
+                            <TableCell className="text-right font-arabic">
+                              {volunteer.email}
+                            </TableCell>
+                            <TableCell className="text-right font-arabic">
+                              {volunteer.full_name}
+                            </TableCell>
+                          </>
+                        ) : (
+                          // English order: left to right
+                          <>
+                            <TableCell className="text-left font-english">
+                              {volunteer.full_name}
+                            </TableCell>
+                            <TableCell className="text-left font-english">
+                              {volunteer.email}
+                            </TableCell>
+                            <TableCell className="text-left font-english">
+                              {volunteer.phone_number}
+                            </TableCell>
+                            <TableCell className="text-left font-english">
+                              {volunteer.volunteering_initiative}
+                            </TableCell>
+                            <TableCell className="text-center">
+                              <div className="flex items-center justify-center gap-1">
+                                <Button
+                                  size="sm"
+                                  variant="outline"
+                                  className="h-8 w-8 p-0"
+                                  onClick={() =>
+                                    handleEditVolunteer(volunteer.id)
+                                  }>
+                                  <Edit className="h-4 w-4" />
+                                </Button>
+                                <Button
+                                  size="sm"
+                                  variant="outline"
+                                  className="h-8 w-8 p-0 text-destructive hover:text-destructive"
+                                  onClick={() =>
+                                    handleDeleteVolunteer(volunteer.id)
+                                  }>
+                                  <Trash2 className="h-4 w-4" />
+                                </Button>
+                              </div>
+                            </TableCell>
+                          </>
+                        )}
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
             </CardContent>
           </Card>
         </TabsContent>
@@ -1139,54 +1584,236 @@ const AdminDashboard = () => {
         <TabsContent value="success_stories">
           <Card>
             <CardHeader>
-              <CardTitle className="font-arabic text-right">
-                قصص النجاح
+              <CardTitle
+                className={`${
+                  language === "ar"
+                    ? "text-right font-arabic"
+                    : "text-left font-english"
+                }`}>
+                {language === "ar" ? "قصص النجاح" : "Success Stories"}
               </CardTitle>
-              <CardDescription className="font-arabic text-right">
-                جميع قصص النجاح المنشورة
+              <CardDescription
+                className={`${
+                  language === "ar"
+                    ? "text-right font-arabic"
+                    : "text-left font-english"
+                }`}>
+                {language === "ar"
+                  ? "جميع قصص النجاح المنشورة"
+                  : "All published success stories"}
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead className="text-right font-arabic">
-                      النشر
-                    </TableHead>
-                    <TableHead className="text-right font-arabic">
-                      الفئة
-                    </TableHead>
-                    <TableHead className="text-right font-arabic">
-                      العنوان
-                    </TableHead>
-                    <TableHead className="text-right font-arabic">
-                      تاريخ الإنشاء
-                    </TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {data.success_stories.slice(0, 10).map((story) => (
-                    <TableRow key={story.id}>
-                      <TableCell className="text-right">
-                        <Badge
-                          variant={story.is_published ? "default" : "secondary"}
-                          className="font-arabic">
-                          {story.is_published ? "منشور" : "مسودة"}
-                        </Badge>
-                      </TableCell>
-                      <TableCell className="text-right font-arabic">
-                        {story.category}
-                      </TableCell>
-                      <TableCell className="text-right font-arabic">
-                        {story.title}
-                      </TableCell>
-                      <TableCell className="text-right font-arabic">
-                        {formatDate(story.created_at)}
-                      </TableCell>
+              <div className="overflow-x-auto">
+                <Table className="w-full">
+                  <TableHeader>
+                    <TableRow>
+                      {language === "ar" ? (
+                        // Arabic order: right to left
+                        <>
+                          <TableHead className="text-center font-arabic">
+                            الإجراءات
+                          </TableHead>
+                          <TableHead className="text-center font-arabic">
+                            الأولوية
+                          </TableHead>
+                          <TableHead className="text-right font-arabic">
+                            التاريخ
+                          </TableHead>
+                          <TableHead className="text-right font-arabic">
+                            الكاتب
+                          </TableHead>
+                          <TableHead className="text-right font-arabic">
+                            الوصف
+                          </TableHead>
+                          <TableHead className="text-right font-arabic">
+                            العنوان
+                          </TableHead>
+                        </>
+                      ) : (
+                        // English order: left to right
+                        <>
+                          <TableHead className="text-left font-english">
+                            Title
+                          </TableHead>
+                          <TableHead className="text-left font-english">
+                            Description
+                          </TableHead>
+                          <TableHead className="text-left font-english">
+                            Author
+                          </TableHead>
+                          <TableHead className="text-left font-english">
+                            Date
+                          </TableHead>
+                          <TableHead className="text-center font-english">
+                            Priority
+                          </TableHead>
+                          <TableHead className="text-center font-english">
+                            Actions
+                          </TableHead>
+                        </>
+                      )}
                     </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
+                  </TableHeader>
+                  <TableBody>
+                    {data.success_stories.slice(0, 10).map((story) => (
+                      <TableRow key={story.id}>
+                        {language === "ar" ? (
+                          // Arabic order: right to left
+                          <>
+                            <TableCell className="text-center">
+                              <div className="flex items-center justify-center gap-1">
+                                <Button
+                                  size="sm"
+                                  variant="outline"
+                                  className="h-8 w-8 p-0"
+                                  onClick={() =>
+                                    handleViewSuccessStory(story.id)
+                                  }>
+                                  <Eye className="h-4 w-4" />
+                                </Button>
+                                <Button
+                                  size="sm"
+                                  variant="outline"
+                                  className="h-8 w-8 p-0"
+                                  onClick={() =>
+                                    handleEditSuccessStory(story.id)
+                                  }>
+                                  <Edit className="h-4 w-4" />
+                                </Button>
+                                <Button
+                                  size="sm"
+                                  variant="outline"
+                                  className="h-8 w-8 p-0 text-destructive hover:text-destructive"
+                                  onClick={() =>
+                                    handleDeleteSuccessStory(story.id)
+                                  }>
+                                  <Trash2 className="h-4 w-4" />
+                                </Button>
+                              </div>
+                            </TableCell>
+                            <TableCell className="text-center">
+                              <Button
+                                size="sm"
+                                variant={story.priority ? "default" : "outline"}
+                                className={`h-8 w-8 p-0 ${
+                                  story.priority
+                                    ? "bg-yellow-500 hover:bg-yellow-600 text-white"
+                                    : ""
+                                }`}
+                                onClick={() =>
+                                  handleToggleSuccessStoryPriority(story.id)
+                                }>
+                                <Star
+                                  className={`h-4 w-4 ${
+                                    story.priority ? "fill-current" : ""
+                                  }`}
+                                />
+                              </Button>
+                              {story.priority && (
+                                <div className="text-xs text-center mt-1 font-bold">
+                                  {story.priority}
+                                </div>
+                              )}
+                            </TableCell>
+                            <TableCell className="text-right font-arabic">
+                              {formatDate(story.date)}
+                            </TableCell>
+                            <TableCell className="text-right font-arabic">
+                              {story.author}
+                            </TableCell>
+                            <TableCell className="text-right font-arabic max-w-xs">
+                              <div
+                                className="truncate"
+                                title={story.description}>
+                                {story.description}
+                              </div>
+                            </TableCell>
+                            <TableCell className="text-right font-arabic">
+                              {story.title}
+                            </TableCell>
+                          </>
+                        ) : (
+                          // English order: left to right
+                          <>
+                            <TableCell className="text-left font-english">
+                              {story.title}
+                            </TableCell>
+                            <TableCell className="text-left font-english max-w-xs">
+                              <div
+                                className="truncate"
+                                title={story.description}>
+                                {story.description}
+                              </div>
+                            </TableCell>
+                            <TableCell className="text-left font-english">
+                              {story.author}
+                            </TableCell>
+                            <TableCell className="text-left font-english">
+                              {formatDate(story.date)}
+                            </TableCell>
+                            <TableCell className="text-center">
+                              <Button
+                                size="sm"
+                                variant={story.priority ? "default" : "outline"}
+                                className={`h-8 w-8 p-0 ${
+                                  story.priority
+                                    ? "bg-yellow-500 hover:bg-yellow-600 text-white"
+                                    : ""
+                                }`}
+                                onClick={() =>
+                                  handleToggleSuccessStoryPriority(story.id)
+                                }>
+                                <Star
+                                  className={`h-4 w-4 ${
+                                    story.priority ? "fill-current" : ""
+                                  }`}
+                                />
+                              </Button>
+                              {story.priority && (
+                                <div className="text-xs text-center mt-1 font-bold">
+                                  {story.priority}
+                                </div>
+                              )}
+                            </TableCell>
+                            <TableCell className="text-center">
+                              <div className="flex items-center justify-center gap-1">
+                                <Button
+                                  size="sm"
+                                  variant="outline"
+                                  className="h-8 w-8 p-0"
+                                  onClick={() =>
+                                    handleViewSuccessStory(story.id)
+                                  }>
+                                  <Eye className="h-4 w-4" />
+                                </Button>
+                                <Button
+                                  size="sm"
+                                  variant="outline"
+                                  className="h-8 w-8 p-0"
+                                  onClick={() =>
+                                    handleEditSuccessStory(story.id)
+                                  }>
+                                  <Edit className="h-4 w-4" />
+                                </Button>
+                                <Button
+                                  size="sm"
+                                  variant="outline"
+                                  className="h-8 w-8 p-0 text-destructive hover:text-destructive"
+                                  onClick={() =>
+                                    handleDeleteSuccessStory(story.id)
+                                  }>
+                                  <Trash2 className="h-4 w-4" />
+                                </Button>
+                              </div>
+                            </TableCell>
+                          </>
+                        )}
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
             </CardContent>
           </Card>
         </TabsContent>
