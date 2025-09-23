@@ -49,8 +49,10 @@ const SubmissionsView = () => {
   const [loading, setLoading] = useState(true);
   const [selectedAgency, setSelectedAgency] = useState("all");
 
-  // Find the standard by ID
-  const standard = standardsList.find((s) => s.id === parseInt(standardId));
+  // Find the standard by ID (handle both number and ObjectId)
+  const standard = standardsList.find(
+    (s) => s.id === parseInt(standardId) || s._id === standardId
+  );
 
   // Real submissions data - will be fetched from backend
   const [submissions, setSubmissions] = useState([]);
@@ -342,7 +344,7 @@ const SubmissionsView = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
               <h4 className="font-semibold mb-2">
-                {`${t("submissionsView.standardLabel")} ${standard.id}:`}
+                {`${t("submissionsView.standardLabel")} ${standard.number}:`}
               </h4>
               <p className="text-sm text-muted-foreground leading-relaxed">
                 {standard.standard}

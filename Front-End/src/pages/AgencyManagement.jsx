@@ -324,15 +324,9 @@ const AgencyManagement = () => {
           <div className="space-y-4">
             {agenciesList.map((agency) => (
               <div key={agency.id} className="border rounded-lg p-4">
-                <div
-                  className={`flex items-start justify-between ${
-                    language === "ar" ? "flex-row-reverse" : "flex-row"
-                  }`}>
+                <div className={`flex items-start justify-between`}>
                   <div className="flex-1">
-                    <div
-                      className={`flex items-center gap-3 mb-1 ${
-                        language === "ar" ? "flex-row-reverse" : "flex-row"
-                      }`}>
+                    <div className={`flex items-center gap-3 mb-1 `}>
                       <h3 className="text-lg font-semibold">{agency.name}</h3>
                     </div>
                     <p className="text-muted-foreground mb-6">{agency.email}</p>
@@ -352,16 +346,9 @@ const AgencyManagement = () => {
                     </div>
 
                     {/* Contact Information Row */}
-                    <div
-                      className={`mb-4 ${
-                        language === "ar" ? "text-right" : "text-left"
-                      }`}>
+                    <div className={`mb-4`}>
                       <div
-                        className={`grid grid-cols-2 md:grid-cols-4 gap-4 text-sm ${
-                          language === "ar"
-                            ? "justify-items-end"
-                            : "justify-items-start"
-                        }`}>
+                        className={`grid grid-cols-2 md:grid-cols-4 gap-4 text-sm `}>
                         {[
                           {
                             key: "contactPerson",
@@ -383,7 +370,9 @@ const AgencyManagement = () => {
                           },
                         ].map((field) => {
                           const order =
-                            language === "ar" ? field.order : 5 - field.order;
+                            language === "ar"
+                              ? 1 - field.order
+                              : 5 - field.order;
                           return (
                             <div key={field.key} className={`order-${order}`}>
                               <span className="font-medium">{field.label}</span>
@@ -395,7 +384,10 @@ const AgencyManagement = () => {
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-2 ml-4">
+                  <div
+                    className={`flex items-center gap-2 ${
+                      language === "ar" ? "mr-4" : "ml-4"
+                    }`}>
                     <Button
                       variant="outline"
                       size="sm"
