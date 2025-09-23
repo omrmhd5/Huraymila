@@ -11,12 +11,31 @@ export const mapBackendStandardsToLanguageContext = (
   backendStandards,
   languageStandards
 ) => {
+  // Safety check for undefined languageStandards
+  if (!languageStandards || !Array.isArray(languageStandards)) {
+    console.warn("Language standards not available, using fallback text");
+    return backendStandards.map((backendStandard) => ({
+      _id: backendStandard._id,
+      id: backendStandard._id || backendStandard.number,
+      number: backendStandard.number,
+      standard: `Standard ${backendStandard.number}`,
+      requirements: [],
+      assigned_agencies:
+        backendStandard.assigned_agencies?.map(
+          (agency) => agency.name || agency.name_ar
+        ) || [],
+      status: backendStandard.status,
+      progress: backendStandard.progress,
+    }));
+  }
+
   return backendStandards.map((backendStandard) => {
     const languageStandard = languageStandards.find(
       (standard) => standard.number === backendStandard.number
     );
     return {
-      id: backendStandard.number,
+      _id: backendStandard._id,
+      id: backendStandard._id || backendStandard.number,
       number: backendStandard.number,
       standard:
         languageStandard?.standard || `Standard ${backendStandard.number}`,

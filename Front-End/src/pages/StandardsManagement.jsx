@@ -401,8 +401,8 @@ const StandardsManagement = () => {
                 <TableRow>
                   {[
                     {
-                      key: "id",
-                      label: t("standardsManagement.id"),
+                      key: "number",
+                      label: t("standardsManagement.number"),
                       className: "w-16",
                     },
                     {
@@ -453,7 +453,7 @@ const StandardsManagement = () => {
                 {filteredStandards.map((standard) => (
                   <TableRow key={standard.id}>
                     <TableCell className="font-mono text-sm">
-                      {standard.id}
+                      {standard.number}
                     </TableCell>
                     <TableCell className="max-w-[300px]">
                       <div className="text-sm leading-relaxed">

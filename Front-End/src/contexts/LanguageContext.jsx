@@ -872,6 +872,7 @@ export const LanguageProvider = ({ children }) => {
         agencyNameLabel: "اسم الجهة:",
         delete: "حذف",
         assignedStandards: "المعايير المخصصة",
+        allStandards: "جميع المعايير",
         standards: "معايير",
         noAssignedStandards: "لا توجد معايير مخصصة لهذه الجهة",
         standard: "معيار",
@@ -935,7 +936,7 @@ export const LanguageProvider = ({ children }) => {
         allStatuses: "جميع الحالات",
         healthStandardsTable: "جدول المعايير الصحية",
         standards: "معيار",
-        id: "الرقم",
+        number: "الرقم",
         standard: "المعيار",
         requirements: "المتطلبات",
         responsibleAgencies: "الجهات المسؤولة",
@@ -2519,6 +2520,7 @@ export const LanguageProvider = ({ children }) => {
         agencyNameLabel: "Agency Name:",
         delete: "Delete",
         assignedStandards: "Assigned Standards",
+        allStandards: "All Standards",
         standards: "standards",
         noAssignedStandards: "No standards assigned to this agency",
         standard: "Standard",
@@ -2582,7 +2584,7 @@ export const LanguageProvider = ({ children }) => {
         allStatuses: "All Statuses",
         healthStandardsTable: "Health Standards Table",
         standards: "Standards",
-        id: "ID",
+        number: "Number",
         standard: "Standard",
         requirements: "Requirements",
         responsibleAgencies: "Responsible Agencies",
@@ -3505,6 +3507,7 @@ export const LanguageProvider = ({ children }) => {
     t,
     language,
     translations: translations[language],
+    standards: translations[language].standards,
   };
 
   return (

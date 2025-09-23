@@ -139,10 +139,93 @@ const getStandardsByStatus = async (req, res) => {
   }
 };
 
+// Toggle agency assignment to standard (two-way update)
+const toggleAgencyAssignment = async (req, res) => {
+  try {
+    const { standardId, agencyId } = req.params;
+    const { assigned } = req.body; // true to assign, false to unassign
+
+    // Find the standard
+    const standard = await Standard.findById(standardId);
+    if (!standard) {
+      return res.status(404).json({
+        success: false,
+        message: "Standard not found",
+      });
+    }
+
+    // Find the agency
+    const agency = await Agency.findById(agencyId);
+    if (!agency) {
+      return res.status(404).json({
+        success: false,
+        message: "Agency not found",
+      });
+    }
+
+    // Initialize arrays if they don't exist
+    if (!standard.assigned_agencies) {
+      standard.assigned_agencies = [];
+    }
+    if (!agency.assignedStandards) {
+      agency.assignedStandards = [];
+    }
+
+    if (assigned) {
+      // Assign agency to standard
+      if (!standard.assigned_agencies.includes(agencyId)) {
+        standard.assigned_agencies.push(agencyId);
+      }
+      // Assign standard to agency
+      if (!agency.assignedStandards.includes(standardId)) {
+        agency.assignedStandards.push(standardId);
+      }
+    } else {
+      // Remove agency from standard
+      standard.assigned_agencies = standard.assigned_agencies.filter(
+        (id) => id.toString() !== agencyId
+      );
+      // Remove standard from agency
+      agency.assignedStandards = agency.assignedStandards.filter(
+        (id) => id.toString() !== standardId
+      );
+    }
+
+    // Save both documents
+    await Promise.all([standard.save(), agency.save()]);
+
+    // Populate the updated standard
+    await standard.populate("assigned_agencies", "name email");
+
+    res.json({
+      success: true,
+      message: assigned
+        ? "Agency assigned to standard successfully"
+        : "Agency unassigned from standard successfully",
+      data: {
+        standard: standard,
+        agency: {
+          _id: agency._id,
+          name: agency.name,
+          assignedStandards: agency.assignedStandards,
+        },
+      },
+    });
+  } catch (error) {
+    console.error("Error toggling agency assignment:", error);
+    res.status(500).json({
+      success: false,
+      message: "Error toggling agency assignment",
+      error: error.message,
+    });
+  }
+};
+
 module.exports = {
   getStandards,
   getStandardByNumber,
   updateStandard,
   updateStandardFromSubmissions,
   getStandardsByStatus,
+  toggleAgencyAssignment,
 };

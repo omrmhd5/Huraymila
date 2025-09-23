@@ -39,15 +39,19 @@ import {
   createAgency,
   updateAgency,
   deleteAgency,
+  getAllStandardsByNumber,
+  toggleAgencyAssignment,
 } from "@/lib/api";
+import { mapBackendStandardsToLanguageContext } from "@/lib/utils";
 
 const AgencyManagement = () => {
   const { user, loading } = useAuth();
   const { language } = useTheme();
-  const { t } = useLanguage();
+  const { t, standards } = useLanguage();
   const [showAddForm, setShowAddForm] = useState(false);
   const [editingAgency, setEditingAgency] = useState(null);
   const [agenciesList, setAgenciesList] = useState([]);
+  const [allStandards, setAllStandards] = useState([]);
   const [deleteConfirm, setDeleteConfirm] = useState({
     show: false,
     agencyId: null,
@@ -58,6 +62,7 @@ const AgencyManagement = () => {
     agency: null,
   });
   const [showPassword, setShowPassword] = useState(false);
+  const [isToggling, setIsToggling] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -70,20 +75,33 @@ const AgencyManagement = () => {
     assignedStandards: [],
   });
 
-  // Initialize agencies list from backend
+  // Initialize agencies list and standards from backend
   useEffect(() => {
-    const fetchAgencies = async () => {
+    const fetchData = async () => {
       try {
-        const agenciesData = await getAllAgencies();
+        const [agenciesData, standardsData] = await Promise.all([
+          getAllAgencies(),
+          getAllStandardsByNumber(),
+        ]);
         setAgenciesList(agenciesData);
+
+        // Map backend standards to language context for proper text display
+        const mappedStandards = mapBackendStandardsToLanguageContext(
+          standardsData,
+          standards
+        );
+        setAllStandards(mappedStandards);
       } catch (error) {
-        console.error("Error fetching agencies:", error);
-        toast.error("Failed to load agencies");
+        console.error("Error fetching data:", error);
+        toast.error("Failed to load data");
       }
     };
 
-    fetchAgencies();
-  }, []);
+    // Only fetch data when standards are available
+    if (standards && Array.isArray(standards)) {
+      fetchData();
+    }
+  }, [standards]);
 
   // Page title for better UX
   useEffect(() => {
@@ -210,12 +228,69 @@ const AgencyManagement = () => {
     setDeleteConfirm({ show: false, agencyId: null, agencyName: "" });
   };
 
-  const handleViewStandards = (agency) => {
-    setViewStandards({ show: true, agency });
+  const handleViewStandards = async (agency) => {
+    try {
+      // Fetch the latest agency data with populated assignedStandards
+      const updatedAgency = await getAllAgencies().then((agencies) =>
+        agencies.find((a) => a._id === agency._id)
+      );
+      setViewStandards({ show: true, agency: updatedAgency || agency });
+    } catch (error) {
+      console.error("Error fetching agency data:", error);
+      // Fallback to original agency data
+      setViewStandards({ show: true, agency });
+    }
   };
 
   const closeViewStandards = () => {
     setViewStandards({ show: false, agency: null });
+  };
+
+  const handleStandardToggle = async (standardId, assigned) => {
+    if (isToggling) return; // Prevent multiple clicks
+
+    try {
+      setIsToggling(true);
+
+      // Find the standard to get its _id
+      const standard = allStandards.find((s) => s.id === standardId);
+      if (!standard) return;
+
+      await toggleAgencyAssignment(
+        standard._id,
+        viewStandards.agency._id,
+        assigned
+      );
+
+      // Refresh the agency data to get the latest state
+      const updatedAgency = await getAllAgencies().then((agencies) =>
+        agencies.find((a) => a._id === viewStandards.agency._id)
+      );
+
+      // Update the agencies list with fresh data
+      setAgenciesList((prev) =>
+        prev.map((agency) =>
+          agency._id === viewStandards.agency._id ? updatedAgency : agency
+        )
+      );
+
+      // Update the viewStandards agency with fresh data
+      setViewStandards((prev) => ({
+        ...prev,
+        agency: updatedAgency || prev.agency,
+      }));
+
+      toast.success(
+        assigned
+          ? "Standard assigned successfully"
+          : "Standard unassigned successfully"
+      );
+    } catch (error) {
+      console.error("Error toggling standard assignment:", error);
+      toast.error("Failed to update standard assignment");
+    } finally {
+      setIsToggling(false);
+    }
   };
 
   return (
@@ -261,6 +336,20 @@ const AgencyManagement = () => {
                       <h3 className="text-lg font-semibold">{agency.name}</h3>
                     </div>
                     <p className="text-muted-foreground mb-6">{agency.email}</p>
+
+                    {/* Assigned Standards Count */}
+                    <div className="mb-4">
+                      <div className="flex items-center gap-2 text-sm">
+                        <CheckSquare className="w-4 h-4 text-green-600" />
+                        <span className="font-medium">
+                          {t("agencyManagement.assignedStandards")}:
+                        </span>
+                        <Badge variant="outline" className="text-xs">
+                          {agency.assignedStandards?.length || 0}{" "}
+                          {t("agencyManagement.standards")}
+                        </Badge>
+                      </div>
+                    </div>
 
                     {/* Contact Information Row */}
                     <div
@@ -582,11 +671,31 @@ const AgencyManagement = () => {
                 <h4 className="text-lg font-semibold flex items-center gap-2">
                   <CheckSquare className="w-5 h-5 text-green-600" />
                   {t("agencyManagement.assignedStandards")}
+                  {isToggling && (
+                    <div className="w-4 h-4 border-2 border-green-600 border-t-transparent rounded-full animate-spin"></div>
+                  )}
                 </h4>
+                <p className="text-sm text-muted-foreground">
+                  Standards currently assigned to this agency
+                </p>
 
                 {(() => {
-                  const assignedStandards =
-                    viewStandards.agency.assignedStandards || [];
+                  const assignedStandards = allStandards.filter((standard) => {
+                    const isAssigned =
+                      viewStandards.agency.assignedStandards?.some(
+                        (assignedItem) => {
+                          // Handle both populated objects and ID strings
+                          const assignedId =
+                            typeof assignedItem === "object"
+                              ? assignedItem._id || assignedItem.id
+                              : assignedItem;
+                          return (
+                            assignedId.toString() === standard._id.toString()
+                          );
+                        }
+                      );
+                    return isAssigned;
+                  });
 
                   if (assignedStandards.length === 0) {
                     return (
@@ -600,31 +709,175 @@ const AgencyManagement = () => {
                   }
 
                   return (
-                    <div className="grid gap-3 max-h-60 overflow-y-auto">
+                    <div className="grid gap-3">
                       {assignedStandards.map((standard) => (
                         <Card
                           key={standard._id}
-                          className="p-3 hover:shadow-sm transition-shadow">
+                          className={`p-3 hover:shadow-sm transition-all cursor-pointer ring-2 ring-green-500 bg-green-50 dark:bg-green-900/20 dark:ring-green-400 ${
+                            isToggling ? "opacity-50 cursor-not-allowed" : ""
+                          }`}
+                          onClick={() =>
+                            !isToggling &&
+                            handleStandardToggle(standard.id, false)
+                          }>
                           <div className="flex items-start gap-3">
-                            <div className="mt-1 text-green-600">
-                              <CheckSquare className="w-4 h-4" />
+                            <div className="mt-1">
+                              <input
+                                type="checkbox"
+                                checked={true}
+                                onChange={() => {}} // Handled by card click
+                                className="w-4 h-4 text-green-600 border-gray-300 rounded focus:ring-green-500"
+                              />
                             </div>
                             <div className="flex-1 min-w-0">
                               <div className="flex items-center gap-2 mb-1">
-                                <Badge variant="outline" className="text-xs">
+                                <Badge variant="outline" className="text-sm">
                                   #{standard.number}
                                 </Badge>
-                                <span className="text-xs text-muted-foreground">
-                                  {t("agencyManagement.standard")}
-                                </span>
+                                <Badge
+                                  variant="secondary"
+                                  className="text-xs bg-green-100 text-green-800">
+                                  Assigned
+                                </Badge>
                               </div>
                               <h5 className="font-medium text-sm leading-relaxed mb-2">
-                                Standard {standard.number}
+                                {standard.standard}
                               </h5>
-                              <div className="text-xs text-muted-foreground">
-                                Status: {standard.status} | Progress:{" "}
-                                {standard.progress}%
+                              {standard.requirements &&
+                                standard.requirements.length > 0 && (
+                                  <div className="text-xs text-muted-foreground mb-2">
+                                    <span className="font-medium">
+                                      Requirements:
+                                    </span>
+                                    <ul className="list-disc list-inside mt-1">
+                                      {standard.requirements
+                                        .slice(0, 2)
+                                        .map((req, idx) => (
+                                          <li key={idx} className="truncate">
+                                            {req}
+                                          </li>
+                                        ))}
+                                      {standard.requirements.length > 2 && (
+                                        <li className="text-muted-foreground">
+                                          +{standard.requirements.length - 2}{" "}
+                                          more...
+                                        </li>
+                                      )}
+                                    </ul>
+                                  </div>
+                                )}
+                            </div>
+                          </div>
+                        </Card>
+                      ))}
+                    </div>
+                  );
+                })()}
+              </div>
+
+              {/* Divider */}
+              <div className="border-t border-gray-200 my-6"></div>
+
+              {/* All Available Standards Section */}
+              <div className="space-y-4">
+                <h4 className="text-lg font-semibold flex items-center gap-2">
+                  <Target className="w-5 h-5 text-blue-600" />
+                  {t("agencyManagement.allStandards")}
+                  {isToggling && (
+                    <div className="w-4 h-4 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+                  )}
+                </h4>
+                <p className="text-sm text-muted-foreground">
+                  Click to assign standards to this agency
+                </p>
+
+                {(() => {
+                  const unassignedStandards = allStandards.filter(
+                    (standard) => {
+                      const isAssigned =
+                        viewStandards.agency.assignedStandards?.some(
+                          (assignedItem) => {
+                            // Handle both populated objects and ID strings
+                            const assignedId =
+                              typeof assignedItem === "object"
+                                ? assignedItem._id || assignedItem.id
+                                : assignedItem;
+                            return (
+                              assignedId.toString() === standard._id.toString()
+                            );
+                          }
+                        );
+                      return !isAssigned;
+                    }
+                  );
+
+                  if (unassignedStandards.length === 0) {
+                    return (
+                      <div className="text-center py-8 bg-muted/50 rounded-lg">
+                        <CheckSquare className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
+                        <p className="text-muted-foreground">
+                          All standards are assigned to this agency
+                        </p>
+                      </div>
+                    );
+                  }
+
+                  return (
+                    <div className="grid gap-3">
+                      {unassignedStandards.map((standard) => (
+                        <Card
+                          key={standard._id}
+                          className={`p-3 hover:shadow-sm transition-all cursor-pointer hover:ring-2 hover:ring-blue-300 hover:bg-blue-50 dark:hover:bg-blue-900/20 dark:hover:ring-blue-400 ${
+                            isToggling ? "opacity-50 cursor-not-allowed" : ""
+                          }`}
+                          onClick={() =>
+                            !isToggling &&
+                            handleStandardToggle(standard.id, true)
+                          }>
+                          <div className="flex items-start gap-3">
+                            <div className="mt-1">
+                              <input
+                                type="checkbox"
+                                checked={false}
+                                onChange={() => {}} // Handled by card click
+                                className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                              />
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-center gap-2 mb-1">
+                                <Badge variant="outline" className="text-sm">
+                                  #{standard.number}
+                                </Badge>
+                                <Badge variant="outline" className="text-xs">
+                                  Available
+                                </Badge>
                               </div>
+                              <h5 className="font-medium text-sm leading-relaxed mb-2">
+                                {standard.standard}
+                              </h5>
+                              {standard.requirements &&
+                                standard.requirements.length > 0 && (
+                                  <div className="text-xs text-muted-foreground mb-2">
+                                    <span className="font-medium">
+                                      Requirements:
+                                    </span>
+                                    <ul className="list-disc list-inside mt-1">
+                                      {standard.requirements
+                                        .slice(0, 2)
+                                        .map((req, idx) => (
+                                          <li key={idx} className="truncate">
+                                            {req}
+                                          </li>
+                                        ))}
+                                      {standard.requirements.length > 2 && (
+                                        <li className="text-muted-foreground">
+                                          +{standard.requirements.length - 2}{" "}
+                                          more...
+                                        </li>
+                                      )}
+                                    </ul>
+                                  </div>
+                                )}
                             </div>
                           </div>
                         </Card>

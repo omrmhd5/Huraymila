@@ -169,3 +169,31 @@ export const deleteAgency = async (id) => {
     throw error;
   }
 };
+
+// Toggle agency assignment to standard (two-way update)
+export const toggleAgencyAssignment = async (
+  standardId,
+  agencyId,
+  assigned
+) => {
+  try {
+    const response = await fetch(
+      `${API_BASE_URL}/standards/${standardId}/agency/${agencyId}/toggle`,
+      {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ assigned }),
+      }
+    );
+    if (!response.ok) {
+      throw new Error("Failed to toggle agency assignment");
+    }
+    const result = await response.json();
+    return result.data;
+  } catch (error) {
+    console.error("Error toggling agency assignment:", error);
+    throw error;
+  }
+};

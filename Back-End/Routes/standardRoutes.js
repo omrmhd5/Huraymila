@@ -6,6 +6,7 @@ const {
   updateStandard,
   updateStandardFromSubmissions,
   getStandardsByStatus,
+  toggleAgencyAssignment,
 } = require("../Controllers/standardController");
 const auth = require("../middleware/auth");
 
@@ -17,5 +18,6 @@ router.get("/", getStandards);
 // Protected routes (require JWT token)
 // router.put("/number/:number", updateStandard);
 router.patch("/:number/from-submissions", updateStandardFromSubmissions);
+router.patch("/:standardId/agency/:agencyId/toggle", toggleAgencyAssignment);
 
 module.exports = router;
