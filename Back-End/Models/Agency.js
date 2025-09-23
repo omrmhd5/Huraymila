@@ -8,20 +8,42 @@ const agencySchema = new mongoose.Schema(
       unique: true,
       trim: true,
     },
-    name_ar: {
+    email: {
       type: String,
       required: true,
       unique: true,
       trim: true,
+      lowercase: true,
     },
-    description: {
+    password: {
       type: String,
-      trim: true,
+      required: true,
+      minlength: 6,
     },
-    description_ar: {
-      type: String,
-      trim: true,
+    contactPerson: {
+      name: {
+        type: String,
+        required: true,
+        trim: true,
+      },
+      email: {
+        type: String,
+        required: true,
+        trim: true,
+        lowercase: true,
+      },
+      phoneNumber: {
+        type: String,
+        required: true,
+        trim: true,
+      },
     },
+    assignedStandards: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Standard",
+      },
+    ],
   },
   {
     timestamps: true,

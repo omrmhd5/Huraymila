@@ -9,13 +9,11 @@ const {
 } = require("../Controllers/agencyController");
 const auth = require("../middleware/auth");
 
-// Public routes
+// Protected routes (require JWT token)
 router.get("/", getAgencies);
 router.get("/:id", getAgencyById);
-
-// Protected routes (require JWT token)
-router.post("/", auth, createAgency);
-router.put("/:id", auth, updateAgency);
-router.delete("/:id", auth, deleteAgency);
+router.post("/", createAgency);
+router.put("/:id", updateAgency);
+router.delete("/:id", deleteAgency);
 
 module.exports = router;

@@ -12,7 +12,6 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Dialog,
   DialogContent,
@@ -21,25 +20,26 @@ import {
 } from "@/components/ui/dialog";
 import {
   Building2,
-  Users,
   Target,
-  Calendar,
   Plus,
   Edit,
   Trash2,
   Eye,
-  CheckCircle,
-  Clock,
+  EyeOff,
   AlertCircle,
   X,
   CheckSquare,
-  Square,
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useTheme } from "@/contexts/ThemeContext";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { toast } from "sonner";
-import Standards from "@/lib/standards";
+import {
+  getAllAgencies,
+  createAgency,
+  updateAgency,
+  deleteAgency,
+} from "@/lib/api";
 
 const AgencyManagement = () => {
   const { user, loading } = useAuth();
@@ -57,24 +57,33 @@ const AgencyManagement = () => {
     show: false,
     agency: null,
   });
+  const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
-    description: "",
-    contactPerson: "",
     email: "",
-    phone: "",
-    address: "",
-    agencyEmail: "",
-    agencyPassword: "",
+    password: "",
+    contactPerson: {
+      name: "",
+      email: "",
+      phoneNumber: "",
+    },
+    assignedStandards: [],
   });
 
-  // Initialize agencies list
+  // Initialize agencies list from backend
   useEffect(() => {
-    setAgenciesList(agencies);
-  }, []);
+    const fetchAgencies = async () => {
+      try {
+        const agenciesData = await getAllAgencies();
+        setAgenciesList(agenciesData);
+      } catch (error) {
+        console.error("Error fetching agencies:", error);
+        toast.error("Failed to load agencies");
+      }
+    };
 
-  // Get standards data
-  const [standards, agencyToStandardsMap] = Standards();
+    fetchAgencies();
+  }, []);
 
   // Page title for better UX
   useEffect(() => {
@@ -92,60 +101,34 @@ const AgencyManagement = () => {
     );
   }
 
-  // Mock data
-  const agencies = [
-    {
-      id: 1,
-      name: "وزارة الصحة - حريملاء",
-      description: "الجهة المسؤولة عن الصحة العامة في المدينة",
-      contactPerson: "د. أحمد محمد",
-      email: "ahmed@moh.gov.sa",
-      phone: "+966-11-123-4567",
-      address: "شارع الملك فهد، حريملاء",
-      agencyEmail: "health@huraymila.gov.sa",
-      agencyPassword: "health123",
-      initiatives: 12,
-      volunteers: 45,
-    },
-    {
-      id: 2,
-      name: "بلدية حريملاء",
-      description: "إدارة البلدية والخدمات البلدية",
-      contactPerson: "م. سارة العتيبي",
-      email: "sara@baladiyah.gov.sa",
-      phone: "+966-11-123-4568",
-      address: "مبنى البلدية، حريملاء",
-      agencyEmail: "municipality@huraymila.gov.sa",
-      agencyPassword: "municipality123",
-      initiatives: 8,
-      volunteers: 32,
-    },
-    {
-      id: 3,
-      name: "مستشفى حريملاء العام",
-      description: "المستشفى الرئيسي في المدينة",
-      contactPerson: "د. فاطمة الزهراني",
-      email: "fatima@hospital.gov.sa",
-      phone: "+966-11-123-4569",
-      address: "شارع المستشفى، حريملاء",
-      agencyEmail: "hospital@huraymila.gov.sa",
-      agencyPassword: "hospital123",
-      initiatives: 15,
-      volunteers: 120,
-    },
-  ];
-
   const handleInputChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
+    const { name, value } = e.target;
+
+    if (name.startsWith("contactPerson.")) {
+      const contactField = name.split(".")[1];
+      setFormData({
+        ...formData,
+        contactPerson: {
+          ...formData.contactPerson,
+          [contactField]: value,
+        },
+      });
+    } else {
+      setFormData({
+        ...formData,
+        [name]: value,
+      });
+    }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!formData.name.trim() || !formData.description.trim()) {
+    if (
+      !formData.name.trim() ||
+      !formData.email.trim() ||
+      (!editingAgency && !formData.password.trim())
+    ) {
       toast.error(t("agencyManagement.fillRequiredFields"));
       return;
     }
@@ -153,39 +136,37 @@ const AgencyManagement = () => {
     try {
       if (editingAgency) {
         // Update existing agency
-        await new Promise((resolve) => setTimeout(resolve, 1000));
+        const updatedAgency = await updateAgency(editingAgency._id, formData);
         setAgenciesList((prev) =>
           prev.map((agency) =>
-            agency.id === editingAgency.id ? { ...agency, ...formData } : agency
+            agency._id === editingAgency._id ? updatedAgency : agency
           )
         );
         toast.success(t("agencyManagement.agencyUpdated"));
       } else {
-        // Create new agency
-        await new Promise((resolve) => setTimeout(resolve, 1000));
-        const newAgency = {
-          id: Date.now(), // Simple ID generation
-          ...formData,
-          initiatives: Math.floor(Math.random() * 20) + 5,
-          volunteers: Math.floor(Math.random() * 50) + 10,
-        };
+        // Create new agency - exclude assignedStandards
+        const { assignedStandards, ...agencyData } = formData;
+        const newAgency = await createAgency(agencyData);
         setAgenciesList((prev) => [...prev, newAgency]);
         toast.success(t("agencyManagement.agencyAdded"));
       }
 
       setFormData({
         name: "",
-        description: "",
-        contactPerson: "",
         email: "",
-        phone: "",
-        address: "",
-        agencyEmail: "",
-        agencyPassword: "",
+        password: "",
+        contactPerson: {
+          name: "",
+          email: "",
+          phoneNumber: "",
+        },
+        assignedStandards: [],
       });
+      setShowPassword(false);
       setShowAddForm(false);
       setEditingAgency(null);
     } catch (error) {
+      console.error("Error saving agency:", error);
       toast.error(t("agencyManagement.operationError"));
     }
   };
@@ -194,31 +175,33 @@ const AgencyManagement = () => {
     setEditingAgency(agency);
     setFormData({
       name: agency.name,
-      description: agency.description,
-      contactPerson: agency.contactPerson,
       email: agency.email,
-      phone: agency.phone,
-      address: agency.address,
-      agencyEmail: agency.agencyEmail,
-      agencyPassword: agency.agencyPassword,
+      password: "", // Don't pre-fill password for security
+      contactPerson: agency.contactPerson || {
+        name: "",
+        email: "",
+        phoneNumber: "",
+      },
+      assignedStandards: agency.assignedStandards || [],
     });
     setShowAddForm(true);
   };
 
   const handleDelete = async (agencyId) => {
-    const agency = agenciesList.find((a) => a.id === agencyId);
+    const agency = agenciesList.find((a) => a._id === agencyId);
     setDeleteConfirm({ show: true, agencyId, agencyName: agency?.name || "" });
   };
 
   const confirmDelete = async () => {
     try {
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      await deleteAgency(deleteConfirm.agencyId);
       setAgenciesList((prev) =>
-        prev.filter((agency) => agency.id !== deleteConfirm.agencyId)
+        prev.filter((agency) => agency._id !== deleteConfirm.agencyId)
       );
       toast.success(t("agencyManagement.agencyDeleted"));
       setDeleteConfirm({ show: false, agencyId: null, agencyName: "" });
     } catch (error) {
+      console.error("Error deleting agency:", error);
       toast.error(t("agencyManagement.deleteError"));
     }
   };
@@ -233,35 +216,6 @@ const AgencyManagement = () => {
 
   const closeViewStandards = () => {
     setViewStandards({ show: false, agency: null });
-  };
-
-  const getAgencyStandards = (agencyName) => {
-    const standardIds = agencyToStandardsMap[agencyName] || [];
-    return standards.records.filter((standard) =>
-      standardIds.includes(standard.id)
-    );
-  };
-
-  const getUnassignedStandards = (agencyName) => {
-    const assignedIds = agencyToStandardsMap[agencyName] || [];
-    return standards.records.filter(
-      (standard) => !assignedIds.includes(standard.id)
-    );
-  };
-
-  const toggleStandardAssignment = (standardId, agencyName) => {
-    // This would typically update the backend
-    // For now, we'll just show a toast message
-    const isCurrentlyAssigned = (
-      agencyToStandardsMap[agencyName] || []
-    ).includes(standardId);
-    const action = isCurrentlyAssigned ? "unassigned" : "assigned";
-
-    toast.success(
-      isCurrentlyAssigned
-        ? t("agencyManagement.standardUnassigned")
-        : t("agencyManagement.standardAssigned")
-    );
   };
 
   return (
@@ -284,182 +238,100 @@ const AgencyManagement = () => {
         </Button>
       </div>
 
-      <Tabs value="agencies" className="space-y-6">
-        {/* Agencies Tab */}
-        <TabsContent value="agencies">
-          <Card>
-            <CardHeader>
-              <CardTitle>{t("agencyManagement.agenciesList")}</CardTitle>
-              <CardDescription>
-                {t("agencyManagement.manageAgencies")}
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                {agenciesList.map((agency) => (
-                  <div key={agency.id} className="border rounded-lg p-4">
+      <Card>
+        <CardHeader>
+          <CardTitle>{t("agencyManagement.agenciesList")}</CardTitle>
+          <CardDescription>
+            {t("agencyManagement.manageAgencies")}
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-4">
+            {agenciesList.map((agency) => (
+              <div key={agency.id} className="border rounded-lg p-4">
+                <div
+                  className={`flex items-start justify-between ${
+                    language === "ar" ? "flex-row-reverse" : "flex-row"
+                  }`}>
+                  <div className="flex-1">
                     <div
-                      className={`flex items-start justify-between ${
+                      className={`flex items-center gap-3 mb-1 ${
                         language === "ar" ? "flex-row-reverse" : "flex-row"
                       }`}>
-                      <div className="flex-1">
-                        <div
-                          className={`flex items-center gap-3 mb-2 ${
-                            language === "ar" ? "flex-row-reverse" : "flex-row"
-                          }`}>
-                          <h3 className="text-lg font-semibold">
-                            {agency.name}
-                          </h3>
-                        </div>
-                        <p className="text-muted-foreground mb-3">
-                          {agency.description}
-                        </p>
+                      <h3 className="text-lg font-semibold">{agency.name}</h3>
+                    </div>
+                    <p className="text-muted-foreground mb-6">{agency.email}</p>
 
-                        {/* Agency Information Row */}
-                        <div
-                          className={`mb-4 w-1/2 ${
-                            language === "ar"
-                              ? "text-right justify-self-end"
-                              : "text-left"
-                          }`}>
-                          <div
-                            className={`grid grid-cols-1 md:grid-cols-2 text-sm ${
-                              language === "ar"
-                                ? "justify-items-end"
-                                : "justify-items-start"
-                            }`}>
-                            <div
-                              className={` mb-2 ${
-                                language === "ar" ? "order-2" : "order-1"
-                              }
-                              `}>
-                              <span className="font-medium">
-                                {t("agencyManagement.agencyEmail")}
-                              </span>
-                              <p>{agency.agencyEmail}</p>
+                    {/* Contact Information Row */}
+                    <div
+                      className={`mb-4 ${
+                        language === "ar" ? "text-right" : "text-left"
+                      }`}>
+                      <div
+                        className={`grid grid-cols-2 md:grid-cols-4 gap-4 text-sm ${
+                          language === "ar"
+                            ? "justify-items-end"
+                            : "justify-items-start"
+                        }`}>
+                        {[
+                          {
+                            key: "contactPerson",
+                            label: t("agencyManagement.contactPerson"),
+                            value: agency.contactPerson?.name || "",
+                            order: 1,
+                          },
+                          {
+                            key: "email",
+                            label: t("agencyManagement.personEmail"),
+                            value: agency.contactPerson?.email || "",
+                            order: 2,
+                          },
+                          {
+                            key: "phone",
+                            label: t("agencyManagement.phone"),
+                            value: agency.contactPerson?.phoneNumber || "",
+                            order: 3,
+                          },
+                        ].map((field) => {
+                          const order =
+                            language === "ar" ? field.order : 5 - field.order;
+                          return (
+                            <div key={field.key} className={`order-${order}`}>
+                              <span className="font-medium">{field.label}</span>
+                              <p>{field.value}</p>
                             </div>
-                            <div
-                              className={` mb-2 ${
-                                language === "ar" ? "order-1" : "order-2"
-                              }
-                              `}>
-                              <span className="font-medium">
-                                {t("agencyManagement.agencyPassword")}
-                              </span>
-                              <p className="font-mono text-xs bg-muted p-1 rounded">
-                                {agency.agencyPassword ? "••••••••" : ""}
-                              </p>
-                            </div>
-                          </div>
-                        </div>
-
-                        {/* Contact Information Row */}
-                        <div
-                          className={`mb-4 ${
-                            language === "ar" ? "text-right" : "text-left"
-                          }`}>
-                          <div
-                            className={`grid grid-cols-2 md:grid-cols-4 gap-4 text-sm ${
-                              language === "ar"
-                                ? "justify-items-end"
-                                : "justify-items-start"
-                            }`}>
-                            {[
-                              {
-                                key: "contactPerson",
-                                label: t("agencyManagement.contactPerson"),
-                                value: agency.contactPerson,
-                                order: 1,
-                              },
-                              {
-                                key: "email",
-                                label: t("agencyManagement.personEmail"),
-                                value: agency.email,
-                                order: 2,
-                              },
-                              {
-                                key: "phone",
-                                label: t("agencyManagement.phone"),
-                                value: agency.phone,
-                                order: 3,
-                              },
-                              {
-                                key: "address",
-                                label: t("agencyManagement.address"),
-                                value: agency.address,
-                                order: 4,
-                              },
-                            ].map((field) => {
-                              const order =
-                                language === "ar"
-                                  ? 5 - field.order
-                                  : field.order;
-                              return (
-                                <div
-                                  key={field.key}
-                                  className={`order-${order}`}>
-                                  <span className="font-medium">
-                                    {field.label}
-                                  </span>
-                                  <p>{field.value}</p>
-                                </div>
-                              );
-                            })}
-                          </div>
-                        </div>
-
-                        <div
-                          className={`flex items-center gap-4 mt-3 text-sm text-muted-foreground ${
-                            language === "ar" ? "justify-end" : "justify-start"
-                          }`}>
-                          <span
-                            className={`flex items-center gap-1 ${
-                              language === "ar" ? "order-2" : "order-1"
-                            }`}>
-                            <Target className="w-4 h-4" />
-                            {agency.initiatives}{" "}
-                            {t("agencyManagement.initiatives")}
-                          </span>
-                          <span
-                            className={`flex items-center gap-1 ${
-                              language === "ar" ? "order-1" : "order-2"
-                            }`}>
-                            {" "}
-                            <Users className="w-4 h-4" />
-                            {agency.volunteers}{" "}
-                            {t("agencyManagement.volunteers")}
-                          </span>
-                        </div>
-                      </div>
-
-                      <div className="flex items-center gap-2 ml-4">
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => handleEdit(agency)}>
-                          <Edit className="w-4 h-4" />
-                        </Button>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => handleViewStandards(agency)}>
-                          <Eye className="w-4 h-4" />
-                        </Button>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => handleDelete(agency.id)}>
-                          <Trash2 className="w-4 h-4" />
-                        </Button>
+                          );
+                        })}
                       </div>
                     </div>
                   </div>
-                ))}
+
+                  <div className="flex items-center gap-2 ml-4">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => handleEdit(agency)}>
+                      <Edit className="w-4 h-4" />
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => handleViewStandards(agency)}>
+                      <Eye className="w-4 h-4" />
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => handleDelete(agency._id)}>
+                      <Trash2 className="w-4 h-4" />
+                    </Button>
+                  </div>
+                </div>
               </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-      </Tabs>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
 
       {/* Add/Edit Form Modal */}
       {showAddForm && (
@@ -495,69 +367,10 @@ const AgencyManagement = () => {
                   </div>
                 </div>
 
-                <div className="space-y-2">
-                  <Label htmlFor="description">
-                    {t("agencyManagement.agencyDescription")} *
-                  </Label>
-                  <Textarea
-                    id="description"
-                    name="description"
-                    value={formData.description}
-                    onChange={handleInputChange}
-                    placeholder={t(
-                      "agencyManagement.agencyDescriptionPlaceholder"
-                    )}
-                    rows={3}
-                    required
-                  />
-                </div>
-
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="agencyEmail">
-                      {t("agencyManagement.agencyEmailField")}
-                    </Label>
-                    <Input
-                      id="agencyEmail"
-                      name="agencyEmail"
-                      type="email"
-                      value={formData.agencyEmail}
-                      onChange={handleInputChange}
-                      placeholder={t("agencyManagement.agencyEmailPlaceholder")}
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="agencyPassword">
-                      {t("agencyManagement.agencyPasswordField")}
-                    </Label>
-                    <Input
-                      id="agencyPassword"
-                      name="agencyPassword"
-                      value={formData.agencyPassword}
-                      onChange={handleInputChange}
-                      placeholder={t("agencyManagement.passwordPlaceholder")}
-                    />
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="contactPerson">
-                      {t("agencyManagement.contactPersonField")}
-                    </Label>
-                    <Input
-                      id="contactPerson"
-                      name="contactPerson"
-                      value={formData.contactPerson}
-                      onChange={handleInputChange}
-                      placeholder={t(
-                        "agencyManagement.contactPersonPlaceholder"
-                      )}
-                    />
-                  </div>
                   <div className="space-y-2">
                     <Label htmlFor="email">
-                      {t("agencyManagement.personEmailField")}
+                      {t("agencyManagement.agencyEmailField")} *
                     </Label>
                     <Input
                       id="email"
@@ -565,35 +378,96 @@ const AgencyManagement = () => {
                       type="email"
                       value={formData.email}
                       onChange={handleInputChange}
-                      placeholder="example@agency.gov.sa"
+                      placeholder={t("agencyManagement.agencyEmailPlaceholder")}
+                      required
                     />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="password">
+                      {t("agencyManagement.agencyPasswordField")}{" "}
+                      {!editingAgency && "*"}
+                    </Label>
+                    <div className="relative">
+                      <Input
+                        id="password"
+                        name="password"
+                        type={showPassword ? "text" : "password"}
+                        value={formData.password}
+                        onChange={handleInputChange}
+                        placeholder={
+                          editingAgency && !formData.password
+                            ? "Enter new password to change"
+                            : t("agencyManagement.passwordPlaceholder")
+                        }
+                        required={!editingAgency}
+                        className="pr-10"
+                      />
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                        onClick={() => setShowPassword(!showPassword)}>
+                        {showPassword ? (
+                          <EyeOff className="h-4 w-4" />
+                        ) : (
+                          <Eye className="h-4 w-4" />
+                        )}
+                      </Button>
+                    </div>
                   </div>
                 </div>
 
-                <div className="space-y-2">
-                  <Label htmlFor="phone">
-                    {t("agencyManagement.phoneNumber")}
-                  </Label>
-                  <Input
-                    id="phone"
-                    name="phone"
-                    value={formData.phone}
-                    onChange={handleInputChange}
-                    placeholder={t("agencyManagement.phonePlaceholder")}
-                  />
-                </div>
+                <div className="space-y-4">
+                  <h3 className="text-lg font-semibold">
+                    {t("agencyManagement.contactPersonInfo")}
+                  </h3>
 
-                <div className="space-y-2">
-                  <Label htmlFor="address">
-                    {t("agencyManagement.addressField")}
-                  </Label>
-                  <Input
-                    id="address"
-                    name="address"
-                    value={formData.address}
-                    onChange={handleInputChange}
-                    placeholder={t("agencyManagement.addressPlaceholder")}
-                  />
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="contactPerson.name">
+                        {t("agencyManagement.contactPersonField")} *
+                      </Label>
+                      <Input
+                        id="contactPerson.name"
+                        name="contactPerson.name"
+                        value={formData.contactPerson.name}
+                        onChange={handleInputChange}
+                        placeholder={t(
+                          "agencyManagement.contactPersonPlaceholder"
+                        )}
+                        required
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="contactPerson.email">
+                        {t("agencyManagement.personEmailField")} *
+                      </Label>
+                      <Input
+                        id="contactPerson.email"
+                        name="contactPerson.email"
+                        type="email"
+                        value={formData.contactPerson.email}
+                        onChange={handleInputChange}
+                        placeholder="example@agency.gov.sa"
+                        required
+                      />
+                    </div>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="contactPerson.phoneNumber">
+                      {t("agencyManagement.phoneNumber")} *
+                    </Label>
+                    <Input
+                      id="contactPerson.phoneNumber"
+                      name="contactPerson.phoneNumber"
+                      value={formData.contactPerson.phoneNumber}
+                      onChange={handleInputChange}
+                      placeholder={t("agencyManagement.phonePlaceholder")}
+                      required
+                    />
+                  </div>
                 </div>
 
                 <div className="flex gap-2 pt-4">
@@ -608,15 +482,17 @@ const AgencyManagement = () => {
                     onClick={() => {
                       setShowAddForm(false);
                       setEditingAgency(null);
+                      setShowPassword(false);
                       setFormData({
                         name: "",
-                        description: "",
-                        contactPerson: "",
                         email: "",
-                        phone: "",
-                        address: "",
-                        agencyEmail: "",
-                        agencyPassword: "",
+                        password: "",
+                        contactPerson: {
+                          name: "",
+                          email: "",
+                          phoneNumber: "",
+                        },
+                        assignedStandards: [],
                       });
                     }}>
                     {t("agencyManagement.cancel")}
@@ -709,9 +585,8 @@ const AgencyManagement = () => {
                 </h4>
 
                 {(() => {
-                  const assignedStandards = getAgencyStandards(
-                    viewStandards.agency.name
-                  );
+                  const assignedStandards =
+                    viewStandards.agency.assignedStandards || [];
 
                   if (assignedStandards.length === 0) {
                     return (
@@ -728,99 +603,27 @@ const AgencyManagement = () => {
                     <div className="grid gap-3 max-h-60 overflow-y-auto">
                       {assignedStandards.map((standard) => (
                         <Card
-                          key={standard.id}
+                          key={standard._id}
                           className="p-3 hover:shadow-sm transition-shadow">
                           <div className="flex items-start gap-3">
-                            <button
-                              onClick={() =>
-                                toggleStandardAssignment(
-                                  standard.id,
-                                  viewStandards.agency.name
-                                )
-                              }
-                              className="mt-1 text-green-600 hover:text-green-700 transition-colors">
+                            <div className="mt-1 text-green-600">
                               <CheckSquare className="w-4 h-4" />
-                            </button>
-                            <div className="flex-1 min-w-0">
-                              <div className="flex items-center gap-2 mb-1">
-                                <Badge variant="outline" className="text-xs">
-                                  #{standard.id}
-                                </Badge>
-                                <span className="text-xs text-muted-foreground">
-                                  {t("agencyManagement.standard")}
-                                </span>
-                              </div>
-                              <h5 className="font-medium text-sm leading-relaxed mb-2">
-                                {standard.standard}
-                              </h5>
-                              <div className="text-xs text-muted-foreground">
-                                {standard.requirements.length}{" "}
-                                {t("agencyManagement.requirements")}
-                              </div>
                             </div>
-                          </div>
-                        </Card>
-                      ))}
-                    </div>
-                  );
-                })()}
-              </div>
-
-              {/* Unassigned Standards Section */}
-              <div className="space-y-4">
-                <h4 className="text-lg font-semibold flex items-center gap-2">
-                  <Square className="w-5 h-5 text-gray-500" />
-                  {t("agencyManagement.unassignedStandards")}
-                </h4>
-
-                {(() => {
-                  const unassignedStandards = getUnassignedStandards(
-                    viewStandards.agency.name
-                  );
-
-                  if (unassignedStandards.length === 0) {
-                    return (
-                      <div className="text-center py-8 bg-muted/50 rounded-lg">
-                        <CheckCircle className="w-12 h-12 text-green-500 mx-auto mb-4" />
-                        <p className="text-muted-foreground">
-                          {t("agencyManagement.allStandardsAssigned")}
-                        </p>
-                      </div>
-                    );
-                  }
-
-                  return (
-                    <div className="grid gap-3 max-h-60 overflow-y-auto">
-                      {unassignedStandards.map((standard) => (
-                        <Card
-                          key={standard.id}
-                          className="p-3 hover:shadow-sm transition-shadow">
-                          <div className="flex items-start gap-3">
-                            <button
-                              onClick={() =>
-                                toggleStandardAssignment(
-                                  standard.id,
-                                  viewStandards.agency.name
-                                )
-                              }
-                              className="mt-1 text-gray-400 hover:text-gray-600 transition-colors">
-                              <Square className="w-4 h-4" />
-                            </button>
                             <div className="flex-1 min-w-0">
                               <div className="flex items-center gap-2 mb-1">
                                 <Badge variant="outline" className="text-xs">
-                                  #{standard.id}
+                                  #{standard.number}
                                 </Badge>
                                 <span className="text-xs text-muted-foreground">
                                   {t("agencyManagement.standard")}
                                 </span>
                               </div>
                               <h5 className="font-medium text-sm leading-relaxed mb-2">
-                                {standard.standard}
+                                Standard {standard.number}
                               </h5>
                               <div className="text-xs text-muted-foreground">
-                                {standard.requirements.length}{" "}
-                                {t("agencyManagement.requirements")}
+                                Status: {standard.status} | Progress:{" "}
+                                {standard.progress}%
                               </div>
                             </div>
                           </div>
