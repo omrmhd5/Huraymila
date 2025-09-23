@@ -282,12 +282,12 @@ const AgencyManagement = () => {
 
       toast.success(
         assigned
-          ? "Standard assigned successfully"
-          : "Standard unassigned successfully"
+          ? t("agencyManagement.standardAssignedSuccess")
+          : t("agencyManagement.standardUnassignedSuccess")
       );
     } catch (error) {
       console.error("Error toggling standard assignment:", error);
-      toast.error("Failed to update standard assignment");
+      toast.error(t("agencyManagement.standardToggleError"));
     } finally {
       setIsToggling(false);
     }
@@ -634,7 +634,7 @@ const AgencyManagement = () => {
             <div className="flex items-center justify-between">
               <DialogTitle className="flex items-center gap-2">
                 <Building2 className="w-5 h-5" />
-                {t("agencyManagement.assignedStandards")}
+                {t("agencyManagement.standardsModalTitle")}
               </DialogTitle>
               <Button
                 variant="ghost"
@@ -651,10 +651,10 @@ const AgencyManagement = () => {
               {/* Agency Info */}
               <div className="bg-muted p-4 rounded-lg">
                 <h3 className="text-lg font-semibold mb-2">
-                  {viewStandards.agency.name}
+                  {t("agencyManagement.agencyInfo")}
                 </h3>
                 <p className="text-muted-foreground">
-                  {viewStandards.agency.description}
+                  {viewStandards.agency.name}
                 </p>
               </div>
 
@@ -662,13 +662,13 @@ const AgencyManagement = () => {
               <div className="space-y-4">
                 <h4 className="text-lg font-semibold flex items-center gap-2">
                   <CheckSquare className="w-5 h-5 text-green-600" />
-                  {t("agencyManagement.assignedStandards")}
+                  {t("agencyManagement.assignedStandardsSection")}
                   {isToggling && (
                     <div className="w-4 h-4 border-2 border-green-600 border-t-transparent rounded-full animate-spin"></div>
                   )}
                 </h4>
                 <p className="text-sm text-muted-foreground">
-                  Standards currently assigned to this agency
+                  {t("agencyManagement.assignedStandardsDescription")}
                 </p>
 
                 {(() => {
@@ -729,7 +729,7 @@ const AgencyManagement = () => {
                                 <Badge
                                   variant="secondary"
                                   className="text-xs bg-green-100 text-green-800">
-                                  Assigned
+                                  {t("agencyManagement.assigned")}
                                 </Badge>
                               </div>
                               <h5 className="font-medium text-sm leading-relaxed mb-2">
@@ -739,7 +739,7 @@ const AgencyManagement = () => {
                                 standard.requirements.length > 0 && (
                                   <div className="text-xs text-muted-foreground mb-2">
                                     <span className="font-medium">
-                                      Requirements:
+                                      {t("agencyManagement.requirements")}:
                                     </span>
                                     <ul className="list-disc list-inside mt-1">
                                       {standard.requirements
@@ -752,7 +752,10 @@ const AgencyManagement = () => {
                                       {standard.requirements.length > 2 && (
                                         <li className="text-muted-foreground">
                                           +{standard.requirements.length - 2}{" "}
-                                          more...
+                                          {t(
+                                            "agencyManagement.moreRequirements"
+                                          )}
+                                          ...
                                         </li>
                                       )}
                                     </ul>
@@ -774,13 +777,13 @@ const AgencyManagement = () => {
               <div className="space-y-4">
                 <h4 className="text-lg font-semibold flex items-center gap-2">
                   <Target className="w-5 h-5 text-blue-600" />
-                  {t("agencyManagement.allStandards")}
+                  {t("agencyManagement.allStandardsSection")}
                   {isToggling && (
                     <div className="w-4 h-4 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
                   )}
                 </h4>
                 <p className="text-sm text-muted-foreground">
-                  Click to assign standards to this agency
+                  {t("agencyManagement.allStandardsDescription")}
                 </p>
 
                 {(() => {
@@ -808,7 +811,7 @@ const AgencyManagement = () => {
                       <div className="text-center py-8 bg-muted/50 rounded-lg">
                         <CheckSquare className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
                         <p className="text-muted-foreground">
-                          All standards are assigned to this agency
+                          {t("agencyManagement.allStandardsAssigned")}
                         </p>
                       </div>
                     );
@@ -841,7 +844,7 @@ const AgencyManagement = () => {
                                   #{standard.number}
                                 </Badge>
                                 <Badge variant="outline" className="text-xs">
-                                  Available
+                                  {t("agencyManagement.available")}
                                 </Badge>
                               </div>
                               <h5 className="font-medium text-sm leading-relaxed mb-2">
@@ -851,7 +854,7 @@ const AgencyManagement = () => {
                                 standard.requirements.length > 0 && (
                                   <div className="text-xs text-muted-foreground mb-2">
                                     <span className="font-medium">
-                                      Requirements:
+                                      {t("agencyManagement.requirements")}:
                                     </span>
                                     <ul className="list-disc list-inside mt-1">
                                       {standard.requirements
@@ -864,7 +867,10 @@ const AgencyManagement = () => {
                                       {standard.requirements.length > 2 && (
                                         <li className="text-muted-foreground">
                                           +{standard.requirements.length - 2}{" "}
-                                          more...
+                                          {t(
+                                            "agencyManagement.moreRequirements"
+                                          )}
+                                          ...
                                         </li>
                                       )}
                                     </ul>
