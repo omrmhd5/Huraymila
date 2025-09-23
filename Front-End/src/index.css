@@ -386,4 +386,13 @@
       transform: translateX(-50%);
     }
   }
+
+  /* Utility classes for gradient cards */
+  .bg-gradient-card {
+    background: var(--gradient-card);
+  }
+
+  .shadow-card {
+    box-shadow: var(--shadow-card);
+  }
 }
