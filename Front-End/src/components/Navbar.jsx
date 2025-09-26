@@ -134,28 +134,50 @@ const Navbar = () => {
                   variant="ghost"
                   size="sm"
                   onClick={toggleUserMenu}
-                  className="flex items-center gap-2">
+                  className={`flex items-center gap-2 ${
+                    language === "ar" ? "flex-row-reverse" : ""
+                  }`}>
                   <User className="w-4 h-4" />
                   <span className="hidden sm:block text-sm">
-                    {user.email?.split("@")[0] || "User"}
+                    {user.email || user.name || "User"}
                   </span>
                 </Button>
 
                 {isUserMenuOpen && (
-                  <div className="absolute right-0 mt-2 w-48 bg-background border border-border rounded-lg shadow-lg py-2 z-50">
-                    <div className="px-4 py-2 border-b border-border">
+                  <div
+                    className={`absolute ${
+                      language === "ar" ? "left-0" : "right-0"
+                    } mt-2 w-48 bg-background border border-border rounded-lg shadow-lg py-2 z-50`}>
+                    <div
+                      className={`px-4 py-2 border-b border-border ${
+                        language === "ar" ? "text-right" : "text-left"
+                      }`}>
                       <p className="text-sm font-medium">{user.email}</p>
                       <p className="text-xs text-muted-foreground">
-                        {user.user_metadata?.full_name || "User"}
+                        {user.type === "governor"
+                          ? language === "ar"
+                            ? "المحافظ"
+                            : "Governor"
+                          : language === "ar"
+                          ? "الوكالة"
+                          : "Agency"}
                       </p>
                     </div>
 
                     <button
                       onClick={() => {
-                        navigateToTop("/admin");
+                        const dashboardPath =
+                          user.type === "governor"
+                            ? "/admin"
+                            : "/agency-dashboard";
+                        navigateToTop(dashboardPath);
                         setIsUserMenuOpen(false);
                       }}
-                      className="flex items-center gap-2 px-4 py-2 text-sm hover:bg-muted transition-colors w-full text-left">
+                      className={`flex items-center gap-2 px-4 py-2 text-sm hover:bg-muted transition-colors w-full ${
+                        language === "ar"
+                          ? "text-right flex-row-reverse"
+                          : "text-left"
+                      }`}>
                       <User className="w-4 h-4" />
                       {t("nav.dashboard")}
                     </button>
@@ -165,7 +187,11 @@ const Navbar = () => {
                         logout();
                         setIsUserMenuOpen(false);
                       }}
-                      className="flex items-center gap-2 px-4 py-2 text-sm hover:bg-muted transition-colors w-full text-left text-destructive">
+                      className={`flex items-center gap-2 px-4 py-2 text-sm hover:bg-muted transition-colors w-full text-destructive ${
+                        language === "ar"
+                          ? "text-right flex-row-reverse"
+                          : "text-left"
+                      }`}>
                       <LogOut className="w-4 h-4" />
                       {t("nav.signOut")}
                     </button>
@@ -173,17 +199,9 @@ const Navbar = () => {
                 )}
               </div>
             ) : (
-              <div className="flex items-center gap-2">
-                <Button size="sm" onClick={() => navigateToTop("/auth")}>
-                  {t("nav.signInSignUp")}
-                </Button>
-                <Button
-                  size="sm"
-                  variant="outline"
-                  onClick={() => navigateToTop("/agency-login")}>
-                  {language === "ar" ? "دخول الجهة" : "Agency Login"}
-                </Button>
-              </div>
+              <Button size="sm" onClick={() => navigateToTop("/auth")}>
+                {t("nav.signInSignUp")}
+              </Button>
             )}
 
             {/* Mobile Menu Button */}
@@ -244,27 +262,15 @@ const Navbar = () => {
                     )}
                   </Button>
                 </div>
-                <div className="flex items-center gap-2">
-                  <Button
-                    size="sm"
-                    onClick={() => {
-                      navigateToTop("/auth");
-                      setIsMobileMenuOpen(false);
-                    }}
-                    className="flex-1">
-                    {t("nav.signInSignUp")}
-                  </Button>
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    onClick={() => {
-                      navigateToTop("/agency-login");
-                      setIsMobileMenuOpen(false);
-                    }}
-                    className="flex-1">
-                    {language === "ar" ? "دخول الجهة" : "Agency Login"}
-                  </Button>
-                </div>
+                <Button
+                  size="sm"
+                  onClick={() => {
+                    navigateToTop("/auth");
+                    setIsMobileMenuOpen(false);
+                  }}
+                  className="w-full">
+                  {t("nav.signInSignUp")}
+                </Button>
               </div>
             </nav>
           </div>

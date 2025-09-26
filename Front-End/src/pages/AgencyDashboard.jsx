@@ -38,10 +38,10 @@ const AgencyDashboard = () => {
 
   const isRTL = language === "ar";
 
-  // Redirect to login if not authenticated
+  // Redirect to login if not authenticated or not an agency
   useEffect(() => {
-    if (!loading && !user) {
-      navigate("/agency-login");
+    if (!loading && (!user || user.type !== "agency")) {
+      navigate("/auth");
     }
   }, [user, loading, navigate]);
 

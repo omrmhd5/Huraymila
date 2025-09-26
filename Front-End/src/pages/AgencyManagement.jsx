@@ -45,7 +45,7 @@ import {
 import { mapBackendStandardsToLanguageContext } from "@/lib/utils";
 
 const AgencyManagement = () => {
-  const { user, loading } = useAuth();
+  const { user, loading, token } = useAuth();
   const { language } = useTheme();
   const { t, standards } = useLanguage();
   const [showAddForm, setShowAddForm] = useState(false);
@@ -80,7 +80,7 @@ const AgencyManagement = () => {
     const fetchData = async () => {
       try {
         const [agenciesData, standardsData] = await Promise.all([
-          getAllAgencies(),
+          getAllAgencies(token),
           getAllStandardsByNumber(),
         ]);
         setAgenciesList(agenciesData);
@@ -97,11 +97,11 @@ const AgencyManagement = () => {
       }
     };
 
-    // Only fetch data when standards are available
-    if (standards && Array.isArray(standards)) {
+    // Only fetch data when standards are available and token exists
+    if (standards && Array.isArray(standards) && token) {
       fetchData();
     }
-  }, [standards]);
+  }, [standards, token]);
 
   // Page title for better UX
   useEffect(() => {
@@ -154,7 +154,11 @@ const AgencyManagement = () => {
     try {
       if (editingAgency) {
         // Update existing agency
-        const updatedAgency = await updateAgency(editingAgency._id, formData);
+        const updatedAgency = await updateAgency(
+          editingAgency._id,
+          formData,
+          token
+        );
         setAgenciesList((prev) =>
           prev.map((agency) =>
             agency._id === editingAgency._id ? updatedAgency : agency
@@ -164,7 +168,7 @@ const AgencyManagement = () => {
       } else {
         // Create new agency - exclude assignedStandards
         const { assignedStandards, ...agencyData } = formData;
-        const newAgency = await createAgency(agencyData);
+        const newAgency = await createAgency(agencyData, token);
         setAgenciesList((prev) => [...prev, newAgency]);
         toast.success(t("agencyManagement.agencyAdded"));
       }
@@ -212,7 +216,7 @@ const AgencyManagement = () => {
 
   const confirmDelete = async () => {
     try {
-      await deleteAgency(deleteConfirm.agencyId);
+      await deleteAgency(deleteConfirm.agencyId, token);
       setAgenciesList((prev) =>
         prev.filter((agency) => agency._id !== deleteConfirm.agencyId)
       );
@@ -231,7 +235,7 @@ const AgencyManagement = () => {
   const handleViewStandards = async (agency) => {
     try {
       // Fetch the latest agency data with populated assignedStandards
-      const updatedAgency = await getAllAgencies().then((agencies) =>
+      const updatedAgency = await getAllAgencies(token).then((agencies) =>
         agencies.find((a) => a._id === agency._id)
       );
       setViewStandards({ show: true, agency: updatedAgency || agency });
@@ -259,11 +263,12 @@ const AgencyManagement = () => {
       await toggleAgencyAssignment(
         standard._id,
         viewStandards.agency._id,
-        assigned
+        assigned,
+        token
       );
 
       // Refresh the agency data to get the latest state
-      const updatedAgency = await getAllAgencies().then((agencies) =>
+      const updatedAgency = await getAllAgencies(token).then((agencies) =>
         agencies.find((a) => a._id === viewStandards.agency._id)
       );
 

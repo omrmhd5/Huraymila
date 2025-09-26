@@ -3,23 +3,8 @@ const API_BASE_URL =
   import.meta.env.VITE_API_BASE_URL || "http://localhost:5000/api";
 
 export const agencyApi = {
-  // Login agency
-  login: async (email, password) => {
-    const response = await fetch(`${API_BASE_URL}/agencies/login`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ email, password }),
-    });
-
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.message || "Login failed");
-    }
-
-    return response.json();
-  },
+  // Note: Login is now handled by unified auth in AuthContext
+  // Use the login function from AuthContext instead of this API
 
   // Get agency profile
   getProfile: async (token) => {

@@ -1,69 +1,4 @@
 const Agency = require("../Models/Agency");
-const bcrypt = require("bcryptjs");
-const jwt = require("jsonwebtoken");
-
-// Agency login
-const loginAgency = async (req, res) => {
-  try {
-    const { email, password } = req.body;
-
-    // Validate required fields
-    if (!email || !password) {
-      return res.status(400).json({
-        success: false,
-        message: "Email and password are required",
-      });
-    }
-
-    // Find agency by email
-    const agency = await Agency.findOne({ email }).select("+password");
-
-    if (!agency) {
-      return res.status(401).json({
-        success: false,
-        message: "Invalid email or password",
-      });
-    }
-
-    // Check password
-    const isPasswordValid = await bcrypt.compare(password, agency.password);
-
-    if (!isPasswordValid) {
-      return res.status(401).json({
-        success: false,
-        message: "Invalid email or password",
-      });
-    }
-
-    // Generate JWT token
-    const token = jwt.sign(
-      {
-        agencyId: agency._id,
-        email: agency.email,
-        type: "agency",
-      },
-      process.env.JWT_SECRET || "your-secret-key",
-      { expiresIn: "7d" }
-    );
-
-    // Remove password from response
-    const agencyData = agency.toObject();
-    delete agencyData.password;
-
-    res.json({
-      success: true,
-      message: "Login successful",
-      token,
-      agency: agencyData,
-    });
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: "Error during login",
-      error: error.message,
-    });
-  }
-};
 
 // Get agency profile (protected route)
 const getAgencyProfile = async (req, res) => {
@@ -322,7 +257,6 @@ const deleteAgency = async (req, res) => {
 };
 
 module.exports = {
-  loginAgency,
   getAgencyProfile,
   getAssignedStandards,
   getAgencies,

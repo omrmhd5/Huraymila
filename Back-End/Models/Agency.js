@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const bcrypt = require("bcryptjs");
 
 const agencySchema = new mongoose.Schema(
   {
@@ -10,17 +11,20 @@ const agencySchema = new mongoose.Schema(
     },
     email: {
       type: String,
-      default: null,
-      required: false,
+      required: true,
       trim: true,
       lowercase: true,
       unique: true,
-      sparse: true,
     },
     password: {
       type: String,
-      required: false,
+      required: true,
       minlength: 6,
+    },
+    type: {
+      type: String,
+      default: "agency",
+      immutable: true,
     },
     contactPerson: {
       name: {
@@ -51,5 +55,17 @@ const agencySchema = new mongoose.Schema(
     timestamps: true,
   }
 );
+
+// Hash password before saving
+agencySchema.pre("save", async function (next) {
+  if (!this.isModified("password")) return next();
+  this.password = await bcrypt.hash(this.password, 12);
+  next();
+});
+
+// Compare password method
+agencySchema.methods.comparePassword = async function (candidatePassword) {
+  return await bcrypt.compare(candidatePassword, this.password);
+};
 
 module.exports = mongoose.model("Agency", agencySchema);

@@ -56,18 +56,30 @@ const Auth = () => {
     setLoading(true);
     setError("");
 
+    if (!formData.email || !formData.password) {
+      setError(
+        language === "ar"
+          ? "البريد الإلكتروني وكلمة المرور مطلوبان"
+          : "Email and password are required"
+      );
+      setLoading(false);
+      return;
+    }
+
     try {
-      // Mock implementation - simulate sign in
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      const result = await login(formData.email, formData.password);
 
-      // Set user in context
-      await login({
-        email: formData.email,
-        role: "volunteer",
-        name: formData.fullName || "User",
-      });
-
-      navigate("/");
+      if (result.success) {
+        // Redirect based on user type
+        navigate(result.redirectTo || "/");
+      } else {
+        setError(
+          result.error ||
+            (language === "ar"
+              ? "بيانات الدخول غير صحيحة"
+              : "Invalid credentials")
+        );
+      }
     } catch (err) {
       setError(
         language === "ar" ? "حدث خطأ غير متوقع" : "An unexpected error occurred"

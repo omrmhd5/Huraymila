@@ -8,16 +8,24 @@ const {
   getStandardsByStatus,
   toggleAgencyAssignment,
 } = require("../Controllers/standardController");
-const auth = require("../middleware/auth");
+const { governorOnly } = require("../middleware/authProtection");
 
 // Public routes
 router.get("/", getStandards);
 // router.get("/status/:status", getStandardsByStatus);
 // router.get("/number/:number", getStandardByNumber);
 
-// Protected routes (require JWT token)
+// Protected routes (governor only)
 // router.put("/number/:number", updateStandard);
-router.patch("/:number/from-submissions", updateStandardFromSubmissions);
-router.patch("/:standardId/agency/:agencyId/toggle", toggleAgencyAssignment);
+router.patch(
+  "/:number/from-submissions",
+  governorOnly,
+  updateStandardFromSubmissions
+);
+router.patch(
+  "/:standardId/agency/:agencyId/toggle",
+  governorOnly,
+  toggleAgencyAssignment
+);
 
 module.exports = router;

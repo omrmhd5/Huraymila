@@ -85,9 +85,21 @@ export const updateStandardFromSubmissions = async (
 };
 
 // Agency API functions
-export const getAllAgencies = async () => {
+export const getAllAgencies = async (token) => {
   try {
-    const response = await fetch(`${API_BASE_URL}/agencies`);
+    const headers = {
+      "Content-Type": "application/json",
+    };
+
+    // Add authorization header if token is provided
+    if (token) {
+      headers.Authorization = `Bearer ${token}`;
+    }
+
+    const response = await fetch(`${API_BASE_URL}/agencies`, {
+      headers,
+    });
+
     if (!response.ok) {
       throw new Error("Failed to fetch agencies");
     }
@@ -113,13 +125,19 @@ export const getAgencyById = async (id) => {
   }
 };
 
-export const createAgency = async (agencyData) => {
+export const createAgency = async (agencyData, token) => {
   try {
+    const headers = {
+      "Content-Type": "application/json",
+    };
+
+    if (token) {
+      headers.Authorization = `Bearer ${token}`;
+    }
+
     const response = await fetch(`${API_BASE_URL}/agencies`, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
+      headers,
       body: JSON.stringify(agencyData),
     });
     if (!response.ok) {
@@ -134,13 +152,19 @@ export const createAgency = async (agencyData) => {
   }
 };
 
-export const updateAgency = async (id, agencyData) => {
+export const updateAgency = async (id, agencyData, token) => {
   try {
+    const headers = {
+      "Content-Type": "application/json",
+    };
+
+    if (token) {
+      headers.Authorization = `Bearer ${token}`;
+    }
+
     const response = await fetch(`${API_BASE_URL}/agencies/${id}`, {
       method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
+      headers,
       body: JSON.stringify(agencyData),
     });
     if (!response.ok) {
@@ -154,10 +178,19 @@ export const updateAgency = async (id, agencyData) => {
   }
 };
 
-export const deleteAgency = async (id) => {
+export const deleteAgency = async (id, token) => {
   try {
+    const headers = {
+      "Content-Type": "application/json",
+    };
+
+    if (token) {
+      headers.Authorization = `Bearer ${token}`;
+    }
+
     const response = await fetch(`${API_BASE_URL}/agencies/${id}`, {
       method: "DELETE",
+      headers,
     });
     if (!response.ok) {
       throw new Error("Failed to delete agency");
@@ -174,16 +207,23 @@ export const deleteAgency = async (id) => {
 export const toggleAgencyAssignment = async (
   standardId,
   agencyId,
-  assigned
+  assigned,
+  token
 ) => {
   try {
+    const headers = {
+      "Content-Type": "application/json",
+    };
+
+    if (token) {
+      headers.Authorization = `Bearer ${token}`;
+    }
+
     const response = await fetch(
       `${API_BASE_URL}/standards/${standardId}/agency/${agencyId}/toggle`,
       {
         method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers,
         body: JSON.stringify({ assigned }),
       }
     );

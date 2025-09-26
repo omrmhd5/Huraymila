@@ -33,15 +33,15 @@ export const AuthProvider = ({ children }) => {
     setLoading(false);
   }, []);
 
-  // Agency login function
-  const loginAgency = async (email, password) => {
+  // Unified login function that works for both governor and agency
+  const login = async (email, password) => {
     try {
       setLoading(true);
 
       const response = await fetch(
         `${
           import.meta.env.VITE_API_BASE_URL || "http://localhost:5000/api"
-        }/agencies/login`,
+        }/auth/login`,
         {
           method: "POST",
           headers: {
@@ -60,12 +60,16 @@ export const AuthProvider = ({ children }) => {
 
       // Store token and user data
       localStorage.setItem("authToken", data.token);
-      localStorage.setItem("user", JSON.stringify(data.agency));
+      localStorage.setItem("user", JSON.stringify(data.user));
 
       setToken(data.token);
-      setUser(data.agency);
+      setUser(data.user);
 
-      return { success: true };
+      return {
+        success: true,
+        redirectTo: data.redirectTo,
+        userType: data.type,
+      };
     } catch (error) {
       console.error("Login error:", error);
       return { success: false, error: error.message };
@@ -100,7 +104,7 @@ export const AuthProvider = ({ children }) => {
     user,
     loading,
     token,
-    loginAgency,
+    login,
     logout,
     isAuthenticated,
     getAuthHeaders,

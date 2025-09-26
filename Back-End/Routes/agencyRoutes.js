@@ -1,7 +1,6 @@
 const express = require("express");
 const router = express.Router();
 const {
-  loginAgency,
   getAgencyProfile,
   getAssignedStandards,
   getAgencies,
@@ -10,18 +9,21 @@ const {
   updateAgency,
   deleteAgency,
 } = require("../Controllers/agencyController");
-const auth = require("../middleware/auth");
+const {
+  governorOnly,
+  agencyOnly,
+  governorOrAgency,
+} = require("../middleware/authProtection");
 
-// Public routes
-router.post("/login", loginAgency);
+// Protected routes
+router.get("/profile", agencyOnly, getAgencyProfile);
+router.get("/assigned-standards", agencyOnly, getAssignedStandards);
 
-// Protected routes (require JWT token)
-router.get("/profile", auth, getAgencyProfile);
-router.get("/assigned-standards", auth, getAssignedStandards);
-router.get("/", getAgencies);
-router.get("/:id", getAgencyById);
-router.post("/", createAgency);
-router.put("/:id", updateAgency);
-router.delete("/:id", deleteAgency);
+// Governor-only routes (agency management)
+router.get("/", governorOnly, getAgencies);
+router.get("/:id", governorOnly, getAgencyById);
+router.post("/", governorOnly, createAgency);
+router.put("/:id", governorOnly, updateAgency);
+router.delete("/:id", governorOnly, deleteAgency);
 
 module.exports = router;

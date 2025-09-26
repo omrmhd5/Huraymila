@@ -27,13 +27,11 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useTheme } from "@/contexts/ThemeContext";
-// Commented out useAuth import for development
-// import { useAuth } from "@/contexts/AuthContext";
+import { useAuth } from "@/contexts/AuthContext";
 
 const AdminLayout = () => {
   const { language, theme, setLanguage, setTheme } = useTheme();
-  // Commented out useAuth for development - no authentication required
-  // const { user, signOut } = useAuth();
+  const { user, logout } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const isRTL = language === "ar";
@@ -107,46 +105,34 @@ const AdminLayout = () => {
   };
 
   const current = content[language];
-  // Commented out user role state for development
-  // const [userRole, setUserRole] = useState(null);
-  // const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(true);
 
-  // Commented out useEffect for development
-  // useEffect(() => {
-  //   checkUserRole();
-  // }, [user]);
+  useEffect(() => {
+    checkUserAccess();
+  }, [user]);
 
-  // Commented out checkUserRole function for development
-  // const checkUserRole = async () => {
-  //   // Commented out authentication validation for development
-  //   // if (!user) {
-  //     // navigate("/auth");
-  //     // return;
-  //   // }
+  const checkUserAccess = async () => {
+    if (!user) {
+      navigate("/auth");
+      return;
+    }
 
-  //   // Commented out role checking for development
-  //   try {
-  //     // Mock implementation - simulate admin role check
-  //     await new Promise((resolve) => setTimeout(resolve, 1000));
+    // Check if user is a governor (admin)
+    if (user.type !== "governor") {
+      // Redirect agencies to their dashboard
+      if (user.type === "agency") {
+        navigate("/agency-dashboard");
+      } else {
+        navigate("/auth");
+      }
+      return;
+    }
 
-  //     // Check if user has admin role (for demo purposes, always grant access)
-  //     // In production, this should check user.role === "admin"
-  //     setUserRole("admin");
-  //   } catch (error) {
-  //     console.error("Error checking user role:", error);
-  //     // navigate("/"); // Commented out redirect
-  //   } finally {
-  //     setLoading(false);
-  //   }
-
-  //   // For development: immediately set admin role and skip loading
-  //   setUserRole("admin");
-  //   setLoading(false);
-  // };
+    setLoading(false);
+  };
 
   const handleSignOut = async () => {
-    // Commented out signOut for development
-    // await signOut();
+    logout();
     navigate("/");
   };
 
@@ -201,42 +187,21 @@ const AdminLayout = () => {
     setTheme(newTheme);
   };
 
-  // Commented out loading and role checks for development
-  // // Show loading state while checking role
-  // if (loading || userRole === null) {
-  //   return (
-  //     <div className="min-h-screen bg-background flex items-center justify-center">
-  //       <div className="text-center">
-  //         <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-  //         <p className="text-muted-foreground font-arabic">
-  //           {language === "ar"
-  //             ? "جاري التحقق من الصلاحيات..."
-  //             : "Checking permissions..."}
-  //         </p>
-  //       </div>
-  //     </div>
-  //   );
-  // }
-
-  // // Show unauthorized message if not admin
-  // if (userRole !== "admin") {
-  //   return (
-  //     <div className="min-h-screen bg-background flex items-center justify-center">
-  //     <div className="text-center">
-  //       <h1 className="text-2xl font-bold text-destructive mb-4">
-  //         {language === "ar" ? "غير مصرح لك بالوصول" : "Access Denied"}
-  //       </h1>
-  //       <p className="text-muted-foreground mb-4">
-  //         {language === "ar"
-  //           ? "هذه الصفحة مخصصة للمسؤولين فقط"
-  //           : "This page is for administrators only"}
-  //       </p>
-  //       <Button onClick={() => navigate("/")}>
-  //         {language === "ar" ? "العودة للصفحة الرئيسية" : "Back to Home"}
-  //       </Button>
-  //     </div>
-  //   );
-  // }
+  // Show loading state while checking role
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-muted-foreground font-arabic">
+            {language === "ar"
+              ? "جاري التحقق من الصلاحيات..."
+              : "Checking permissions..."}
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div
