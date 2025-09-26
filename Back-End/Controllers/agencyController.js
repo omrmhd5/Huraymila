@@ -2,6 +2,127 @@ const Agency = require("../Models/Agency");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
+// Agency login
+const loginAgency = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    // Validate required fields
+    if (!email || !password) {
+      return res.status(400).json({
+        success: false,
+        message: "Email and password are required",
+      });
+    }
+
+    // Find agency by email
+    const agency = await Agency.findOne({ email }).select("+password");
+
+    if (!agency) {
+      return res.status(401).json({
+        success: false,
+        message: "Invalid email or password",
+      });
+    }
+
+    // Check password
+    const isPasswordValid = await bcrypt.compare(password, agency.password);
+
+    if (!isPasswordValid) {
+      return res.status(401).json({
+        success: false,
+        message: "Invalid email or password",
+      });
+    }
+
+    // Generate JWT token
+    const token = jwt.sign(
+      {
+        agencyId: agency._id,
+        email: agency.email,
+        type: "agency",
+      },
+      process.env.JWT_SECRET || "your-secret-key",
+      { expiresIn: "7d" }
+    );
+
+    // Remove password from response
+    const agencyData = agency.toObject();
+    delete agencyData.password;
+
+    res.json({
+      success: true,
+      message: "Login successful",
+      token,
+      agency: agencyData,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Error during login",
+      error: error.message,
+    });
+  }
+};
+
+// Get agency profile (protected route)
+const getAgencyProfile = async (req, res) => {
+  try {
+    const agencyId = req.user.agencyId;
+
+    const agency = await Agency.findById(agencyId)
+      .populate("assignedStandards", "number standard requirements status")
+      .select("-password");
+
+    if (!agency) {
+      return res.status(404).json({
+        success: false,
+        message: "Agency not found",
+      });
+    }
+
+    res.json({
+      success: true,
+      data: agency,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Error fetching agency profile",
+      error: error.message,
+    });
+  }
+};
+
+// Get assigned standards for agency
+const getAssignedStandards = async (req, res) => {
+  try {
+    const agencyId = req.user.agencyId;
+
+    const agency = await Agency.findById(agencyId)
+      .populate("assignedStandards", "number standard requirements status")
+      .select("assignedStandards");
+
+    if (!agency) {
+      return res.status(404).json({
+        success: false,
+        message: "Agency not found",
+      });
+    }
+
+    res.json({
+      success: true,
+      standards: agency.assignedStandards || [],
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Error fetching assigned standards",
+      error: error.message,
+    });
+  }
+};
+
 // Get all agencies
 const getAgencies = async (req, res) => {
   try {
@@ -201,6 +322,9 @@ const deleteAgency = async (req, res) => {
 };
 
 module.exports = {
+  loginAgency,
+  getAgencyProfile,
+  getAssignedStandards,
   getAgencies,
   getAgencyById,
   createAgency,

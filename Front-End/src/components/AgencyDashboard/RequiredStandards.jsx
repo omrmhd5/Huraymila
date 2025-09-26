@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Card,
   CardContent,
@@ -19,9 +19,12 @@ import { Eye, Edit, Plus } from "lucide-react";
 import SubmissionModal from "@/components/AgencyDashboard/Modals/SubmissionModal";
 import { toast } from "sonner";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useAuth } from "@/contexts/AuthContext";
+import { agencyApi } from "@/lib/agencyApi";
 
-const RequiredStandards = ({ assignedStandards }) => {
+const RequiredStandards = ({ assignedStandards, loading = false }) => {
   const { t, language } = useLanguage();
+  const { token } = useAuth();
 
   // Component-specific state
   const [statusFilter, setStatusFilter] = useState("all");
@@ -36,8 +39,44 @@ const RequiredStandards = ({ assignedStandards }) => {
     submission: null,
   });
 
-  // Mock submissions data - in real app, this would come from API
+  // Real submissions data from API
   const [submissions, setSubmissions] = useState({});
+  const [submissionsLoading, setSubmissionsLoading] = useState(false);
+
+  // Load submissions when component mounts
+  useEffect(() => {
+    const loadSubmissions = async () => {
+      if (!token) return;
+
+      try {
+        setSubmissionsLoading(true);
+        const response = await agencyApi.getMySubmissions(token);
+
+        // Group submissions by standard number
+        const submissionsByStandard = {};
+        response.data.forEach((submission) => {
+          const standardNumber = submission.standardNumber;
+          if (!submissionsByStandard[standardNumber]) {
+            submissionsByStandard[standardNumber] = [];
+          }
+          submissionsByStandard[standardNumber].push(submission);
+        });
+
+        setSubmissions(submissionsByStandard);
+      } catch (error) {
+        console.error("Error loading submissions:", error);
+        toast.error(
+          language === "ar"
+            ? "فشل في تحميل التقديمات"
+            : "Failed to load submissions"
+        );
+      } finally {
+        setSubmissionsLoading(false);
+      }
+    };
+
+    loadSubmissions();
+  }, [token, language]);
 
   // Filter standards based on search and status
   const filteredStandards = assignedStandards.filter((standard) => {
@@ -104,21 +143,6 @@ const RequiredStandards = ({ assignedStandards }) => {
     }
   };
 
-  const getSubmissionTypeText = (type) => {
-    switch (type) {
-      case "text":
-        return t("requiredStandards.text");
-      case "pdf":
-        return t("requiredStandards.pdfFile");
-      case "photo":
-        return t("requiredStandards.photo");
-      case "video":
-        return t("requiredStandards.video");
-      default:
-        return t("requiredStandards.undefined");
-    }
-  };
-
   // Submission modal handlers
   const openSubmissionModal = (
     mode,
@@ -148,30 +172,145 @@ const RequiredStandards = ({ assignedStandards }) => {
   const handleSubmissionSubmit = async (submissionData) => {
     try {
       if (submissionModal.mode === "add") {
-        // Add new submission
-        setSubmissions((prev) => ({
-          ...prev,
-          [submissionData.standardId]: submissionData,
-        }));
-        toast.success(t("requiredStandards.submissionAdded"));
+        // Find the standard to get the standardNumber
+        const standard = assignedStandards.find(
+          (s) => s.id === submissionModal.standardId
+        );
+        if (!standard) {
+          throw new Error("Standard not found");
+        }
+
+        const apiData = {
+          standardNumber: standard.number,
+          title: submissionData.title,
+          description: submissionData.description,
+          notes: submissionData.notes,
+        };
+
+        const response = await agencyApi.createSubmission(
+          token,
+          apiData,
+          submissionData.files
+        );
+
+        // Update local state
+        setSubmissions((prev) => {
+          const standardNumber = standard.number;
+          const existingSubmissions = prev[standardNumber] || [];
+          return {
+            ...prev,
+            [standardNumber]: [...existingSubmissions, response.data],
+          };
+        });
+
+        toast.success(
+          language === "ar"
+            ? "تم إنشاء التقديم بنجاح"
+            : "Submission created successfully"
+        );
+
+        // Optionally trigger a refresh of standards to update their status
+        if (typeof window !== "undefined") {
+          // Dispatch a custom event to notify other components
+          window.dispatchEvent(
+            new CustomEvent("submissionUpdated", {
+              detail: { standardNumber: standard.number },
+            })
+          );
+        }
       } else if (submissionModal.mode === "edit") {
-        // Update existing submission
-        setSubmissions((prev) => ({
-          ...prev,
-          [submissionData.standardId]: submissionData,
-        }));
-        toast.success(t("requiredStandards.submissionUpdated"));
+        const updateData = {
+          title: submissionData.title,
+          description: submissionData.description,
+          notes: submissionData.notes,
+        };
+
+        // For updates, we need to handle existing files
+        // Keep existing files that weren't removed + add new files
+        const existingFileUrls = submissionData.existingFiles
+          ? submissionData.existingFiles.map((file) => file.url)
+          : [];
+
+        const response = await agencyApi.updateMySubmission(
+          token,
+          submissionModal.submission._id,
+          { ...updateData, existingFileUrls },
+          submissionData.files
+        );
+
+        // Update local state
+        setSubmissions((prev) => {
+          const standardNumber = submissionModal.submission.standardNumber;
+          const existingSubmissions = prev[standardNumber] || [];
+          const updatedSubmissions = existingSubmissions.map((sub) =>
+            sub._id === response.data._id ? response.data : sub
+          );
+          return {
+            ...prev,
+            [standardNumber]: updatedSubmissions,
+          };
+        });
+
+        toast.success(
+          language === "ar"
+            ? "تم تحديث التقديم بنجاح"
+            : "Submission updated successfully"
+        );
+
+        // Optionally trigger a refresh of standards to update their status
+        if (typeof window !== "undefined") {
+          // Dispatch a custom event to notify other components
+          window.dispatchEvent(
+            new CustomEvent("submissionUpdated", {
+              detail: {
+                standardNumber: submissionModal.submission.standardNumber,
+              },
+            })
+          );
+        }
       }
     } catch (error) {
       console.error("Error handling submission:", error);
-      toast.error(t("requiredStandards.errorSaving"));
+      toast.error(
+        language === "ar"
+          ? "حدث خطأ في معالجة التقديم"
+          : "Error processing submission"
+      );
     }
   };
 
   // Get submission for a standard
   const getSubmissionForStandard = (standardId) => {
-    return submissions[standardId] || null;
+    // Find the standard to get its number
+    const standard = assignedStandards.find((s) => s.id === standardId);
+    if (!standard) return null;
+
+    const standardSubmissions = submissions[standard.number] || [];
+    // Return the first submission for this standard (you might want to handle multiple submissions differently)
+    return standardSubmissions.length > 0 ? standardSubmissions[0] : null;
   };
+  if (loading) {
+    return (
+      <div className="space-y-6">
+        <Card>
+          <CardContent className="p-6">
+            <div className="text-center">
+              <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+              <p
+                className={`text-muted-foreground ${
+                  language === "ar" ? "font-arabic" : "font-sans"
+                }`}>
+                {language === "ar"
+                  ? "جاري تحميل المعايير..."
+                  : "Loading standards..."}
+              </p>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-6">
       {/* Standards Summary */}
@@ -389,10 +528,7 @@ const RequiredStandards = ({ assignedStandards }) => {
                     className={`flex items-start justify-between mb-3 ${
                       language === "ar" ? "flex-row-reverse" : ""
                     }`}>
-                    <div
-                      className={`flex items-center gap-3 ${
-                        language === "ar" ? "flex-row-reverse" : ""
-                      }`}>
+                    <div className={`flex items-center gap-3`}>
                       <span> </span>
                       <div
                         className={
@@ -405,11 +541,11 @@ const RequiredStandards = ({ assignedStandards }) => {
                           {language === "ar" ? (
                             <>
                               <span>{standard.standard}</span>
-                              <span>{`${standard.id}`}</span>
+                              <span>{`${standard.number}`}</span>
                             </>
                           ) : (
                             <>
-                              {standard.id}. {standard.standard}
+                              {standard.number}. {standard.standard}
                             </>
                           )}
                         </h3>
@@ -418,78 +554,16 @@ const RequiredStandards = ({ assignedStandards }) => {
                   </div>
 
                   <div
-                    className={`grid grid-cols-1 md:grid-cols-2 gap-4 text-sm mb-3 ${
-                      language === "ar" ? "rtl" : "ltr"
+                    className={`flex items-center gap-2 mb-3 ${
+                      language === "ar" ? "flex-row-reverse rtl" : "ltr"
                     }`}>
-                    {language === "ar" ? (
-                      <>
-                        <div
-                          className={`flex items-center gap-2 ${
-                            language === "ar" ? "flex-row-reverse" : ""
-                          }`}>
-                          <span
-                            className={`font-medium ${
-                              language === "ar" ? "font-arabic" : "font-sans"
-                            }`}>
-                            {language === "ar" ? "الحالة:" : "Status:"}
-                          </span>
-                          {getStandardStatusBadge(standard.status)}
-                        </div>
-                        <div
-                          className={`flex items-center gap-2 ${
-                            language === "ar" ? "flex-row-reverse" : ""
-                          }`}>
-                          <span
-                            className={`font-medium ${
-                              language === "ar" ? "font-arabic" : "font-sans"
-                            }`}>
-                            {language === "ar"
-                              ? "نوع التقديم:"
-                              : "Submission Type:"}
-                          </span>
-                          <span
-                            className={`text-muted-foreground ${
-                              language === "ar" ? "font-arabic" : "font-sans"
-                            }`}>
-                            {getSubmissionTypeText(standard.submissionType)}
-                          </span>
-                        </div>
-                      </>
-                    ) : (
-                      <>
-                        <div
-                          className={`flex items-center gap-2 ${
-                            language === "ar" ? "flex-row-reverse" : ""
-                          }`}>
-                          <span
-                            className={`font-medium ${
-                              language === "ar" ? "font-arabic" : "font-sans"
-                            }`}>
-                            {language === "ar"
-                              ? "نوع التقديم:"
-                              : "Submission Type:"}
-                          </span>
-                          <span
-                            className={`text-muted-foreground ${
-                              language === "ar" ? "font-arabic" : "font-sans"
-                            }`}>
-                            {getSubmissionTypeText(standard.submissionType)}
-                          </span>
-                        </div>
-                        <div
-                          className={`flex items-center gap-2 ${
-                            language === "ar" ? "flex-row-reverse" : ""
-                          }`}>
-                          <span
-                            className={`font-medium ${
-                              language === "ar" ? "font-arabic" : "font-sans"
-                            }`}>
-                            {language === "ar" ? "الحالة:" : "Status:"}
-                          </span>
-                          {getStandardStatusBadge(standard.status)}
-                        </div>
-                      </>
-                    )}
+                    <span
+                      className={`font-medium text-sm ${
+                        language === "ar" ? "font-arabic" : "font-sans"
+                      }`}>
+                      {language === "ar" ? "الحالة:" : "Status:"}
+                    </span>
+                    {getStandardStatusBadge(standard.status)}
                   </div>
 
                   <div className={`mb-3 ${language === "ar" ? "rtl" : "ltr"}`}>

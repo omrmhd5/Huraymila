@@ -13,6 +13,7 @@ import Contact from "./pages/Contact";
 import Auth from "./pages/Auth";
 import NotFound from "./pages/NotFound";
 import AgencyDashboard from "./pages/AgencyDashboard";
+import AgencyLogin from "./pages/AgencyLogin";
 import AgencyManagement from "./pages/AgencyManagement";
 import AdminDashboard from "./pages/AdminDashboard";
 import AdminLayout from "./pages/AdminLayout";
@@ -75,9 +76,8 @@ const App = () => (
                   />
                 </Route>
 
-                <Route path="/agency-dashboard" element={<AgencyDashboard />}>
-                  {" "}
-                </Route>
+                <Route path="/agency-login" element={<AgencyLogin />} />
+                <Route path="/agency-dashboard" element={<AgencyDashboard />} />
 
                 {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                 <Route path="*" element={<NotFound />} />

@@ -18,7 +18,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 
 const Navbar = () => {
-  const { user, signOut } = useAuth();
+  const { user, logout } = useAuth();
   const { language, theme, setLanguage, setTheme } = useTheme();
   const { t } = useLanguage();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -162,7 +162,7 @@ const Navbar = () => {
 
                     <button
                       onClick={() => {
-                        signOut();
+                        logout();
                         setIsUserMenuOpen(false);
                       }}
                       className="flex items-center gap-2 px-4 py-2 text-sm hover:bg-muted transition-colors w-full text-left text-destructive">
@@ -176,6 +176,12 @@ const Navbar = () => {
               <div className="flex items-center gap-2">
                 <Button size="sm" onClick={() => navigateToTop("/auth")}>
                   {t("nav.signInSignUp")}
+                </Button>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={() => navigateToTop("/agency-login")}>
+                  {language === "ar" ? "دخول الجهة" : "Agency Login"}
                 </Button>
               </div>
             )}
@@ -216,26 +222,49 @@ const Navbar = () => {
               ))}
 
               {/* Mobile Controls */}
-              <div className="flex items-center gap-2 pt-4 border-t border-border">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={handleLanguageChange}
-                  className="flex-1">
-                  <Globe className="w-4 h-4 mr-2" />
-                  {language === "ar" ? "English" : "عربي"}
-                </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={handleThemeChange}
-                  className="flex-1">
-                  {theme === "light" ? (
-                    <Moon className="w-4 h-4" />
-                  ) : (
-                    <Sun className="w-4 h-4" />
-                  )}
-                </Button>
+              <div className="flex flex-col gap-2 pt-4 border-t border-border">
+                <div className="flex items-center gap-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={handleLanguageChange}
+                    className="flex-1">
+                    <Globe className="w-4 h-4 mr-2" />
+                    {language === "ar" ? "English" : "عربي"}
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={handleThemeChange}
+                    className="flex-1">
+                    {theme === "light" ? (
+                      <Moon className="w-4 h-4" />
+                    ) : (
+                      <Sun className="w-4 h-4" />
+                    )}
+                  </Button>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Button
+                    size="sm"
+                    onClick={() => {
+                      navigateToTop("/auth");
+                      setIsMobileMenuOpen(false);
+                    }}
+                    className="flex-1">
+                    {t("nav.signInSignUp")}
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => {
+                      navigateToTop("/agency-login");
+                      setIsMobileMenuOpen(false);
+                    }}
+                    className="flex-1">
+                    {language === "ar" ? "دخول الجهة" : "Agency Login"}
+                  </Button>
+                </div>
               </div>
             </nav>
           </div>

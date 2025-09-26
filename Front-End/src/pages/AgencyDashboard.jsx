@@ -14,60 +14,120 @@ import {
   Sun,
   LogOut,
 } from "lucide-react";
-// Commented out useAuth for development
-// import { useAuth } from "@/contexts/AuthContext";
+import { useAuth } from "@/contexts/AuthContext";
 import { useTheme } from "@/contexts/ThemeContext";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useNavigate } from "react-router-dom";
-import Standards from "@/lib/standards";
+import { agencyApi } from "@/lib/agencyApi";
+import { getAllStandardsByNumber } from "@/lib/api";
+import { mapBackendStandardsToLanguageContext } from "@/lib/utils";
 import RequiredStandards from "@/components/AgencyDashboard/RequiredStandards";
 import Initiatives from "@/components/AgencyDashboard/Initiatives";
 import Volunteers from "@/components/AgencyDashboard/Volunteers";
+import { toast } from "sonner";
 
 const AgencyDashboard = () => {
-  // Commented out useAuth for development
-  // const { user, loading } = useAuth();
+  const { user, loading, logout, token } = useAuth();
   const { language, theme, setLanguage, setTheme } = useTheme();
   const { t } = useLanguage();
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("overview");
   const [showAddForm, setShowAddForm] = useState(false);
+  const [assignedStandards, setAssignedStandards] = useState([]);
+  const [standardsLoading, setStandardsLoading] = useState(true);
 
   const isRTL = language === "ar";
 
-  // Note: Submission modal state is now handled in RequiredStandards component
+  // Redirect to login if not authenticated
+  useEffect(() => {
+    if (!loading && !user) {
+      navigate("/agency-login");
+    }
+  }, [user, loading, navigate]);
 
-  // Note: statusFilter and searchTerm are now handled in RequiredStandards component
+  // Load assigned standards when component mounts
+  useEffect(() => {
+    const loadAssignedStandards = async () => {
+      if (!user) return;
 
-  // Commented out loading check for development
-  // if (loading) {
-  //   return (
-  //     <div className="min-h-screen bg-background flex items-center justify-center">
-  //       <div className="text-center">
-  //         <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-  //         <p className="text-muted-foreground">
-  //           {language === "ar" ? "جاري التحميل..." : "Loading..."}
-  //         </p>
-  //       </div>
-  //     </div>
-  //   );
-  // }
+      try {
+        setStandardsLoading(true);
 
-  // Mock data - matching AgencyManagement structure
+        // Get all standards from backend
+        const backendStandards = await getAllStandardsByNumber();
+        const languageStandards = t("standards");
+
+        // Map backend data to language context data
+        const mappedStandards = mapBackendStandardsToLanguageContext(
+          backendStandards,
+          languageStandards
+        );
+
+        // Get assigned standards for this agency
+        const response = await agencyApi.getAssignedStandards(token);
+        const assignedStandards = response.standards || [];
+
+        // Filter standards to only include those assigned to this agency
+        const agencyAssignedStandards = mappedStandards.filter((standard) => {
+          return assignedStandards.some((assignedStandard) => {
+            // Handle both populated objects and ID strings
+            const assignedId =
+              typeof assignedStandard === "object"
+                ? assignedStandard._id || assignedStandard.id
+                : assignedStandard;
+            return assignedId.toString() === standard._id.toString();
+          });
+        });
+
+        setAssignedStandards(agencyAssignedStandards);
+      } catch (error) {
+        console.error("Error loading assigned standards:", error);
+        toast.error(
+          language === "ar"
+            ? "فشل في تحميل المعايير المخصصة"
+            : "Failed to load assigned standards"
+        );
+      } finally {
+        setStandardsLoading(false);
+      }
+    };
+
+    loadAssignedStandards();
+  }, [user, token, language, t]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-muted-foreground">
+            {language === "ar" ? "جاري التحميل..." : "Loading..."}
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!user) {
+    return null; // Will redirect to login
+  }
+
+  // Use real agency data from authentication
   const agencyData = {
-    name:
-      language === "ar"
-        ? "مكتب تنسيق برنامج المدينة الصحية"
-        : "Healthy City Program Coordination Office",
-    description: "الجهة المسؤولة عن الصحة العامة في المدينة",
-    contactPerson: "د. أحمد محمد",
-    email: "ahmed@moh.gov.sa",
-    phone: "+966-11-123-4567",
-    address: "شارع الملك فهد، حريملاء",
-    agencyEmail: "health@huraymila.gov.sa",
-    agencyPassword: "health123",
-    initiatives: 12,
-    volunteers: 45,
+    name: user.name,
+    email: user.email,
+    contactPerson:
+      user.contactPerson?.name ||
+      (language === "ar" ? "غير محدد" : "Not specified"),
+    contactPersonEmail:
+      user.contactPerson?.email ||
+      (language === "ar" ? "غير محدد" : "Not specified"),
+    contactPersonPhone:
+      user.contactPerson?.phoneNumber ||
+      (language === "ar" ? "غير محدد" : "Not specified"),
+    address: user.address || (language === "ar" ? "غير محدد" : "Not specified"),
+    initiatives: 0, // Will be loaded from API later
+    volunteers: 0, // Will be loaded from API later
   };
 
   const initiatives = [
@@ -178,62 +238,19 @@ const AgencyDashboard = () => {
     },
   ];
 
-  // Get standards data and filter by agency name
-  const agencyName = agencyData.name;
-
-  // Get standards data dynamically
-  const [standards, agencyToStandardsMap] = Standards();
-
-  // Get assigned standards based on agency name
-  const getAssignedStandards = (agencyName) => {
-    // Find the agency key that matches the agency name
-    const agencyKey = Object.keys(agencyToStandardsMap).find(
-      (key) => key.includes(agencyName) || agencyName.includes(key)
-    );
-
-    if (!agencyKey) return [];
-
-    // Get the array of standard IDs for this agency
-    const standardIds = agencyToStandardsMap[agencyKey];
-
-    // Find the actual standard objects from records using the IDs
-    return standardIds
-      .map((id) => standards.records.find((standard) => standard.id === id))
-      .filter(Boolean); // Remove any undefined values
-  };
-
-  const assignedStandards = getAssignedStandards(agencyName).map(
-    (standard, index) => ({
-      id: standard.id,
-      standard: standard.standard,
-      requirement: standard.requirements?.[0] || "متطلب غير محدد",
-      status: standard.status || "didnt_submit", // Default to "didnt_submit" instead of "pending"
-      submissionType: getSubmissionTypeFromRequirements(standard.requirements),
-      description: standard.standard,
-      requirements: standard.requirements || [],
-    })
-  );
-
-  // Helper function to determine submission type based on requirements
-  function getSubmissionTypeFromRequirements(requirements) {
-    if (!requirements || requirements.length === 0) return "text";
-
-    const reqText = requirements.join(" ").toLowerCase();
-    if (
-      reqText.includes("صورة") ||
-      reqText.includes("صور") ||
-      reqText.includes("photo")
-    )
-      return "photo";
-    if (reqText.includes("فيديو") || reqText.includes("video")) return "video";
-    if (
-      reqText.includes("ملف") ||
-      reqText.includes("pdf") ||
-      reqText.includes("وثيقة")
-    )
-      return "pdf";
-    return "text";
-  }
+  // Process assigned standards for display
+  const processedStandards = assignedStandards.map((standard) => ({
+    id: standard._id || standard.id,
+    standard: standard.standard,
+    requirement:
+      standard.requirements?.[0] ||
+      (language === "ar" ? "متطلب غير محدد" : "Requirement not specified"),
+    status: standard.status || "didnt_submit",
+    description: standard.standard,
+    requirements: standard.requirements || [],
+    number: standard.number,
+    assigned_agencies: standard.assigned_agencies || [],
+  }));
 
   const handleLanguageChange = () => {
     const newLanguage = language === "ar" ? "en" : "ar";
@@ -246,8 +263,7 @@ const AgencyDashboard = () => {
   };
 
   const handleSignOut = async () => {
-    // Commented out signOut for development
-    // await signOut();
+    logout();
     navigate("/");
   };
 
@@ -410,7 +426,7 @@ const AgencyDashboard = () => {
                   {agencyData.name}
                 </h1>
                 <p className="text-lg text-muted-foreground mb-2">
-                  {agencyData.description}
+                  {agencyData.email}
                 </p>
                 <div className="grid grid-cols-2 gap-4 text-sm">
                   <div>
@@ -429,7 +445,7 @@ const AgencyDashboard = () => {
                       }`}>
                       {language === "ar" ? "البريد الإلكتروني:" : "Email:"}
                     </span>{" "}
-                    {agencyData.email}
+                    {agencyData.contactPersonEmail}
                   </div>
                   <div>
                     <span
@@ -438,7 +454,7 @@ const AgencyDashboard = () => {
                       }`}>
                       {language === "ar" ? "الهاتف:" : "Phone:"}
                     </span>{" "}
-                    {agencyData.phone}
+                    {agencyData.contactPersonPhone}
                   </div>
                   <div>
                     <span
@@ -534,7 +550,8 @@ const AgencyDashboard = () => {
           <TabsContent value="overview">
             <RequiredStandards
               language={language}
-              assignedStandards={assignedStandards}
+              assignedStandards={processedStandards}
+              loading={standardsLoading}
             />
           </TabsContent>
 

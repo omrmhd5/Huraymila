@@ -89,7 +89,17 @@ export const getStatusOptions = (language) => {
 
 // Format submission date
 export const formatSubmissionDate = (dateString, language) => {
+  if (!dateString) {
+    return language === "ar" ? "غير محدد" : "Not specified";
+  }
+
   const date = new Date(dateString);
+
+  // Check if the date is valid
+  if (isNaN(date.getTime())) {
+    return language === "ar" ? "تاريخ غير صحيح" : "Invalid date";
+  }
+
   return new Intl.DateTimeFormat(language === "ar" ? "ar-SA" : "en-US", {
     year: "numeric",
     month: "long",
