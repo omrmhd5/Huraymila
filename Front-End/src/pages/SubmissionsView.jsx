@@ -18,6 +18,9 @@ import {
 } from "@/components/ui/dialog";
 import { useTheme } from "@/contexts/ThemeContext";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useAuth } from "@/contexts/AuthContext";
+import { agencyApi } from "@/lib/agencyApi";
+import { toast } from "sonner";
 import {
   getAllStandardsByNumber,
   getSubmissionsByStandardNumber,
@@ -43,6 +46,7 @@ const SubmissionsView = () => {
   const navigate = useNavigate();
   const { language } = useTheme();
   const { t } = useLanguage();
+  const { token } = useAuth();
   const [selectedSubmission, setSelectedSubmission] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [standardsList, setStandardsList] = useState([]);
@@ -85,13 +89,14 @@ const SubmissionsView = () => {
 
   // Function to determine agency submission status
   const getAgencySubmissionStatus = (standard) => {
-    // Real implementation would fetch submission status from backend
     const agencyStatuses = {};
     standard.assigned_agencies.forEach((agency) => {
       // Check if agency has submitted for this standard
-      const hasSubmitted = submissions.some(
-        (submission) => submission.agency === agency
-      );
+      const hasSubmitted = submissions.some((submission) => {
+        const agencyName =
+          submission.agency?.name || submission.agency?.name_ar;
+        return agencyName === agency;
+      });
       agencyStatuses[agency] = hasSubmitted ? "submitted" : "not_submitted";
     });
     return agencyStatuses;
@@ -192,6 +197,14 @@ const SubmissionsView = () => {
     setSelectedSubmission(null);
   };
 
+  const formatFileSize = (bytes) => {
+    if (bytes === 0) return "0 Bytes";
+    const k = 1024;
+    const sizes = ["Bytes", "KB", "MB", "GB"];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i];
+  };
+
   const renderModalContent = () => {
     if (!selectedSubmission) return null;
 
@@ -237,21 +250,111 @@ const SubmissionsView = () => {
                     {t("submissionsView.files")} (
                     {selectedSubmission.filesUrls.length})
                   </h3>
-                  <div className="space-y-2">
-                    {selectedSubmission.filesUrls.map((url, index) => (
-                      <div
-                        key={index}
-                        className="flex items-center gap-2 p-2 bg-muted rounded">
-                        <FileText className="w-4 h-4 text-muted-foreground" />
-                        <a
-                          href={url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-sm text-blue-600 hover:underline">
-                          {t("submissionsView.file")} {index + 1}
-                        </a>
-                      </div>
-                    ))}
+                  <div className="space-y-3">
+                    {selectedSubmission.filesUrls.map((url, index) => {
+                      // Extract filename from URL
+                      const filename = url.split("/").pop();
+                      const fileExtension =
+                        filename.split(".").pop()?.toLowerCase() || "";
+
+                      return (
+                        <div
+                          key={index}
+                          className={`flex items-center gap-3 p-4 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors ${
+                            language === "ar" ? "flex-row-reverse" : ""
+                          }`}>
+                          {/* File Icon */}
+                          <div className="flex-shrink-0">
+                            <div className="w-10 h-10 rounded-lg flex items-center justify-center bg-blue-100">
+                              <FileText className="w-5 h-5 text-blue-600" />
+                            </div>
+                          </div>
+
+                          {/* File Details */}
+                          <div
+                            className={`flex-1 min-w-0 ${
+                              language === "ar" ? "text-right" : "text-left"
+                            }`}>
+                            <div className="flex items-center gap-2">
+                              <p
+                                className={`text-sm font-medium text-gray-900 truncate ${
+                                  language === "ar"
+                                    ? "font-arabic"
+                                    : "font-sans"
+                                }`}>
+                                {filename}
+                              </p>
+                            </div>
+                            <div className="flex items-center gap-2 mt-1">
+                              {fileExtension && (
+                                <p
+                                  className={`text-xs text-gray-500 ${
+                                    language === "ar"
+                                      ? "font-arabic"
+                                      : "font-sans"
+                                  }`}>
+                                  {fileExtension.toUpperCase()}
+                                </p>
+                              )}
+                            </div>
+                          </div>
+
+                          {/* Download Button */}
+                          <div className="flex-shrink-0">
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="text-blue-600 hover:text-blue-800"
+                              onClick={async () => {
+                                try {
+                                  // Extract submission ID and filename from file URL
+                                  // URL format: "/submissions/{submissionId}/{filename}"
+                                  const urlParts = url.split("/");
+                                  const submissionId = urlParts[2];
+                                  const filename = urlParts[3];
+
+                                  if (!token) {
+                                    toast.error(
+                                      language === "ar"
+                                        ? "يرجى تسجيل الدخول لتحميل الملفات"
+                                        : "Please log in to download files"
+                                    );
+                                    return;
+                                  }
+
+                                  // Download using secure API
+                                  const blob =
+                                    await agencyApi.downloadSubmissionFile(
+                                      token,
+                                      submissionId,
+                                      filename
+                                    );
+
+                                  // Create download link
+                                  const downloadUrl =
+                                    window.URL.createObjectURL(blob);
+                                  const a = document.createElement("a");
+                                  a.href = downloadUrl;
+                                  a.download = filename;
+                                  document.body.appendChild(a);
+                                  a.click();
+                                  window.URL.revokeObjectURL(downloadUrl);
+                                  document.body.removeChild(a);
+                                } catch (error) {
+                                  console.error("Download error:", error);
+                                  toast.error(
+                                    language === "ar"
+                                      ? "فشل في تحميل الملف"
+                                      : "Failed to download file"
+                                  );
+                                }
+                              }}>
+                              <Download className="w-4 h-4" />
+                            </Button>
+                          </div>
+                        </div>
+                      );
+                    })}
                   </div>
                 </div>
               )}
@@ -588,7 +691,62 @@ const SubmissionsView = () => {
                         <Eye className="w-4 h-4 mr-1" />
                         {t("submissionsView.view")}
                       </Button>
-                      <Button size="sm" variant="outline">
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={async () => {
+                          if (
+                            !submission.filesUrls ||
+                            submission.filesUrls.length === 0
+                          ) {
+                            toast.error(
+                              language === "ar"
+                                ? "لا توجد ملفات للتحميل"
+                                : "No files to download"
+                            );
+                            return;
+                          }
+
+                          // Download first file or show file selection if multiple
+                          try {
+                            const firstFileUrl = submission.filesUrls[0];
+                            const urlParts = firstFileUrl.split("/");
+                            const submissionId = urlParts[2];
+                            const filename = urlParts[3];
+
+                            if (!token) {
+                              toast.error(
+                                language === "ar"
+                                  ? "يرجى تسجيل الدخول لتحميل الملفات"
+                                  : "Please log in to download files"
+                              );
+                              return;
+                            }
+
+                            const blob = await agencyApi.downloadSubmissionFile(
+                              token,
+                              submissionId,
+                              filename
+                            );
+
+                            const downloadUrl =
+                              window.URL.createObjectURL(blob);
+                            const a = document.createElement("a");
+                            a.href = downloadUrl;
+                            a.download = filename;
+                            document.body.appendChild(a);
+                            a.click();
+                            window.URL.revokeObjectURL(downloadUrl);
+                            document.body.removeChild(a);
+                          } catch (error) {
+                            console.error("Download error:", error);
+                            toast.error(
+                              language === "ar"
+                                ? "فشل في تحميل الملف"
+                                : "Failed to download file"
+                            );
+                          }
+                        }}>
                         <Download className="w-4 h-4" />
                       </Button>
                     </div>

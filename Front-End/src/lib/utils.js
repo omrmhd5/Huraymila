@@ -58,31 +58,37 @@ export const updateStandardsFromSubmissions = async (
   const updatePromises = standards.map(async (standard) => {
     const submissions = submissionsMap[standard.number] || [];
 
-    // Calculate status based on submissions
+    // Calculate status based on ALL submissions
     let calculatedStatus = "didnt_submit";
     let calculatedProgress = 0;
 
-    if (submissions.length > 0) {
+    if (submissions.length === 0) {
+      // No submissions at all
+      calculatedStatus = "didnt_submit";
+      calculatedProgress = 0;
+    } else {
+      // Check the status of all submissions
       const approvedCount = submissions.filter(
         (sub) => sub.status === "approved"
       ).length;
       const rejectedCount = submissions.filter(
         (sub) => sub.status === "rejected"
       ).length;
-      const pendingCount = submissions.filter(
-        (sub) => sub.status === "pending"
-      ).length;
+      const totalSubmissions = submissions.length;
 
-      if (approvedCount === submissions.length) {
+      if (approvedCount === totalSubmissions) {
+        // All submissions are approved
         calculatedStatus = "approved";
         calculatedProgress = 100;
-      } else if (rejectedCount === submissions.length) {
+      } else if (rejectedCount === totalSubmissions) {
+        // All submissions are rejected
         calculatedStatus = "rejected";
         calculatedProgress = 0;
-      } else if (approvedCount > 0 || pendingCount > 0) {
+      } else {
+        // Mix of statuses OR some pending submissions
         calculatedStatus = "pending_approval";
         calculatedProgress = Math.round(
-          (approvedCount / submissions.length) * 100
+          (approvedCount / totalSubmissions) * 100
         );
       }
     }

@@ -27,62 +27,46 @@ const updateStandardStatus = async (standardNumber) => {
       return;
     }
 
-    // Count submissions by status
-    const statusCounts = {
-      approved: 0,
-      rejected: 0,
-      pending: 0,
-      didnt_submit: 0,
-    };
-
-    // Create a map of agencies that have submitted
-    const agenciesWithSubmissions = new Set();
-
-    submissions.forEach((submission) => {
-      agenciesWithSubmissions.add(submission.agency.toString());
-
-      if (submission.status === "approved") {
-        statusCounts.approved++;
-      } else if (submission.status === "rejected") {
-        statusCounts.rejected++;
-      } else if (submission.status === "pending") {
-        statusCounts.pending++;
-      }
-    });
-
-    // Count agencies that haven't submitted anything
-    statusCounts.didnt_submit = totalAgencies - agenciesWithSubmissions.size;
-
-    // Calculate progress (percentage of agencies that have approved submissions)
-    const progress = Math.round((statusCounts.approved / totalAgencies) * 100);
-
-    // Determine overall standard status based on submission statuses
+    // Determine overall standard status and progress based on ALL submissions
     let overallStatus;
+    let progress;
 
-    if (statusCounts.approved === totalAgencies) {
-      // All agencies have approved submissions
-      overallStatus = "approved";
-    } else if (
-      statusCounts.approved > 0 &&
-      statusCounts.pending === 0 &&
-      statusCounts.rejected === 0 &&
-      statusCounts.didnt_submit === 0
-    ) {
-      // Some approved, no pending/rejected/unsubmitted
-      overallStatus = "approved";
-    } else if (statusCounts.pending > 0) {
-      // Any pending submissions
-      overallStatus = "pending_approval";
-    } else if (statusCounts.approved > 0) {
-      // Some approved, but also some rejected or unsubmitted
-      overallStatus = "pending_approval";
-    } else if (statusCounts.rejected > 0 && statusCounts.didnt_submit === 0) {
-      // All submitted but all rejected
-      overallStatus = "rejected";
-    } else {
-      // Default case - not all submitted or mix of statuses
+    if (submissions.length === 0) {
+      // No submissions at all
       overallStatus = "didnt_submit";
+      progress = 0;
+    } else {
+      // Check the status of all submissions
+      const approvedCount = submissions.filter(
+        (sub) => sub.status === "approved"
+      ).length;
+      const rejectedCount = submissions.filter(
+        (sub) => sub.status === "rejected"
+      ).length;
+      const totalSubmissions = submissions.length;
+
+      // Calculate progress based on approved submissions
+      progress = Math.round((approvedCount / totalSubmissions) * 100);
+
+      if (approvedCount === totalSubmissions) {
+        // All submissions are approved
+        overallStatus = "approved";
+      } else if (rejectedCount === totalSubmissions) {
+        // All submissions are rejected
+        overallStatus = "rejected";
+      } else {
+        // Mix of statuses OR some pending submissions
+        overallStatus = "pending_approval";
+      }
     }
+
+    // Create status counts for logging
+    const statusCounts = {
+      approved: submissions.filter((sub) => sub.status === "approved").length,
+      rejected: submissions.filter((sub) => sub.status === "rejected").length,
+      pending: submissions.filter((sub) => sub.status === "pending").length,
+      total_submissions: submissions.length,
+    };
 
     // Update the standard
     await Standard.findOneAndUpdate(
@@ -99,7 +83,7 @@ const updateStandardStatus = async (standardNumber) => {
       `Updated Standard ${standardNumber}: status=${overallStatus}, progress=${progress}%`
     );
     console.log(
-      `Breakdown: approved=${statusCounts.approved}, pending=${statusCounts.pending}, rejected=${statusCounts.rejected}, didnt_submit=${statusCounts.didnt_submit}`
+      `Submission breakdown: approved=${statusCounts.approved}, pending=${statusCounts.pending}, rejected=${statusCounts.rejected}, total=${statusCounts.total_submissions}`
     );
 
     return {

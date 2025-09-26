@@ -163,6 +163,17 @@ export const agencyApi = {
       formData.append("notes", submissionData.notes);
     }
 
+    // Add existing file URLs to keep
+    if (
+      submissionData.existingFileUrls &&
+      Array.isArray(submissionData.existingFileUrls)
+    ) {
+      formData.append(
+        "existingFileUrls",
+        JSON.stringify(submissionData.existingFileUrls)
+      );
+    }
+
     // Add files if provided
     files.forEach((file) => {
       formData.append("files", file);
@@ -186,5 +197,34 @@ export const agencyApi = {
     }
 
     return response.json();
+  },
+
+  // Download submission file
+  downloadSubmissionFile: async (token, submissionId, filename) => {
+    const response = await fetch(
+      `${API_BASE_URL}/submissions/${submissionId}/files/${encodeURIComponent(
+        filename
+      )}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || "Failed to download file");
+    }
+
+    // Return the blob for download
+    return response.blob();
+  },
+
+  // Get file URL for viewing/downloading
+  getFileUrl: (submissionId, filename) => {
+    return `${API_BASE_URL}/submissions/${submissionId}/files/${encodeURIComponent(
+      filename
+    )}`;
   },
 };

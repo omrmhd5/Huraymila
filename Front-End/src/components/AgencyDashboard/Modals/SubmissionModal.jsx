@@ -29,6 +29,8 @@ import {
 } from "@/lib/submissions";
 import { Upload, X, File } from "lucide-react";
 import { toast } from "sonner";
+import { useAuth } from "@/contexts/AuthContext";
+import { agencyApi } from "@/lib/agencyApi";
 
 const SubmissionModal = ({
   isOpen,
@@ -40,6 +42,7 @@ const SubmissionModal = ({
   onSubmit,
 }) => {
   const { language } = useTheme();
+  const { token } = useAuth();
   const [formData, setFormData] = useState({
     title: "",
     description: "",
@@ -158,11 +161,11 @@ const SubmissionModal = ({
     });
 
     if (validFiles.length > 0) {
-      // Mark new files as not existing
-      const newFiles = validFiles.map((file) => ({
-        ...file,
-        isExisting: false,
-      }));
+      // Mark new files as not existing by adding a property to the File object
+      const newFiles = validFiles.map((file) => {
+        file.isExisting = false;
+        return file;
+      });
 
       setFormData((prev) => ({
         ...prev,
@@ -438,7 +441,7 @@ const SubmissionModal = ({
                                 {file.name || `File ${index + 1}`}
                               </p>
                               <div className="flex items-center gap-2 mt-1">
-                                {file.size && (
+                                {file.size > 0 && (
                                   <p
                                     className={`text-xs text-gray-500 ${
                                       language === "ar"
@@ -447,19 +450,6 @@ const SubmissionModal = ({
                                     }`}>
                                     {formatFileSize(file.size)}
                                   </p>
-                                )}
-                                {file.type && (
-                                  <>
-                                    <span className="text-gray-300">•</span>
-                                    <p
-                                      className={`text-xs text-gray-500 ${
-                                        language === "ar"
-                                          ? "font-arabic"
-                                          : "font-sans"
-                                      }`}>
-                                      {file.type}
-                                    </p>
-                                  </>
                                 )}
                               </div>
                             </div>
@@ -471,13 +461,47 @@ const SubmissionModal = ({
                                   variant="ghost"
                                   size="sm"
                                   className="text-blue-600 hover:text-blue-800"
-                                  onClick={() => {
-                                    // Download existing file
-                                    const API_BASE_URL =
-                                      import.meta.env.VITE_API_BASE_URL ||
-                                      "http://localhost:5000";
-                                    const fileUrl = `${API_BASE_URL}/public${file.url}`;
-                                    window.open(fileUrl, "_blank");
+                                  onClick={async () => {
+                                    try {
+                                      // Extract submission ID and filename from file URL
+                                      // URL format: "/submissions/{submissionId}/{filename}"
+                                      const urlParts = file.url.split("/");
+                                      const submissionId = urlParts[2];
+                                      const filename = urlParts[3];
+
+                                      if (!token) {
+                                        toast.error(
+                                          "Please log in to download files"
+                                        );
+                                        return;
+                                      }
+
+                                      // Download using secure API
+                                      const blob =
+                                        await agencyApi.downloadSubmissionFile(
+                                          token,
+                                          submissionId,
+                                          filename
+                                        );
+
+                                      // Create download link
+                                      const url =
+                                        window.URL.createObjectURL(blob);
+                                      const a = document.createElement("a");
+                                      a.href = url;
+                                      a.download = filename;
+                                      document.body.appendChild(a);
+                                      a.click();
+                                      window.URL.revokeObjectURL(url);
+                                      document.body.removeChild(a);
+                                    } catch (error) {
+                                      console.error("Download error:", error);
+                                      toast.error(
+                                        language === "ar"
+                                          ? "فشل في تحميل الملف"
+                                          : "Failed to download file"
+                                      );
+                                    }
                                   }}>
                                   <svg
                                     className="w-4 h-4"
@@ -670,6 +694,14 @@ const SubmissionModal = ({
                       ? "جميع أنواع الملفات مقبولة"
                       : "All file types accepted"}
                   </p>
+
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={triggerFileUpload}
+                    className="mt-2">
+                    {language === "ar" ? "اختيار الملفات" : "Choose Files"}
+                  </Button>
                 </div>
               </div>
 
@@ -696,17 +728,8 @@ const SubmissionModal = ({
                         }`}>
                         {/* File Icon */}
                         <div className="flex-shrink-0">
-                          <div
-                            className={`w-10 h-10 rounded-lg flex items-center justify-center ${
-                              file.isExisting ? "bg-green-100" : "bg-blue-100"
-                            }`}>
-                            <File
-                              className={`w-5 h-5 ${
-                                file.isExisting
-                                  ? "text-green-600"
-                                  : "text-blue-600"
-                              }`}
-                            />
+                          <div className="w-10 h-10 rounded-lg flex items-center justify-center bg-blue-100">
+                            <File className="w-5 h-5 text-blue-600" />
                           </div>
                         </div>
 
@@ -722,11 +745,6 @@ const SubmissionModal = ({
                               }`}>
                               {file.name}
                             </p>
-                            {file.isExisting && (
-                              <span className="px-2 py-1 text-xs bg-green-100 text-green-800 rounded-full">
-                                {language === "ar" ? "موجود" : "Existing"}
-                              </span>
-                            )}
                           </div>
                           <div className="flex items-center gap-2 mt-1">
                             {file.size > 0 && (

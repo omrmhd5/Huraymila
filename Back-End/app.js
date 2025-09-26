@@ -15,8 +15,8 @@ const PORT = process.env.PORT || 5000;
 app.use(cors());
 app.use(express.json());
 
-// Serve static files from public directory
-app.use("/public", express.static("public"));
+// Serve uploaded submission files
+app.use("/submissions", express.static("submissions"));
 
 // Create API router
 const apiRouter = express.Router();

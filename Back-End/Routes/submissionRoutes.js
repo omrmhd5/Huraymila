@@ -8,6 +8,7 @@ const {
   updateSubmissionStatus,
   updateMySubmission,
   getAllSubmissions,
+  downloadSubmissionFile,
 } = require("../Controllers/submissionController");
 const auth = require("../middleware/auth");
 const { upload } = require("../middleware/fileUpload");
@@ -36,5 +37,8 @@ router.patch("/:id/status", updateSubmissionStatus);
 
 // Update my submission (agency)
 router.put("/:id", auth, upload.array("files", 10), updateMySubmission);
+
+// Download submission file (authenticated users only)
+router.get("/:submissionId/files/:filename", auth, downloadSubmissionFile);
 
 module.exports = router;

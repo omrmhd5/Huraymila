@@ -129,14 +129,47 @@ const StandardsManagement = () => {
       selectedAgency === "all" ||
       standard.assigned_agencies.includes(selectedAgency);
 
-    // Status filtering logic based on database status
+    // Status filtering logic based on calculated status
     const matchesStatus =
-      selectedStatus === "all" || standard.status === selectedStatus;
+      selectedStatus === "all" ||
+      getCalculatedStatus(standard) === selectedStatus;
 
     return matchesSearch && matchesAgency && matchesStatus;
   });
 
+  // Helper function to calculate display status based on submissions
+  const getCalculatedStatus = (standard) => {
+    const submissions = submissionsData[standard.number] || [];
+
+    if (submissions.length === 0) {
+      // No submissions at all
+      return "didnt_submit";
+    } else {
+      // Check the status of all submissions
+      const approvedCount = submissions.filter(
+        (sub) => sub.status === "approved"
+      ).length;
+      const rejectedCount = submissions.filter(
+        (sub) => sub.status === "rejected"
+      ).length;
+      const totalSubmissions = submissions.length;
+
+      if (approvedCount === totalSubmissions) {
+        // All submissions are approved
+        return "approved";
+      } else if (rejectedCount === totalSubmissions) {
+        // All submissions are rejected
+        return "rejected";
+      } else {
+        // Mix of statuses OR some pending submissions
+        return "pending_approval";
+      }
+    }
+  };
+
   const getStatusBadge = (standard) => {
+    const displayStatus = getCalculatedStatus(standard);
+
     const statuses = [
       {
         value: "approved",
@@ -165,7 +198,7 @@ const StandardsManagement = () => {
     ];
 
     const status =
-      statuses.find((s) => s.value === standard.status) || statuses[2];
+      statuses.find((s) => s.value === displayStatus) || statuses[2];
 
     return (
       <Badge
@@ -254,24 +287,30 @@ const StandardsManagement = () => {
             color: "text-foreground",
           },
           {
-            value: standardsList.filter((s) => s.status === "approved").length,
+            value: standardsList.filter(
+              (s) => getCalculatedStatus(s) === "approved"
+            ).length,
             label: t("standardsManagement.approved"),
             color: "text-green-600",
           },
           {
-            value: standardsList.filter((s) => s.status === "pending_approval")
-              .length,
+            value: standardsList.filter(
+              (s) => getCalculatedStatus(s) === "pending_approval"
+            ).length,
             label: t("standardsManagement.pendingApproval"),
             color: "text-yellow-600",
           },
           {
-            value: standardsList.filter((s) => s.status === "rejected").length,
+            value: standardsList.filter(
+              (s) => getCalculatedStatus(s) === "rejected"
+            ).length,
             label: t("standardsManagement.rejected"),
             color: "text-red-500",
           },
           {
-            value: standardsList.filter((s) => s.status === "didnt_submit")
-              .length,
+            value: standardsList.filter(
+              (s) => getCalculatedStatus(s) === "didnt_submit"
+            ).length,
             label: t("standardsManagement.didntSubmit"),
             color: "text-gray-400",
           },
