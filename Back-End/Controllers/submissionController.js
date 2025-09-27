@@ -374,7 +374,7 @@ const downloadSubmissionFile = async (req, res) => {
     }
 
     // Check if file exists in submission
-    const fileUrl = `/submissions/${submissionId}/${filename}`;
+    const fileUrl = `/public/submissions/${submissionId}/${filename}`;
     const fileExists = submission.filesUrls.includes(fileUrl);
 
     if (!fileExists) {

@@ -40,6 +40,10 @@ const initiativeSchema = new mongoose.Schema(
       ref: "Agency",
       required: true,
     },
+    imageUrl: {
+      type: String,
+      required: false,
+    },
     volunteers: [
       {
         name: {

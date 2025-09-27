@@ -1,4 +1,10 @@
 const Initiative = require("../Models/Initiative");
+const {
+  moveImageToInitiativeFolder,
+  deleteInitiativeImage,
+  deleteInitiativeFolder,
+  cleanupTempFiles,
+} = require("../middleware/initiativeFileUpload");
 
 // Get all initiatives
 const getAllInitiatives = async (req, res) => {
@@ -125,6 +131,10 @@ const createInitiative = async (req, res) => {
 
     // Validate required fields
     if (!title || !description || !startDate || !endDate || !maxVolunteers) {
+      // Clean up uploaded file if validation fails
+      if (req.file) {
+        cleanupTempFiles(req.file);
+      }
       return res.status(400).json({
         success: false,
         message: "Missing required fields",
@@ -135,13 +145,17 @@ const createInitiative = async (req, res) => {
     const start = new Date(startDate);
     const end = new Date(endDate);
     if (end <= start) {
+      // Clean up uploaded file if validation fails
+      if (req.file) {
+        cleanupTempFiles(req.file);
+      }
       return res.status(400).json({
         success: false,
         message: "End date must be after start date",
       });
     }
 
-    // Create new initiative
+    // Create new initiative first to get the ID
     const initiative = new Initiative({
       title,
       description,
@@ -154,6 +168,32 @@ const createInitiative = async (req, res) => {
     });
 
     await initiative.save();
+
+    // Handle image upload if provided
+    if (req.file) {
+      try {
+        // Move image to initiative-specific folder
+        const imageUrl = moveImageToInitiativeFolder(
+          initiative._id.toString(),
+          req.file
+        );
+        // Update initiative with image URL
+        initiative.imageUrl = imageUrl;
+        await initiative.save();
+      } catch (error) {
+        // If image moving fails, clean up and delete the initiative
+        console.error("Error moving image:", error);
+        await Initiative.findByIdAndDelete(initiative._id);
+        cleanupTempFiles(req.file);
+
+        return res.status(500).json({
+          success: false,
+          message: "Error processing uploaded image",
+          error: error.message,
+        });
+      }
+    }
+
     await initiative.populate("agency", "name email");
 
     res.status(201).json({
@@ -162,6 +202,11 @@ const createInitiative = async (req, res) => {
       data: initiative,
     });
   } catch (error) {
+    // Clean up uploaded file on error
+    if (req.file) {
+      cleanupTempFiles(req.file);
+    }
+
     res.status(500).json({
       success: false,
       message: "Error creating initiative",
@@ -212,6 +257,27 @@ const updateInitiative = async (req, res) => {
     if (status !== undefined) updateData.status = status;
     if (maxVolunteers !== undefined) updateData.maxVolunteers = maxVolunteers;
     if (volunteers !== undefined) updateData.volunteers = volunteers;
+
+    // Handle image upload
+    if (req.file) {
+      try {
+        // Delete old image if it exists
+        if (existingInitiative.imageUrl) {
+          deleteInitiativeImage(existingInitiative.imageUrl);
+        }
+        // Move new image to initiative-specific folder
+        const imageUrl = moveImageToInitiativeFolder(id, req.file);
+        updateData.imageUrl = imageUrl;
+      } catch (error) {
+        // Clean up uploaded file if moving fails
+        cleanupTempFiles(req.file);
+        return res.status(500).json({
+          success: false,
+          message: "Error processing uploaded image",
+          error: error.message,
+        });
+      }
+    }
 
     // Validate dates if both are provided
     if (updateData.startDate && updateData.endDate) {
@@ -266,6 +332,9 @@ const deleteInitiative = async (req, res) => {
         message: "You can only delete your own initiatives",
       });
     }
+
+    // Delete entire initiative folder (including image)
+    deleteInitiativeFolder(id);
 
     await Initiative.findByIdAndDelete(id);
 

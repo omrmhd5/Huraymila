@@ -82,17 +82,21 @@ const Initiatives = ({ language }) => {
     }
   };
 
-  const handleCreateInitiative = async (formData) => {
+  const handleCreateInitiative = async (formData, imageFile = null) => {
     try {
       setActionLoading(true);
-      const response = await initiativeApi.createInitiative(token, {
-        title: formData.title,
-        description: formData.description,
-        startDate: formData.startDate,
-        endDate: formData.endDate,
-        status: formData.status,
-        maxVolunteers: parseInt(formData.maxVolunteers),
-      });
+      const response = await initiativeApi.createInitiative(
+        token,
+        {
+          title: formData.title,
+          description: formData.description,
+          startDate: formData.startDate,
+          endDate: formData.endDate,
+          status: formData.status,
+          maxVolunteers: parseInt(formData.maxVolunteers),
+        },
+        imageFile
+      );
 
       toast.success(
         t("initiatives.createSuccess") || "Initiative created successfully"
@@ -107,7 +111,11 @@ const Initiatives = ({ language }) => {
     }
   };
 
-  const handleUpdateInitiative = async (initiativeId, formData) => {
+  const handleUpdateInitiative = async (
+    initiativeId,
+    formData,
+    imageFile = null
+  ) => {
     try {
       setActionLoading(true);
       const response = await initiativeApi.updateInitiative(
@@ -120,7 +128,8 @@ const Initiatives = ({ language }) => {
           endDate: formData.endDate,
           status: formData.status,
           maxVolunteers: parseInt(formData.maxVolunteers),
-        }
+        },
+        imageFile
       );
 
       toast.success(
@@ -501,6 +510,24 @@ const Initiatives = ({ language }) => {
                     className={`flex items-start justify-between mb-4 ${
                       language === "ar" ? "flex-row-reverse" : "flex-row"
                     }`}>
+                    {/* Initiative Image */}
+                    {initiative.imageUrl && (
+                      <div
+                        className={`${
+                          language === "ar" ? "ml-4" : "mr-4"
+                        } flex-shrink-0`}>
+                        <img
+                          src={`${
+                            import.meta.env.VITE_API_BASE_URL?.replace(
+                              "/api",
+                              ""
+                            ) || "http://localhost:5000"
+                          }${initiative.imageUrl}`}
+                          alt={initiative.title}
+                          className="w-24 h-24 object-cover rounded-lg border"
+                        />
+                      </div>
+                    )}
                     <div
                       className={`flex-1 ${
                         language === "ar" ? "text-right" : "text-left"
@@ -640,13 +667,14 @@ const Initiatives = ({ language }) => {
         initiative={initiativeModal.initiative}
         formData={initiativeForm}
         onFormChange={setInitiativeForm}
-        onSubmit={(formData) => {
+        onSubmit={(formData, imageFile) => {
           if (initiativeModal.mode === "add") {
-            handleCreateInitiative(formData);
+            handleCreateInitiative(formData, imageFile);
           } else {
             handleUpdateInitiative(
               initiativeModal.initiative.id || initiativeModal.initiative._id,
-              formData
+              formData,
+              imageFile
             );
           }
         }}

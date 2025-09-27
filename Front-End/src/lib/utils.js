@@ -53,7 +53,8 @@ export const mapBackendStandardsToLanguageContext = (
 // Function to calculate and update standard status and progress from submissions
 export const updateStandardsFromSubmissions = async (
   standards,
-  submissionsMap
+  submissionsMap,
+  token
 ) => {
   const updatePromises = standards.map(async (standard) => {
     const submissions = submissionsMap[standard.number] || [];
@@ -98,7 +99,8 @@ export const updateStandardsFromSubmissions = async (
       await updateStandardFromSubmissions(
         standard.number,
         calculatedStatus,
-        calculatedProgress
+        calculatedProgress,
+        token
       );
     } catch (error) {
       console.error(`Error updating standard ${standard.number}:`, error);

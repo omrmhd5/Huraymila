@@ -16,10 +16,16 @@ export const getAllStandardsByNumber = async () => {
 };
 
 // Get submissions by standard number
-export const getSubmissionsByStandardNumber = async (standardNumber) => {
+export const getSubmissionsByStandardNumber = async (standardNumber, token) => {
   try {
     const response = await fetch(
-      `${API_BASE_URL}/submissions/standard/${standardNumber}`
+      `${API_BASE_URL}/submissions/standard/${standardNumber}`,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      }
     );
     if (!response.ok) {
       throw new Error("Failed to fetch submissions");
@@ -33,7 +39,7 @@ export const getSubmissionsByStandardNumber = async (standardNumber) => {
 };
 
 // Update submission status
-export const updateSubmissionStatus = async (submissionId, status) => {
+export const updateSubmissionStatus = async (submissionId, status, token) => {
   try {
     const response = await fetch(
       `${API_BASE_URL}/submissions/${submissionId}/status`,
@@ -41,6 +47,7 @@ export const updateSubmissionStatus = async (submissionId, status) => {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({ status }),
       }
@@ -60,7 +67,8 @@ export const updateSubmissionStatus = async (submissionId, status) => {
 export const updateStandardFromSubmissions = async (
   standardNumber,
   status,
-  progress
+  progress,
+  token
 ) => {
   try {
     const response = await fetch(
@@ -69,6 +77,7 @@ export const updateStandardFromSubmissions = async (
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({ status, progress }),
       }

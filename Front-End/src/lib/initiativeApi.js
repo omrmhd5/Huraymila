@@ -83,14 +83,28 @@ export const initiativeApi = {
   },
 
   // Create new initiative
-  createInitiative: async (token, initiativeData) => {
+  createInitiative: async (token, initiativeData, imageFile = null) => {
+    const formData = new FormData();
+
+    // Add text fields
+    Object.keys(initiativeData).forEach((key) => {
+      if (initiativeData[key] !== null && initiativeData[key] !== undefined) {
+        formData.append(key, initiativeData[key]);
+      }
+    });
+
+    // Add image file if provided
+    if (imageFile) {
+      formData.append("image", imageFile);
+    }
+
     const response = await fetch(`${API_BASE_URL}/initiatives`, {
       method: "POST",
       headers: {
-        "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
+        // Note: Don't set Content-Type when using FormData
       },
-      body: JSON.stringify(initiativeData),
+      body: formData,
     });
 
     if (!response.ok) {
@@ -102,16 +116,35 @@ export const initiativeApi = {
   },
 
   // Update initiative
-  updateInitiative: async (token, initiativeId, initiativeData) => {
+  updateInitiative: async (
+    token,
+    initiativeId,
+    initiativeData,
+    imageFile = null
+  ) => {
+    const formData = new FormData();
+
+    // Add text fields
+    Object.keys(initiativeData).forEach((key) => {
+      if (initiativeData[key] !== null && initiativeData[key] !== undefined) {
+        formData.append(key, initiativeData[key]);
+      }
+    });
+
+    // Add image file if provided
+    if (imageFile) {
+      formData.append("image", imageFile);
+    }
+
     const response = await fetch(
       `${API_BASE_URL}/initiatives/${initiativeId}`,
       {
         method: "PUT",
         headers: {
-          "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
+          // Note: Don't set Content-Type when using FormData
         },
-        body: JSON.stringify(initiativeData),
+        body: formData,
       }
     );
 

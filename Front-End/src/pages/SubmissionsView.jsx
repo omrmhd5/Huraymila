@@ -104,10 +104,11 @@ const SubmissionsView = () => {
 
   useEffect(() => {
     const fetchSubmissions = async () => {
-      if (standard) {
+      if (standard && token) {
         try {
           const submissionsData = await getSubmissionsByStandardNumber(
-            standard.number
+            standard.number,
+            token
           );
           setSubmissions(submissionsData);
         } catch (error) {
@@ -118,7 +119,7 @@ const SubmissionsView = () => {
     };
 
     fetchSubmissions();
-  }, [standard]);
+  }, [standard, token]);
 
   const getStatusBadge = (submission) => {
     const statuses = [
@@ -174,7 +175,8 @@ const SubmissionsView = () => {
       // Update via API
       const updatedSubmission = await updateSubmissionStatus(
         submission._id,
-        newStatus
+        newStatus,
+        token
       );
 
       // Update local state

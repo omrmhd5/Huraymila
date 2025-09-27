@@ -16,6 +16,7 @@ const {
   agencyOnly,
   governorOrAgency,
 } = require("../middleware/authProtection");
+const { uploadInitiativeImage } = require("../middleware/initiativeFileUpload");
 
 // Public/General routes (protected by governorOrAgency)
 router.get("/", governorOrAgency, getAllInitiatives);
@@ -26,8 +27,18 @@ router.get("/agency/my-initiatives", agencyOnly, getAgencyInitiatives);
 router.get("/agency/:agencyId", governorOrAgency, getInitiativesByAgencyId);
 
 // CRUD operations
-router.post("/", governorOrAgency, createInitiative);
-router.put("/:id", governorOrAgency, updateInitiative);
+router.post(
+  "/",
+  governorOrAgency,
+  uploadInitiativeImage.single("image"),
+  createInitiative
+);
+router.put(
+  "/:id",
+  governorOrAgency,
+  uploadInitiativeImage.single("image"),
+  updateInitiative
+);
 router.delete("/:id", governorOrAgency, deleteInitiative);
 
 // Volunteer management

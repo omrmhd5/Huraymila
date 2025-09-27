@@ -16,8 +16,8 @@ const PORT = process.env.PORT || 5000;
 app.use(cors());
 app.use(express.json());
 
-// Serve uploaded submission files
-app.use("/submissions", express.static("submissions"));
+// Serve all public files (submissions, initiatives, etc.)
+app.use("/public", express.static("public"));
 
 // Create API router
 const apiRouter = express.Router();

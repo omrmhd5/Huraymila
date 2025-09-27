@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -18,6 +18,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Upload } from "lucide-react";
 
 const InitiativeModal = ({
   isOpen,
@@ -30,6 +31,27 @@ const InitiativeModal = ({
   loading = false,
   language,
 }) => {
+  const [imageFile, setImageFile] = useState(null);
+  const [imagePreview, setImagePreview] = useState(null);
+
+  // Handle image file selection
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setImageFile(file);
+      const reader = new FileReader();
+      reader.onload = (e) => setImagePreview(e.target.result);
+      reader.readAsDataURL(file);
+    }
+  };
+
+  // Clear image when modal is closed
+  React.useEffect(() => {
+    if (!isOpen) {
+      setImageFile(null);
+      setImagePreview(null);
+    }
+  }, [isOpen]);
   // Modal-specific handlers
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -47,12 +69,12 @@ const InitiativeModal = ({
       );
       return;
     }
-    onSubmit(formData);
+    onSubmit(formData, imageFile);
   };
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent
-        className={`${
+        className={`max-h-[90vh] overflow-y-auto ${
           language === "ar" ? "font-arabic text-right" : "font-sans text-left"
         }`}>
         <DialogHeader>
@@ -246,6 +268,70 @@ const InitiativeModal = ({
                     : "font-sans text-left"
                 }`}
               />
+            </div>
+          </div>
+
+          {/* Image Upload */}
+          <div>
+            <Label htmlFor="initiative-image">
+              {language === "ar" ? "صورة المبادرة" : "Initiative Image"}
+            </Label>
+            <div className="mt-2">
+              <Input
+                id="initiative-image"
+                type="file"
+                accept="image/*"
+                onChange={handleImageChange}
+                className="hidden"
+              />
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() =>
+                  document.getElementById("initiative-image").click()
+                }
+                className={`w-full h-24 border-2 border-dashed border-gray-300 hover:border-gray-400 ${
+                  language === "ar" ? "text-right" : "text-left"
+                }`}>
+                <div className="flex flex-col items-center gap-2">
+                  <Upload className="w-6 h-6 text-gray-400" />
+                  <span
+                    className={`text-sm text-gray-500 ${
+                      language === "ar" ? "font-arabic" : "font-sans"
+                    }`}>
+                    {language === "ar" ? "اختر صورة" : "Choose Image"}
+                  </span>
+                </div>
+              </Button>
+              {imagePreview && (
+                <div className="mt-3">
+                  <img
+                    src={imagePreview}
+                    alt="Preview"
+                    className="w-full h-32 object-cover rounded-md border"
+                  />
+                </div>
+              )}
+              {mode === "edit" && initiative?.imageUrl && !imagePreview && (
+                <div className="mt-3">
+                  <img
+                    src={`${
+                      import.meta.env.VITE_API_BASE_URL?.replace("/api", "") ||
+                      "http://localhost:5000"
+                    }${initiative.imageUrl}`}
+                    alt="Current initiative image"
+                    className="w-full h-32 object-cover rounded-md border"
+                  />
+                  <p
+                    className={`text-xs text-gray-500 mt-1 ${
+                      language === "ar"
+                        ? "font-arabic text-right"
+                        : "font-sans text-left"
+                    }`}>
+                    {language === "ar" ? "الصورة الحالية" : "Current image"}
+                  </p>
+                </div>
+              )}
             </div>
           </div>
         </div>

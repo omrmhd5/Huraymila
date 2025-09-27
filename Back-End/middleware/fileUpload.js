@@ -5,8 +5,12 @@ const fs = require("fs");
 // Configure storage
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    // Create submissions folder if it doesn't exist
-    const submissionsDir = path.join(__dirname, "../submissions");
+    // Create public/submissions folder if it doesn't exist
+    const publicDir = path.join(__dirname, "../public");
+    const submissionsDir = path.join(publicDir, "submissions");
+    if (!fs.existsSync(publicDir)) {
+      fs.mkdirSync(publicDir, { recursive: true });
+    }
     if (!fs.existsSync(submissionsDir)) {
       fs.mkdirSync(submissionsDir, { recursive: true });
     }
@@ -48,7 +52,11 @@ const upload = multer({
 
 // Helper function to move files to submission-specific folder
 const moveFilesToSubmissionFolder = (submissionId, tempFiles) => {
-  const submissionDir = path.join(__dirname, "../submissions", submissionId);
+  const submissionDir = path.join(
+    __dirname,
+    "../public/submissions",
+    submissionId
+  );
 
   // Create submission-specific directory
   if (!fs.existsSync(submissionDir)) {
@@ -85,7 +93,7 @@ const moveFilesToSubmissionFolder = (submissionId, tempFiles) => {
         originalname: file.originalname,
         size: file.size,
         mimetype: file.mimetype,
-        path: `/submissions/${submissionId}/${finalFilename}`,
+        path: `/public/submissions/${submissionId}/${finalFilename}`,
       });
     } catch (error) {
       console.error("Error moving file:", error);
@@ -132,7 +140,11 @@ const deletePhysicalFiles = (fileUrls) => {
 // Helper function to delete entire submission folder
 const deleteSubmissionFolder = (submissionId) => {
   try {
-    const submissionDir = path.join(__dirname, "../submissions", submissionId);
+    const submissionDir = path.join(
+      __dirname,
+      "../public/submissions",
+      submissionId
+    );
 
     if (fs.existsSync(submissionDir)) {
       // Remove all files in the directory

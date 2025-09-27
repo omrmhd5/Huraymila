@@ -13,7 +13,7 @@ dist-ssr
 *.local
 
 .env
-submissions/
+public/
 
 # Editor directories and files
 .vscode/*

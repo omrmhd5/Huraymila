@@ -28,6 +28,7 @@ import {
 } from "@/components/ui/dialog";
 import { useTheme } from "@/contexts/ThemeContext";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useAuth } from "@/contexts/AuthContext";
 import {
   getAllStandardsByNumber,
   getSubmissionsByStandardNumber,
@@ -48,6 +49,7 @@ import {
 const StandardsManagement = () => {
   const { language } = useTheme();
   const { t } = useLanguage();
+  const { token } = useAuth();
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedAgency, setSelectedAgency] = useState("all");
@@ -79,7 +81,8 @@ const StandardsManagement = () => {
         const submissionsPromises = mappedStandards.map(async (standard) => {
           try {
             const submissions = await getSubmissionsByStandardNumber(
-              standard.number
+              standard.number,
+              token
             );
             return { standardNumber: standard.number, submissions };
           } catch (error) {
@@ -100,7 +103,11 @@ const StandardsManagement = () => {
         setSubmissionsData(submissionsMap);
 
         // Update standards with calculated status and progress
-        await updateStandardsFromSubmissions(mappedStandards, submissionsMap);
+        await updateStandardsFromSubmissions(
+          mappedStandards,
+          submissionsMap,
+          token
+        );
       } catch (error) {
         console.error("Error fetching standards:", error);
         setStandardsList([]);
@@ -109,8 +116,10 @@ const StandardsManagement = () => {
       }
     };
 
-    fetchStandards();
-  }, [t]);
+    if (token) {
+      fetchStandards();
+    }
+  }, [t, token]);
 
   // Get unique agencies from standards
   const allAgencies = Array.from(
