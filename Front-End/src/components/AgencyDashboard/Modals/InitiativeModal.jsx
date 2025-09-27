@@ -27,18 +27,27 @@ const InitiativeModal = ({
   formData,
   onFormChange,
   onSubmit,
+  loading = false,
   language,
 }) => {
   // Modal-specific handlers
-  const handleSubmit = () => {
-    if (mode === "edit") {
-      // Here you would typically update the initiative in your state/API
-      console.log("Editing initiative:", initiative.id, formData);
-    } else {
-      // Here you would typically add the new initiative to your state/API
-      console.log("Adding new initiative:", formData);
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (
+      !formData.title ||
+      !formData.description ||
+      !formData.startDate ||
+      !formData.endDate ||
+      !formData.maxVolunteers
+    ) {
+      alert(
+        language === "ar"
+          ? "يرجى ملء جميع الحقول المطلوبة"
+          : "Please fill in all required fields"
+      );
+      return;
     }
-    onSubmit();
+    onSubmit(formData);
   };
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -241,17 +250,26 @@ const InitiativeModal = ({
           </div>
         </div>
         <DialogFooter>
-          <Button variant="outline" onClick={onClose}>
+          <Button variant="outline" onClick={onClose} disabled={loading}>
             {language === "ar" ? "إلغاء" : "Cancel"}
           </Button>
-          <Button onClick={handleSubmit}>
-            {mode === "add"
-              ? language === "ar"
-                ? "إضافة المبادرة"
-                : "Add Initiative"
-              : language === "ar"
-              ? "حفظ التغييرات"
-              : "Save Changes"}
+          <Button onClick={handleSubmit} disabled={loading}>
+            {loading ? (
+              <div className="flex items-center gap-2">
+                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                {language === "ar" ? "جاري المعالجة..." : "Processing..."}
+              </div>
+            ) : mode === "add" ? (
+              language === "ar" ? (
+                "إضافة المبادرة"
+              ) : (
+                "Add Initiative"
+              )
+            ) : language === "ar" ? (
+              "حفظ التغييرات"
+            ) : (
+              "Save Changes"
+            )}
           </Button>
         </DialogFooter>
       </DialogContent>

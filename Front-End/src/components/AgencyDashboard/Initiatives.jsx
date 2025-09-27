@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Card,
   CardContent,
@@ -21,9 +21,18 @@ import DeleteInitiativeModal from "./Modals/DeleteInitiativeModal";
 import ViewVolunteersModal from "./Modals/ViewVolunteersModal";
 import { Eye, Edit, Trash2, Plus } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useAuth } from "@/contexts/AuthContext";
+import { initiativeApi } from "@/lib/initiativeApi";
+import { toast } from "sonner";
 
-const Initiatives = ({ language, initiatives }) => {
+const Initiatives = ({ language }) => {
   const { t } = useLanguage();
+  const { token } = useAuth();
+
+  // Data state
+  const [initiatives, setInitiatives] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [actionLoading, setActionLoading] = useState(false);
   // Modal state management
   const [deleteModal, setDeleteModal] = useState({
     isOpen: false,
@@ -50,9 +59,100 @@ const Initiatives = ({ language, initiatives }) => {
     startDate: "",
     endDate: "",
     status: "gathering volunteers",
-    volunteers: 0,
+    currentVolunteers: 0,
     maxVolunteers: 10,
   });
+
+  // Load initiatives on component mount
+  useEffect(() => {
+    loadInitiatives();
+  }, [token]);
+
+  // API Functions
+  const loadInitiatives = async () => {
+    try {
+      setLoading(true);
+      const response = await initiativeApi.getMyInitiatives(token);
+      setInitiatives(response.data || []);
+    } catch (error) {
+      console.error("Error loading initiatives:", error);
+      toast.error(t("initiatives.loadError") || "Failed to load initiatives");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleCreateInitiative = async (formData) => {
+    try {
+      setActionLoading(true);
+      const response = await initiativeApi.createInitiative(token, {
+        title: formData.title,
+        description: formData.description,
+        startDate: formData.startDate,
+        endDate: formData.endDate,
+        status: formData.status,
+        maxVolunteers: parseInt(formData.maxVolunteers),
+      });
+
+      toast.success(
+        t("initiatives.createSuccess") || "Initiative created successfully"
+      );
+      await loadInitiatives(); // Refresh the list
+      closeInitiativeModal();
+    } catch (error) {
+      console.error("Error creating initiative:", error);
+      toast.error(error.message || "Failed to create initiative");
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
+  const handleUpdateInitiative = async (initiativeId, formData) => {
+    try {
+      setActionLoading(true);
+      const response = await initiativeApi.updateInitiative(
+        token,
+        initiativeId,
+        {
+          title: formData.title,
+          description: formData.description,
+          startDate: formData.startDate,
+          endDate: formData.endDate,
+          status: formData.status,
+          maxVolunteers: parseInt(formData.maxVolunteers),
+        }
+      );
+
+      toast.success(
+        t("initiatives.updateSuccess") || "Initiative updated successfully"
+      );
+      await loadInitiatives(); // Refresh the list
+      closeInitiativeModal();
+    } catch (error) {
+      console.error("Error updating initiative:", error);
+      toast.error(error.message || "Failed to update initiative");
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
+  const handleDeleteInitiative = async (initiativeId) => {
+    try {
+      setActionLoading(true);
+      await initiativeApi.deleteInitiative(token, initiativeId);
+
+      toast.success(
+        t("initiatives.deleteSuccess") || "Initiative deleted successfully"
+      );
+      await loadInitiatives(); // Refresh the list
+      closeDeleteModal();
+    } catch (error) {
+      console.error("Error deleting initiative:", error);
+      toast.error(error.message || "Failed to delete initiative");
+    } finally {
+      setActionLoading(false);
+    }
+  };
 
   // Component-specific functions
   const getStatusBadge = (status) => {
@@ -102,10 +202,10 @@ const Initiatives = ({ language, initiatives }) => {
       setInitiativeForm({
         title: initiative.title,
         description: initiative.description,
-        startDate: initiative.startDate,
-        endDate: initiative.endDate,
+        startDate: initiative.startDate.split("T")[0], // Format for date input
+        endDate: initiative.endDate.split("T")[0], // Format for date input
         status: initiative.status,
-        volunteers: initiative.volunteers || 0,
+        currentVolunteers: initiative.currentVolunteers || 0,
         maxVolunteers: initiative.maxVolunteers || 10,
       });
     } else {
@@ -116,7 +216,7 @@ const Initiatives = ({ language, initiatives }) => {
         startDate: "",
         endDate: "",
         status: "gathering volunteers",
-        volunteers: 0,
+        currentVolunteers: 0,
         maxVolunteers: 10,
       });
     }
@@ -131,7 +231,7 @@ const Initiatives = ({ language, initiatives }) => {
       startDate: "",
       endDate: "",
       status: "gathering volunteers",
-      volunteers: 0,
+      currentVolunteers: 0,
       maxVolunteers: 10,
     });
   };
@@ -180,7 +280,7 @@ const Initiatives = ({ language, initiatives }) => {
       init.status === "gathering volunteers" || init.status === "جمع المتطوعين"
   ).length;
   const totalVolunteers = initiatives.reduce(
-    (sum, init) => sum + (init.volunteers || 0),
+    (sum, init) => sum + (init.currentVolunteers || 0),
     0
   );
   const maxVolunteers = initiatives.reduce(
@@ -281,6 +381,7 @@ const Initiatives = ({ language, initiatives }) => {
             </div>
             <Button
               onClick={() => openInitiativeModal("add")}
+              disabled={actionLoading}
               className={language === "ar" ? "mr-4" : "ml-4"}>
               <Plus className="w-4 h-4" />
               {t("initiatives.addInitiative")}
@@ -371,7 +472,14 @@ const Initiatives = ({ language, initiatives }) => {
       <Card>
         <CardContent>
           <div className="space-y-4">
-            {filteredInitiatives.length === 0 ? (
+            {loading ? (
+              <div className="text-center py-8">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
+                <p className="text-muted-foreground">
+                  {t("initiatives.loading") || "Loading initiatives..."}
+                </p>
+              </div>
+            ) : filteredInitiatives.length === 0 ? (
               <div
                 className={`text-center py-8 ${
                   language === "ar"
@@ -379,7 +487,11 @@ const Initiatives = ({ language, initiatives }) => {
                     : "font-sans text-left"
                 }`}>
                 <p className="text-muted-foreground">
-                  {t("initiatives.noSearchResults")}
+                  {initiatives.length === 0
+                    ? t("initiatives.noInitiatives") ||
+                      "No initiatives found. Create your first initiative!"
+                    : t("initiatives.noSearchResults") ||
+                      "No initiatives match your search criteria."}
                 </p>
               </div>
             ) : (
@@ -462,7 +574,7 @@ const Initiatives = ({ language, initiatives }) => {
                             {t("initiatives.volunteers")}
                           </span>
                           <span className="font-medium">
-                            {initiative.volunteers || 0}{" "}
+                            {initiative.currentVolunteers || 0}{" "}
                             {t("initiatives.outOf")}{" "}
                             {initiative.maxVolunteers || 10}
                           </span>
@@ -477,7 +589,7 @@ const Initiatives = ({ language, initiatives }) => {
                             }`}
                             style={{
                               width: `${
-                                ((initiative.volunteers || 0) /
+                                ((initiative.currentVolunteers || 0) /
                                   (initiative.maxVolunteers || 10)) *
                                 100
                               }%`,
@@ -493,19 +605,22 @@ const Initiatives = ({ language, initiatives }) => {
                       <Button
                         variant="outline"
                         size="sm"
-                        onClick={() => openViewModal(initiative)}>
+                        onClick={() => openViewModal(initiative)}
+                        disabled={actionLoading}>
                         <Eye className="w-4 h-4" />
                       </Button>
                       <Button
                         variant="outline"
                         size="sm"
-                        onClick={() => openInitiativeModal("edit", initiative)}>
+                        onClick={() => openInitiativeModal("edit", initiative)}
+                        disabled={actionLoading}>
                         <Edit className="w-4 h-4" />
                       </Button>
                       <Button
                         variant="outline"
                         size="sm"
-                        onClick={() => openDeleteModal(initiative)}>
+                        onClick={() => openDeleteModal(initiative)}
+                        disabled={actionLoading}>
                         <Trash2 className="w-4 h-4" />
                       </Button>
                     </div>
@@ -525,7 +640,17 @@ const Initiatives = ({ language, initiatives }) => {
         initiative={initiativeModal.initiative}
         formData={initiativeForm}
         onFormChange={setInitiativeForm}
-        onSubmit={closeInitiativeModal}
+        onSubmit={(formData) => {
+          if (initiativeModal.mode === "add") {
+            handleCreateInitiative(formData);
+          } else {
+            handleUpdateInitiative(
+              initiativeModal.initiative.id || initiativeModal.initiative._id,
+              formData
+            );
+          }
+        }}
+        loading={actionLoading}
         language={language}
       />
 
@@ -534,7 +659,14 @@ const Initiatives = ({ language, initiatives }) => {
         isOpen={deleteModal.isOpen}
         onClose={closeDeleteModal}
         initiative={deleteModal.initiative}
-        onConfirm={closeDeleteModal}
+        onConfirm={() => {
+          if (deleteModal.initiative) {
+            handleDeleteInitiative(
+              deleteModal.initiative.id || deleteModal.initiative._id
+            );
+          }
+        }}
+        loading={actionLoading}
         language={language}
       />
 
@@ -543,9 +675,17 @@ const Initiatives = ({ language, initiatives }) => {
         isOpen={viewModal.isOpen}
         onClose={closeViewModal}
         initiative={viewModal.initiative}
-        volunteers={null}
+        volunteers={viewModal.initiative?.volunteers || []}
         formatDate={formatDate}
         language={language}
+        onAddVolunteer={(volunteerData) => {
+          // This could be implemented if needed
+          console.log("Add volunteer:", volunteerData);
+        }}
+        onRemoveVolunteer={(volunteerId) => {
+          // This could be implemented if needed
+          console.log("Remove volunteer:", volunteerId);
+        }}
       />
     </div>
   );

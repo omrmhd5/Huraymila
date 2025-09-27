@@ -1072,7 +1072,13 @@ export const LanguageProvider = ({ children }) => {
         viewVolunteers: "عرض المتطوعين",
         volunteersCount: "متطوع",
         of: "من",
+        outOf: "من",
         needed: "مطلوب",
+        loading: "جاري التحميل...",
+        loadError: "فشل في تحميل المبادرات",
+        createSuccess: "تم إنشاء المبادرة بنجاح",
+        updateSuccess: "تم تحديث المبادرة بنجاح",
+        deleteSuccess: "تم حذف المبادرة بنجاح",
       },
 
       standards: [
@@ -2738,7 +2744,13 @@ export const LanguageProvider = ({ children }) => {
         viewVolunteers: "View Volunteers",
         volunteersCount: "volunteers",
         of: "of",
+        outOf: "of",
         needed: "needed",
+        loading: "Loading initiatives...",
+        loadError: "Failed to load initiatives",
+        createSuccess: "Initiative created successfully",
+        updateSuccess: "Initiative updated successfully",
+        deleteSuccess: "Initiative deleted successfully",
       },
       requiredStandards: {
         title: "Required Standards Summary",

@@ -15,12 +15,11 @@ const DeleteInitiativeModal = ({
   onClose,
   initiative,
   onConfirm,
+  loading = false,
   language,
 }) => {
   // Modal-specific handler
   const handleConfirm = () => {
-    // Here you would typically delete the initiative from your state/API
-    console.log("Deleting initiative:", initiative.id);
     onConfirm();
   };
   return (
@@ -45,8 +44,18 @@ const DeleteInitiativeModal = ({
           </AlertDialogCancel>
           <AlertDialogAction
             onClick={handleConfirm}
+            disabled={loading}
             className="bg-red-600 hover:bg-red-700">
-            {language === "ar" ? "حذف" : "Delete"}
+            {loading ? (
+              <div className="flex items-center gap-2">
+                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                {language === "ar" ? "جاري الحذف..." : "Deleting..."}
+              </div>
+            ) : language === "ar" ? (
+              "حذف"
+            ) : (
+              "Delete"
+            )}
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>

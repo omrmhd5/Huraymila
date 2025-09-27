@@ -130,70 +130,7 @@ const AgencyDashboard = () => {
     volunteers: 0, // Will be loaded from API later
   };
 
-  const initiatives = [
-    {
-      id: 1,
-      title:
-        language === "ar"
-          ? "برنامج التوعية الصحية"
-          : "Health Awareness Program",
-      description:
-        language === "ar"
-          ? "توعية المجتمع بأهمية الصحة الوقائية"
-          : "Raising community awareness about preventive health",
-      status: "completed",
-      startDate: "2024-01-01",
-      endDate: "2024-03-31",
-      volunteers: 8,
-      maxVolunteers: 10,
-    },
-    {
-      id: 2,
-      title:
-        language === "ar" ? "مشروع الفحص المبكر" : "Early Screening Project",
-      description:
-        language === "ar"
-          ? "فحص مبكر للأمراض المزمنة"
-          : "Early screening for chronic diseases",
-      status: "active",
-      startDate: "2024-02-01",
-      endDate: "2024-06-30",
-      volunteers: 5,
-      maxVolunteers: 8,
-    },
-    {
-      id: 3,
-      title:
-        language === "ar"
-          ? "مبادرة البيئة الصحية"
-          : "Healthy Environment Initiative",
-      description:
-        language === "ar"
-          ? "تحسين البيئة المحيطة بالمرافق الصحية"
-          : "Improving the environment around health facilities",
-      status: "gathering volunteers",
-      startDate: "2024-03-01",
-      endDate: "2024-08-31",
-      volunteers: 3,
-      maxVolunteers: 6,
-    },
-    {
-      id: 4,
-      title:
-        language === "ar"
-          ? "مشروع التغذية الصحية"
-          : "Healthy Nutrition Project",
-      description:
-        language === "ar"
-          ? "تعزيز العادات الغذائية الصحية"
-          : "Promoting healthy eating habits",
-      status: "cancelled",
-      startDate: "2024-04-01",
-      endDate: "2024-07-31",
-      volunteers: 0,
-      maxVolunteers: 5,
-    },
-  ];
+  // Initiatives are now fetched directly by the Initiatives component
 
   const volunteers = [
     {
@@ -557,7 +494,7 @@ const AgencyDashboard = () => {
 
           {/* Initiatives Tab */}
           <TabsContent value="initiatives">
-            <Initiatives language={language} initiatives={initiatives} />
+            <Initiatives language={language} />
           </TabsContent>
 
           {/* Volunteers Tab */}
