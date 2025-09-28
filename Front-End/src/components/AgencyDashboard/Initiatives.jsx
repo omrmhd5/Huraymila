@@ -163,6 +163,37 @@ const Initiatives = ({ language }) => {
     }
   };
 
+  // Handle volunteer applications
+  const handleApproveVolunteer = async (initiativeId, volunteerData) => {
+    try {
+      setActionLoading(true);
+      await initiativeApi.addVolunteer(token, initiativeId, volunteerData);
+
+      toast.success("Volunteer approved successfully");
+      await loadInitiatives(); // Refresh the list
+    } catch (error) {
+      console.error("Error approving volunteer:", error);
+      toast.error(error.message || "Failed to approve volunteer");
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
+  const handleRemoveVolunteer = async (initiativeId, volunteerId) => {
+    try {
+      setActionLoading(true);
+      await initiativeApi.removeVolunteer(token, initiativeId, volunteerId);
+
+      toast.success("Volunteer removed successfully");
+      await loadInitiatives(); // Refresh the list
+    } catch (error) {
+      console.error("Error removing volunteer:", error);
+      toast.error(error.message || "Failed to remove volunteer");
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
   // Component-specific functions
   const getStatusBadge = (status) => {
     switch (status) {
@@ -706,13 +737,22 @@ const Initiatives = ({ language }) => {
         volunteers={viewModal.initiative?.volunteers || []}
         formatDate={formatDate}
         language={language}
-        onAddVolunteer={(volunteerData) => {
-          // This could be implemented if needed
-          console.log("Add volunteer:", volunteerData);
+        loading={actionLoading}
+        onApproveVolunteer={(volunteerData) => {
+          if (viewModal.initiative) {
+            handleApproveVolunteer(
+              viewModal.initiative.id || viewModal.initiative._id,
+              volunteerData
+            );
+          }
         }}
         onRemoveVolunteer={(volunteerId) => {
-          // This could be implemented if needed
-          console.log("Remove volunteer:", volunteerId);
+          if (viewModal.initiative) {
+            handleRemoveVolunteer(
+              viewModal.initiative.id || viewModal.initiative._id,
+              volunteerId
+            );
+          }
         }}
       />
     </div>

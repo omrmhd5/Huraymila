@@ -1,4 +1,5 @@
 const Initiative = require("../Models/Initiative");
+const Volunteer = require("../Models/Volunteer");
 const {
   moveImageToInitiativeFolder,
   deleteInitiativeImage,
@@ -11,6 +12,7 @@ const getAllInitiatives = async (req, res) => {
   try {
     const initiatives = await Initiative.find()
       .populate("agency", "name email")
+      .populate("volunteers.volunteer", "fullName email phoneNumber")
       .sort({ createdAt: -1 });
 
     res.json({
@@ -32,10 +34,9 @@ const getInitiativeById = async (req, res) => {
   try {
     const { id } = req.params;
 
-    const initiative = await Initiative.findById(id).populate(
-      "agency",
-      "name email"
-    );
+    const initiative = await Initiative.findById(id)
+      .populate("agency", "name email")
+      .populate("volunteers.volunteer", "fullName email phoneNumber");
 
     if (!initiative) {
       return res.status(404).json({
@@ -87,6 +88,7 @@ const getAgencyInitiatives = async (req, res) => {
 
     const initiatives = await Initiative.find({ agency: agencyId })
       .populate("agency", "name email")
+      .populate("volunteers.volunteer", "fullName email phoneNumber")
       .sort({ createdAt: -1 });
 
     res.json({
@@ -440,13 +442,44 @@ const removeVolunteerFromInitiative = async (req, res) => {
       });
     }
 
-    // Remove volunteer
+    // Find the volunteer entry in the initiative
+    const volunteerEntry = initiative.volunteers.find(
+      (vol) =>
+        vol._id.toString() === volunteerId ||
+        vol.volunteer?.toString() === volunteerId
+    );
+
+    if (!volunteerEntry) {
+      return res.status(404).json({
+        success: false,
+        message: "Volunteer not found in this initiative",
+      });
+    }
+
+    // Get the actual volunteer ID (the volunteer document ID)
+    const actualVolunteerId = volunteerEntry.volunteer || volunteerId;
+
+    // Find the volunteer document
+    const volunteer = await Volunteer.findById(actualVolunteerId);
+    if (volunteer) {
+      // Remove initiative from volunteer's initiatives array
+      volunteer.initiatives = volunteer.initiatives.filter(
+        (init) => init.initiative.toString() !== id
+      );
+      await volunteer.save();
+    }
+
+    // Remove volunteer from initiative
     initiative.volunteers = initiative.volunteers.filter(
       (vol) => vol._id.toString() !== volunteerId
     );
 
     await initiative.save();
     await initiative.populate("agency", "name email");
+    await initiative.populate(
+      "volunteers.volunteer",
+      "fullName email phoneNumber"
+    );
 
     res.json({
       success: true,
@@ -454,9 +487,177 @@ const removeVolunteerFromInitiative = async (req, res) => {
       data: initiative,
     });
   } catch (error) {
+    console.error("Error removing volunteer:", error);
     res.status(500).json({
       success: false,
       message: "Error removing volunteer",
+      error: error.message,
+    });
+  }
+};
+
+// Apply to initiative (for volunteers)
+const applyToInitiative = async (req, res) => {
+  try {
+    const { id: initiativeId } = req.params;
+    const { volunteerId } = req.user;
+
+    // Find the initiative
+    const initiative = await Initiative.findById(initiativeId);
+    if (!initiative) {
+      return res.status(404).json({
+        success: false,
+        message: "Initiative not found",
+      });
+    }
+
+    // Find the volunteer
+    const volunteer = await Volunteer.findById(volunteerId);
+    if (!volunteer) {
+      return res.status(404).json({
+        success: false,
+        message: "Volunteer not found",
+      });
+    }
+
+    // Check if initiative is accepting volunteers
+    if (
+      initiative.status !== "gathering volunteers" &&
+      initiative.status !== "active"
+    ) {
+      return res.status(400).json({
+        success: false,
+        message: "This initiative is not accepting volunteers",
+      });
+    }
+
+    // Check if volunteer is already applied
+    const isAlreadyApplied = initiative.volunteers.some(
+      (vol) => vol.volunteer.toString() === volunteerId
+    );
+
+    if (isAlreadyApplied) {
+      return res.status(400).json({
+        success: false,
+        message: "You have already applied to this initiative",
+      });
+    }
+
+    // Check if initiative has reached maximum volunteers
+    if (initiative.volunteers.length >= initiative.maxVolunteers) {
+      return res.status(400).json({
+        success: false,
+        message: "This initiative has reached maximum capacity",
+      });
+    }
+
+    // Add volunteer to initiative
+    initiative.volunteers.push({
+      volunteer: volunteerId,
+      joinedAt: new Date(),
+    });
+
+    // Add initiative to volunteer
+    volunteer.initiatives.push({
+      initiative: initiativeId,
+      joinedAt: new Date(),
+    });
+
+    // Save both documents
+    await initiative.save();
+    await volunteer.save();
+
+    // Populate volunteer details for response
+    await initiative.populate(
+      "volunteers.volunteer",
+      "fullName email phoneNumber"
+    );
+
+    res.json({
+      success: true,
+      message: "Successfully applied to initiative",
+      data: {
+        initiative,
+        volunteer: {
+          id: volunteer._id,
+          fullName: volunteer.fullName,
+          email: volunteer.email,
+        },
+      },
+    });
+  } catch (error) {
+    console.error("Error applying to initiative:", error);
+    res.status(500).json({
+      success: false,
+      message: "Error applying to initiative",
+      error: error.message,
+    });
+  }
+};
+
+// Withdraw from initiative (for volunteers)
+const withdrawFromInitiative = async (req, res) => {
+  try {
+    const { id: initiativeId } = req.params;
+    const { volunteerId } = req.user;
+
+    // Find the initiative
+    const initiative = await Initiative.findById(initiativeId);
+    if (!initiative) {
+      return res.status(404).json({
+        success: false,
+        message: "Initiative not found",
+      });
+    }
+
+    // Find the volunteer
+    const volunteer = await Volunteer.findById(volunteerId);
+    if (!volunteer) {
+      return res.status(404).json({
+        success: false,
+        message: "Volunteer not found",
+      });
+    }
+
+    // Find volunteer in initiative
+    const volunteerIndex = initiative.volunteers.findIndex(
+      (vol) => vol.volunteer.toString() === volunteerId
+    );
+
+    if (volunteerIndex === -1) {
+      return res.status(400).json({
+        success: false,
+        message: "You are not registered for this initiative",
+      });
+    }
+
+    // Find initiative in volunteer
+    const initiativeIndex = volunteer.initiatives.findIndex(
+      (init) => init.initiative.toString() === initiativeId
+    );
+
+    // Remove volunteer from initiative
+    initiative.volunteers.splice(volunteerIndex, 1);
+
+    // Remove initiative from volunteer
+    if (initiativeIndex !== -1) {
+      volunteer.initiatives.splice(initiativeIndex, 1);
+    }
+
+    // Save both documents
+    await initiative.save();
+    await volunteer.save();
+
+    res.json({
+      success: true,
+      message: "Successfully withdrawn from initiative",
+      data: initiative,
+    });
+  } catch (error) {
+    console.error("Error withdrawing from initiative:", error);
+    res.status(500).json({
+      success: false,
+      message: "Error withdrawing from initiative",
       error: error.message,
     });
   }
@@ -472,4 +673,6 @@ module.exports = {
   deleteInitiative,
   addVolunteerToInitiative,
   removeVolunteerFromInitiative,
+  applyToInitiative,
+  withdrawFromInitiative,
 };

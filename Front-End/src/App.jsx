@@ -13,6 +13,7 @@ import Contact from "./pages/Contact";
 import Auth from "./pages/Auth";
 import NotFound from "./pages/NotFound";
 import AgencyDashboard from "./pages/AgencyDashboard";
+import VolunteerDashboard from "./pages/VolunteerDashboard";
 import AgencyManagement from "./pages/AgencyManagement";
 import AdminDashboard from "./pages/AdminDashboard";
 import AdminLayout from "./pages/AdminLayout";
@@ -60,6 +61,10 @@ const App = () => (
                   <Route path="/report" element={<Report />} />
                   <Route path="/about-huraymila" element={<AboutHuraymila />} />
                   <Route path="/faq" element={<FAQ />} />
+                  <Route
+                    path="/volunteer-dashboard"
+                    element={<VolunteerDashboard />}
+                  />
                 </Route>
 
                 <Route path="/admin" element={<AdminLayout />}>

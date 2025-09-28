@@ -21,7 +21,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 const Auth = () => {
   const { language } = useTheme();
   const { t } = useLanguage();
-  const { user, login } = useAuth();
+  const { user, login, volunteerSignup } = useAuth();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -95,6 +95,20 @@ const Auth = () => {
     setError("");
     setSuccess("");
 
+    // Validate required fields
+    if (
+      !formData.fullName ||
+      !formData.email ||
+      !formData.password ||
+      !formData.phone
+    ) {
+      setError(
+        language === "ar" ? "جميع الحقول مطلوبة" : "All fields are required"
+      );
+      setLoading(false);
+      return;
+    }
+
     if (formData.password !== formData.confirmPassword) {
       setError(
         language === "ar"
@@ -116,36 +130,42 @@ const Auth = () => {
     }
 
     try {
-      // Mock implementation - simulate sign up
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-
-      setSuccess(
-        language === "ar"
-          ? "تم إنشاء الحساب بنجاح! تم تسجيل الدخول تلقائياً"
-          : "Account created successfully! You are now signed in"
+      const result = await volunteerSignup(
+        formData.fullName,
+        formData.email,
+        formData.password,
+        formData.phone
       );
 
-      // Auto-login after successful signup
-      await login({
-        email: formData.email,
-        role: "volunteer",
-        name: formData.fullName,
-        phone: formData.phone,
-      });
+      if (result.success) {
+        setSuccess(
+          result.message ||
+            (language === "ar"
+              ? "تم إنشاء الحساب بنجاح! تم تسجيل الدخول تلقائياً"
+              : "Account created successfully! You are now signed in")
+        );
 
-      // Clear form
-      setFormData({
-        email: "",
-        password: "",
-        fullName: "",
-        confirmPassword: "",
-        phone: "",
-      });
+        // Clear form
+        setFormData({
+          email: "",
+          password: "",
+          fullName: "",
+          confirmPassword: "",
+          phone: "",
+        });
 
-      // Redirect to home after a short delay
-      setTimeout(() => {
-        navigate("/");
-      }, 1500);
+        // Navigate to dashboard
+        setTimeout(() => {
+          navigate(result.redirectTo || "/volunteer-dashboard");
+        }, 1000);
+      } else {
+        setError(
+          result.error ||
+            (language === "ar"
+              ? "فشل في إنشاء الحساب"
+              : "Failed to create account")
+        );
+      }
     } catch (err) {
       setError(
         language === "ar" ? "حدث خطأ غير متوقع" : "An unexpected error occurred"

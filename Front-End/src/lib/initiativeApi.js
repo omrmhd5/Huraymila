@@ -218,4 +218,46 @@ export const initiativeApi = {
 
     return response.json();
   },
+
+  // Apply to initiative (volunteer only)
+  applyToInitiative: async (token, initiativeId) => {
+    const response = await fetch(
+      `${API_BASE_URL}/initiatives/${initiativeId}/apply`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || "Error applying to initiative");
+    }
+
+    return response.json();
+  },
+
+  // Withdraw from initiative (volunteer only)
+  withdrawFromInitiative: async (token, initiativeId) => {
+    const response = await fetch(
+      `${API_BASE_URL}/initiatives/${initiativeId}/withdraw`,
+      {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || "Error withdrawing from initiative");
+    }
+
+    return response.json();
+  },
 };

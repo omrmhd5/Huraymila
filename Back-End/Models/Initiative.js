@@ -46,17 +46,10 @@ const initiativeSchema = new mongoose.Schema(
     },
     volunteers: [
       {
-        name: {
-          type: String,
+        volunteer: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "Volunteer",
           required: true,
-        },
-        email: {
-          type: String,
-          required: true,
-        },
-        phone: {
-          type: String,
-          required: false,
         },
         joinedAt: {
           type: Date,

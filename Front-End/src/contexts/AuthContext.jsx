@@ -100,6 +100,89 @@ export const AuthProvider = ({ children }) => {
     };
   };
 
+  // Fetch current user data from server
+  const fetchCurrentUser = async () => {
+    if (!token) return null;
+
+    try {
+      const response = await fetch(
+        `${
+          import.meta.env.VITE_API_BASE_URL || "http://localhost:5000/api"
+        }/auth/me`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (response.ok) {
+        const data = await response.json();
+        if (data.success && data.user) {
+          // Update user data in state and localStorage
+          setUser(data.user);
+          localStorage.setItem("user", JSON.stringify(data.user));
+          return data.user;
+        }
+      }
+      return null;
+    } catch (error) {
+      console.error("Error fetching current user:", error);
+      return null;
+    }
+  };
+
+  // Volunteer signup function
+  const volunteerSignup = async (fullName, email, password, phoneNumber) => {
+    try {
+      setLoading(true);
+
+      const response = await fetch(
+        `${
+          import.meta.env.VITE_API_BASE_URL || "http://localhost:5000/api"
+        }/auth/volunteer/signup`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ fullName, email, password, phoneNumber }),
+        }
+      );
+
+      const data = await response.json();
+
+      if (data.success) {
+        // Store token and user data
+        localStorage.setItem("authToken", data.token);
+        localStorage.setItem("user", JSON.stringify(data.user));
+        setToken(data.token);
+        setUser(data.user);
+
+        return {
+          success: true,
+          redirectTo: data.redirectTo,
+          message: data.message,
+        };
+      } else {
+        return {
+          success: false,
+          error: data.message,
+        };
+      }
+    } catch (error) {
+      console.error("Volunteer signup error:", error);
+      return {
+        success: false,
+        error: "Network error occurred",
+      };
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const value = {
     user,
     loading,
@@ -108,6 +191,8 @@ export const AuthProvider = ({ children }) => {
     logout,
     isAuthenticated,
     getAuthHeaders,
+    fetchCurrentUser,
+    volunteerSignup,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

@@ -4,9 +4,10 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
-import { ArrowLeft, Calendar, Users, UserPlus } from "lucide-react";
+import { ArrowLeft, Calendar, Users, UserPlus, Check } from "lucide-react";
 import { useTheme } from "@/contexts/ThemeContext";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useAuth } from "@/contexts/AuthContext";
 import { initiativeApi } from "@/lib/initiativeApi";
 import { toast } from "sonner";
 
@@ -15,6 +16,7 @@ const Initiative = () => {
   const navigate = useNavigate();
   const { language } = useTheme();
   const { t } = useLanguage();
+  const { user, token } = useAuth();
   const [isApplying, setIsApplying] = useState(false);
   const [initiative, setInitiative] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -112,17 +114,57 @@ const Initiative = () => {
     );
   };
 
+  // Check if current user has applied to this initiative
+  const hasUserApplied = () => {
+    if (!user || user.type !== "volunteer" || !initiative?.volunteers) {
+      return false;
+    }
+
+    return initiative.volunteers.some((vol) => {
+      const volunteerId = vol.volunteer?._id || vol.volunteer;
+      return volunteerId === user._id || volunteerId === user.id;
+    });
+  };
+
   const handleApply = async () => {
-    setIsApplying(true);
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 2000));
-    setIsApplying(false);
-    // Show success message
-    alert(
-      language === "ar"
-        ? "تم تقديم طلب المشاركة بنجاح!"
-        : "Application submitted successfully!"
-    );
+    if (!user) {
+      toast.error(
+        language === "ar" ? "يجب تسجيل الدخول أولاً" : "Please sign in first"
+      );
+      navigate("/auth");
+      return;
+    }
+
+    if (user.type !== "volunteer") {
+      toast.error(
+        language === "ar"
+          ? "المتطوعون فقط يمكنهم التقدم للمبادرات"
+          : "Only volunteers can apply to initiatives"
+      );
+      return;
+    }
+
+    try {
+      setIsApplying(true);
+      await initiativeApi.applyToInitiative(token, id);
+
+      toast.success(
+        language === "ar"
+          ? "تم تقديم طلب المشاركة بنجاح!"
+          : "Application submitted successfully!"
+      );
+
+      // Refresh initiative data to show updated status
+      await loadInitiative();
+    } catch (error) {
+      console.error("Error applying to initiative:", error);
+      toast.error(
+        error.message ||
+          (language === "ar" ? "فشل في تقديم الطلب" : "Failed to apply")
+      );
+    } finally {
+      setIsApplying(false);
+    }
   };
 
   const volunteerProgress =
@@ -258,28 +300,76 @@ const Initiative = () => {
 
           {/* Apply Button */}
           <div className="mt-8 text-center">
-            <Button
-              size="lg"
-              onClick={handleApply}
-              disabled={
-                isApplying ||
-                (initiative.currentVolunteers || 0) >= initiative.maxVolunteers
-              }
-              className="px-8 py-6 text-lg">
-              <UserPlus className="w-5 h-5 mr-2" />
-              {isApplying
-                ? language === "ar"
-                  ? "جاري التقديم..."
-                  : "Applying..."
-                : (initiative.currentVolunteers || 0) >=
-                  initiative.maxVolunteers
-                ? language === "ar"
-                  ? "المبادرة ممتلئة"
-                  : "Initiative Full"
-                : language === "ar"
-                ? "تقدم للمشاركة"
-                : "Apply to Participate"}
-            </Button>
+            {user && user.type === "volunteer" ? (
+              // Volunteer user - show apply/applied state
+              hasUserApplied() ? (
+                <Button
+                  size="lg"
+                  disabled
+                  className="px-8 py-6 text-lg bg-green-500 hover:bg-green-500">
+                  <Check className="w-5 h-5 mr-2" />
+                  {language === "ar" ? "تم التقديم" : "Applied"}
+                </Button>
+              ) : (
+                <Button
+                  size="lg"
+                  onClick={handleApply}
+                  disabled={
+                    isApplying ||
+                    (initiative.currentVolunteers || 0) >=
+                      initiative.maxVolunteers ||
+                    (initiative.status !== "gathering volunteers" &&
+                      initiative.status !== "active")
+                  }
+                  className="px-8 py-6 text-lg">
+                  {isApplying ? (
+                    <div className="w-5 h-5 mr-2 animate-spin rounded-full border-2 border-current border-t-transparent" />
+                  ) : (
+                    <UserPlus className="w-5 h-5 mr-2" />
+                  )}
+                  {isApplying
+                    ? language === "ar"
+                      ? "جاري التقديم..."
+                      : "Applying..."
+                    : (initiative.currentVolunteers || 0) >=
+                      initiative.maxVolunteers
+                    ? language === "ar"
+                      ? "المبادرة ممتلئة"
+                      : "Initiative Full"
+                    : initiative.status !== "gathering volunteers" &&
+                      initiative.status !== "active"
+                    ? language === "ar"
+                      ? "المبادرة مغلقة"
+                      : "Initiative Closed"
+                    : language === "ar"
+                    ? "تقدم للمشاركة"
+                    : "Apply to Participate"}
+                </Button>
+              )
+            ) : (
+              // Non-volunteer user - show sign in prompt
+              <div className="space-y-4">
+                <Button
+                  size="lg"
+                  onClick={() => navigate("/auth")}
+                  className="px-8 py-6 text-lg">
+                  <UserPlus className="w-5 h-5 mr-2" />
+                  {language === "ar"
+                    ? "سجل الدخول للتقديم"
+                    : "Sign In to Apply"}
+                </Button>
+                <p
+                  className={`text-sm text-muted-foreground ${
+                    isRTL ? "font-arabic" : "font-sans"
+                  }`}>
+                  {language === "ar"
+                    ? "يجب تسجيل الدخول كمتطوع للتقدم للمبادرات"
+                    : "You need to sign in as a volunteer to apply to initiatives"}
+                </p>
+              </div>
+            )}
+
+            {/* Status messages */}
             {(initiative.currentVolunteers || 0) >=
               initiative.maxVolunteers && (
               <p
@@ -289,6 +379,17 @@ const Initiative = () => {
                 {language === "ar"
                   ? "تم الوصول للحد الأقصى من المتطوعين"
                   : "Maximum volunteers reached"}
+              </p>
+            )}
+
+            {user && user.type === "volunteer" && hasUserApplied() && (
+              <p
+                className={`text-sm text-green-600 mt-2 ${
+                  isRTL ? "font-arabic" : "font-sans"
+                }`}>
+                {language === "ar"
+                  ? "لقد تقدمت بالفعل لهذه المبادرة"
+                  : "You have already applied to this initiative"}
               </p>
             )}
           </div>

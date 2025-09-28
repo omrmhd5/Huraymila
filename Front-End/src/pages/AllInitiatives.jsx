@@ -21,15 +21,24 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Search, Calendar, Users, ArrowRight, UserPlus } from "lucide-react";
+import {
+  Search,
+  Calendar,
+  Users,
+  ArrowRight,
+  UserPlus,
+  Check,
+} from "lucide-react";
 import { useTheme } from "@/contexts/ThemeContext";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useAuth } from "@/contexts/AuthContext";
 import { initiativeApi } from "@/lib/initiativeApi";
 import { toast } from "sonner";
 
 const AllInitiatives = () => {
   const { language } = useTheme();
   const { t } = useLanguage();
+  const { user, token } = useAuth();
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
@@ -39,6 +48,7 @@ const AllInitiatives = () => {
   const [initiatives, setInitiatives] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [applyingTo, setApplyingTo] = useState(null);
 
   const isRTL = language === "ar";
 
@@ -59,6 +69,60 @@ const AllInitiatives = () => {
       toast.error("Failed to load initiatives");
     } finally {
       setLoading(false);
+    }
+  };
+
+  // Check if current user has applied to an initiative
+  const hasUserApplied = (initiative) => {
+    if (!user || user.type !== "volunteer" || !initiative.volunteers) {
+      return false;
+    }
+
+    return initiative.volunteers.some((vol) => {
+      const volunteerId = vol.volunteer?._id || vol.volunteer;
+      return volunteerId === user._id || volunteerId === user.id;
+    });
+  };
+
+  // Handle volunteer application
+  const handleApplyToInitiative = async (initiativeId) => {
+    if (!user) {
+      toast.error(
+        language === "ar" ? "يجب تسجيل الدخول أولاً" : "Please sign in first"
+      );
+      navigate("/auth");
+      return;
+    }
+
+    if (user.type !== "volunteer") {
+      toast.error(
+        language === "ar"
+          ? "المتطوعون فقط يمكنهم التقدم للمبادرات"
+          : "Only volunteers can apply to initiatives"
+      );
+      return;
+    }
+
+    try {
+      setApplyingTo(initiativeId);
+      await initiativeApi.applyToInitiative(token, initiativeId);
+
+      toast.success(
+        language === "ar"
+          ? "تم تقديم طلب المشاركة بنجاح!"
+          : "Application submitted successfully!"
+      );
+
+      // Refresh initiatives to show updated data
+      await loadInitiatives();
+    } catch (error) {
+      console.error("Error applying to initiative:", error);
+      toast.error(
+        error.message ||
+          (language === "ar" ? "فشل في تقديم الطلب" : "Failed to apply")
+      );
+    } finally {
+      setApplyingTo(null);
     }
   };
 
@@ -416,8 +480,68 @@ const AllInitiatives = () => {
                         className={`w-4 h-4 ${isRTL ? "mr-2" : "ml-2"}`}
                       />
                     </Button>
-                    {(initiative.currentVolunteers || 0) <
-                      initiative.maxVolunteers &&
+
+                    {/* Apply/Applied Button */}
+                    {user && user.type === "volunteer" && (
+                      <>
+                        {hasUserApplied(initiative) ? (
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            disabled
+                            className="bg-green-50 text-green-700 border-green-200">
+                            <Check className="w-4 h-4" />
+                            <span
+                              className={`${isRTL ? "mr-2" : "ml-2"} text-xs`}>
+                              {language === "ar" ? "مُطبق" : "Applied"}
+                            </span>
+                          </Button>
+                        ) : (
+                          (initiative.currentVolunteers || 0) <
+                            initiative.maxVolunteers &&
+                          (initiative.status === "gathering volunteers" ||
+                            initiative.status === "active") && (
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() =>
+                                handleApplyToInitiative(
+                                  initiative._id || initiative.id
+                                )
+                              }
+                              disabled={
+                                applyingTo === (initiative._id || initiative.id)
+                              }
+                              className="hover:bg-primary hover:text-primary-foreground">
+                              {applyingTo ===
+                              (initiative._id || initiative.id) ? (
+                                <div className="w-4 h-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
+                              ) : (
+                                <UserPlus className="w-4 h-4" />
+                              )}
+                              <span
+                                className={`${
+                                  isRTL ? "mr-2" : "ml-2"
+                                } text-xs`}>
+                                {applyingTo ===
+                                (initiative._id || initiative.id)
+                                  ? language === "ar"
+                                    ? "جاري التقديم..."
+                                    : "Applying..."
+                                  : language === "ar"
+                                  ? "تقدم"
+                                  : "Apply"}
+                              </span>
+                            </Button>
+                          )
+                        )}
+                      </>
+                    )}
+
+                    {/* Show apply button for non-volunteers */}
+                    {(!user || user.type !== "volunteer") &&
+                      (initiative.currentVolunteers || 0) <
+                        initiative.maxVolunteers &&
                       initiative.status !== "cancelled" && (
                         <Button
                           variant="outline"

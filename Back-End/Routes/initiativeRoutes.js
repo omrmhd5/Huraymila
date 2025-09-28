@@ -10,11 +10,14 @@ const {
   deleteInitiative,
   addVolunteerToInitiative,
   removeVolunteerFromInitiative,
+  applyToInitiative,
+  withdrawFromInitiative,
 } = require("../Controllers/initiativeController");
 const {
   governorOnly,
   agencyOnly,
   governorOrAgency,
+  volunteerOnly,
 } = require("../middleware/authProtection");
 const { uploadInitiativeImage } = require("../middleware/initiativeFileUpload");
 
@@ -41,12 +44,16 @@ router.put(
 );
 router.delete("/:id", governorOrAgency, deleteInitiative);
 
-// Volunteer management
+// Volunteer management (for agencies/governors)
 router.post("/:id/volunteers", governorOrAgency, addVolunteerToInitiative);
 router.delete(
   "/:id/volunteers/:volunteerId",
   governorOrAgency,
   removeVolunteerFromInitiative
 );
+
+// Volunteer application routes (for volunteers)
+router.post("/:id/apply", volunteerOnly, applyToInitiative);
+router.delete("/:id/withdraw", volunteerOnly, withdrawFromInitiative);
 
 module.exports = router;

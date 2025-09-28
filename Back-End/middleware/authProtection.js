@@ -61,9 +61,23 @@ const governorOrAgency = (req, res, next) => {
   });
 };
 
+// Volunteer-only protection
+const volunteerOnly = (req, res, next) => {
+  auth(req, res, () => {
+    if (req.user.type !== "volunteer") {
+      return res.status(403).json({
+        success: false,
+        message: "Access denied. Volunteers only.",
+      });
+    }
+    next();
+  });
+};
+
 module.exports = {
   auth,
   governorOnly,
   agencyOnly,
   governorOrAgency,
+  volunteerOnly,
 };

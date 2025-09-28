@@ -158,9 +158,15 @@ const Navbar = () => {
                           ? language === "ar"
                             ? "المحافظ"
                             : "Governor"
-                          : language === "ar"
-                          ? "الوكالة"
-                          : "Agency"}
+                          : user.type === "agency"
+                          ? language === "ar"
+                            ? "الوكالة"
+                            : "Agency"
+                          : user.type === "volunteer"
+                          ? language === "ar"
+                            ? "متطوع"
+                            : "Volunteer"
+                          : "User"}
                       </p>
                     </div>
 
@@ -169,7 +175,11 @@ const Navbar = () => {
                         const dashboardPath =
                           user.type === "governor"
                             ? "/admin"
-                            : "/agency-dashboard";
+                            : user.type === "agency"
+                            ? "/agency-dashboard"
+                            : user.type === "volunteer"
+                            ? "/volunteer-dashboard"
+                            : "/";
                         navigateToTop(dashboardPath);
                         setIsUserMenuOpen(false);
                       }}
