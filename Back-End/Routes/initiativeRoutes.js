@@ -8,8 +8,8 @@ const {
   createInitiative,
   updateInitiative,
   deleteInitiative,
-  addVolunteer,
-  removeVolunteer,
+  addVolunteerToInitiative,
+  removeVolunteerFromInitiative,
 } = require("../Controllers/initiativeController");
 const {
   governorOnly,
@@ -18,9 +18,9 @@ const {
 } = require("../middleware/authProtection");
 const { uploadInitiativeImage } = require("../middleware/initiativeFileUpload");
 
-// Public/General routes (protected by governorOrAgency)
-router.get("/", governorOrAgency, getAllInitiatives);
-router.get("/:id", governorOrAgency, getInitiativeById);
+// Public/General routes
+router.get("/", getAllInitiatives);
+router.get("/:id", getInitiativeById);
 
 // Agency-specific routes
 router.get("/agency/my-initiatives", agencyOnly, getAgencyInitiatives);
@@ -42,11 +42,11 @@ router.put(
 router.delete("/:id", governorOrAgency, deleteInitiative);
 
 // Volunteer management
-router.post("/:id/volunteers", governorOrAgency, addVolunteer);
+router.post("/:id/volunteers", governorOrAgency, addVolunteerToInitiative);
 router.delete(
   "/:id/volunteers/:volunteerId",
   governorOrAgency,
-  removeVolunteer
+  removeVolunteerFromInitiative
 );
 
 module.exports = router;

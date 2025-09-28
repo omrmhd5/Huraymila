@@ -20,21 +20,20 @@ export const initiativeApi = {
     return response.json();
   },
 
-  // Get initiative by ID
-  getInitiativeById: async (token, initiativeId) => {
+  // Get initiative by ID (public route)
+  getInitiativeById: async (initiativeId) => {
     const response = await fetch(
       `${API_BASE_URL}/initiatives/${initiativeId}`,
       {
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
         },
       }
     );
 
     if (!response.ok) {
       const errorData = await response.json();
-      throw new Error(errorData.message || "Failed to fetch initiative");
+      throw new Error(errorData.message || "Error fetching initiative");
     }
 
     return response.json();

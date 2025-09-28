@@ -50,8 +50,30 @@ const InitiativeModal = ({
     if (!isOpen) {
       setImageFile(null);
       setImagePreview(null);
+      // Reset the file input when modal closes
+      const fileInput = document.getElementById("initiative-image");
+      if (fileInput) {
+        fileInput.value = "";
+      }
     }
   }, [isOpen]);
+
+  // Reset image state when switching between different initiatives or modes
+  React.useEffect(() => {
+    if (isOpen) {
+      // Only reset if this is a different initiative or switching from edit to add
+      const shouldReset = !initiative?.id || mode === "add";
+      if (shouldReset) {
+        setImageFile(null);
+        setImagePreview(null);
+        // Reset the file input
+        const fileInput = document.getElementById("initiative-image");
+        if (fileInput) {
+          fileInput.value = "";
+        }
+      }
+    }
+  }, [isOpen, mode, initiative?.id]);
   // Modal-specific handlers
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -69,6 +91,7 @@ const InitiativeModal = ({
       );
       return;
     }
+
     onSubmit(formData, imageFile);
   };
   return (
@@ -310,6 +333,16 @@ const InitiativeModal = ({
                     alt="Preview"
                     className="w-full h-32 object-cover rounded-md border"
                   />
+                  <p
+                    className={`text-xs text-green-600 mt-1 font-medium ${
+                      language === "ar"
+                        ? "font-arabic text-right"
+                        : "font-sans text-left"
+                    }`}>
+                    {language === "ar"
+                      ? "صورة جديدة محددة"
+                      : "New image selected"}
+                  </p>
                 </div>
               )}
               {mode === "edit" && initiative?.imageUrl && !imagePreview && (

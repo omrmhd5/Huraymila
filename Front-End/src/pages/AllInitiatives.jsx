@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -21,201 +21,56 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
-  Search,
-  Calendar,
-  MapPin,
-  Users,
-  Clock,
-  Target,
-  CheckCircle,
-  Heart,
-  Share2,
-  ArrowRight,
-  Leaf,
-  Award,
-  TrendingUp,
-  UserPlus,
-} from "lucide-react";
+import { Search, Calendar, Users, ArrowRight, UserPlus } from "lucide-react";
 import { useTheme } from "@/contexts/ThemeContext";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { initiativeApi } from "@/lib/initiativeApi";
+import { toast } from "sonner";
 
 const AllInitiatives = () => {
   const { language } = useTheme();
   const { t } = useLanguage();
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
-  const [categoryFilter, setCategoryFilter] = useState("all");
   const [statusFilter, setStatusFilter] = useState("all");
   const [sortBy, setSortBy] = useState("newest");
 
+  // Data state
+  const [initiatives, setInitiatives] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
   const isRTL = language === "ar";
 
-  // Mock initiatives data
-  const initiativesData = [
-    {
-      id: 1,
-      title: "برنامج التوعية الصحية",
-      titleEn: "Health Awareness Program",
-      description: "برنامج شامل للتوعية بأهمية الصحة الوقائية والتغذية السليمة",
-      descriptionEn:
-        "Comprehensive program for awareness of preventive health and proper nutrition",
-      category: "صحة",
-      categoryEn: "Health",
-      status: "نشط",
-      statusEn: "Active",
-      startDate: "2024-01-15",
-      endDate: "2024-06-30",
-      location: "مركز المدينة الصحي",
-      locationEn: "City Health Center",
-      volunteers: 150,
-      maxVolunteers: 200,
-      progress: 75,
-      image: "/assets/health-workshop.jpg",
-      likes: 89,
-      shares: 23,
-      views: 1250,
-      featured: true,
-    },
-    {
-      id: 2,
-      title: "مشروع التشجير الحضري",
-      titleEn: "Urban Greening Project",
-      description:
-        "مبادرة لزيادة المساحات الخضراء في المدينة وتحسين جودة الهواء",
-      descriptionEn:
-        "Initiative to increase green spaces in the city and improve air quality",
-      category: "بيئة",
-      categoryEn: "Environment",
-      status: "نشط",
-      statusEn: "Active",
-      startDate: "2024-02-01",
-      endDate: "2024-12-31",
-      location: "جميع أنحاء المدينة",
-      locationEn: "Throughout the City",
-      volunteers: 75,
-      maxVolunteers: 120,
-      progress: 62,
-      image: "/assets/green-garden.jpg",
-      likes: 67,
-      shares: 18,
-      views: 980,
-      featured: false,
-    },
-    {
-      id: 3,
-      title: "مبادرة المشي الصحي",
-      titleEn: "Healthy Walking Initiative",
-      description: "برنامج أسبوعي للمشي الصحي في منتزهات المدينة",
-      descriptionEn: "Weekly healthy walking program in city parks",
-      category: "صحة",
-      categoryEn: "Health",
-      status: "جمع متطوعين",
-      statusEn: "Gathering Volunteers",
-      startDate: "2024-03-01",
-      endDate: "2024-08-31",
-      location: "منتزه المدينة",
-      locationEn: "City Park",
-      volunteers: 45,
-      maxVolunteers: 80,
-      progress: 56,
-      image: "/assets/walking-initiative.jpg",
-      likes: 45,
-      shares: 12,
-      views: 750,
-      featured: false,
-    },
-    {
-      id: 4,
-      title: "برنامج التغذية المدرسية",
-      titleEn: "School Nutrition Program",
-      description: "تحسين التغذية في المدارس وتوعية الطلاب بأهمية الغذاء الصحي",
-      descriptionEn:
-        "Improving nutrition in schools and educating students about the importance of healthy food",
-      category: "تعليم",
-      categoryEn: "Education",
-      status: "مكتمل",
-      statusEn: "Completed",
-      startDate: "2023-09-01",
-      endDate: "2024-01-31",
-      location: "مدارس حريملاء",
-      locationEn: "Huraymila Schools",
-      volunteers: 95,
-      maxVolunteers: 100,
-      progress: 100,
-      image: "/assets/health-workshop.jpg",
-      likes: 78,
-      shares: 25,
-      views: 1100,
-      featured: true,
-    },
-    {
-      id: 5,
-      title: "مشروع إعادة التدوير",
-      titleEn: "Recycling Project",
-      description: "برنامج شامل لإعادة تدوير النفايات وتقليل التلوث البيئي",
-      descriptionEn:
-        "Comprehensive program for waste recycling and reducing environmental pollution",
-      category: "بيئة",
-      categoryEn: "Environment",
-      status: "نشط",
-      statusEn: "Active",
-      startDate: "2024-01-01",
-      endDate: "2024-12-31",
-      location: "جميع الأحياء",
-      locationEn: "All Neighborhoods",
-      volunteers: 120,
-      maxVolunteers: 150,
-      progress: 80,
-      image: "/assets/green-garden.jpg",
-      likes: 92,
-      shares: 35,
-      views: 1350,
-      featured: false,
-    },
-    {
-      id: 6,
-      title: "حملة التطعيم المجتمعي",
-      titleEn: "Community Vaccination Campaign",
-      description: "حملة تطعيم شاملة لجميع فئات المجتمع ضد الأمراض المعدية",
-      descriptionEn:
-        "Comprehensive vaccination campaign for all community segments against infectious diseases",
-      category: "صحة",
-      categoryEn: "Health",
-      status: "ملغي",
-      statusEn: "Cancelled",
-      startDate: "2024-02-15",
-      endDate: "2024-04-15",
-      location: "المراكز الصحية",
-      locationEn: "Health Centers",
-      volunteers: 0,
-      maxVolunteers: 50,
-      progress: 0,
-      image: "/assets/health-workshop.jpg",
-      likes: 34,
-      shares: 8,
-      views: 420,
-      featured: false,
-    },
-  ];
+  // Load initiatives on component mount
+  useEffect(() => {
+    loadInitiatives();
+  }, []);
 
-  const categories = [
-    { value: "all", label: language === "ar" ? "الكل" : "All" },
-    { value: "صحة", label: language === "ar" ? "صحة" : "Health" },
-    { value: "بيئة", label: language === "ar" ? "بيئة" : "Environment" },
-    { value: "تعليم", label: language === "ar" ? "تعليم" : "Education" },
-    { value: "مجتمع", label: language === "ar" ? "مجتمع" : "Community" },
-  ];
+  const loadInitiatives = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const response = await initiativeApi.getAllInitiatives();
+      setInitiatives(response.data || []);
+    } catch (error) {
+      console.error("Error loading initiatives:", error);
+      setError("Failed to load initiatives");
+      toast.error("Failed to load initiatives");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const statusOptions = [
     { value: "all", label: language === "ar" ? "الكل" : "All" },
-    { value: "نشط", label: language === "ar" ? "نشط" : "Active" },
-    { value: "مكتمل", label: language === "ar" ? "مكتمل" : "Completed" },
+    { value: "active", label: language === "ar" ? "نشط" : "Active" },
+    { value: "completed", label: language === "ar" ? "مكتمل" : "Completed" },
     {
-      value: "جمع متطوعين",
-      label: language === "ar" ? "جمع متطوعين" : "Gathering Volunteers",
+      value: "gathering volunteers",
+      label: language === "ar" ? "جمع المتطوعين" : "Gathering Volunteers",
     },
-    { value: "ملغي", label: language === "ar" ? "ملغي" : "Cancelled" },
+    { value: "cancelled", label: language === "ar" ? "ملغي" : "Cancelled" },
   ];
 
   const sortOptions = [
@@ -225,42 +80,20 @@ const AllInitiatives = () => {
       value: "most_volunteers",
       label: language === "ar" ? "الأكثر متطوعين" : "Most Volunteers",
     },
-    {
-      value: "most_progress",
-      label: language === "ar" ? "الأكثر تقدم" : "Most Progress",
-    },
-    {
-      value: "most_liked",
-      label: language === "ar" ? "الأكثر إعجاباً" : "Most Liked",
-    },
   ];
 
   // Filter and sort initiatives
-  const filteredInitiatives = initiativesData
+  const filteredInitiatives = initiatives
     .filter((initiative) => {
       const matchesSearch =
         searchTerm === "" ||
-        (language === "ar" ? initiative.title : initiative.titleEn)
-          .toLowerCase()
-          .includes(searchTerm.toLowerCase()) ||
-        (language === "ar" ? initiative.description : initiative.descriptionEn)
-          .toLowerCase()
-          .includes(searchTerm.toLowerCase()) ||
-        (language === "ar" ? initiative.location : initiative.locationEn)
-          .toLowerCase()
-          .includes(searchTerm.toLowerCase());
-
-      const matchesCategory =
-        categoryFilter === "all" ||
-        (language === "ar" ? initiative.category : initiative.categoryEn) ===
-          categoryFilter;
+        initiative.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        initiative.description.toLowerCase().includes(searchTerm.toLowerCase());
 
       const matchesStatus =
-        statusFilter === "all" ||
-        (language === "ar" ? initiative.status : initiative.statusEn) ===
-          statusFilter;
+        statusFilter === "all" || initiative.status === statusFilter;
 
-      return matchesSearch && matchesCategory && matchesStatus;
+      return matchesSearch && matchesStatus;
     })
     .sort((a, b) => {
       switch (sortBy) {
@@ -269,11 +102,7 @@ const AllInitiatives = () => {
         case "oldest":
           return new Date(a.startDate) - new Date(b.startDate);
         case "most_volunteers":
-          return b.volunteers - a.volunteers;
-        case "most_progress":
-          return b.progress - a.progress;
-        case "most_liked":
-          return b.likes - a.likes;
+          return (b.currentVolunteers || 0) - (a.currentVolunteers || 0);
         default:
           return 0;
       }
@@ -306,41 +135,13 @@ const AllInitiatives = () => {
       },
       "gathering volunteers": {
         color: "bg-yellow-500",
-        text: language === "ar" ? "جمع متطوعين" : "Gathering Volunteers",
+        text: language === "ar" ? "جمع المتطوعين" : "Gathering Volunteers",
       },
     };
 
     const config = statusConfig[status] || statusConfig.active;
     return (
       <Badge className={`${config.color} text-white`}>{config.text}</Badge>
-    );
-  };
-
-  const getCategoryBadge = (category) => {
-    const categoryConfig = {
-      health: {
-        color: "bg-blue-100 text-blue-800",
-        text: language === "ar" ? "صحة" : "Health",
-      },
-      environment: {
-        color: "bg-green-100 text-green-800",
-        text: language === "ar" ? "بيئة" : "Environment",
-      },
-      community: {
-        color: "bg-purple-100 text-purple-800",
-        text: language === "ar" ? "مجتمع" : "Community",
-      },
-      education: {
-        color: "bg-orange-100 text-orange-800",
-        text: language === "ar" ? "تعليم" : "Education",
-      },
-    };
-
-    const config = categoryConfig[category] || categoryConfig.health;
-    return (
-      <Badge variant="outline" className={config.color}>
-        {config.text}
-      </Badge>
     );
   };
 
@@ -365,7 +166,11 @@ const AllInitiatives = () => {
               className={`text-xl text-muted-foreground ${
                 isRTL ? "font-arabic text-right" : "font-sans text-left"
               }`}>
-              {t("initiatives.subtitle")}
+              {t("initiatives.title")
+                ? language === "ar"
+                  ? "اكتشف المبادرات النشطة في مدينة حريملاء الصحية"
+                  : "Discover Active Initiatives in Huraymila Healthy City"
+                : "Fallback subtitle"}
             </p>
           </div>
         </AnimatedSection>
@@ -393,34 +198,6 @@ const AllInitiatives = () => {
                     }`}
                   />
                 </div>
-              </div>
-
-              {/* Category Filter */}
-              <div className="w-full md:w-48">
-                <Select
-                  value={categoryFilter}
-                  onValueChange={setCategoryFilter}>
-                  <SelectTrigger
-                    className={
-                      isRTL ? "font-arabic text-right" : "font-sans text-left"
-                    }>
-                    <SelectValue placeholder={t("initiatives.category")} />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {categories.map((category) => (
-                      <SelectItem
-                        key={category.value}
-                        value={category.value}
-                        className={
-                          isRTL
-                            ? "font-arabic text-right"
-                            : "font-sans text-left"
-                        }>
-                        {category.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
               </div>
 
               {/* Status Filter */}
@@ -482,166 +259,183 @@ const AllInitiatives = () => {
                 isRTL ? "font-arabic text-right" : "font-sans text-left"
               }`}>
               {language === "ar"
-                ? `عرض ${filteredInitiatives.length} من ${initiativesData.length} مبادرة`
-                : `Showing ${filteredInitiatives.length} of ${initiativesData.length} initiatives`}
+                ? `عرض ${filteredInitiatives.length} من ${initiatives.length} مبادرة`
+                : `Showing ${filteredInitiatives.length} of ${initiatives.length} initiatives`}
             </p>
           </div>
         </AnimatedSection>
 
+        {/* Loading State */}
+        {loading && (
+          <div className="text-center py-12">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
+            <p className="text-muted-foreground">
+              {language === "ar" ? "جاري التحميل..." : "Loading..."}
+            </p>
+          </div>
+        )}
+
+        {/* Error State */}
+        {error && (
+          <div className="text-center py-12">
+            <p className="text-red-500 mb-4">{error}</p>
+            <Button onClick={loadInitiatives}>
+              {language === "ar" ? "إعادة المحاولة" : "Try Again"}
+            </Button>
+          </div>
+        )}
+
         {/* Initiatives Grid */}
-        <StaggeredContainer
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
-          staggerDelay={100}
-          animation="fadeInUp">
-          {filteredInitiatives.map((initiative, index) => (
-            <AnimatedCard
-              key={initiative.id}
-              animation="fadeInUp"
-              delay={index * 100}
-              className="group hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
-              {/* Initiative Image */}
-              <div className="relative h-48 overflow-hidden rounded-t-lg">
-                <img
-                  src={initiative.image}
-                  alt={
-                    language === "ar" ? initiative.title : initiative.titleEn
-                  }
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                />
-                {initiative.featured && (
-                  <Badge className="absolute top-4 left-4 bg-red-500">
-                    {language === "ar" ? "مميز" : "Featured"}
-                  </Badge>
-                )}
-                <div className="absolute top-4 right-4 flex gap-2">
-                  {getCategoryBadge(initiative.category)}
-                  {getStatusBadge(initiative.status)}
-                </div>
-              </div>
-
-              <CardHeader>
-                <CardTitle
-                  className={`text-lg line-clamp-2 ${
-                    isRTL ? "font-arabic text-right" : "font-sans text-left"
-                  }`}>
-                  {language === "ar" ? initiative.title : initiative.titleEn}
-                </CardTitle>
-                <CardDescription
-                  className={`line-clamp-3 ${
-                    isRTL ? "font-arabic text-right" : "font-sans text-left"
-                  }`}>
-                  {language === "ar"
-                    ? initiative.description
-                    : initiative.descriptionEn}
-                </CardDescription>
-              </CardHeader>
-
-              <CardContent className="space-y-4">
-                {/* Meta Info */}
-                <div
-                  className={`flex flex-wrap items-center gap-4 text-sm text-muted-foreground ${
-                    isRTL ? "font-arabic" : "font-sans"
-                  }`}>
-                  <div className="flex items-center gap-1">
-                    <MapPin className="w-3 h-3" />
-                    <span>
-                      {language === "ar"
-                        ? initiative.location
-                        : initiative.locationEn}
-                    </span>
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <Calendar className="w-3 h-3" />
-                    <span>{formatDate(initiative.startDate)}</span>
-                  </div>
-                </div>
-
-                {/* Volunteer Progress */}
-                <div
-                  className={`space-y-2 ${isRTL ? "rtl" : "ltr"}`}
-                  dir={isRTL ? "rtl" : "ltr"}>
-                  <div className="flex items-center justify-between text-sm">
-                    <span
-                      className={`font-medium ${
-                        isRTL ? "font-arabic" : "font-sans"
-                      }`}>
-                      {initiative.volunteers} {language === "ar" ? "من" : "of"}{" "}
-                      {initiative.maxVolunteers}{" "}
-                      {language === "ar" ? "متطوع" : "volunteers"}
-                    </span>
-                    <span className="text-muted-foreground">
-                      {Math.round(
-                        (initiative.volunteers / initiative.maxVolunteers) * 100
-                      )}
-                      %
-                    </span>
-                  </div>
-                  <div
-                    className={`w-full ${isRTL ? "rtl" : "ltr"}`}
-                    dir={isRTL ? "rtl" : "ltr"}>
-                    <Progress
-                      value={
-                        (initiative.volunteers / initiative.maxVolunteers) * 100
-                      }
-                      className={`h-2 ${isRTL ? "rtl" : "ltr"}`}
-                      style={isRTL ? { transform: "scaleX(-1)" } : {}}
+        {!loading && !error && (
+          <StaggeredContainer
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+            staggerDelay={100}
+            animation="fadeInUp">
+            {filteredInitiatives.map((initiative, index) => (
+              <AnimatedCard
+                key={initiative.id}
+                animation="fadeInUp"
+                delay={index * 100}
+                className="group hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
+                {/* Initiative Image */}
+                <div className="relative h-48 overflow-hidden rounded-t-lg">
+                  {initiative.imageUrl ? (
+                    <img
+                      src={`${
+                        import.meta.env.VITE_API_BASE_URL?.replace(
+                          "/api",
+                          ""
+                        ) || "http://localhost:5000"
+                      }${initiative.imageUrl}`}
+                      alt={initiative.title}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                     />
+                  ) : (
+                    <div className="w-full h-full bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center">
+                      <div className="text-center text-gray-400">
+                        <Users className="w-12 h-12 mx-auto mb-2" />
+                        <p className="text-sm">
+                          {language === "ar" ? "لا توجد صورة" : "No image"}
+                        </p>
+                      </div>
+                    </div>
+                  )}
+                  <div className="absolute top-4 right-4">
+                    {getStatusBadge(initiative.status)}
                   </div>
-                  <p
-                    className={`text-xs text-muted-foreground ${
+                </div>
+
+                <CardHeader>
+                  <CardTitle
+                    className={`text-lg line-clamp-2 ${
                       isRTL ? "font-arabic text-right" : "font-sans text-left"
                     }`}>
-                    {initiative.maxVolunteers - initiative.volunteers}{" "}
-                    {language === "ar" ? "متطوع مطلوب" : "volunteers needed"}
-                  </p>
-                </div>
+                    {initiative.title}
+                  </CardTitle>
+                  <CardDescription
+                    className={`line-clamp-3 ${
+                      isRTL ? "font-arabic text-right" : "font-sans text-left"
+                    }`}>
+                    {initiative.description}
+                  </CardDescription>
+                </CardHeader>
 
-                {/* Stats */}
-                <div className="flex items-center justify-between text-sm text-muted-foreground">
-                  <div className="flex items-center gap-4">
+                <CardContent className="space-y-4">
+                  {/* Meta Info */}
+                  <div
+                    className={`flex flex-wrap items-center gap-4 text-sm text-muted-foreground ${
+                      isRTL ? "font-arabic" : "font-sans"
+                    }`}>
                     <div className="flex items-center gap-1">
-                      <Users className="w-3 h-3" />
-                      <span>{initiative.views.toLocaleString()}</span>
+                      <Calendar className="w-3 h-3" />
+                      <span>{formatDate(initiative.startDate)}</span>
                     </div>
                     <div className="flex items-center gap-1">
-                      <Heart className="w-3 h-3" />
-                      <span>{initiative.likes}</span>
-                    </div>
-                    <div className="flex items-center gap-1">
-                      <Share2 className="w-3 h-3" />
-                      <span>{initiative.shares}</span>
+                      <Calendar className="w-3 h-3" />
+                      <span>{formatDate(initiative.endDate)}</span>
                     </div>
                   </div>
-                </div>
 
-                {/* Action Buttons */}
-                <div className="flex gap-2">
-                  <Button
-                    className="flex-1 group-hover:bg-primary/90 transition-colors"
-                    onClick={() =>
-                      navigateToTop(`/initiatives/${initiative.id}`)
-                    }>
-                    {language === "ar" ? "عرض التفاصيل" : "View Details"}
-                    <ArrowRight
-                      className={`w-4 h-4 ${isRTL ? "mr-2" : "ml-2"}`}
-                    />
-                  </Button>
-                  {initiative.volunteers < initiative.maxVolunteers &&
-                    initiative.status !== "ملغي" && (
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() =>
-                          navigateToTop(`/initiatives/${initiative.id}`)
-                        }>
-                        <UserPlus className="w-4 h-4" />
-                      </Button>
-                    )}
-                </div>
-              </CardContent>
-            </AnimatedCard>
-          ))}
-        </StaggeredContainer>
+                  {/* Volunteer Progress */}
+                  <div
+                    className={`space-y-2 ${isRTL ? "rtl" : "ltr"}`}
+                    dir={isRTL ? "rtl" : "ltr"}>
+                    <div className="flex items-center justify-between text-sm">
+                      <span
+                        className={`font-medium ${
+                          isRTL ? "font-arabic" : "font-sans"
+                        }`}>
+                        {initiative.currentVolunteers || 0}{" "}
+                        {language === "ar" ? "من" : "of"}{" "}
+                        {initiative.maxVolunteers}{" "}
+                        {language === "ar" ? "متطوع" : "volunteers"}
+                      </span>
+                      <span className="text-muted-foreground">
+                        {Math.round(
+                          ((initiative.currentVolunteers || 0) /
+                            initiative.maxVolunteers) *
+                            100
+                        )}
+                        %
+                      </span>
+                    </div>
+                    <div
+                      className={`w-full ${isRTL ? "rtl" : "ltr"}`}
+                      dir={isRTL ? "rtl" : "ltr"}>
+                      <Progress
+                        value={
+                          ((initiative.currentVolunteers || 0) /
+                            initiative.maxVolunteers) *
+                          100
+                        }
+                        className={`h-2 ${isRTL ? "rtl" : "ltr"}`}
+                        style={isRTL ? { transform: "scaleX(-1)" } : {}}
+                      />
+                    </div>
+                    <p
+                      className={`text-xs text-muted-foreground ${
+                        isRTL ? "font-arabic text-right" : "font-sans text-left"
+                      }`}>
+                      {initiative.maxVolunteers -
+                        (initiative.currentVolunteers || 0)}{" "}
+                      {language === "ar" ? "متطوع مطلوب" : "volunteers needed"}
+                    </p>
+                  </div>
+
+                  {/* Action Buttons */}
+                  <div className="flex gap-2">
+                    <Button
+                      className="flex-1 group-hover:bg-primary/90 transition-colors"
+                      onClick={() =>
+                        navigateToTop(
+                          `/initiatives/${initiative._id || initiative.id}`
+                        )
+                      }>
+                      {language === "ar" ? "عرض التفاصيل" : "View Details"}
+                      <ArrowRight
+                        className={`w-4 h-4 ${isRTL ? "mr-2" : "ml-2"}`}
+                      />
+                    </Button>
+                    {(initiative.currentVolunteers || 0) <
+                      initiative.maxVolunteers &&
+                      initiative.status !== "cancelled" && (
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() =>
+                            navigateToTop(
+                              `/initiatives/${initiative._id || initiative.id}`
+                            )
+                          }>
+                          <UserPlus className="w-4 h-4" />
+                        </Button>
+                      )}
+                  </div>
+                </CardContent>
+              </AnimatedCard>
+            ))}
+          </StaggeredContainer>
+        )}
 
         {/* No Results */}
         {filteredInitiatives.length === 0 && (

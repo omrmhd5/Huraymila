@@ -352,7 +352,7 @@ const deleteInitiative = async (req, res) => {
 };
 
 // Add volunteer to initiative
-const addVolunteer = async (req, res) => {
+const addVolunteerToInitiative = async (req, res) => {
   try {
     const { id } = req.params;
     const { name, email, phone } = req.body;
@@ -417,7 +417,7 @@ const addVolunteer = async (req, res) => {
 };
 
 // Remove volunteer from initiative
-const removeVolunteer = async (req, res) => {
+const removeVolunteerFromInitiative = async (req, res) => {
   try {
     const { id, volunteerId } = req.params;
 
@@ -470,6 +470,6 @@ module.exports = {
   createInitiative,
   updateInitiative,
   deleteInitiative,
-  addVolunteer,
-  removeVolunteer,
+  addVolunteerToInitiative,
+  removeVolunteerFromInitiative,
 };
