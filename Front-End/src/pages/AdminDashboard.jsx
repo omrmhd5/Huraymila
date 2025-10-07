@@ -7,6 +7,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Alert, AlertDescription } from "@/components/ui/alert";
@@ -31,8 +32,13 @@ import {
   Edit,
   Trash2,
   Star,
+  Search,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import InitiativeModal from "@/components/AgencyDashboard/Modals/InitiativeModal";
+import DeleteInitiativeModal from "@/components/AgencyDashboard/Modals/DeleteInitiativeModal";
+import { initiativeApi } from "@/lib/initiativeApi";
+import { useAuth } from "@/contexts/AuthContext";
 import { useTheme } from "@/contexts/ThemeContext";
 import { useLanguage } from "@/contexts/LanguageContext";
 // Commented out useAuth for development
@@ -46,12 +52,15 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+// duplicate imports removed
 
 const AdminDashboard = () => {
   const { language } = useTheme();
   const { t } = useLanguage();
   // Commented out useAuth for development
   // const { user, signOut } = useAuth();
+  const authContext = useAuth?.();
+  const token = authContext?.token;
   const navigate = useNavigate();
   // Commented out user role state for development
   // const [userRole, setUserRole] = useState(null);
@@ -168,110 +177,56 @@ const AdminDashboard = () => {
   //   }
   // };
 
-  const fetchAllData = () => {
+  const fetchAllData = async () => {
     try {
-      // Commented out loading logic for development
-      // setLoading(true);
+      const res = await fetch(
+        `${import.meta.env.VITE_API_BASE_URL}/initiatives`
+      );
+      const json = await res.json();
+      const initiativesRaw = Array.isArray(json?.data) ? json.data : [];
 
-      // Mock implementation - simulate data fetching
-      // await new Promise((resolve) => setTimeout(resolve, 1000));
+      const initiatives = initiativesRaw.map((i) => ({
+        id: i._id || i.id,
+        status: i.status || "",
+        title: i.title,
+        description: i.description,
+        startDate: i.startDate,
+        endDate: i.endDate,
+        volunteers: Array.isArray(i?.volunteers) ? i.volunteers.length : 0,
+        max_volunteers: i.maxVolunteers || i.max_volunteers || 0,
+        maxVolunteers: i.maxVolunteers || i.max_volunteers || 0,
+        organized_agency: i?.agency?.name || "",
+        created_at: i.createdAt || i.created_at,
+      }));
 
-      // Mock data for demonstration
-      const mockStats = {
-        initiatives: 12,
-        news: 8,
-        agencies: 15,
-        volunteers: 32,
-        success_stories: 18,
-        reports: 25,
-      };
+      const volunteers = [];
+      initiativesRaw.forEach((init) => {
+        const entries = Array.isArray(init?.volunteers) ? init.volunteers : [];
+        entries.forEach((entry) => {
+          const v = entry?.volunteer || entry;
+          volunteers.push({
+            id: entry?._id || v?._id || v?.id,
+            full_name: v?.fullName || v?.name || "",
+            email: v?.email || "",
+            phone_number: v?.phoneNumber || v?.phone || "",
+            volunteering_initiative: init?.title || "",
+            status: entry?.status || null,
+            availability: "",
+            reviewed_at: null,
+            created_at: entry?.joinedAt || init?.createdAt || null,
+          });
+        });
+      });
 
-      const mockData = {
-        initiatives: Array.from({ length: 10 }, (_, i) => ({
-          id: i + 1,
-          status: ["active", "completed", "draft"][i % 3],
-          category: ["صحة", "بيئة", "تعليم"][i % 3],
-          title: `مبادرة ${i + 1}`,
-          volunteers: Math.floor(Math.random() * 15) + 5,
-          max_volunteers: Math.floor(Math.random() * 20) + 20,
-          organized_agency: [
-            "وزارة الصحة",
-            "أمانة الرياض",
-            "جمعية حريملاء الخيرية",
-            "مستشفى حريملاء العام",
-          ][i % 4],
-          created_at: new Date(Date.now() - i * 86400000).toISOString(),
-        })),
-        news: Array.from({ length: 10 }, (_, i) => ({
-          id: i + 1,
-          title: `خبر ${i + 1}`,
-          author: `الكاتب ${i + 1}`,
-          date: new Date(Date.now() - i * 86400000).toISOString(),
-          is_published: i % 2 === 0,
-          category: ["صحة", "بيئة", "تعليم"][i % 3],
-          priority: i < 3 ? i + 1 : null, // Top 3 get priority 1, 2, 3
-          created_at: new Date(Date.now() - i * 86400000).toISOString(),
-        })),
-        agencies: Array.from({ length: 10 }, (_, i) => ({
-          id: i + 1,
-          is_active: i % 2 === 0,
-          agency_type: ["حكومية", "خاصة", "غير ربحية"][i % 3],
-          name: `جهة ${i + 1}`,
-          created_at: new Date(Date.now() - i * 86400000).toISOString(),
-        })),
-        volunteers: Array.from({ length: 10 }, (_, i) => ({
-          id: i + 1,
-          full_name: `المتطوع ${i + 1}`,
-          email: `volunteer${i + 1}@example.com`,
-          phone_number: `+966501234${i.toString().padStart(3, "0")}`,
-          volunteering_initiative: `مبادرة ${i + 1}`,
-          status: ["pending", "approved", "rejected"][i % 3],
-          availability: ["صباحاً", "مساءً", "أي وقت"][i % 3],
-          reviewed_at:
-            i % 2 === 0
-              ? new Date(Date.now() - i * 86400000).toISOString()
-              : null,
-          created_at: new Date(Date.now() - i * 86400000).toISOString(),
-        })),
-        success_stories: Array.from({ length: 10 }, (_, i) => ({
-          id: i + 1,
-          title: `قصة نجاح ${i + 1}`,
-          description: `وصف قصة النجاح ${
-            i + 1
-          } - هذا مثال على وصف مفصل لقصة نجاح ملهمة في مجتمع حريملاء`,
-          author: `الكاتب ${i + 1}`,
-          date: new Date(Date.now() - i * 86400000).toISOString(),
-          is_published: i % 2 === 0,
-          category: ["صحة", "بيئة", "تعليم"][i % 3],
-          priority: i < 3 ? i + 1 : null, // Top 3 get priority 1, 2, 3
-          created_at: new Date(Date.now() - i * 86400000).toISOString(),
-        })),
-        reports: Array.from({ length: 10 }, (_, i) => ({
-          id: i + 1,
-          report_type: ["صحة", "بيئة", "تعليم"][i % 3],
-          status: ["مكتمل", "قيد المراجعة", "مسودة"][i % 3],
-          title: `بلاغ ${i + 1}`,
-          created_at: new Date(Date.now() - i * 86400000).toISOString(),
-        })),
-        health_metrics: Array.from({ length: 10 }, (_, i) => ({
-          id: i + 1,
-          source: ["وزارة الصحة", "البلدية", "المستشفى"][i % 3],
-          region: ["المركز", "الشرق", "الغرب"][i % 3],
-          value: Math.floor(Math.random() * 100) + 1,
-          unit: ["%", "عدد", "كجم"][i % 3],
-          metric_name: `مؤشر ${i + 1}`,
-        })),
-      };
-
-      setStats(mockStats);
-      setData(mockData);
+      setData((prev) => ({ ...prev, initiatives, volunteers }));
+      setStats((prev) => ({
+        ...prev,
+        initiatives: initiatives.length,
+        volunteers: volunteers.length,
+      }));
     } catch (error) {
       console.error("Error fetching data:", error);
     }
-    // Commented out finally block for development
-    // finally {
-    //   setLoading(false);
-    // }
   };
 
   const handleSignOut = async () => {
@@ -334,7 +289,7 @@ const AdminDashboard = () => {
   const handleViewInitiative = (id) => {
     console.log(`Viewing initiative ${id}`);
     // Navigate to initiative details page
-    navigate(`/initiative/${id}`);
+    navigate(`/initiatives/${id}`);
   };
 
   const handleEditInitiative = (id) => {
@@ -502,6 +457,137 @@ const AdminDashboard = () => {
         return story;
       }),
     }));
+  };
+
+  // Search state and filters
+  const [initiativeSearch, setInitiativeSearch] = useState("");
+  const [volunteerSearch, setVolunteerSearch] = useState("");
+
+  const isArabicSearch = (term) => /[\u0600-\u06FF]/.test(term);
+
+  const filteredInitiatives = data.initiatives.filter((initiative) => {
+    if (!initiativeSearch.trim()) return true;
+    const term = initiativeSearch;
+    const fields = [
+      initiative.title || "",
+      initiative.organized_agency || "",
+      initiative.status || "",
+    ];
+    if (isArabicSearch(term)) {
+      return fields.some((f) => f.includes(term));
+    }
+    const tl = term.toLowerCase();
+    return fields.some((f) => (f || "").toLowerCase().includes(tl));
+  });
+
+  const filteredVolunteers = data.volunteers.filter((v) => {
+    if (!volunteerSearch.trim()) return true;
+    const term = volunteerSearch;
+    const fields = [
+      v.full_name || "",
+      v.email || "",
+      v.phone_number || "",
+      v.volunteering_initiative || "",
+    ];
+    if (isArabicSearch(term)) {
+      return fields.some((f) => f.includes(term));
+    }
+    const tl = term.toLowerCase();
+    return fields.some((f) => (f || "").toLowerCase().includes(tl));
+  });
+
+  // Initiative modals state and handlers (reuse agency modals)
+  const [initiativeModal, setInitiativeModal] = useState({
+    isOpen: false,
+    mode: "edit", // "add" or "edit"
+    initiative: null,
+  });
+  const [initiativeForm, setInitiativeForm] = useState({
+    title: "",
+    description: "",
+    startDate: "",
+    endDate: "",
+    status: "",
+    maxVolunteers: 10,
+  });
+  const [deleteModal, setDeleteModal] = useState({
+    isOpen: false,
+    initiative: null,
+  });
+  const [actionLoading, setActionLoading] = useState(false);
+
+  const closeInitiativeModal = () => {
+    setInitiativeModal({ isOpen: false, mode: "edit", initiative: null });
+  };
+
+  const openInitiativeModal = (mode, initiative = null) => {
+    if (mode === "edit" && initiative) {
+      setInitiativeForm({
+        title: initiative.title,
+        description: initiative.description,
+        startDate: (initiative.startDate || "").split("T")[0],
+        endDate: (initiative.endDate || "").split("T")[0],
+        status: initiative.status,
+        maxVolunteers:
+          initiative.maxVolunteers || initiative.max_volunteers || 10,
+      });
+    } else {
+      setInitiativeForm({
+        title: "",
+        description: "",
+        startDate: "",
+        endDate: "",
+        status: "gathering volunteers",
+        maxVolunteers: 10,
+      });
+    }
+    setInitiativeModal({ isOpen: true, mode, initiative });
+  };
+
+  const handleUpdateInitiative = async (
+    initiativeId,
+    formData,
+    imageFile = null
+  ) => {
+    try {
+      setActionLoading(true);
+      await initiativeApi.updateInitiative(
+        token,
+        initiativeId,
+        {
+          title: formData.title,
+          description: formData.description,
+          startDate: formData.startDate,
+          endDate: formData.endDate,
+          status: formData.status,
+          maxVolunteers: parseInt(formData.maxVolunteers),
+        },
+        imageFile
+      );
+      await fetchAllData();
+      closeInitiativeModal();
+    } catch (error) {
+      console.error("Error updating initiative:", error);
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
+  const handleConfirmDelete = async () => {
+    try {
+      if (!deleteModal.initiative) return;
+      setActionLoading(true);
+      await initiativeApi.deleteInitiative(
+        token,
+        deleteModal.initiative.id || deleteModal.initiative._id
+      );
+      await fetchAllData();
+      setDeleteModal({ isOpen: false, initiative: null });
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setActionLoading(false);
+    }
   };
 
   const statCards = [
@@ -982,6 +1068,30 @@ const AdminDashboard = () => {
               </CardDescription>
             </CardHeader>
             <CardContent>
+              {/* Search Bar */}
+              <div className="mb-4">
+                <div className="relative">
+                  <Search
+                    className={`absolute top-1/2 -translate-y-1/2 ${
+                      language === "ar" ? "right-3" : "left-3"
+                    } h-4 w-4 text-muted-foreground`}
+                  />
+                  <Input
+                    placeholder={
+                      language === "ar"
+                        ? "ابحث في المبادرات"
+                        : "Search initiatives"
+                    }
+                    value={initiativeSearch}
+                    onChange={(e) => setInitiativeSearch(e.target.value)}
+                    className={`${
+                      language === "ar"
+                        ? "font-arabic text-right pr-10"
+                        : "font-english text-left pl-10"
+                    }`}
+                  />
+                </div>
+              </div>
               <div className="overflow-x-auto">
                 <Table className="w-full">
                   <TableHeader>
@@ -998,9 +1108,7 @@ const AdminDashboard = () => {
                           <TableHead className="text-right font-arabic">
                             المتطوعين
                           </TableHead>
-                          <TableHead className="text-right font-arabic">
-                            الفئة
-                          </TableHead>
+
                           <TableHead className="text-right font-arabic">
                             الحالة
                           </TableHead>
@@ -1017,9 +1125,7 @@ const AdminDashboard = () => {
                           <TableHead className="text-center font-english">
                             Status
                           </TableHead>
-                          <TableHead className="text-center font-english">
-                            Category
-                          </TableHead>
+
                           <TableHead className="text-center font-english">
                             Volunteers
                           </TableHead>
@@ -1034,7 +1140,7 @@ const AdminDashboard = () => {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {data.initiatives.slice(0, 10).map((initiative) => (
+                    {filteredInitiatives.slice(0, 10).map((initiative) => (
                       <TableRow key={initiative.id}>
                         {language === "ar" ? (
                           // Arabic order: right to left
@@ -1055,7 +1161,7 @@ const AdminDashboard = () => {
                                   variant="outline"
                                   className="h-8 w-8 p-0"
                                   onClick={() =>
-                                    handleEditInitiative(initiative.id)
+                                    openEditInitiative(initiative)
                                   }>
                                   <Edit className="h-4 w-4" />
                                 </Button>
@@ -1064,7 +1170,7 @@ const AdminDashboard = () => {
                                   variant="outline"
                                   className="h-8 w-8 p-0 text-destructive hover:text-destructive"
                                   onClick={() =>
-                                    handleDeleteInitiative(initiative.id)
+                                    setDeleteModal({ isOpen: true, initiative })
                                   }>
                                   <Trash2 className="h-4 w-4" />
                                 </Button>
@@ -1096,9 +1202,7 @@ const AdminDashboard = () => {
                                 </div>
                               </div>
                             </TableCell>
-                            <TableCell className="text-right font-arabic">
-                              {initiative.category}
-                            </TableCell>
+
                             <TableCell className="text-right">
                               <Badge
                                 variant={
@@ -1106,14 +1210,12 @@ const AdminDashboard = () => {
                                     ? "default"
                                     : initiative.status === "completed"
                                     ? "secondary"
+                                    : initiative.status === "cancelled"
+                                    ? "destructive"
                                     : "outline"
                                 }
                                 className="font-arabic">
-                                {initiative.status === "active"
-                                  ? "نشط"
-                                  : initiative.status === "completed"
-                                  ? "مكتمل"
-                                  : "مسودة"}
+                                {initiative.status}
                               </Badge>
                             </TableCell>
                             <TableCell className="text-right font-arabic">
@@ -1133,19 +1235,15 @@ const AdminDashboard = () => {
                                     ? "default"
                                     : initiative.status === "completed"
                                     ? "secondary"
+                                    : initiative.status === "cancelled"
+                                    ? "destructive"
                                     : "outline"
                                 }
                                 className="font-english">
-                                {initiative.status === "active"
-                                  ? "Active"
-                                  : initiative.status === "completed"
-                                  ? "Completed"
-                                  : "Draft"}
+                                {initiative.status}
                               </Badge>
                             </TableCell>
-                            <TableCell className="text-center font-english">
-                              {initiative.category}
-                            </TableCell>
+
                             <TableCell className="text-center font-english">
                               <div className="flex items-center justify-center gap-2">
                                 <span className="font-semibold text-primary">
@@ -1188,7 +1286,7 @@ const AdminDashboard = () => {
                                   variant="outline"
                                   className="h-8 w-8 p-0"
                                   onClick={() =>
-                                    handleEditInitiative(initiative.id)
+                                    openInitiativeModal("edit", initiative)
                                   }>
                                   <Edit className="h-4 w-4" />
                                 </Button>
@@ -1197,7 +1295,7 @@ const AdminDashboard = () => {
                                   variant="outline"
                                   className="h-8 w-8 p-0 text-destructive hover:text-destructive"
                                   onClick={() =>
-                                    handleDeleteInitiative(initiative.id)
+                                    setDeleteModal({ isOpen: true, initiative })
                                   }>
                                   <Trash2 className="h-4 w-4" />
                                 </Button>
@@ -1448,6 +1546,30 @@ const AdminDashboard = () => {
               </CardDescription>
             </CardHeader>
             <CardContent>
+              {/* Search Bar */}
+              <div className="mb-4">
+                <div className="relative">
+                  <Search
+                    className={`absolute top-1/2 -translate-y-1/2 ${
+                      language === "ar" ? "right-3" : "left-3"
+                    } h-4 w-4 text-muted-foreground`}
+                  />
+                  <Input
+                    placeholder={
+                      language === "ar"
+                        ? "ابحث في المتطوعين"
+                        : "Search volunteers"
+                    }
+                    value={volunteerSearch}
+                    onChange={(e) => setVolunteerSearch(e.target.value)}
+                    className={`${
+                      language === "ar"
+                        ? "font-arabic text-right pr-10"
+                        : "font-english text-left pl-10"
+                    }`}
+                  />
+                </div>
+              </div>
               <div className="overflow-x-auto">
                 <Table className="w-full">
                   <TableHeader>
@@ -1455,9 +1577,6 @@ const AdminDashboard = () => {
                       {language === "ar" ? (
                         // Arabic order: right to left
                         <>
-                          <TableHead className="text-center font-arabic">
-                            الإجراءات
-                          </TableHead>
                           <TableHead className="text-right font-arabic">
                             مبادرة التطوع
                           </TableHead>
@@ -1486,41 +1605,16 @@ const AdminDashboard = () => {
                           <TableHead className="text-left font-english">
                             Volunteering Initiative
                           </TableHead>
-                          <TableHead className="text-center font-english">
-                            Actions
-                          </TableHead>
                         </>
                       )}
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {data.volunteers.slice(0, 10).map((volunteer) => (
+                    {filteredVolunteers.slice(0, 10).map((volunteer) => (
                       <TableRow key={volunteer.id}>
                         {language === "ar" ? (
                           // Arabic order: right to left
                           <>
-                            <TableCell className="text-center">
-                              <div className="flex items-center justify-center gap-1">
-                                <Button
-                                  size="sm"
-                                  variant="outline"
-                                  className="h-8 w-8 p-0"
-                                  onClick={() =>
-                                    handleEditVolunteer(volunteer.id)
-                                  }>
-                                  <Edit className="h-4 w-4" />
-                                </Button>
-                                <Button
-                                  size="sm"
-                                  variant="outline"
-                                  className="h-8 w-8 p-0 text-destructive hover:text-destructive"
-                                  onClick={() =>
-                                    handleDeleteVolunteer(volunteer.id)
-                                  }>
-                                  <Trash2 className="h-4 w-4" />
-                                </Button>
-                              </div>
-                            </TableCell>
                             <TableCell className="text-right font-arabic">
                               {volunteer.volunteering_initiative}
                             </TableCell>
@@ -1548,28 +1642,6 @@ const AdminDashboard = () => {
                             </TableCell>
                             <TableCell className="text-left font-english">
                               {volunteer.volunteering_initiative}
-                            </TableCell>
-                            <TableCell className="text-center">
-                              <div className="flex items-center justify-center gap-1">
-                                <Button
-                                  size="sm"
-                                  variant="outline"
-                                  className="h-8 w-8 p-0"
-                                  onClick={() =>
-                                    handleEditVolunteer(volunteer.id)
-                                  }>
-                                  <Edit className="h-4 w-4" />
-                                </Button>
-                                <Button
-                                  size="sm"
-                                  variant="outline"
-                                  className="h-8 w-8 p-0 text-destructive hover:text-destructive"
-                                  onClick={() =>
-                                    handleDeleteVolunteer(volunteer.id)
-                                  }>
-                                  <Trash2 className="h-4 w-4" />
-                                </Button>
-                              </div>
                             </TableCell>
                           </>
                         )}
@@ -1880,8 +1952,45 @@ const AdminDashboard = () => {
           </Card>
         </TabsContent>
       </Tabs>
+
+      {/* Initiative Edit Modal */}
+      <InitiativeModal
+        isOpen={initiativeModal.isOpen}
+        onClose={closeInitiativeModal}
+        mode={initiativeModal.mode}
+        initiative={initiativeModal.initiative}
+        formData={initiativeForm}
+        onFormChange={setInitiativeForm}
+        onSubmit={(formData, imageFile) => {
+          if (initiativeModal.mode === "add") {
+            // No add flow here; admin only edits in this screen
+            return;
+          } else {
+            handleUpdateInitiative(
+              initiativeModal.initiative.id || initiativeModal.initiative._id,
+              formData,
+              imageFile
+            );
+          }
+        }}
+        loading={actionLoading}
+        language={language}
+      />
+
+      {/* Delete Initiative Modal */}
+      <DeleteInitiativeModal
+        isOpen={deleteModal.isOpen}
+        onClose={() => setDeleteModal({ isOpen: false, initiative: null })}
+        initiative={deleteModal.initiative}
+        onConfirm={handleConfirmDelete}
+        loading={actionLoading}
+        language={language}
+      />
     </div>
   );
 };
 
 export default AdminDashboard;
+
+// Render modals at root level of the page component
+// Note: These JSX elements must be inside a component's return; we add them by augmenting the return above.

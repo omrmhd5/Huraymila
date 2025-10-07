@@ -40,6 +40,37 @@ const VolunteerDashboard = () => {
   const [loading, setLoading] = useState(true);
   const [withdrawing, setWithdrawing] = useState(null);
 
+  const normalizeVolunteerInitiatives = (rawInitiatives) => {
+    if (!Array.isArray(rawInitiatives)) return [];
+    return rawInitiatives.map((entry) => {
+      const initiativeDoc = entry?.initiative ?? entry;
+      const id =
+        typeof initiativeDoc === "string"
+          ? initiativeDoc
+          : initiativeDoc?._id || initiativeDoc?.id || null;
+      return {
+        id,
+        title:
+          typeof initiativeDoc === "object" ? initiativeDoc?.title || "" : "",
+        description:
+          typeof initiativeDoc === "object"
+            ? initiativeDoc?.description || ""
+            : "",
+        status:
+          typeof initiativeDoc === "object" ? initiativeDoc?.status || "" : "",
+        startDate:
+          typeof initiativeDoc === "object"
+            ? initiativeDoc?.startDate || null
+            : null,
+        endDate:
+          typeof initiativeDoc === "object"
+            ? initiativeDoc?.endDate || null
+            : null,
+        joinedAt: entry?.joinedAt || null,
+      };
+    });
+  };
+
   const isRTL = language === "ar";
 
   // Redirect to login if not authenticated or not a volunteer (match Agency behavior)
@@ -49,35 +80,23 @@ const VolunteerDashboard = () => {
     }
   }, [user, authLoading, navigate]);
 
-  // Load user initiatives
+  // Load user initiatives (refresh populated data and normalize)
   useEffect(() => {
     const loadInitiatives = async () => {
-      if (user && token) {
-        if (
-          user.initiatives &&
-          Array.isArray(user.initiatives) &&
-          user.initiatives.length > 0
-        ) {
-          // Use existing populated data
-          setUserInitiatives(user.initiatives);
-          setLoading(false);
-        } else {
-          // Fetch fresh populated data from server
-          try {
-            const userData = await fetchCurrentUser();
-            if (userData && userData.initiatives) {
-              setUserInitiatives(userData.initiatives);
-            } else {
-              setUserInitiatives([]);
-            }
-          } catch (error) {
-            console.error("Error refreshing user data:", error);
-            setUserInitiatives([]);
-          } finally {
-            setLoading(false);
-          }
-        }
-      } else {
+      if (!token) {
+        setLoading(false);
+        return;
+      }
+      try {
+        const res = await fetchCurrentUser();
+        const fetchedUser = res?.user || res;
+        const initiativesRaw = fetchedUser?.initiatives || [];
+        setUserInitiatives(normalizeVolunteerInitiatives(initiativesRaw));
+      } catch (error) {
+        console.error("Error loading initiatives:", error);
+        const fallback = normalizeVolunteerInitiatives(user?.initiatives || []);
+        setUserInitiatives(fallback);
+      } finally {
         setLoading(false);
       }
     };
@@ -220,7 +239,10 @@ const VolunteerDashboard = () => {
                     <TrendingUp className="w-6 h-6 text-green-600" />
                   </div>
                   <div className="text-3xl font-bold text-green-600 mb-2">
-                    {userInitiatives.length || 0}
+                    {
+                      userInitiatives.filter((i) => i.status === "active")
+                        .length
+                    }
                   </div>
                   <p
                     className={cn(
@@ -241,7 +263,10 @@ const VolunteerDashboard = () => {
                     <Award className="w-6 h-6 text-purple-600" />
                   </div>
                   <div className="text-3xl font-bold text-purple-600 mb-2">
-                    0
+                    {
+                      userInitiatives.filter((i) => i.status === "completed")
+                        .length
+                    }
                   </div>
                   <p
                     className={cn(
@@ -433,12 +458,7 @@ const VolunteerDashboard = () => {
                 ) : userInitiatives && userInitiatives.length > 0 ? (
                   <div className="grid gap-4">
                     {userInitiatives.map((initiative, index) => {
-                      const initiativeData =
-                        initiative?.initiative ?? initiative; // support both populated and raw
-                      const initiativeId =
-                        (typeof initiativeData === "string"
-                          ? initiativeData
-                          : initiativeData?._id || initiativeData?.id) || null;
+                      const initiativeId = initiative?.id || null;
                       const isWithdrawing = initiativeId
                         ? withdrawing === initiativeId
                         : false;
@@ -456,18 +476,14 @@ const VolunteerDashboard = () => {
                                 "font-semibold text-lg mb-1",
                                 isRTL ? "font-arabic" : "font-sans"
                               )}>
-                              {typeof initiativeData === "object"
-                                ? initiativeData?.title || "Initiative"
-                                : "Initiative"}
+                              {initiative?.title || "Initiative"}
                             </h3>
                             <p
                               className={cn(
                                 "text-sm text-muted-foreground mb-2",
                                 isRTL ? "font-arabic" : "font-sans"
                               )}>
-                              {typeof initiativeData === "object"
-                                ? initiativeData?.description || ""
-                                : ""}
+                              {initiative?.description || ""}
                             </p>
                             <p
                               className={cn(
@@ -475,7 +491,9 @@ const VolunteerDashboard = () => {
                                 isRTL ? "font-arabic" : "font-sans"
                               )}>
                               {language === "ar" ? "انضممت في:" : "Joined on:"}{" "}
-                              {new Date(initiative.joinedAt).toLocaleDateString(
+                              {new Date(
+                                initiative?.joinedAt || Date.now()
+                              ).toLocaleDateString(
                                 language === "ar" ? "ar-SA" : "en-US"
                               )}
                             </p>
@@ -506,9 +524,7 @@ const VolunteerDashboard = () => {
                               onClick={() =>
                                 handleWithdraw(
                                   initiativeId,
-                                  typeof initiativeData === "object"
-                                    ? initiativeData?.title
-                                    : ""
+                                  initiative?.title || ""
                                 )
                               }
                               disabled={!initiativeId || isWithdrawing}
