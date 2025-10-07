@@ -243,6 +243,33 @@ const AdminDashboard = () => {
     });
   };
 
+  // Status badge helper function
+  const getStatusBadge = (status) => {
+    const statusConfig = {
+      active: {
+        color: "bg-green-500",
+        text: language === "ar" ? "نشط" : "Active",
+      },
+      completed: {
+        color: "bg-blue-500",
+        text: language === "ar" ? "مكتمل" : "Completed",
+      },
+      cancelled: {
+        color: "bg-red-500",
+        text: language === "ar" ? "ملغي" : "Cancelled",
+      },
+      "gathering volunteers": {
+        color: "bg-yellow-500",
+        text: language === "ar" ? "جمع المتطوعين" : "Gathering Volunteers",
+      },
+    };
+
+    const config = statusConfig[status] || statusConfig.active;
+    return (
+      <Badge className={`${config.color} text-white`}>{config.text}</Badge>
+    );
+  };
+
   // Health indicators management functions
   const updateHealthIndicator = (id, field, value) => {
     setHealthIndicators((prev) =>
@@ -290,55 +317,6 @@ const AdminDashboard = () => {
     console.log(`Viewing initiative ${id}`);
     // Navigate to initiative details page
     navigate(`/initiatives/${id}`);
-  };
-
-  const handleEditInitiative = (id) => {
-    console.log(`Editing initiative ${id}`);
-    // Navigate to edit initiative page or open edit modal
-    navigate(`/admin/initiatives/edit/${id}`);
-  };
-
-  const handleDeleteInitiative = (id) => {
-    console.log(`Deleting initiative ${id}`);
-    // Show confirmation dialog and delete initiative
-    if (
-      window.confirm(
-        language === "ar"
-          ? "هل أنت متأكد من حذف هذه المبادرة؟"
-          : "Are you sure you want to delete this initiative?"
-      )
-    ) {
-      // Delete logic here
-      setData((prev) => ({
-        ...prev,
-        initiatives: prev.initiatives.filter((init) => init.id !== id),
-      }));
-    }
-  };
-
-  // Volunteer action handlers
-  const handleEditVolunteer = (id) => {
-    console.log(`Editing volunteer ${id}`);
-    // Navigate to edit volunteer page or open edit modal
-    navigate(`/admin/volunteers/edit/${id}`);
-  };
-
-  const handleDeleteVolunteer = (id) => {
-    console.log(`Deleting volunteer ${id}`);
-    // Show confirmation dialog and delete volunteer
-    if (
-      window.confirm(
-        language === "ar"
-          ? "هل أنت متأكد من حذف هذا المتطوع؟"
-          : "Are you sure you want to delete this volunteer?"
-      )
-    ) {
-      // Delete logic here
-      setData((prev) => ({
-        ...prev,
-        volunteers: prev.volunteers.filter((vol) => vol.id !== id),
-      }));
-    }
   };
 
   // News action handlers
@@ -1204,19 +1182,30 @@ const AdminDashboard = () => {
                             </TableCell>
 
                             <TableCell className="text-right">
-                              <Badge
-                                variant={
-                                  initiative.status === "active"
-                                    ? "default"
-                                    : initiative.status === "completed"
-                                    ? "secondary"
-                                    : initiative.status === "cancelled"
-                                    ? "destructive"
-                                    : "outline"
-                                }
-                                className="font-arabic">
-                                {initiative.status}
-                              </Badge>
+                              {initiative.status && (
+                                <Badge
+                                  variant="default"
+                                  className={`
+                                    ${
+                                      initiative.status === "active" ||
+                                      initiative.status === "نشط"
+                                        ? "bg-green-500"
+                                        : initiative.status === "completed" ||
+                                          initiative.status === "مكتمل"
+                                        ? "bg-blue-500"
+                                        : initiative.status === "cancelled" ||
+                                          initiative.status === "ملغي"
+                                        ? "bg-red-500"
+                                        : initiative.status ===
+                                            "gathering volunteers" ||
+                                          initiative.status === "جمع المتطوعين"
+                                        ? "bg-yellow-500"
+                                        : "bg-gray-500"
+                                    } font-arabic
+                                  `}>
+                                  {initiative.status}
+                                </Badge>
+                              )}
                             </TableCell>
                             <TableCell className="text-right font-arabic">
                               {initiative.title}
@@ -1229,19 +1218,8 @@ const AdminDashboard = () => {
                               {initiative.title}
                             </TableCell>
                             <TableCell className="text-center">
-                              <Badge
-                                variant={
-                                  initiative.status === "active"
-                                    ? "default"
-                                    : initiative.status === "completed"
-                                    ? "secondary"
-                                    : initiative.status === "cancelled"
-                                    ? "destructive"
-                                    : "outline"
-                                }
-                                className="font-english">
-                                {initiative.status}
-                              </Badge>
+                              {initiative.status &&
+                                getStatusBadge(initiative.status)}
                             </TableCell>
 
                             <TableCell className="text-center font-english">

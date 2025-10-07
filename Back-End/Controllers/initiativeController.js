@@ -315,8 +315,11 @@ const deleteInitiative = async (req, res) => {
   try {
     const { id } = req.params;
 
-    // Find initiative first to check ownership
-    const existingInitiative = await Initiative.findById(id);
+    // Find initiative first to check ownership and populate volunteer details
+    const existingInitiative = await Initiative.findById(id)
+      .populate("volunteers.volunteer", "fullName email phoneNumber")
+      .populate("agency", "name email");
+
     if (!existingInitiative) {
       return res.status(404).json({
         success: false,
@@ -335,9 +338,22 @@ const deleteInitiative = async (req, res) => {
       });
     }
 
+    // Remove initiative from all associated volunteers' records
+    const volunteerIds = existingInitiative.volunteers
+      .filter((vol) => vol.volunteer)
+      .map((vol) => vol.volunteer._id);
+
+    if (volunteerIds.length > 0) {
+      await Volunteer.updateMany(
+        { _id: { $in: volunteerIds } },
+        { $pull: { initiatives: { initiative: id } } }
+      );
+    }
+
     // Delete entire initiative folder (including image)
     deleteInitiativeFolder(id);
 
+    // Delete the initiative document
     await Initiative.findByIdAndDelete(id);
 
     res.json({
