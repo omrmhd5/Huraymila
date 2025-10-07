@@ -25,7 +25,13 @@ import { initiativeApi } from "@/lib/initiativeApi";
 import { toast } from "sonner";
 
 const VolunteerDashboard = () => {
-  const { user, token, getAuthHeaders, fetchCurrentUser } = useAuth();
+  const {
+    user,
+    loading: authLoading,
+    token,
+    getAuthHeaders,
+    fetchCurrentUser,
+  } = useAuth();
   const { language } = useTheme();
   const { t } = useLanguage();
   const navigate = useNavigate();
@@ -35,6 +41,13 @@ const VolunteerDashboard = () => {
   const [withdrawing, setWithdrawing] = useState(null);
 
   const isRTL = language === "ar";
+
+  // Redirect to login if not authenticated or not a volunteer (match Agency behavior)
+  useEffect(() => {
+    if (!authLoading && (!user || user.type !== "volunteer")) {
+      navigate("/auth");
+    }
+  }, [user, authLoading, navigate]);
 
   // Load user initiatives
   useEffect(() => {
@@ -123,7 +136,8 @@ const VolunteerDashboard = () => {
     }
   };
 
-  if (!user) {
+  // Match Agency loading gate
+  if (authLoading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center">
@@ -136,19 +150,8 @@ const VolunteerDashboard = () => {
     );
   }
 
-  if (user.type !== "volunteer") {
-    return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="text-center">
-          <h2 className="text-2xl font-bold mb-4">
-            {language === "ar" ? "غير مخول" : "Unauthorized"}
-          </h2>
-          <Button onClick={() => navigate("/auth")}>
-            {language === "ar" ? "تسجيل الدخول" : "Sign In"}
-          </Button>
-        </div>
-      </div>
-    );
+  if (!user) {
+    return null; // Will redirect to login
   }
 
   return (
@@ -430,10 +433,15 @@ const VolunteerDashboard = () => {
                 ) : userInitiatives && userInitiatives.length > 0 ? (
                   <div className="grid gap-4">
                     {userInitiatives.map((initiative, index) => {
-                      const initiativeData = initiative.initiative;
+                      const initiativeData =
+                        initiative?.initiative ?? initiative; // support both populated and raw
                       const initiativeId =
-                        initiativeData?._id || initiativeData?.id;
-                      const isWithdrawing = withdrawing === initiativeId;
+                        (typeof initiativeData === "string"
+                          ? initiativeData
+                          : initiativeData?._id || initiativeData?.id) || null;
+                      const isWithdrawing = initiativeId
+                        ? withdrawing === initiativeId
+                        : false;
 
                       return (
                         <div
@@ -448,14 +456,18 @@ const VolunteerDashboard = () => {
                                 "font-semibold text-lg mb-1",
                                 isRTL ? "font-arabic" : "font-sans"
                               )}>
-                              {initiativeData?.title || "Initiative"}
+                              {typeof initiativeData === "object"
+                                ? initiativeData?.title || "Initiative"
+                                : "Initiative"}
                             </h3>
                             <p
                               className={cn(
                                 "text-sm text-muted-foreground mb-2",
                                 isRTL ? "font-arabic" : "font-sans"
                               )}>
-                              {initiativeData?.description || ""}
+                              {typeof initiativeData === "object"
+                                ? initiativeData?.description || ""
+                                : ""}
                             </p>
                             <p
                               className={cn(
@@ -482,6 +494,7 @@ const VolunteerDashboard = () => {
                               onClick={() =>
                                 navigate(`/initiatives/${initiativeId}`)
                               }
+                              disabled={!initiativeId}
                               className="hover:bg-primary hover:text-primary-foreground">
                               <Eye className="w-4 h-4" />
                             </Button>
@@ -493,10 +506,12 @@ const VolunteerDashboard = () => {
                               onClick={() =>
                                 handleWithdraw(
                                   initiativeId,
-                                  initiativeData?.title
+                                  typeof initiativeData === "object"
+                                    ? initiativeData?.title
+                                    : ""
                                 )
                               }
-                              disabled={isWithdrawing}
+                              disabled={!initiativeId || isWithdrawing}
                               className="text-red-600 hover:text-red-700 hover:bg-red-50 border-red-200">
                               {isWithdrawing ? (
                                 <Loader2 className="w-4 h-4 animate-spin" />

@@ -196,6 +196,7 @@ const Navbar = () => {
                       onClick={() => {
                         logout();
                         setIsUserMenuOpen(false);
+                        navigateToTop("/auth");
                       }}
                       className={`flex items-center gap-2 px-4 py-2 text-sm hover:bg-muted transition-colors w-full text-destructive ${
                         language === "ar"

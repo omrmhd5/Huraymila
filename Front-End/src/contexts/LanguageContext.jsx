@@ -1034,6 +1034,7 @@ export const LanguageProvider = ({ children }) => {
         confirmDeleteMessageEnd: "؟ لا يمكن التراجع عن هذا الإجراء.",
         cancel: "إلغاء",
         delete: "حذف",
+        removed: "تمت إزالة المتطوع بنجاح",
       },
       initiatives: {
         title: "المبادرات",
@@ -2706,6 +2707,7 @@ export const LanguageProvider = ({ children }) => {
         confirmDeleteMessageEnd: "? This action cannot be undone.",
         cancel: "Cancel",
         delete: "Delete",
+        removed: "Volunteer removed successfully",
       },
       initiatives: {
         title: "Initiatives",

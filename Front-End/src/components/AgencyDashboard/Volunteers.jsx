@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import {
   Card,
   CardContent,
@@ -28,17 +28,66 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Trash2, Search } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useAuth } from "@/contexts/AuthContext";
+import { initiativeApi } from "@/lib/initiativeApi";
+import { toast } from "sonner";
 
-const Volunteers = ({ language, volunteers }) => {
+const Volunteers = ({ language }) => {
   const { t } = useLanguage();
+  const { token } = useAuth();
   // Search state
   const [searchTerm, setSearchTerm] = useState("");
+
+  // Local state
+  const [loading, setLoading] = useState(true);
+  const [initiatives, setInitiatives] = useState([]);
+  const [actionLoading, setActionLoading] = useState(false);
 
   // Delete modal state
   const [deleteModal, setDeleteModal] = useState({
     isOpen: false,
-    volunteer: null,
+    volunteer: null, // flattened volunteer entry
   });
+
+  // Load agency initiatives with populated volunteers
+  useEffect(() => {
+    const loadInitiatives = async () => {
+      try {
+        setLoading(true);
+        const res = await initiativeApi.getMyInitiatives(token);
+        setInitiatives(res.data || []);
+      } catch (error) {
+        console.error("Error loading initiatives:", error);
+        toast.error(t("initiatives.loadError") || "Failed to load initiatives");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (token) loadInitiatives();
+  }, [token, t]);
+
+  // Flatten volunteers across initiatives
+  const flattenedVolunteers = useMemo(() => {
+    const result = [];
+    for (const initiative of initiatives) {
+      const vols = initiative?.volunteers || [];
+      for (const entry of vols) {
+        const volDoc = entry?.volunteer || {};
+        result.push({
+          entryId: entry?._id, // volunteer array entry id
+          volunteerId: volDoc?._id || volDoc?.id, // volunteer document id
+          initiativeId: initiative?._id || initiative?.id,
+          initiativeTitle: initiative?.title,
+          fullName: volDoc?.fullName || volDoc?.name || "",
+          email: volDoc?.email || "",
+          phoneNumber: volDoc?.phoneNumber || volDoc?.phone || "",
+          joinedAt: entry?.joinedAt,
+        });
+      }
+    }
+    return result;
+  }, [initiatives]);
 
   // Component-specific functions
   const formatDate = (dateString) => {
@@ -48,13 +97,13 @@ const Volunteers = ({ language, volunteers }) => {
   };
 
   // Filter volunteers based on search term
-  const filteredVolunteers = volunteers.filter((volunteer) => {
+  const filteredVolunteers = flattenedVolunteers.filter((volunteer) => {
     if (!searchTerm.trim()) return true;
 
     const searchTermLower = searchTerm.toLowerCase();
-    const fullName = volunteer.fullName || volunteer.name || "";
+    const fullName = volunteer.fullName || "";
     const email = volunteer.email || "";
-    const phone = volunteer.phone || "";
+    const phone = volunteer.phoneNumber || "";
 
     // For Arabic text, we don't convert to lowercase as it can cause issues
     // For English text, we convert to lowercase for case-insensitive search
@@ -86,10 +135,33 @@ const Volunteers = ({ language, volunteers }) => {
     setDeleteModal({ isOpen: false, volunteer: null });
   };
 
-  const handleDelete = () => {
-    // Here you would typically delete the volunteer from your state/API
-    console.log("Deleting volunteer:", deleteModal.volunteer.id);
-    closeDeleteModal();
+  const handleDelete = async () => {
+    if (!deleteModal.volunteer) return;
+    try {
+      setActionLoading(true);
+      // Remove volunteer from initiative (requires entry volunteerId for route param)
+      await initiativeApi.removeVolunteer(
+        token,
+        deleteModal.volunteer.initiativeId,
+        deleteModal.volunteer.entryId // backend expects the initiative volunteer array entry id
+      );
+      toast.success(
+        t("volunteers.removed") || "Volunteer removed successfully"
+      );
+      // Refresh initiatives after removal
+      const res = await initiativeApi.getMyInitiatives(token);
+      setInitiatives(res.data || []);
+    } catch (error) {
+      console.error("Error removing volunteer:", error);
+      toast.error(
+        error.message ||
+          t("volunteers.removeFailed") ||
+          "Failed to remove volunteer"
+      );
+    } finally {
+      setActionLoading(false);
+      closeDeleteModal();
+    }
   };
 
   return (
@@ -135,147 +207,148 @@ const Volunteers = ({ language, volunteers }) => {
         </div>
 
         {/* Volunteers Table */}
-        <div
-          className={`rounded-md border ${language === "ar" ? "rtl" : "ltr"}`}>
-          <Table dir={language === "ar" ? "rtl" : "ltr"}>
-            <TableHeader>
-              <TableRow className={language === "ar" ? "rtl" : "ltr"}>
-                <TableHead
-                  className={`${
-                    language === "ar"
-                      ? "font-arabic text-right"
-                      : "font-sans text-left"
-                  }`}>
-                  {t("volunteers.fullName")}
-                </TableHead>
-                <TableHead
-                  className={`${
-                    language === "ar"
-                      ? "font-arabic text-right"
-                      : "font-sans text-left"
-                  }`}>
-                  {t("volunteers.email")}
-                </TableHead>
-                <TableHead
-                  className={`${
-                    language === "ar"
-                      ? "font-arabic text-right"
-                      : "font-sans text-left"
-                  }`}>
-                  {t("volunteers.phoneNumber")}
-                </TableHead>
-                <TableHead
-                  className={`${
-                    language === "ar"
-                      ? "font-arabic text-right"
-                      : "font-sans text-left"
-                  }`}>
-                  {t("volunteers.volunteeredInitiatives")}
-                </TableHead>
-                <TableHead
-                  className={`${
-                    language === "ar"
-                      ? "font-arabic text-right"
-                      : "font-sans text-left"
-                  }`}>
-                  {t("volunteers.joinDate")}
-                </TableHead>
-                <TableHead
-                  className={`${
-                    language === "ar"
-                      ? "font-arabic text-right"
-                      : "font-sans text-left"
-                  }`}>
-                  {t("volunteers.actions")}
-                </TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {filteredVolunteers.length > 0 ? (
-                filteredVolunteers.map((volunteer) => (
-                  <TableRow
-                    key={volunteer.id}
-                    className={language === "ar" ? "rtl" : "ltr"}>
-                    <TableCell
-                      className={`${
-                        language === "ar"
-                          ? "font-arabic text-right"
-                          : "font-sans text-left"
-                      }`}>
-                      {volunteer.fullName || volunteer.name}
-                    </TableCell>
-                    <TableCell
-                      className={`${
-                        language === "ar"
-                          ? "font-arabic text-right"
-                          : "font-sans text-left"
-                      }`}>
-                      {volunteer.email}
-                    </TableCell>
-                    <TableCell
-                      className={`whitespace-nowrap ${
-                        language === "ar"
-                          ? "font-arabic text-right"
-                          : "font-sans text-left"
-                      }`}>
-                      {volunteer.phone}
-                    </TableCell>
-                    <TableCell
-                      className={`${
-                        language === "ar"
-                          ? "font-arabic text-right"
-                          : "font-sans text-left"
-                      }`}>
-                      <div className="flex flex-wrap gap-1">
-                        {Array.isArray(volunteer.initiatives) &&
-                        volunteer.initiatives.length > 0 ? (
-                          volunteer.initiatives.map((initiative, index) => (
-                            <span
-                              key={index}
-                              className="inline-flex items-center px-2 py-1 rounded-full text-xs bg-blue-100 text-blue-800">
-                              {initiative}
-                            </span>
-                          ))
-                        ) : (
-                          <span className="text-muted-foreground">
-                            {t("volunteers.noInitiatives")}
+        {loading ? (
+          <div className="text-center py-8">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
+            <p className="text-muted-foreground">
+              {t("initiatives.loading") || "Loading..."}
+            </p>
+          </div>
+        ) : (
+          <div
+            className={`rounded-md border ${
+              language === "ar" ? "rtl" : "ltr"
+            }`}>
+            <Table dir={language === "ar" ? "rtl" : "ltr"}>
+              <TableHeader>
+                <TableRow className={language === "ar" ? "rtl" : "ltr"}>
+                  <TableHead
+                    className={`${
+                      language === "ar"
+                        ? "font-arabic text-right"
+                        : "font-sans text-left"
+                    }`}>
+                    {t("volunteers.fullName")}
+                  </TableHead>
+                  <TableHead
+                    className={`${
+                      language === "ar"
+                        ? "font-arabic text-right"
+                        : "font-sans text-left"
+                    }`}>
+                    {t("volunteers.email")}
+                  </TableHead>
+                  <TableHead
+                    className={`${
+                      language === "ar"
+                        ? "font-arabic text-right"
+                        : "font-sans text-left"
+                    }`}>
+                    {t("volunteers.phoneNumber")}
+                  </TableHead>
+                  <TableHead
+                    className={`${
+                      language === "ar"
+                        ? "font-arabic text-right"
+                        : "font-sans text-left"
+                    }`}>
+                    {t("volunteers.volunteeredInitiatives")}
+                  </TableHead>
+                  <TableHead
+                    className={`${
+                      language === "ar"
+                        ? "font-arabic text-right"
+                        : "font-sans text-left"
+                    }`}>
+                    {t("volunteers.joinDate")}
+                  </TableHead>
+                  <TableHead
+                    className={`${
+                      language === "ar"
+                        ? "font-arabic text-right"
+                        : "font-sans text-left"
+                    }`}>
+                    {t("volunteers.actions")}
+                  </TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {filteredVolunteers.length > 0 ? (
+                  filteredVolunteers.map((volunteer) => (
+                    <TableRow
+                      key={`${volunteer.entryId}`}
+                      className={language === "ar" ? "rtl" : "ltr"}>
+                      <TableCell
+                        className={`${
+                          language === "ar"
+                            ? "font-arabic text-right"
+                            : "font-sans text-left"
+                        }`}>
+                        {volunteer.fullName}
+                      </TableCell>
+                      <TableCell
+                        className={`${
+                          language === "ar"
+                            ? "font-arabic text-right"
+                            : "font-sans text-left"
+                        }`}>
+                        {volunteer.email}
+                      </TableCell>
+                      <TableCell
+                        className={`whitespace-nowrap ${
+                          language === "ar"
+                            ? "font-arabic text-right"
+                            : "font-sans text-left"
+                        }`}>
+                        {volunteer.phoneNumber}
+                      </TableCell>
+                      <TableCell
+                        className={`${
+                          language === "ar"
+                            ? "font-arabic text-right"
+                            : "font-sans text-left"
+                        }`}>
+                        <div className="flex flex-wrap gap-1">
+                          <span className="inline-flex items-center px-2 py-1 rounded-full text-xs bg-blue-100 text-blue-800">
+                            {volunteer.initiativeTitle ||
+                              t("initiatives.title")}
                           </span>
-                        )}
-                      </div>
-                    </TableCell>
+                        </div>
+                      </TableCell>
+                      <TableCell
+                        className={`${
+                          language === "ar"
+                            ? "font-arabic text-right"
+                            : "font-sans text-left"
+                        }`}>
+                        {formatDate(volunteer.joinedAt)}
+                      </TableCell>
+                      <TableCell>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => openDeleteModal(volunteer)}
+                          className="text-red-600 hover:text-red-700 hover:bg-red-50">
+                          <Trash2 className="w-4 h-4" />
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  ))
+                ) : (
+                  <TableRow className={language === "ar" ? "rtl" : "ltr"}>
                     <TableCell
-                      className={`${
-                        language === "ar"
-                          ? "font-arabic text-right"
-                          : "font-sans text-left"
+                      colSpan={6}
+                      className={`text-center py-8 ${
+                        language === "ar" ? "font-arabic" : "font-sans"
                       }`}>
-                      {formatDate(volunteer.joinDate)}
-                    </TableCell>
-                    <TableCell>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => openDeleteModal(volunteer)}
-                        className="text-red-600 hover:text-red-700 hover:bg-red-50">
-                        <Trash2 className="w-4 h-4" />
-                      </Button>
+                      {t("volunteers.noSearchResults")}
                     </TableCell>
                   </TableRow>
-                ))
-              ) : (
-                <TableRow className={language === "ar" ? "rtl" : "ltr"}>
-                  <TableCell
-                    colSpan={6}
-                    className={`text-center py-8 ${
-                      language === "ar" ? "font-arabic" : "font-sans"
-                    }`}>
-                    {t("volunteers.noSearchResults")}
-                  </TableCell>
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
-        </div>
+                )}
+              </TableBody>
+            </Table>
+          </div>
+        )}
 
         {/* Delete Confirmation Modal */}
         <AlertDialog open={deleteModal.isOpen} onOpenChange={closeDeleteModal}>
@@ -291,7 +364,7 @@ const Volunteers = ({ language, volunteers }) => {
               </AlertDialogTitle>
               <AlertDialogDescription>
                 {`${t("volunteers.confirmDeleteMessage")} "${
-                  deleteModal.volunteer?.fullName || deleteModal.volunteer?.name
+                  deleteModal.volunteer?.fullName
                 }"${t("volunteers.confirmDeleteMessageEnd")}`}
               </AlertDialogDescription>
             </AlertDialogHeader>
