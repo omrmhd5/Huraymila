@@ -104,6 +104,9 @@ export const AuthProvider = ({ children }) => {
   const fetchCurrentUser = async () => {
     if (!token) return null;
 
+    // Capture the token used for this request so we can detect logout
+    const currentToken = token;
+
     try {
       const response = await fetch(
         `${
@@ -113,7 +116,7 @@ export const AuthProvider = ({ children }) => {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
+            Authorization: `Bearer ${currentToken}`,
           },
         }
       );
@@ -121,7 +124,12 @@ export const AuthProvider = ({ children }) => {
       if (response.ok) {
         const data = await response.json();
         if (data.success && data.user) {
-          // Update user data in state and localStorage
+          // If the auth token changed (e.g. user logged out) skip updating state
+          const storedToken = localStorage.getItem("authToken");
+          if (!storedToken || storedToken !== currentToken) {
+            return null;
+          }
+
           setUser(data.user);
           localStorage.setItem("user", JSON.stringify(data.user));
           return data.user;
