@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import {
   Card,
   CardContent,
@@ -16,16 +16,21 @@ import {
   Quote,
   Award,
   TrendingUp,
+  Star,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useTheme } from "@/contexts/ThemeContext";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { cn } from "@/lib/utils";
+import { successStoryApi } from "@/lib/successStoryApi";
+import { formatDate } from "@/utils/dateUtils";
 
 const SuccessStories = () => {
   const { language } = useTheme();
   const { t } = useLanguage();
   const navigate = useNavigate();
+  const [stories, setStories] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   // Function to navigate and scroll to top
   const navigateToTop = (path) => {
@@ -33,7 +38,26 @@ const SuccessStories = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  const stories = [
+  // Fetch prioritized success stories
+  useEffect(() => {
+    const fetchPrioritizedStories = async () => {
+      try {
+        setLoading(true);
+        const response = await successStoryApi.getPrioritizedSuccessStories(3);
+        setStories(response.data || []);
+      } catch (error) {
+        console.error("Error fetching prioritized success stories:", error);
+        setStories([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchPrioritizedStories();
+  }, []);
+
+  // Mock stories (fallback)
+  const mockStories = [
     {
       id: 1,
       title: "تحول صحي مذهل",
@@ -209,14 +233,45 @@ const SuccessStories = () => {
           </p>
         </div>
 
+        {/* Loading State */}
+        {loading && (
+          <div className="text-center py-12">
+            <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+            <p className="text-muted-foreground">
+              {language === "ar"
+                ? "جاري تحميل قصص النجاح..."
+                : "Loading success stories..."}
+            </p>
+          </div>
+        )}
+
         {/* Stories Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
-          {stories
-            .filter((story) => !story.featured)
-            .map((story, index) => (
+        {!loading && (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
+            {stories.map((story, index) => (
               <Card
                 key={index}
-                className="bg-card border border-border shadow-soft hover:shadow-card transition-all duration-300 group">
+                className="bg-card border border-border shadow-soft hover:shadow-card transition-all duration-300 group overflow-hidden">
+                {/* Story Image */}
+                {story.imageUrl && (
+                  <div className="relative h-48 overflow-hidden">
+                    <img
+                      src={successStoryApi.getImageUrl(story.imageUrl)}
+                      alt={story.title}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                    />
+                    {story.priority && (
+                      <div className="absolute top-4 right-4">
+                        <div className="flex items-center gap-1 bg-yellow-500 text-white px-2 py-1 rounded-md">
+                          <Star className="w-4 h-4 fill-current" />
+                          <span className="text-sm font-bold">
+                            {story.priority}
+                          </span>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                )}
                 <CardContent className="p-6">
                   {/* Quote Icon */}
                   <div className="mb-4">
@@ -229,16 +284,12 @@ const SuccessStories = () => {
                       "text-muted-foreground leading-relaxed mb-6",
                       isRTL ? "font-arabic" : "font-english"
                     )}>
-                    "
-                    {language === "ar"
-                      ? story.testimonial
-                      : story.testimonialEn}
-                    "
+                    "{story.quote}"
                   </p>
 
-                  {/* Initiative Badge */}
+                  {/* Story Title */}
                   <Badge variant="secondary" className="mb-4">
-                    {language === "ar" ? story.title : story.titleEn}
+                    {story.title}
                   </Badge>
 
                   {/* Before and After */}
@@ -248,7 +299,7 @@ const SuccessStories = () => {
                         {t("successStories.before")}:
                       </span>
                       <p className="text-red-700 dark:text-red-300 text-xs">
-                        {language === "ar" ? story.before : story.beforeEn}
+                        {story.before}
                       </p>
                     </div>
                     <div className="text-sm">
@@ -256,7 +307,7 @@ const SuccessStories = () => {
                         {t("successStories.after")}:
                       </span>
                       <p className="text-green-700 dark:text-green-300 text-xs">
-                        {language === "ar" ? story.after : story.afterEn}
+                        {story.after}
                       </p>
                     </div>
                   </div>
@@ -274,21 +325,22 @@ const SuccessStories = () => {
                           "font-semibold text-foreground",
                           isRTL ? "font-arabic" : "font-english"
                         )}>
-                        {language === "ar" ? story.author : story.authorEn}
+                        {story.author}
                       </h4>
                       <p
                         className={cn(
                           "text-sm text-muted-foreground",
                           isRTL ? "font-arabic" : "font-english"
                         )}>
-                        {language === "ar" ? story.location : story.locationEn}
+                        {formatDate(story.date)}
                       </p>
                     </div>
                   </div>
                 </CardContent>
               </Card>
             ))}
-        </div>
+          </div>
+        )}
 
         {/* Call to Action */}
         <div className="text-center">

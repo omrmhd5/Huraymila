@@ -31,7 +31,7 @@ export const newsApi = {
   },
 
   // Get prioritized news for home page (public route)
-  getPrioritizedNews: async (limit = 5) => {
+  getPrioritizedNews: async (limit = 3) => {
     const response = await fetch(
       `${API_BASE_URL}/news/prioritized?limit=${limit}`,
       {

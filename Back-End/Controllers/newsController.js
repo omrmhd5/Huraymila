@@ -46,7 +46,7 @@ const getAllNews = async (req, res) => {
 // Get prioritized news for home page (public route)
 const getPrioritizedNews = async (req, res) => {
   try {
-    const { limit = 5 } = req.query;
+    const { limit = 3 } = req.query;
 
     // Get news sorted by priority (ascending) then by date (descending)
     // Priority 1 is highest, 5 is lowest, null priority comes last

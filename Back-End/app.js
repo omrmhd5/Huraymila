@@ -9,6 +9,7 @@ const submissionRoutes = require("./Routes/submissionRoutes");
 const authRoutes = require("./Routes/authRoutes");
 const initiativeRoutes = require("./Routes/initiativeRoutes");
 const newsRoutes = require("./Routes/newsRoutes");
+const successStoryRoutes = require("./Routes/successStoryRoutes");
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -36,6 +37,7 @@ apiRouter.use("/agencies", agencyRoutes);
 apiRouter.use("/submissions", submissionRoutes);
 apiRouter.use("/initiatives", initiativeRoutes);
 apiRouter.use("/news", newsRoutes);
+apiRouter.use("/success-stories", successStoryRoutes);
 
 // MongoDB connection
 mongoose

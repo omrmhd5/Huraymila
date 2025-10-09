@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -19,15 +19,40 @@ import {
 } from "lucide-react";
 import { useTheme } from "@/contexts/ThemeContext";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { successStoryApi } from "@/lib/successStoryApi";
+import { formatDate } from "@/utils/dateUtils";
 
 const SuccessStory = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { language } = useTheme();
   const { t } = useLanguage();
+  const [story, setStory] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  // Mock success stories data - in real app, this would come from API
-  const storiesData = {
+  // Fetch success story from API
+  useEffect(() => {
+    const fetchSuccessStory = async () => {
+      try {
+        setLoading(true);
+        const response = await successStoryApi.getSuccessStoryById(id);
+        setStory(response.data);
+      } catch (error) {
+        console.error("Error fetching success story:", error);
+        setError(error.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (id) {
+      fetchSuccessStory();
+    }
+  }, [id]);
+
+  // Mock success stories data (fallback)
+  const mockStoriesData = {
     1: {
       id: 1,
       title: "تحول صحي مذهل",
@@ -153,10 +178,26 @@ const SuccessStory = () => {
     },
   };
 
-  const story = storiesData[id];
   const isRTL = language === "ar";
 
-  if (!story) {
+  // Loading state
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-muted-foreground">
+            {language === "ar"
+              ? "جاري تحميل قصة النجاح..."
+              : "Loading success story..."}
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  // Error state
+  if (error || !story) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center">
@@ -200,27 +241,28 @@ const SuccessStory = () => {
           {/* Story Header */}
           <div className="mb-8">
             <div className="flex items-center gap-2 mb-4">
-              <Badge variant="outline" className="px-3 py-1">
-                {language === "ar" ? story.category : story.categoryEn}
-              </Badge>
-              <Badge variant="secondary" className="px-3 py-1">
-                <Star className="w-3 h-3 mr-1" />
-                {story.rating}/5
-              </Badge>
+              {story.priority && (
+                <Badge variant="secondary" className="px-3 py-1">
+                  <Star className="w-3 h-3 mr-1 fill-current" />
+                  {language === "ar"
+                    ? `أولوية ${story.priority}`
+                    : `Priority ${story.priority}`}
+                </Badge>
+              )}
             </div>
 
             <h1
               className={`text-4xl md:text-5xl font-bold mb-6 ${
                 isRTL ? "font-arabic text-right" : "font-sans text-left"
               }`}>
-              {language === "ar" ? story.title : story.titleEn}
+              {story.title}
             </h1>
 
             <p
               className={`text-xl text-muted-foreground mb-6 ${
                 isRTL ? "font-arabic text-right" : "font-sans text-left"
               }`}>
-              {language === "ar" ? story.description : story.descriptionEn}
+              {story.subtitle}
             </p>
 
             {/* Story Meta */}
@@ -230,35 +272,25 @@ const SuccessStory = () => {
               }`}>
               <div className="flex items-center gap-2">
                 <User className="w-4 h-4" />
-                <span>{language === "ar" ? story.author : story.authorEn}</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <MapPin className="w-4 h-4" />
-                <span>
-                  {language === "ar" ? story.location : story.locationEn}
-                </span>
+                <span>{story.author}</span>
               </div>
               <div className="flex items-center gap-2">
                 <Calendar className="w-4 h-4" />
-                <span>{formatDate(story.publishDate)}</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <Target className="w-4 h-4" />
-                <span>
-                  {language === "ar" ? story.duration : story.durationEn}
-                </span>
+                <span>{formatDate(story.date)}</span>
               </div>
             </div>
           </div>
 
           {/* Story Image */}
-          <div className="mb-8">
-            <img
-              src={story.image}
-              alt={language === "ar" ? story.title : story.titleEn}
-              className="w-full h-64 md:h-96 object-cover rounded-lg"
-            />
-          </div>
+          {story.imageUrl && (
+            <div className="mb-8">
+              <img
+                src={successStoryApi.getImageUrl(story.imageUrl)}
+                alt={story.title}
+                className="w-full h-64 md:h-96 object-cover rounded-lg"
+              />
+            </div>
+          )}
 
           {/* Before/After Comparison */}
           <div className="mb-8">
@@ -275,60 +307,21 @@ const SuccessStory = () => {
                     <h4 className="font-semibold text-red-600 mb-2">
                       {t("successStory.before")}
                     </h4>
-                    <p className="text-muted-foreground">
-                      {language === "ar" ? story.before : story.beforeEn}
-                    </p>
+                    <p className="text-muted-foreground">{story.before}</p>
                   </div>
                   <div className={`${isRTL ? "text-right" : "text-left"}`}>
                     <h4 className="font-semibold text-green-600 mb-2">
                       {t("successStory.after")}
                     </h4>
-                    <p className="text-muted-foreground">
-                      {language === "ar" ? story.after : story.afterEn}
-                    </p>
+                    <p className="text-muted-foreground">{story.after}</p>
                   </div>
                 </div>
               </CardContent>
             </Card>
           </div>
 
-          {/* Impact Section */}
+          {/* Quote Section */}
           <div className="mb-8">
-            <Card>
-              <CardContent className="p-6">
-                <h3
-                  className={`text-xl font-semibold mb-4 ${
-                    isRTL ? "font-arabic text-right" : "font-sans text-left"
-                  }`}>
-                  {t("successStory.achievedResults")}
-                </h3>
-                <div className="flex items-center gap-2">
-                  <TrendingUp className="w-5 h-5 text-green-600" />
-                  <p
-                    className={`text-lg ${
-                      isRTL ? "font-arabic text-right" : "font-sans text-left"
-                    }`}>
-                    {language === "ar" ? story.impact : story.impactEn}
-                  </p>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-
-          {/* Story Content */}
-          <div
-            className={`prose prose-lg max-w-none ${
-              isRTL ? "font-arabic text-right" : "font-sans text-left"
-            }`}>
-            <div
-              dangerouslySetInnerHTML={{
-                __html: language === "ar" ? story.content : story.contentEn,
-              }}
-            />
-          </div>
-
-          {/* Testimonial */}
-          <div className="mt-8">
             <Card className="bg-primary/5 border-primary/20">
               <CardContent className="p-6">
                 <div className="flex items-start gap-4">
@@ -339,17 +332,13 @@ const SuccessStory = () => {
                       className={`text-lg italic mb-4 ${
                         isRTL ? "font-arabic" : "font-sans"
                       }`}>
-                      "
-                      {language === "ar"
-                        ? story.testimonial
-                        : story.testimonialEn}
-                      "
+                      "{story.quote}"
                     </blockquote>
                     <cite
                       className={`text-sm text-muted-foreground ${
                         isRTL ? "font-arabic" : "font-sans"
                       }`}>
-                      — {language === "ar" ? story.author : story.authorEn}
+                      — {story.author}
                     </cite>
                   </div>
                 </div>
@@ -357,27 +346,12 @@ const SuccessStory = () => {
             </Card>
           </div>
 
-          {/* Tags */}
-          <div className="mt-8">
-            <h3
-              className={`text-lg font-semibold mb-4 ${
-                isRTL ? "font-arabic text-right" : "font-sans text-left"
-              }`}>
-              {t("successStory.tags")}
-            </h3>
-            <div className="flex flex-wrap gap-2">
-              {(language === "ar" ? story.tags : story.tagsEn).map(
-                (tag, index) => (
-                  <Badge key={index} variant="secondary" className="px-3 py-1">
-                    {tag}
-                  </Badge>
-                )
-              )}
-              <Button variant="outline" size="sm">
-                <Share2 className="w-4 h-4 mr-2" />
-                {t("successStory.share")}
-              </Button>
-            </div>
+          {/* Story Content */}
+          <div
+            className={`prose prose-lg max-w-none ${
+              isRTL ? "font-arabic text-right" : "font-sans text-left"
+            }`}>
+            <p className="text-lg leading-relaxed">{story.description}</p>
           </div>
         </div>
       </div>

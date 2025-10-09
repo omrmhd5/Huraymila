@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -50,6 +50,7 @@ import {
 import { useTheme } from "@/contexts/ThemeContext";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { formatDate } from "@/utils/dateUtils";
+import { successStoryApi } from "@/lib/successStoryApi";
 
 const AllSuccessStories = () => {
   const { language } = useTheme();
@@ -59,20 +60,44 @@ const AllSuccessStories = () => {
   const [categoryFilter, setCategoryFilter] = useState("all");
   const [sortBy, setSortBy] = useState("newest");
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [storiesData, setStoriesData] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [formData, setFormData] = useState({
     title: "",
+    subtitle: "",
     description: "",
     author: "",
+    date: "",
+    quote: "",
     before: "",
     after: "",
-    body: "",
-    authorComment: "",
   });
 
   const isRTL = language === "ar";
 
-  // Mock success stories data
-  const storiesData = [
+  // Fetch success stories from API
+  useEffect(() => {
+    const fetchSuccessStories = async () => {
+      try {
+        setLoading(true);
+        const response = await successStoryApi.getAllSuccessStories({
+          limit: 100,
+        });
+        setStoriesData(response.data || []);
+      } catch (error) {
+        console.error("Error fetching success stories:", error);
+        setError(error.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchSuccessStories();
+  }, []);
+
+  // Mock success stories data (fallback)
+  const mockStoriesData = [
     {
       id: 1,
       title: "تحول صحي مذهل",
@@ -260,35 +285,21 @@ const AllSuccessStories = () => {
     .filter((story) => {
       const matchesSearch =
         searchTerm === "" ||
-        (language === "ar" ? story.title : story.titleEn)
-          .toLowerCase()
-          .includes(searchTerm.toLowerCase()) ||
-        (language === "ar" ? story.description : story.descriptionEn)
-          .toLowerCase()
-          .includes(searchTerm.toLowerCase()) ||
-        (language === "ar" ? story.author : story.authorEn)
-          .toLowerCase()
-          .includes(searchTerm.toLowerCase());
+        story.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        story.subtitle.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        story.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        story.author.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        story.quote.toLowerCase().includes(searchTerm.toLowerCase());
 
-      const matchesCategory =
-        categoryFilter === "all" ||
-        (language === "ar" ? story.category : story.categoryEn) ===
-          categoryFilter;
-
-      return matchesSearch && matchesCategory;
+      // For now, we'll show all stories since we don't have categories in the new model
+      return matchesSearch;
     })
     .sort((a, b) => {
       switch (sortBy) {
         case "newest":
-          return new Date(b.publishDate) - new Date(a.publishDate);
+          return new Date(b.date) - new Date(a.date);
         case "oldest":
-          return new Date(a.publishDate) - new Date(b.publishDate);
-        case "most_viewed":
-          return b.views - a.views;
-        case "most_liked":
-          return b.likes - a.likes;
-        case "highest_rated":
-          return b.rating - a.rating;
+          return new Date(a.date) - new Date(b.date);
         default:
           return 0;
       }
@@ -306,27 +317,55 @@ const AllSuccessStories = () => {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Here you would typically send the data to your backend
-    console.log("New success story:", formData);
-    // Reset form
-    setFormData({
-      title: "",
-      description: "",
-      author: "",
-      before: "",
-      after: "",
-      body: "",
-      authorComment: "",
-    });
-    setIsModalOpen(false);
-    // Show success message
-    alert(
-      language === "ar"
-        ? "تم إضافة قصة النجاح بنجاح!"
-        : "Success story added successfully!"
-    );
+    try {
+      const token = localStorage.getItem("authToken");
+
+      if (!token) {
+        alert(
+          language === "ar"
+            ? "خطأ في المصادقة. يرجى تسجيل الدخول أولاً."
+            : "Authentication error. Please login first."
+        );
+        return;
+      }
+
+      await successStoryApi.createSuccessStory(token, formData);
+
+      // Reset form
+      setFormData({
+        title: "",
+        subtitle: "",
+        description: "",
+        author: "",
+        date: "",
+        quote: "",
+        before: "",
+        after: "",
+      });
+      setIsModalOpen(false);
+
+      // Refresh data
+      const response = await successStoryApi.getAllSuccessStories({
+        limit: 100,
+      });
+      setStoriesData(response.data || []);
+
+      // Show success message
+      alert(
+        language === "ar"
+          ? "تم إضافة قصة النجاح بنجاح!"
+          : "Success story added successfully!"
+      );
+    } catch (error) {
+      console.error("Error creating success story:", error);
+      alert(
+        language === "ar"
+          ? "فشل في إضافة قصة النجاح: " + error.message
+          : "Failed to add success story: " + error.message
+      );
+    }
   };
 
   return (
@@ -397,6 +436,26 @@ const AllSuccessStories = () => {
                       />
                     </div>
 
+                    {/* Subtitle */}
+                    <div className="space-y-2">
+                      <Label htmlFor="subtitle">
+                        {language === "ar" ? "العنوان الفرعي" : "Subtitle"}
+                      </Label>
+                      <Input
+                        id="subtitle"
+                        value={formData.subtitle}
+                        onChange={(e) =>
+                          handleInputChange("subtitle", e.target.value)
+                        }
+                        placeholder={
+                          language === "ar"
+                            ? "أدخل العنوان الفرعي"
+                            : "Enter subtitle"
+                        }
+                        required
+                      />
+                    </div>
+
                     {/* Description */}
                     <div className="space-y-2">
                       <Label htmlFor="description">
@@ -416,6 +475,43 @@ const AllSuccessStories = () => {
                             : "Brief description of the success story"
                         }
                         rows={3}
+                        required
+                      />
+                    </div>
+
+                    {/* Date */}
+                    <div className="space-y-2">
+                      <Label htmlFor="date">
+                        {language === "ar" ? "التاريخ" : "Date"}
+                      </Label>
+                      <Input
+                        id="date"
+                        type="date"
+                        value={formData.date}
+                        onChange={(e) =>
+                          handleInputChange("date", e.target.value)
+                        }
+                        required
+                      />
+                    </div>
+
+                    {/* Quote */}
+                    <div className="space-y-2">
+                      <Label htmlFor="quote">
+                        {language === "ar" ? "الاقتباس" : "Quote"}
+                      </Label>
+                      <Textarea
+                        id="quote"
+                        value={formData.quote}
+                        onChange={(e) =>
+                          handleInputChange("quote", e.target.value)
+                        }
+                        placeholder={
+                          language === "ar"
+                            ? "أدخل اقتباس من قصة النجاح"
+                            : "Enter a quote from the success story"
+                        }
+                        rows={2}
                         required
                       />
                     </div>
@@ -643,126 +739,139 @@ const AllSuccessStories = () => {
           </div>
         </AnimatedSection>
 
+        {/* Loading State */}
+        {loading && (
+          <AnimatedSection animation="fadeInUp" delay={300}>
+            <div className="text-center py-12">
+              <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+              <p
+                className={`text-muted-foreground ${
+                  isRTL ? "font-arabic" : "font-sans"
+                }`}>
+                {language === "ar"
+                  ? "جاري تحميل قصص النجاح..."
+                  : "Loading success stories..."}
+              </p>
+            </div>
+          </AnimatedSection>
+        )}
+
+        {/* Error State */}
+        {error && (
+          <AnimatedSection animation="fadeInUp" delay={300}>
+            <div className="text-center py-12">
+              <h3
+                className={`text-xl font-semibold mb-2 ${
+                  isRTL ? "font-arabic" : "font-sans"
+                }`}>
+                {language === "ar" ? "خطأ في التحميل" : "Loading Error"}
+              </h3>
+              <p
+                className={`text-muted-foreground ${
+                  isRTL ? "font-arabic" : "font-sans"
+                }`}>
+                {error}
+              </p>
+            </div>
+          </AnimatedSection>
+        )}
+
         {/* Stories Grid */}
-        <StaggeredContainer
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
-          staggerDelay={150}
-          animation="fadeInUp">
-          {filteredStories.map((story, index) => (
-            <AnimatedCard
-              key={story.id}
-              animation="fadeInUp"
-              delay={index * 150}
-              className="group hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
-              {/* Story Image */}
-              <div className="relative h-48 overflow-hidden rounded-t-lg">
-                <img
-                  src={story.image}
-                  alt={language === "ar" ? story.title : story.titleEn}
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                />
-                {story.featured && (
-                  <Badge className="absolute top-4 left-4 bg-red-500">
-                    {t("allSuccessStories.featured")}
-                  </Badge>
-                )}
-                <Badge
-                  variant="outline"
-                  className="absolute top-4 right-4 bg-background/80">
-                  {language === "ar" ? story.category : story.categoryEn}
-                </Badge>
-                <div className="absolute bottom-4 right-4 flex items-center gap-1 bg-background/80 px-2 py-1 rounded">
-                  <Star className="w-3 h-3 text-yellow-500 fill-current" />
-                  <span className="text-xs font-medium">{story.rating}</span>
-                </div>
-              </div>
-
-              <CardHeader>
-                <CardTitle
-                  className={`text-lg line-clamp-2 ${
-                    isRTL ? "font-arabic text-right" : "font-sans text-left"
-                  }`}>
-                  {language === "ar" ? story.title : story.titleEn}
-                </CardTitle>
-                <CardDescription
-                  className={`line-clamp-3 ${
-                    isRTL ? "font-arabic text-right" : "font-sans text-left"
-                  }`}>
-                  {language === "ar" ? story.description : story.descriptionEn}
-                </CardDescription>
-              </CardHeader>
-
-              <CardContent className="space-y-4">
-                {/* Meta Info */}
-                <div
-                  className={`flex flex-wrap items-center gap-4 text-sm text-muted-foreground ${
-                    isRTL ? "font-arabic" : "font-sans"
-                  }`}>
-                  <div className="flex items-center gap-1">
-                    <User className="w-3 h-3" />
-                    <span>
-                      {language === "ar" ? story.author : story.authorEn}
-                    </span>
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <MapPin className="w-3 h-3" />
-                    <span>
-                      {language === "ar" ? story.location : story.locationEn}
-                    </span>
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <Calendar className="w-3 h-3" />
-                    <span>{formatDate(story.publishDate)}</span>
-                  </div>
-                </div>
-
-                {/* Impact */}
-                <div className="bg-green-50 dark:bg-green-900/20 p-3 rounded-lg">
-                  <div className="flex items-start gap-2">
-                    <TrendingUp className="w-4 h-4 text-green-600 mt-0.5" />
-                    <p
-                      className={`text-sm text-green-800 dark:text-green-200 ${
-                        isRTL ? "font-arabic text-right" : "font-sans text-left"
-                      }`}>
-                      {language === "ar" ? story.impact : story.impactEn}
-                    </p>
-                  </div>
-                </div>
-
-                {/* Stats */}
-                <div className="flex items-center justify-between text-sm text-muted-foreground">
-                  <div className="flex items-center gap-4">
-                    <div className="flex items-center gap-1">
-                      <Users className="w-3 h-3" />
-                      <span>{story.views.toLocaleString()}</span>
-                    </div>
-                    <div className="flex items-center gap-1">
-                      <Heart className="w-3 h-3" />
-                      <span>{story.likes}</span>
-                    </div>
-                    <div className="flex items-center gap-1">
-                      <Share2 className="w-3 h-3" />
-                      <span>{story.shares}</span>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Read More Button */}
-                <Button
-                  className="w-full group-hover:bg-primary/90 transition-colors"
-                  onClick={() => navigateToTop(`/success-stories/${story.id}`)}>
-                  {t("allSuccessStories.readStory")}
-                  <ArrowRight
-                    className={`w-4 h-4 ${isRTL ? "mr-2" : "ml-2"}`}
+        {!loading && !error && (
+          <StaggeredContainer
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+            staggerDelay={150}
+            animation="fadeInUp">
+            {filteredStories.map((story, index) => (
+              <AnimatedCard
+                key={story._id || story.id}
+                animation="fadeInUp"
+                delay={index * 150}
+                className="group hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
+                {/* Story Image */}
+                <div className="relative h-48 overflow-hidden rounded-t-lg">
+                  <img
+                    src={
+                      story.imageUrl
+                        ? successStoryApi.getImageUrl(story.imageUrl)
+                        : "/assets/placeholder.svg"
+                    }
+                    alt={story.title}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                   />
-                </Button>
-              </CardContent>
-            </AnimatedCard>
-          ))}
-        </StaggeredContainer>
+                  {story.priority && (
+                    <Badge className="absolute top-4 left-4 bg-yellow-500">
+                      <Star className="w-3 h-3 mr-1 fill-current" />
+                      {story.priority}
+                    </Badge>
+                  )}
+                </div>
+
+                <CardHeader>
+                  <CardTitle
+                    className={`text-lg line-clamp-2 ${
+                      isRTL ? "font-arabic text-right" : "font-sans text-left"
+                    }`}>
+                    {story.title}
+                  </CardTitle>
+                  <CardDescription
+                    className={`line-clamp-3 ${
+                      isRTL ? "font-arabic text-right" : "font-sans text-left"
+                    }`}>
+                    {story.subtitle}
+                  </CardDescription>
+                </CardHeader>
+
+                <CardContent className="space-y-4">
+                  {/* Meta Info */}
+                  <div
+                    className={`flex flex-wrap items-center gap-4 text-sm text-muted-foreground ${
+                      isRTL ? "font-arabic" : "font-sans"
+                    }`}>
+                    <div className="flex items-center gap-1">
+                      <User className="w-3 h-3" />
+                      <span>{story.author}</span>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <Calendar className="w-3 h-3" />
+                      <span>{formatDate(story.date)}</span>
+                    </div>
+                  </div>
+
+                  {/* Quote */}
+                  <div className="bg-blue-50 dark:bg-blue-900/20 p-3 rounded-lg">
+                    <div className="flex items-start gap-2">
+                      <Quote className="w-4 h-4 text-blue-600 mt-0.5" />
+                      <p
+                        className={`text-sm text-blue-800 dark:text-blue-200 italic ${
+                          isRTL
+                            ? "font-arabic text-right"
+                            : "font-sans text-left"
+                        }`}>
+                        "{story.quote}"
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Read More Button */}
+                  <Button
+                    className="w-full group-hover:bg-primary/90 transition-colors"
+                    onClick={() =>
+                      navigateToTop(`/success-stories/${story._id || story.id}`)
+                    }>
+                    {t("allSuccessStories.readStory")}
+                    <ArrowRight
+                      className={`w-4 h-4 ${isRTL ? "mr-2" : "ml-2"}`}
+                    />
+                  </Button>
+                </CardContent>
+              </AnimatedCard>
+            ))}
+          </StaggeredContainer>
+        )}
 
         {/* No Results */}
-        {filteredStories.length === 0 && (
+        {!loading && !error && filteredStories.length === 0 && (
           <AnimatedSection animation="fadeInUp" delay={400}>
             <div className="text-center py-12">
               <h3

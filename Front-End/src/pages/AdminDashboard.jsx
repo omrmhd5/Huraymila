@@ -212,12 +212,173 @@ const SortableNewsRow = ({
     </TableRow>
   );
 };
+
+// Sortable Success Story Row Component
+const SortableSuccessStoryRow = ({
+  story,
+  language,
+  actionLoading,
+  handleViewSuccessStory,
+  handleEditSuccessStory,
+  handleDeleteSuccessStory,
+}) => {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id: story._id || story._id || story.id });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.5 : 1,
+  };
+
+  const isRTL = language === "ar";
+
+  return (
+    <TableRow
+      ref={setNodeRef}
+      style={style}
+      className={cn(
+        "hover:bg-muted/50 transition-colors",
+        isDragging && "shadow-lg border-2 border-primary"
+      )}>
+      {isRTL ? (
+        // Arabic order: right to left - Actions | Priority | Author | Date | Title
+        <>
+          <TableCell className="text-center">
+            <div className="flex items-center justify-center gap-2">
+              <Button
+                size="sm"
+                variant="outline"
+                className="h-8 w-8 p-0"
+                onClick={() => handleViewSuccessStory(story._id || story.id)}>
+                <Eye className="h-4 w-4" />
+              </Button>
+              <Button
+                size="sm"
+                variant="outline"
+                className="h-8 w-8 p-0"
+                onClick={() => handleEditSuccessStory(story._id || story.id)}>
+                <Edit className="h-4 w-4" />
+              </Button>
+              <Button
+                size="sm"
+                variant="outline"
+                className="h-8 w-8 p-0 text-destructive hover:text-destructive"
+                onClick={() => handleDeleteSuccessStory(story._id || story.id)}>
+                <Trash2 className="h-4 w-4" />
+              </Button>
+            </div>
+          </TableCell>
+          <TableCell className="text-center">
+            <div className="flex items-center justify-center gap-2">
+              <div
+                {...attributes}
+                {...listeners}
+                className="cursor-grab active:cursor-grabbing p-1 hover:bg-muted rounded"
+                title={
+                  language === "ar" ? "اسحب لإعادة الترتيب" : "Drag to reorder"
+                }>
+                <GripVertical className="h-4 w-4 text-muted-foreground" />
+              </div>
+              {story.priority && (
+                <div className="flex items-center gap-1">
+                  <Star className="h-4 w-4 fill-current text-yellow-500" />
+                  <span className="text-sm font-bold text-yellow-600">
+                    {story.priority}
+                  </span>
+                </div>
+              )}
+            </div>
+          </TableCell>
+          <TableCell className="text-right font-arabic">
+            {story.author}
+          </TableCell>
+          <TableCell className="text-right font-arabic">
+            {formatDate(story.date)}
+          </TableCell>
+          <TableCell className="text-right font-arabic">
+            {story.title}
+          </TableCell>
+        </>
+      ) : (
+        // English order: left to right - Title | Date | Author | Priority | Actions
+        <>
+          <TableCell className="text-left font-english">
+            {story.title}
+          </TableCell>
+          <TableCell className="text-left font-english">
+            {formatDate(story.date)}
+          </TableCell>
+          <TableCell className="text-left font-english">
+            {story.author}
+          </TableCell>
+          <TableCell className="text-center">
+            <div className="flex items-center justify-center gap-2">
+              <div
+                {...attributes}
+                {...listeners}
+                className="cursor-grab active:cursor-grabbing p-1 hover:bg-muted rounded"
+                title={
+                  language === "ar" ? "اسحب لإعادة الترتيب" : "Drag to reorder"
+                }>
+                <GripVertical className="h-4 w-4 text-muted-foreground" />
+              </div>
+              {story.priority && (
+                <div className="flex items-center gap-1">
+                  <Star className="h-4 w-4 fill-current text-yellow-500" />
+                  <span className="text-sm font-bold text-yellow-600">
+                    {story.priority}
+                  </span>
+                </div>
+              )}
+            </div>
+          </TableCell>
+          <TableCell className="text-center">
+            <div className="flex items-center justify-center gap-2">
+              <Button
+                size="sm"
+                variant="outline"
+                className="h-8 w-8 p-0"
+                onClick={() => handleViewSuccessStory(story._id || story.id)}>
+                <Eye className="h-4 w-4" />
+              </Button>
+              <Button
+                size="sm"
+                variant="outline"
+                className="h-8 w-8 p-0"
+                onClick={() => handleEditSuccessStory(story._id || story.id)}>
+                <Edit className="h-4 w-4" />
+              </Button>
+              <Button
+                size="sm"
+                variant="outline"
+                className="h-8 w-8 p-0 text-destructive hover:text-destructive"
+                onClick={() => handleDeleteSuccessStory(story._id || story.id)}>
+                <Trash2 className="h-4 w-4" />
+              </Button>
+            </div>
+          </TableCell>
+        </>
+      )}
+    </TableRow>
+  );
+};
+
 import InitiativeModal from "@/components/AgencyDashboard/Modals/InitiativeModal";
 import DeleteInitiativeModal from "@/components/AgencyDashboard/Modals/DeleteInitiativeModal";
 import NewsModal from "@/components/AdminDashboard/NewsModal";
 import DeleteNewsModal from "@/components/AdminDashboard/DeleteNewsModal";
+import SuccessStoryModal from "@/components/AdminDashboard/SuccessStoryModal";
+import DeleteSuccessStoryModal from "@/components/AdminDashboard/DeleteSuccessStoryModal";
 import { initiativeApi } from "@/lib/initiativeApi";
 import { newsApi } from "@/lib/newsApi";
+import { successStoryApi } from "@/lib/successStoryApi";
 import { getAllAgencies } from "@/lib/api";
 import { useAuth } from "@/contexts/AuthContext";
 import { useTheme } from "@/contexts/ThemeContext";
@@ -406,15 +567,42 @@ const AdminDashboard = () => {
         created_at: article.createdAt || article.created_at,
       }));
 
+      // Fetch success stories
+      const successStoriesRes = await successStoryApi.getAllSuccessStories({
+        limit: 100,
+      });
+      const successStories = successStoriesRes.data.map((story) => ({
+        id: story._id || story._id || story.id,
+        title: story.title,
+        subtitle: story.subtitle,
+        description: story.description,
+        author: story.author,
+        imageUrl: story.imageUrl,
+        date: story.date,
+        quote: story.quote,
+        before: story.before,
+        after: story.after,
+        priority: story.priority,
+        created_at: story.createdAt || story.created_at,
+      }));
+
       // Fetch agencies
       const agencies = await getAllAgencies(token);
 
-      setData((prev) => ({ ...prev, initiatives, volunteers, news, agencies }));
+      setData((prev) => ({
+        ...prev,
+        initiatives,
+        volunteers,
+        news,
+        success_stories: successStories,
+        agencies,
+      }));
       setStats((prev) => ({
         ...prev,
         initiatives: initiatives.length,
         volunteers: volunteers.length,
         news: news.length,
+        success_stories: successStories.length,
         agencies: agencies.length,
       }));
     } catch (error) {
@@ -598,6 +786,68 @@ const AdminDashboard = () => {
     setDeleteNewsModal({ isOpen: false, news: null });
   };
 
+  // Success Stories action handlers
+  const handleViewSuccessStory = (id) => {
+    console.log(`Viewing success story ${id}`);
+    // Navigate to success story page
+    navigate(`/success-stories/${id}`);
+  };
+
+  const handleEditSuccessStory = (id) => {
+    console.log(`Editing success story ${id}`);
+    const successStory = data.success_stories.find(
+      (story) => story._id || story.id === id
+    );
+    setSuccessStoryModal({
+      isOpen: true,
+      mode: "edit",
+      successStory: successStory,
+    });
+  };
+
+  const handleDeleteSuccessStory = (id) => {
+    console.log(`Opening delete modal for success story ${id}`);
+    const successStory = data.success_stories.find(
+      (story) => story._id || story.id === id
+    );
+    setDeleteSuccessStoryModal({
+      isOpen: true,
+      successStory: successStory,
+    });
+  };
+
+  const confirmDeleteSuccessStory = async () => {
+    if (!deleteSuccessStoryModal.successStory) return;
+
+    try {
+      setActionLoading(true);
+      await successStoryApi.deleteSuccessStory(
+        token,
+        deleteSuccessStoryModal.successStory.id
+      );
+      toast.success(
+        language === "ar"
+          ? "تم حذف قصة النجاح بنجاح"
+          : "Success story deleted successfully"
+      );
+      fetchAllData(); // Refresh data
+      setDeleteSuccessStoryModal({ isOpen: false, successStory: null });
+    } catch (error) {
+      console.error("Error deleting success story:", error);
+      toast.error(
+        language === "ar"
+          ? "فشل في حذف قصة النجاح: " + error.message
+          : "Failed to delete success story: " + error.message
+      );
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
+  const closeDeleteSuccessStoryModal = () => {
+    setDeleteSuccessStoryModal({ isOpen: false, successStory: null });
+  };
+
   const handlePriorityChange = async (newsId, newPriority) => {
     try {
       setActionLoading(true);
@@ -659,9 +909,9 @@ const AdminDashboard = () => {
 
         await Promise.all(clearPromises);
 
-        // Step 2: Set new priorities based on new order (top 5 get priorities 1-5)
+        // Step 2: Set new priorities based on new order (top 3 get priorities 1-3)
         const setPriorityPromises = reorderedNews
-          .slice(0, 5)
+          .slice(0, 3)
           .map((news, index) =>
             newsApi.updateNews(token, news.id, { priority: index + 1 })
           );
@@ -671,7 +921,7 @@ const AdminDashboard = () => {
         // Update local state with final priorities
         const finalNews = reorderedNews.map((news, index) => ({
           ...news,
-          priority: index < 5 ? index + 1 : null,
+          priority: index < 3 ? index + 1 : null,
         }));
 
         setData((prev) => ({ ...prev, news: finalNews }));
@@ -696,64 +946,89 @@ const AdminDashboard = () => {
     }
   };
 
-  // Success Stories action handlers
-  const handleViewSuccessStory = (id) => {
-    console.log(`Viewing success story ${id}`);
-    // Navigate to success story page
-    navigate(`/success-story/${id}`);
-  };
+  // Handle drag end for success stories reordering
+  const handleSuccessStoryDragEnd = async (event) => {
+    const { active, over } = event;
 
-  const handleEditSuccessStory = (id) => {
-    console.log(`Editing success story ${id}`);
-    // Navigate to edit success story page or open edit modal
-    navigate(`/admin/success-stories/edit/${id}`);
-  };
+    if (active.id !== over.id) {
+      // Find indices in the filtered array
+      const filteredOldIndex = filteredSuccessStories.findIndex(
+        (item) => item.id === active.id
+      );
+      const filteredNewIndex = filteredSuccessStories.findIndex(
+        (item) => item.id === over.id
+      );
 
-  const handleDeleteSuccessStory = (id) => {
-    console.log(`Deleting success story ${id}`);
-    // Show confirmation dialog and delete success story
-    if (
-      window.confirm(
-        language === "ar"
-          ? "هل أنت متأكد من حذف قصة النجاح هذه؟"
-          : "Are you sure you want to delete this success story?"
-      )
-    ) {
-      // Delete logic here
-      setData((prev) => ({
-        ...prev,
-        success_stories: prev.success_stories.filter(
-          (story) => story.id !== id
-        ),
-      }));
-    }
-  };
+      // Find corresponding indices in the original array
+      const originalOldIndex = data.success_stories.findIndex(
+        (item) => item.id === active.id
+      );
+      const originalNewIndex = data.success_stories.findIndex(
+        (item) => item.id === over.id
+      );
 
-  const handleToggleSuccessStoryPriority = (id) => {
-    console.log(`Toggling priority for success story ${id}`);
-    setData((prev) => ({
-      ...prev,
-      success_stories: prev.success_stories.map((story) => {
-        if (story.id === id) {
-          // If already has priority, remove it
-          if (story.priority) {
-            return { ...story, priority: null };
-          }
-          // If no priority, assign the next available priority (1-3)
-          const usedPriorities = prev.success_stories
-            .filter((s) => s.id !== id && s.priority)
-            .map((s) => s.priority);
-          const availablePriorities = [1, 2, 3].filter(
-            (p) => !usedPriorities.includes(p)
+      // Reorder the original success stories array
+      const reorderedStories = arrayMove(
+        data.success_stories,
+        originalOldIndex,
+        originalNewIndex
+      );
+
+      // Update local state immediately for better UX
+      setData((prev) => ({ ...prev, success_stories: reorderedStories }));
+
+      // Update priorities in backend - handle conflicts by clearing all first, then setting new ones
+      try {
+        setActionLoading(true);
+
+        // Step 1: Clear all existing priorities to avoid conflicts
+        const clearPromises = data.success_stories
+          .filter((story) => story.priority)
+          .map((story) =>
+            successStoryApi.updateSuccessStory(token, story._id || story.id, {
+              priority: null,
+            })
           );
-          return {
-            ...story,
-            priority: availablePriorities[0] || null,
-          };
-        }
-        return story;
-      }),
-    }));
+
+        await Promise.all(clearPromises);
+
+        // Step 2: Set new priorities based on new order (top 3 get priorities 1-3)
+        const setPriorityPromises = reorderedStories
+          .slice(0, 3)
+          .map((story, index) =>
+            successStoryApi.updateSuccessStory(token, story._id || story.id, {
+              priority: index + 1,
+            })
+          );
+
+        await Promise.all(setPriorityPromises);
+
+        // Update local state with final priorities
+        const finalStories = reorderedStories.map((story, index) => ({
+          ...story,
+          priority: index < 3 ? index + 1 : null,
+        }));
+
+        setData((prev) => ({ ...prev, success_stories: finalStories }));
+
+        toast.success(
+          language === "ar"
+            ? "تم إعادة ترتيب قصص النجاح بنجاح"
+            : "Success stories reordered successfully"
+        );
+      } catch (error) {
+        console.error("Error updating success story priorities:", error);
+        toast.error(
+          language === "ar"
+            ? "فشل في تحديث الأولويات: " + error.message
+            : "Failed to update priorities: " + error.message
+        );
+        // Revert on error
+        fetchAllData();
+      } finally {
+        setActionLoading(false);
+      }
+    }
   };
 
   // Search state and filters
@@ -826,8 +1101,24 @@ const AdminDashboard = () => {
     news: null,
   });
 
+  // Success story modal state
+  const [successStoryModal, setSuccessStoryModal] = useState({
+    isOpen: false,
+    mode: "add", // "add" or "edit"
+    successStory: null,
+  });
+
+  // Delete success story modal state
+  const [deleteSuccessStoryModal, setDeleteSuccessStoryModal] = useState({
+    isOpen: false,
+    successStory: null,
+  });
+
   // News search state
   const [newsSearchTerm, setNewsSearchTerm] = useState("");
+
+  // Success story search state
+  const [successStorySearchTerm, setSuccessStorySearchTerm] = useState("");
 
   // Filter news based on search term
   const filteredNews = data.news.filter((article) => {
@@ -837,6 +1128,19 @@ const AdminDashboard = () => {
       article.title.toLowerCase().includes(searchLower) ||
       article.subtitle.toLowerCase().includes(searchLower) ||
       article.description.toLowerCase().includes(searchLower)
+    );
+  });
+
+  // Filter success stories based on search term
+  const filteredSuccessStories = data.success_stories.filter((story) => {
+    if (!successStorySearchTerm) return true;
+    const searchLower = successStorySearchTerm.toLowerCase();
+    return (
+      story.title.toLowerCase().includes(searchLower) ||
+      story.subtitle.toLowerCase().includes(searchLower) ||
+      story.description.toLowerCase().includes(searchLower) ||
+      story.author.toLowerCase().includes(searchLower) ||
+      story.quote.toLowerCase().includes(searchLower)
     );
   });
 
@@ -1783,6 +2087,153 @@ const AdminDashboard = () => {
           </Card>
         </TabsContent>
 
+        {/* Success Stories Tab */}
+        <TabsContent value="success_stories">
+          <Card>
+            <CardHeader>
+              <div
+                className={`flex items-center justify-between ${
+                  language === "ar" ? "flex-row-reverse" : "flex-row"
+                }`}>
+                <div>
+                  <CardTitle
+                    className={`${
+                      language === "ar"
+                        ? "text-right font-arabic"
+                        : "text-left font-english"
+                    }`}>
+                    {language === "ar" ? "قصص النجاح" : "Success Stories"}
+                  </CardTitle>
+                  <CardDescription
+                    className={`${
+                      language === "ar"
+                        ? "text-right font-arabic"
+                        : "text-left font-english"
+                    }`}>
+                    {language === "ar"
+                      ? "جميع قصص النجاح المنشورة"
+                      : "All published success stories"}
+                  </CardDescription>
+                </div>
+                <Button
+                  onClick={() =>
+                    setSuccessStoryModal({
+                      isOpen: true,
+                      mode: "add",
+                      successStory: null,
+                    })
+                  }
+                  className={`${
+                    language === "ar" ? "font-arabic" : "font-sans"
+                  }`}>
+                  {language === "ar"
+                    ? "إضافة قصة نجاح جديدة"
+                    : "Add New Success Story"}
+                </Button>
+              </div>
+            </CardHeader>
+            <CardContent>
+              {/* Search Input */}
+              <div className="mb-6">
+                <div className="relative">
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
+                  <Input
+                    type="text"
+                    placeholder={
+                      language === "ar"
+                        ? "البحث في قصص النجاح..."
+                        : "Search success stories..."
+                    }
+                    value={successStorySearchTerm}
+                    onChange={(e) => setSuccessStorySearchTerm(e.target.value)}
+                    className={`pl-10 ${
+                      language === "ar"
+                        ? "text-right font-arabic"
+                        : "text-left font-english"
+                    }`}
+                  />
+                </div>
+                {successStorySearchTerm && (
+                  <p className="text-sm text-muted-foreground mt-2">
+                    {language === "ar"
+                      ? `عرض ${filteredSuccessStories.length} من ${data.success_stories.length} قصة`
+                      : `Showing ${filteredSuccessStories.length} of ${data.success_stories.length} stories`}
+                  </p>
+                )}
+              </div>
+              <div className="overflow-x-auto">
+                <Table className="w-full">
+                  <TableHeader>
+                    <TableRow>
+                      {language === "ar" ? (
+                        // Arabic order: right to left - Actions | Priority | Author | Date | Title
+                        <>
+                          <TableHead className="text-center font-arabic">
+                            الإجراءات
+                          </TableHead>
+                          <TableHead className="text-center font-arabic">
+                            الأولوية
+                          </TableHead>
+                          <TableHead className="text-right font-arabic">
+                            المؤلف
+                          </TableHead>
+                          <TableHead className="text-right font-arabic">
+                            التاريخ
+                          </TableHead>
+                          <TableHead className="text-right font-arabic">
+                            العنوان
+                          </TableHead>
+                        </>
+                      ) : (
+                        // English order: left to right - Title | Date | Author | Priority | Actions
+                        <>
+                          <TableHead className="text-left font-english">
+                            Title
+                          </TableHead>
+                          <TableHead className="text-left font-english">
+                            Date
+                          </TableHead>
+                          <TableHead className="text-left font-english">
+                            Author
+                          </TableHead>
+                          <TableHead className="text-center font-english">
+                            Priority
+                          </TableHead>
+                          <TableHead className="text-center font-english">
+                            Actions
+                          </TableHead>
+                        </>
+                      )}
+                    </TableRow>
+                  </TableHeader>
+                  <DndContext
+                    sensors={sensors}
+                    collisionDetection={closestCenter}
+                    onDragEnd={handleSuccessStoryDragEnd}>
+                    <SortableContext
+                      items={filteredSuccessStories.map((item) => item.id)}
+                      strategy={verticalListSortingStrategy}>
+                      <TableBody>
+                        {filteredSuccessStories.slice(0, 10).map((story) => (
+                          <SortableSuccessStoryRow
+                            key={story._id || story.id}
+                            story={story}
+                            language={language}
+                            actionLoading={actionLoading}
+                            handleViewSuccessStory={handleViewSuccessStory}
+                            handleEditSuccessStory={handleEditSuccessStory}
+                            handleDeleteSuccessStory={handleDeleteSuccessStory}
+                          />
+                        ))}
+                      </TableBody>
+                    </SortableContext>
+                  </DndContext>
+                </Table>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
         {/* Volunteers Tab */}
         <TabsContent value="volunteers">
           <Card>
@@ -1915,244 +2366,6 @@ const AdminDashboard = () => {
           </Card>
         </TabsContent>
 
-        {/* Success Stories Tab */}
-        <TabsContent value="success_stories">
-          <Card>
-            <CardHeader>
-              <CardTitle
-                className={`${
-                  language === "ar"
-                    ? "text-right font-arabic"
-                    : "text-left font-english"
-                }`}>
-                {language === "ar" ? "قصص النجاح" : "Success Stories"}
-              </CardTitle>
-              <CardDescription
-                className={`${
-                  language === "ar"
-                    ? "text-right font-arabic"
-                    : "text-left font-english"
-                }`}>
-                {language === "ar"
-                  ? "جميع قصص النجاح المنشورة"
-                  : "All published success stories"}
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="overflow-x-auto">
-                <Table className="w-full">
-                  <TableHeader>
-                    <TableRow>
-                      {language === "ar" ? (
-                        // Arabic order: right to left
-                        <>
-                          <TableHead className="text-center font-arabic">
-                            الإجراءات
-                          </TableHead>
-                          <TableHead className="text-center font-arabic">
-                            الأولوية
-                          </TableHead>
-                          <TableHead className="text-right font-arabic">
-                            التاريخ
-                          </TableHead>
-                          <TableHead className="text-right font-arabic">
-                            الكاتب
-                          </TableHead>
-                          <TableHead className="text-right font-arabic">
-                            الوصف
-                          </TableHead>
-                          <TableHead className="text-right font-arabic">
-                            العنوان
-                          </TableHead>
-                        </>
-                      ) : (
-                        // English order: left to right
-                        <>
-                          <TableHead className="text-left font-english">
-                            Title
-                          </TableHead>
-                          <TableHead className="text-left font-english">
-                            Description
-                          </TableHead>
-                          <TableHead className="text-left font-english">
-                            Author
-                          </TableHead>
-                          <TableHead className="text-left font-english">
-                            Date
-                          </TableHead>
-                          <TableHead className="text-center font-english">
-                            Priority
-                          </TableHead>
-                          <TableHead className="text-center font-english">
-                            Actions
-                          </TableHead>
-                        </>
-                      )}
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {data.success_stories.slice(0, 10).map((story) => (
-                      <TableRow key={story.id}>
-                        {language === "ar" ? (
-                          // Arabic order: right to left
-                          <>
-                            <TableCell className="text-center">
-                              <div className="flex items-center justify-center gap-1">
-                                <Button
-                                  size="sm"
-                                  variant="outline"
-                                  className="h-8 w-8 p-0"
-                                  onClick={() =>
-                                    handleViewSuccessStory(story.id)
-                                  }>
-                                  <Eye className="h-4 w-4" />
-                                </Button>
-                                <Button
-                                  size="sm"
-                                  variant="outline"
-                                  className="h-8 w-8 p-0"
-                                  onClick={() =>
-                                    handleEditSuccessStory(story.id)
-                                  }>
-                                  <Edit className="h-4 w-4" />
-                                </Button>
-                                <Button
-                                  size="sm"
-                                  variant="outline"
-                                  className="h-8 w-8 p-0 text-destructive hover:text-destructive"
-                                  onClick={() =>
-                                    handleDeleteSuccessStory(story.id)
-                                  }>
-                                  <Trash2 className="h-4 w-4" />
-                                </Button>
-                              </div>
-                            </TableCell>
-                            <TableCell className="text-center">
-                              <Button
-                                size="sm"
-                                variant={story.priority ? "default" : "outline"}
-                                className={`h-8 w-8 p-0 ${
-                                  story.priority
-                                    ? "bg-yellow-500 hover:bg-yellow-600 text-white"
-                                    : ""
-                                }`}
-                                onClick={() =>
-                                  handleToggleSuccessStoryPriority(story.id)
-                                }>
-                                <Star
-                                  className={`h-4 w-4 ${
-                                    story.priority ? "fill-current" : ""
-                                  }`}
-                                />
-                              </Button>
-                              {story.priority && (
-                                <div className="text-xs text-center mt-1 font-bold">
-                                  {story.priority}
-                                </div>
-                              )}
-                            </TableCell>
-                            <TableCell className="text-right font-arabic">
-                              {formatDate(story.date)}
-                            </TableCell>
-                            <TableCell className="text-right font-arabic">
-                              {story.author}
-                            </TableCell>
-                            <TableCell className="text-right font-arabic max-w-xs">
-                              <div
-                                className="truncate"
-                                title={story.description}>
-                                {story.description}
-                              </div>
-                            </TableCell>
-                            <TableCell className="text-right font-arabic">
-                              {story.title}
-                            </TableCell>
-                          </>
-                        ) : (
-                          // English order: left to right
-                          <>
-                            <TableCell className="text-left font-english">
-                              {story.title}
-                            </TableCell>
-                            <TableCell className="text-left font-english max-w-xs">
-                              <div
-                                className="truncate"
-                                title={story.description}>
-                                {story.description}
-                              </div>
-                            </TableCell>
-                            <TableCell className="text-left font-english">
-                              {story.author}
-                            </TableCell>
-                            <TableCell className="text-left font-english">
-                              {formatDate(story.date)}
-                            </TableCell>
-                            <TableCell className="text-center">
-                              <Button
-                                size="sm"
-                                variant={story.priority ? "default" : "outline"}
-                                className={`h-8 w-8 p-0 ${
-                                  story.priority
-                                    ? "bg-yellow-500 hover:bg-yellow-600 text-white"
-                                    : ""
-                                }`}
-                                onClick={() =>
-                                  handleToggleSuccessStoryPriority(story.id)
-                                }>
-                                <Star
-                                  className={`h-4 w-4 ${
-                                    story.priority ? "fill-current" : ""
-                                  }`}
-                                />
-                              </Button>
-                              {story.priority && (
-                                <div className="text-xs text-center mt-1 font-bold">
-                                  {story.priority}
-                                </div>
-                              )}
-                            </TableCell>
-                            <TableCell className="text-center">
-                              <div className="flex items-center justify-center gap-1">
-                                <Button
-                                  size="sm"
-                                  variant="outline"
-                                  className="h-8 w-8 p-0"
-                                  onClick={() =>
-                                    handleViewSuccessStory(story.id)
-                                  }>
-                                  <Eye className="h-4 w-4" />
-                                </Button>
-                                <Button
-                                  size="sm"
-                                  variant="outline"
-                                  className="h-8 w-8 p-0"
-                                  onClick={() =>
-                                    handleEditSuccessStory(story.id)
-                                  }>
-                                  <Edit className="h-4 w-4" />
-                                </Button>
-                                <Button
-                                  size="sm"
-                                  variant="outline"
-                                  className="h-8 w-8 p-0 text-destructive hover:text-destructive"
-                                  onClick={() =>
-                                    handleDeleteSuccessStory(story.id)
-                                  }>
-                                  <Trash2 className="h-4 w-4" />
-                                </Button>
-                              </div>
-                            </TableCell>
-                          </>
-                        )}
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-
         {/* Reports Tab */}
         <TabsContent value="reports">
           <Card>
@@ -2265,6 +2478,33 @@ const AdminDashboard = () => {
         onClose={closeDeleteNewsModal}
         news={deleteNewsModal.news}
         onConfirm={confirmDeleteNews}
+        loading={actionLoading}
+        language={language}
+      />
+
+      {/* Success Story Modal */}
+      <SuccessStoryModal
+        isOpen={successStoryModal.isOpen}
+        onClose={() =>
+          setSuccessStoryModal({
+            isOpen: false,
+            mode: "add",
+            successStory: null,
+          })
+        }
+        mode={successStoryModal.mode}
+        successStory={successStoryModal.successStory}
+        onSuccess={fetchAllData}
+        loading={token}
+        language={language}
+      />
+
+      {/* Delete Success Story Modal */}
+      <DeleteSuccessStoryModal
+        isOpen={deleteSuccessStoryModal.isOpen}
+        onClose={closeDeleteSuccessStoryModal}
+        successStory={deleteSuccessStoryModal.successStory}
+        onConfirm={confirmDeleteSuccessStory}
         loading={actionLoading}
         language={language}
       />
