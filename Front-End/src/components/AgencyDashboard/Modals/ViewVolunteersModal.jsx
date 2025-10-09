@@ -18,6 +18,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Trash2, UserCheck, Phone, Mail, Calendar } from "lucide-react";
+import { formatDate } from "@/utils/dateUtils";
 
 const ViewVolunteersModal = ({
   isOpen,
@@ -32,13 +33,6 @@ const ViewVolunteersModal = ({
 }) => {
   // Use actual volunteers data from the initiative
   const currentVolunteers = volunteers || [];
-
-  const formatVolunteerDate = (dateString) => {
-    if (!dateString) return "N/A";
-    return new Date(dateString).toLocaleDateString(
-      language === "ar" ? "ar-SA" : "en-US"
-    );
-  };
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -173,7 +167,7 @@ const ViewVolunteersModal = ({
                                 language === "ar" ? "font-arabic" : "font-sans"
                               }>
                               {language === "ar" ? "انضم في:" : "Joined:"}{" "}
-                              {formatVolunteerDate(joinedAt)}
+                              {formatDate(joinedAt)}
                             </span>
                           </div>
                         </div>

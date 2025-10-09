@@ -7,6 +7,7 @@ import { Progress } from "@/components/ui/progress";
 import { ArrowLeft, Calendar, Users, UserPlus, Check } from "lucide-react";
 import { useTheme } from "@/contexts/ThemeContext";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { formatDate } from "@/utils/dateUtils";
 import { useAuth } from "@/contexts/AuthContext";
 import { initiativeApi } from "@/lib/initiativeApi";
 import { toast } from "sonner";
@@ -76,17 +77,6 @@ const Initiative = () => {
       </div>
     );
   }
-
-  const formatDate = (dateString) => {
-    return new Date(dateString).toLocaleDateString(
-      language === "ar" ? "ar-SA" : "en-US",
-      {
-        year: "numeric",
-        month: "long",
-        day: "numeric",
-      }
-    );
-  };
 
   const getStatusBadge = (status) => {
     const statusConfig = {

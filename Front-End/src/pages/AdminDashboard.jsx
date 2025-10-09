@@ -12,6 +12,14 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import {
   Building2,
   Target,
   FileText,
@@ -32,27 +40,193 @@ import {
   Edit,
   Trash2,
   Star,
+  Pin,
   Search,
+  GripVertical,
 } from "lucide-react";
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+} from "@dnd-kit/core";
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  verticalListSortingStrategy,
+} from "@dnd-kit/sortable";
+import { useSortable } from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
 import { cn } from "@/lib/utils";
+
+// Sortable Row Component
+const SortableNewsRow = ({
+  article,
+  language,
+  actionLoading,
+  handleViewNews,
+  handleEditNews,
+  handleDeleteNews,
+}) => {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id: article.id });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.5 : 1,
+  };
+
+  const isRTL = language === "ar";
+
+  return (
+    <TableRow
+      ref={setNodeRef}
+      style={style}
+      className={cn(
+        "hover:bg-muted/50 transition-colors",
+        isDragging && "shadow-lg border-2 border-primary"
+      )}>
+      {isRTL ? (
+        // Arabic order: right to left - Actions | Order | Date | Title
+        <>
+          <TableCell className="text-center">
+            <div className="flex items-center justify-center gap-2">
+              <Button
+                size="sm"
+                variant="outline"
+                className="h-8 w-8 p-0"
+                onClick={() => handleViewNews(article.id)}>
+                <Eye className="h-4 w-4" />
+              </Button>
+              <Button
+                size="sm"
+                variant="outline"
+                className="h-8 w-8 p-0"
+                onClick={() => handleEditNews(article.id)}>
+                <Edit className="h-4 w-4" />
+              </Button>
+              <Button
+                size="sm"
+                variant="outline"
+                className="h-8 w-8 p-0 text-destructive hover:text-destructive"
+                onClick={() => handleDeleteNews(article.id)}>
+                <Trash2 className="h-4 w-4" />
+              </Button>
+            </div>
+          </TableCell>
+          <TableCell className="text-center">
+            <div className="flex items-center justify-center gap-2">
+              <div
+                {...attributes}
+                {...listeners}
+                className="cursor-grab active:cursor-grabbing p-1 hover:bg-muted rounded"
+                title={
+                  language === "ar" ? "اسحب لإعادة الترتيب" : "Drag to reorder"
+                }>
+                <GripVertical className="h-4 w-4 text-muted-foreground" />
+              </div>
+              {article.priority && (
+                <div className="flex items-center gap-1">
+                  <Star className="h-4 w-4 fill-current text-yellow-500" />
+                  <span className="text-sm font-bold text-yellow-600">
+                    {article.priority}
+                  </span>
+                </div>
+              )}
+            </div>
+          </TableCell>
+          <TableCell className="text-right font-arabic">
+            {formatDate(article.date)}
+          </TableCell>
+          <TableCell className="text-right font-arabic">
+            {article.title}
+          </TableCell>
+        </>
+      ) : (
+        // English order: left to right - Title | Date | Order | Actions
+        <>
+          <TableCell className="text-left font-english">
+            {article.title}
+          </TableCell>
+          <TableCell className="text-left font-english">
+            {formatDate(article.date)}
+          </TableCell>
+          <TableCell className="text-center">
+            <div className="flex items-center justify-center gap-2">
+              <div
+                {...attributes}
+                {...listeners}
+                className="cursor-grab active:cursor-grabbing p-1 hover:bg-muted rounded"
+                title={
+                  language === "ar" ? "اسحب لإعادة الترتيب" : "Drag to reorder"
+                }>
+                <GripVertical className="h-4 w-4 text-muted-foreground" />
+              </div>
+              {article.priority && (
+                <div className="flex items-center gap-1">
+                  <Star className="h-4 w-4 fill-current text-yellow-500" />
+                  <span className="text-sm font-bold text-yellow-600">
+                    {article.priority}
+                  </span>
+                </div>
+              )}
+            </div>
+          </TableCell>
+          <TableCell className="text-center">
+            <div className="flex items-center justify-center gap-2">
+              <Button
+                size="sm"
+                variant="outline"
+                className="h-8 w-8 p-0"
+                onClick={() => handleViewNews(article.id)}>
+                <Eye className="h-4 w-4" />
+              </Button>
+              <Button
+                size="sm"
+                variant="outline"
+                className="h-8 w-8 p-0"
+                onClick={() => handleEditNews(article.id)}>
+                <Edit className="h-4 w-4" />
+              </Button>
+              <Button
+                size="sm"
+                variant="outline"
+                className="h-8 w-8 p-0 text-destructive hover:text-destructive"
+                onClick={() => handleDeleteNews(article.id)}>
+                <Trash2 className="h-4 w-4" />
+              </Button>
+            </div>
+          </TableCell>
+        </>
+      )}
+    </TableRow>
+  );
+};
 import InitiativeModal from "@/components/AgencyDashboard/Modals/InitiativeModal";
 import DeleteInitiativeModal from "@/components/AgencyDashboard/Modals/DeleteInitiativeModal";
+import NewsModal from "@/components/AdminDashboard/NewsModal";
+import DeleteNewsModal from "@/components/AdminDashboard/DeleteNewsModal";
 import { initiativeApi } from "@/lib/initiativeApi";
+import { newsApi } from "@/lib/newsApi";
+import { getAllAgencies } from "@/lib/api";
 import { useAuth } from "@/contexts/AuthContext";
 import { useTheme } from "@/contexts/ThemeContext";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { formatDate } from "@/utils/dateUtils";
+import { toast } from "sonner";
 // Commented out useAuth for development
 // import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-// duplicate imports removed
 
 const AdminDashboard = () => {
   const { language } = useTheme();
@@ -179,6 +353,7 @@ const AdminDashboard = () => {
 
   const fetchAllData = async () => {
     try {
+      // Fetch initiatives
       const res = await fetch(
         `${import.meta.env.VITE_API_BASE_URL}/initiatives`
       );
@@ -218,11 +393,29 @@ const AdminDashboard = () => {
         });
       });
 
-      setData((prev) => ({ ...prev, initiatives, volunteers }));
+      // Fetch news
+      const newsRes = await newsApi.getAllNews({ limit: 100 });
+      const news = newsRes.data.map((article) => ({
+        id: article._id || article.id,
+        title: article.title,
+        subtitle: article.subtitle,
+        description: article.description,
+        imageUrl: article.imageUrl,
+        date: article.date,
+        priority: article.priority,
+        created_at: article.createdAt || article.created_at,
+      }));
+
+      // Fetch agencies
+      const agencies = await getAllAgencies(token);
+
+      setData((prev) => ({ ...prev, initiatives, volunteers, news, agencies }));
       setStats((prev) => ({
         ...prev,
         initiatives: initiatives.length,
         volunteers: volunteers.length,
+        news: news.length,
+        agencies: agencies.length,
       }));
     } catch (error) {
       console.error("Error fetching data:", error);
@@ -233,14 +426,6 @@ const AdminDashboard = () => {
     // Commented out signOut for development
     // await signOut();
     navigate("/");
-  };
-
-  const formatDate = (dateString) => {
-    return new Date(dateString).toLocaleDateString("ar-SA", {
-      year: "numeric",
-      month: "short",
-      day: "numeric",
-    });
   };
 
   // Status badge helper function
@@ -267,6 +452,47 @@ const AdminDashboard = () => {
     const config = statusConfig[status] || statusConfig.active;
     return (
       <Badge className={`${config.color} text-white`}>{config.text}</Badge>
+    );
+  };
+
+  // Priority badge helper function
+  const getPriorityBadge = (priority) => {
+    if (!priority) {
+      return (
+        <Badge variant="outline" className="text-muted-foreground">
+          {language === "ar" ? "بدون أولوية" : "No Priority"}
+        </Badge>
+      );
+    }
+
+    const priorityConfig = {
+      1: {
+        color: "bg-red-500",
+        text: language === "ar" ? "عالي جداً" : "Very High",
+      },
+      2: {
+        color: "bg-orange-500",
+        text: language === "ar" ? "عالي" : "High",
+      },
+      3: {
+        color: "bg-yellow-500",
+        text: language === "ar" ? "متوسط" : "Medium",
+      },
+      4: {
+        color: "bg-blue-500",
+        text: language === "ar" ? "منخفض" : "Low",
+      },
+      5: {
+        color: "bg-gray-500",
+        text: language === "ar" ? "منخفض جداً" : "Very Low",
+      },
+    };
+
+    const config = priorityConfig[priority];
+    return (
+      <Badge className={`${config.color} text-white`}>
+        {config.text} ({priority})
+      </Badge>
     );
   };
 
@@ -328,53 +554,146 @@ const AdminDashboard = () => {
 
   const handleEditNews = (id) => {
     console.log(`Editing news ${id}`);
-    // Navigate to edit news page or open edit modal
-    navigate(`/admin/news/edit/${id}`);
+    const news = data.news.find((article) => article.id === id);
+    setNewsModal({
+      isOpen: true,
+      mode: "edit",
+      news: news,
+    });
   };
 
   const handleDeleteNews = (id) => {
-    console.log(`Deleting news ${id}`);
-    // Show confirmation dialog and delete news
-    if (
-      window.confirm(
+    console.log(`Opening delete modal for news ${id}`);
+    const news = data.news.find((article) => article.id === id);
+    setDeleteNewsModal({
+      isOpen: true,
+      news: news,
+    });
+  };
+
+  const confirmDeleteNews = async () => {
+    if (!deleteNewsModal.news) return;
+
+    try {
+      setActionLoading(true);
+      await newsApi.deleteNews(token, deleteNewsModal.news.id);
+      toast.success(
+        language === "ar" ? "تم حذف الخبر بنجاح" : "News deleted successfully"
+      );
+      fetchAllData(); // Refresh data
+      setDeleteNewsModal({ isOpen: false, news: null });
+    } catch (error) {
+      console.error("Error deleting news:", error);
+      toast.error(
         language === "ar"
-          ? "هل أنت متأكد من حذف هذا الخبر؟"
-          : "Are you sure you want to delete this news?"
-      )
-    ) {
-      // Delete logic here
-      setData((prev) => ({
-        ...prev,
-        news: prev.news.filter((article) => article.id !== id),
-      }));
+          ? "فشل في حذف الخبر: " + error.message
+          : "Failed to delete news: " + error.message
+      );
+    } finally {
+      setActionLoading(false);
     }
   };
 
-  const handleTogglePriority = (id) => {
-    console.log(`Toggling priority for news ${id}`);
-    setData((prev) => ({
-      ...prev,
-      news: prev.news.map((article) => {
-        if (article.id === id) {
-          // If already has priority, remove it
-          if (article.priority) {
-            return { ...article, priority: null };
-          }
-          // If no priority, assign the next available priority (1-3)
-          const usedPriorities = prev.news
-            .filter((a) => a.id !== id && a.priority)
-            .map((a) => a.priority);
-          const availablePriorities = [1, 2, 3].filter(
-            (p) => !usedPriorities.includes(p)
-          );
-          return {
-            ...article,
-            priority: availablePriorities[0] || null,
-          };
+  const closeDeleteNewsModal = () => {
+    setDeleteNewsModal({ isOpen: false, news: null });
+  };
+
+  const handlePriorityChange = async (newsId, newPriority) => {
+    try {
+      setActionLoading(true);
+      const newsData = { priority: newPriority };
+      await newsApi.updateNews(token, newsId, newsData);
+      toast.success(
+        language === "ar"
+          ? "تم تحديث الأولوية بنجاح"
+          : "Priority updated successfully"
+      );
+      fetchAllData(); // Refresh data
+    } catch (error) {
+      console.error("Error updating priority:", error);
+      toast.error(
+        language === "ar"
+          ? "فشل في تحديث الأولوية: " + error.message
+          : "Failed to update priority: " + error.message
+      );
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
+  // Handle drag end for reordering
+  const handleDragEnd = async (event) => {
+    const { active, over } = event;
+
+    if (active.id !== over.id) {
+      const oldIndex = filteredNews.findIndex((item) => item.id === active.id);
+      const newIndex = filteredNews.findIndex((item) => item.id === over.id);
+
+      // Reorder the filtered news array
+      const reorderedFilteredNews = arrayMove(filteredNews, oldIndex, newIndex);
+
+      // Update the original data.news array to maintain the new order
+      const reorderedNews = [...data.news];
+      reorderedFilteredNews.forEach((filteredItem, index) => {
+        const originalIndex = reorderedNews.findIndex(
+          (item) => item.id === filteredItem.id
+        );
+        if (originalIndex !== -1) {
+          reorderedNews[originalIndex] = filteredItem;
         }
-        return article;
-      }),
-    }));
+      });
+
+      // Update local state immediately for better UX
+      setData((prev) => ({ ...prev, news: reorderedNews }));
+
+      // Update priorities in backend - handle conflicts by clearing all first, then setting new ones
+      try {
+        setActionLoading(true);
+
+        // Step 1: Clear all existing priorities to avoid conflicts
+        const clearPromises = data.news
+          .filter((news) => news.priority)
+          .map((news) =>
+            newsApi.updateNews(token, news.id, { priority: null })
+          );
+
+        await Promise.all(clearPromises);
+
+        // Step 2: Set new priorities based on new order (top 5 get priorities 1-5)
+        const setPriorityPromises = reorderedNews
+          .slice(0, 5)
+          .map((news, index) =>
+            newsApi.updateNews(token, news.id, { priority: index + 1 })
+          );
+
+        await Promise.all(setPriorityPromises);
+
+        // Update local state with final priorities
+        const finalNews = reorderedNews.map((news, index) => ({
+          ...news,
+          priority: index < 5 ? index + 1 : null,
+        }));
+
+        setData((prev) => ({ ...prev, news: finalNews }));
+
+        toast.success(
+          language === "ar"
+            ? "تم إعادة ترتيب الأخبار بنجاح"
+            : "News reordered successfully"
+        );
+      } catch (error) {
+        console.error("Error updating priorities:", error);
+        toast.error(
+          language === "ar"
+            ? "فشل في تحديث الأولويات: " + error.message
+            : "Failed to update priorities: " + error.message
+        );
+        // Revert on error
+        fetchAllData();
+      } finally {
+        setActionLoading(false);
+      }
+    }
   };
 
   // Success Stories action handlers
@@ -493,6 +812,41 @@ const AdminDashboard = () => {
     initiative: null,
   });
   const [actionLoading, setActionLoading] = useState(false);
+
+  // News modal state
+  const [newsModal, setNewsModal] = useState({
+    isOpen: false,
+    mode: "add", // "add" or "edit"
+    news: null,
+  });
+
+  // Delete news modal state
+  const [deleteNewsModal, setDeleteNewsModal] = useState({
+    isOpen: false,
+    news: null,
+  });
+
+  // News search state
+  const [newsSearchTerm, setNewsSearchTerm] = useState("");
+
+  // Filter news based on search term
+  const filteredNews = data.news.filter((article) => {
+    if (!newsSearchTerm) return true;
+    const searchLower = newsSearchTerm.toLowerCase();
+    return (
+      article.title.toLowerCase().includes(searchLower) ||
+      article.subtitle.toLowerCase().includes(searchLower) ||
+      article.description.toLowerCase().includes(searchLower)
+    );
+  });
+
+  // Drag and drop sensors
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  );
 
   const closeInitiativeModal = () => {
     setInitiativeModal({ isOpen: false, mode: "edit", initiative: null });
@@ -1294,26 +1648,74 @@ const AdminDashboard = () => {
         <TabsContent value="news">
           <Card>
             <CardHeader>
-              <CardTitle
-                className={`${
-                  language === "ar"
-                    ? "text-right font-arabic"
-                    : "text-left font-english"
+              <div
+                className={`flex items-center justify-between ${
+                  language === "ar" ? "flex-row-reverse" : "flex-row"
                 }`}>
-                {language === "ar" ? "الأخبار" : "News"}
-              </CardTitle>
-              <CardDescription
-                className={`${
-                  language === "ar"
-                    ? "text-right font-arabic"
-                    : "text-left font-english"
-                }`}>
-                {language === "ar"
-                  ? "جميع المقالات الإخبارية"
-                  : "All news articles"}
-              </CardDescription>
+                <div>
+                  <CardTitle
+                    className={`${
+                      language === "ar"
+                        ? "text-right font-arabic"
+                        : "text-left font-english"
+                    }`}>
+                    {language === "ar" ? "الأخبار" : "News"}
+                  </CardTitle>
+                  <CardDescription
+                    className={`${
+                      language === "ar"
+                        ? "text-right font-arabic"
+                        : "text-left font-english"
+                    }`}>
+                    {language === "ar"
+                      ? "جميع المقالات الإخبارية"
+                      : "All news articles"}
+                  </CardDescription>
+                </div>
+                <Button
+                  onClick={() =>
+                    setNewsModal({
+                      isOpen: true,
+                      mode: "add",
+                      news: null,
+                    })
+                  }
+                  className={`${
+                    language === "ar" ? "font-arabic" : "font-sans"
+                  }`}>
+                  {language === "ar" ? "إضافة خبر جديد" : "Add New News"}
+                </Button>
+              </div>
             </CardHeader>
             <CardContent>
+              {/* Search Input */}
+              <div className="mb-6">
+                <div className="relative">
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
+                  <Input
+                    type="text"
+                    placeholder={
+                      language === "ar"
+                        ? "البحث في الأخبار..."
+                        : "Search news..."
+                    }
+                    value={newsSearchTerm}
+                    onChange={(e) => setNewsSearchTerm(e.target.value)}
+                    className={`pl-10 ${
+                      language === "ar"
+                        ? "text-right font-arabic"
+                        : "text-left font-english"
+                    }`}
+                  />
+                </div>
+                {newsSearchTerm && (
+                  <p className="text-sm text-muted-foreground mt-2">
+                    {language === "ar"
+                      ? `عرض ${filteredNews.length} من ${data.news.length} خبر`
+                      : `Showing ${filteredNews.length} of ${data.news.length} news`}
+                  </p>
+                )}
+              </div>
               <div className="overflow-x-auto">
                 <Table className="w-full">
                   <TableHeader>
@@ -1325,13 +1727,10 @@ const AdminDashboard = () => {
                             الإجراءات
                           </TableHead>
                           <TableHead className="text-center font-arabic">
-                            الأولوية
+                            الترتيب
                           </TableHead>
                           <TableHead className="text-right font-arabic">
                             التاريخ
-                          </TableHead>
-                          <TableHead className="text-right font-arabic">
-                            الكاتب
                           </TableHead>
                           <TableHead className="text-right font-arabic">
                             العنوان
@@ -1344,13 +1743,10 @@ const AdminDashboard = () => {
                             Title
                           </TableHead>
                           <TableHead className="text-left font-english">
-                            Author
-                          </TableHead>
-                          <TableHead className="text-left font-english">
                             Date
                           </TableHead>
                           <TableHead className="text-center font-english">
-                            Priority
+                            Order
                           </TableHead>
                           <TableHead className="text-center font-english">
                             Actions
@@ -1359,141 +1755,28 @@ const AdminDashboard = () => {
                       )}
                     </TableRow>
                   </TableHeader>
-                  <TableBody>
-                    {data.news.slice(0, 10).map((article) => (
-                      <TableRow key={article.id}>
-                        {language === "ar" ? (
-                          // Arabic order: right to left
-                          <>
-                            <TableCell className="text-center">
-                              <div className="flex items-center justify-center gap-1">
-                                <Button
-                                  size="sm"
-                                  variant="outline"
-                                  className="h-8 w-8 p-0"
-                                  onClick={() => handleViewNews(article.id)}>
-                                  <Eye className="h-4 w-4" />
-                                </Button>
-                                <Button
-                                  size="sm"
-                                  variant="outline"
-                                  className="h-8 w-8 p-0"
-                                  onClick={() => handleEditNews(article.id)}>
-                                  <Edit className="h-4 w-4" />
-                                </Button>
-                                <Button
-                                  size="sm"
-                                  variant="outline"
-                                  className="h-8 w-8 p-0 text-destructive hover:text-destructive"
-                                  onClick={() => handleDeleteNews(article.id)}>
-                                  <Trash2 className="h-4 w-4" />
-                                </Button>
-                              </div>
-                            </TableCell>
-                            <TableCell className="text-center">
-                              <Button
-                                size="sm"
-                                variant={
-                                  article.priority ? "default" : "outline"
-                                }
-                                className={`h-8 w-8 p-0 ${
-                                  article.priority
-                                    ? "bg-yellow-500 hover:bg-yellow-600 text-white"
-                                    : ""
-                                }`}
-                                onClick={() =>
-                                  handleTogglePriority(article.id)
-                                }>
-                                <Star
-                                  className={`h-4 w-4 ${
-                                    article.priority ? "fill-current" : ""
-                                  }`}
-                                />
-                              </Button>
-                              {article.priority && (
-                                <div className="text-xs text-center mt-1 font-bold">
-                                  {article.priority}
-                                </div>
-                              )}
-                            </TableCell>
-                            <TableCell className="text-right font-arabic">
-                              {formatDate(article.date)}
-                            </TableCell>
-                            <TableCell className="text-right font-arabic">
-                              {article.author}
-                            </TableCell>
-                            <TableCell className="text-right font-arabic">
-                              {article.title}
-                            </TableCell>
-                          </>
-                        ) : (
-                          // English order: left to right
-                          <>
-                            <TableCell className="text-left font-english">
-                              {article.title}
-                            </TableCell>
-                            <TableCell className="text-left font-english">
-                              {article.author}
-                            </TableCell>
-                            <TableCell className="text-left font-english">
-                              {formatDate(article.date)}
-                            </TableCell>
-                            <TableCell className="text-center">
-                              <Button
-                                size="sm"
-                                variant={
-                                  article.priority ? "default" : "outline"
-                                }
-                                className={`h-8 w-8 p-0 ${
-                                  article.priority
-                                    ? "bg-yellow-500 hover:bg-yellow-600 text-white"
-                                    : ""
-                                }`}
-                                onClick={() =>
-                                  handleTogglePriority(article.id)
-                                }>
-                                <Star
-                                  className={`h-4 w-4 ${
-                                    article.priority ? "fill-current" : ""
-                                  }`}
-                                />
-                              </Button>
-                              {article.priority && (
-                                <div className="text-xs text-center mt-1 font-bold">
-                                  {article.priority}
-                                </div>
-                              )}
-                            </TableCell>
-                            <TableCell className="text-center">
-                              <div className="flex items-center justify-center gap-1">
-                                <Button
-                                  size="sm"
-                                  variant="outline"
-                                  className="h-8 w-8 p-0"
-                                  onClick={() => handleViewNews(article.id)}>
-                                  <Eye className="h-4 w-4" />
-                                </Button>
-                                <Button
-                                  size="sm"
-                                  variant="outline"
-                                  className="h-8 w-8 p-0"
-                                  onClick={() => handleEditNews(article.id)}>
-                                  <Edit className="h-4 w-4" />
-                                </Button>
-                                <Button
-                                  size="sm"
-                                  variant="outline"
-                                  className="h-8 w-8 p-0 text-destructive hover:text-destructive"
-                                  onClick={() => handleDeleteNews(article.id)}>
-                                  <Trash2 className="h-4 w-4" />
-                                </Button>
-                              </div>
-                            </TableCell>
-                          </>
-                        )}
-                      </TableRow>
-                    ))}
-                  </TableBody>
+                  <DndContext
+                    sensors={sensors}
+                    collisionDetection={closestCenter}
+                    onDragEnd={handleDragEnd}>
+                    <SortableContext
+                      items={filteredNews.map((item) => item.id)}
+                      strategy={verticalListSortingStrategy}>
+                      <TableBody>
+                        {filteredNews.slice(0, 10).map((article) => (
+                          <SortableNewsRow
+                            key={article.id}
+                            article={article}
+                            language={language}
+                            actionLoading={actionLoading}
+                            handleViewNews={handleViewNews}
+                            handleEditNews={handleEditNews}
+                            handleDeleteNews={handleDeleteNews}
+                          />
+                        ))}
+                      </TableBody>
+                    </SortableContext>
+                  </DndContext>
                 </Table>
               </div>
             </CardContent>
@@ -1961,6 +2244,27 @@ const AdminDashboard = () => {
         onClose={() => setDeleteModal({ isOpen: false, initiative: null })}
         initiative={deleteModal.initiative}
         onConfirm={handleConfirmDelete}
+        loading={actionLoading}
+        language={language}
+      />
+
+      {/* News Modal */}
+      <NewsModal
+        isOpen={newsModal.isOpen}
+        onClose={() => setNewsModal({ isOpen: false, mode: "add", news: null })}
+        mode={newsModal.mode}
+        news={newsModal.news}
+        onSuccess={fetchAllData}
+        loading={token}
+        language={language}
+      />
+
+      {/* Delete News Modal */}
+      <DeleteNewsModal
+        isOpen={deleteNewsModal.isOpen}
+        onClose={closeDeleteNewsModal}
+        news={deleteNewsModal.news}
+        onConfirm={confirmDeleteNews}
         loading={actionLoading}
         language={language}
       />

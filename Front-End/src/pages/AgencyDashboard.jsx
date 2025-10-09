@@ -19,6 +19,7 @@ import { useTheme } from "@/contexts/ThemeContext";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useNavigate } from "react-router-dom";
 import { agencyApi } from "@/lib/agencyApi";
+import { initiativeApi } from "@/lib/initiativeApi";
 import { getAllStandardsByNumber } from "@/lib/api";
 import { mapBackendStandardsToLanguageContext } from "@/lib/utils";
 import RequiredStandards from "@/components/AgencyDashboard/RequiredStandards";
@@ -35,6 +36,9 @@ const AgencyDashboard = () => {
   const [showAddForm, setShowAddForm] = useState(false);
   const [assignedStandards, setAssignedStandards] = useState([]);
   const [standardsLoading, setStandardsLoading] = useState(true);
+  const [initiativesCount, setInitiativesCount] = useState(0);
+  const [volunteersCount, setVolunteersCount] = useState(0);
+  const [statsLoading, setStatsLoading] = useState(true);
 
   const isRTL = language === "ar";
 
@@ -95,6 +99,42 @@ const AgencyDashboard = () => {
     loadAssignedStandards();
   }, [user, token, language, t]);
 
+  // Load agency statistics (initiatives and volunteers count)
+  useEffect(() => {
+    const loadAgencyStats = async () => {
+      if (!user || !token) return;
+
+      try {
+        setStatsLoading(true);
+
+        // Get initiatives for the current agency
+        const initiativesResponse = await initiativeApi.getMyInitiatives(token);
+        const initiatives = initiativesResponse.data || [];
+
+        // Set initiatives count
+        setInitiativesCount(initiatives.length);
+
+        // Calculate total volunteers count from all initiatives
+        const totalVolunteers = initiatives.reduce((total, initiative) => {
+          return total + (initiative.currentVolunteers || 0);
+        }, 0);
+
+        setVolunteersCount(totalVolunteers);
+      } catch (error) {
+        console.error("Error loading agency stats:", error);
+        toast.error(
+          language === "ar"
+            ? "فشل في تحميل إحصائيات الجهة"
+            : "Failed to load agency statistics"
+        );
+      } finally {
+        setStatsLoading(false);
+      }
+    };
+
+    loadAgencyStats();
+  }, [user, token, language]);
+
   if (loading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
@@ -126,8 +166,8 @@ const AgencyDashboard = () => {
       user.contactPerson?.phoneNumber ||
       (language === "ar" ? "غير محدد" : "Not specified"),
     address: user.address || (language === "ar" ? "غير محدد" : "Not specified"),
-    initiatives: 0, // Will be loaded from API later
-    volunteers: 0, // Will be loaded from API later
+    initiatives: initiativesCount,
+    volunteers: volunteersCount,
   };
 
   // Initiatives are now fetched directly by the Initiatives component
@@ -446,7 +486,11 @@ const AgencyDashboard = () => {
                       className={`text-2xl font-bold ${valueClass ?? ""} ${
                         language === "ar" ? "font-arabic" : "font-sans"
                       }`}>
-                      {value}
+                      {statsLoading ? (
+                        <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin"></div>
+                      ) : (
+                        value
+                      )}
                     </p>
                   </div>
                   <div className={`${language === "ar" ? "ml-4" : "ml-4"}`}>

@@ -1,4 +1,5 @@
 import { useTheme } from "@/contexts/ThemeContext";
+import { formatDate } from "@/utils/dateUtils";
 
 // Submission object structure
 export const createSubmission = (standardId, submissionData = {}) => {
@@ -93,20 +94,7 @@ export const formatSubmissionDate = (dateString, language) => {
     return language === "ar" ? "غير محدد" : "Not specified";
   }
 
-  const date = new Date(dateString);
-
-  // Check if the date is valid
-  if (isNaN(date.getTime())) {
-    return language === "ar" ? "تاريخ غير صحيح" : "Invalid date";
-  }
-
-  return new Intl.DateTimeFormat(language === "ar" ? "ar-SA" : "en-US", {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-  }).format(date);
+  return formatDate(dateString);
 };
 
 // Get submission status badge

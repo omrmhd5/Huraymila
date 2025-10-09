@@ -29,6 +29,7 @@ import {
 import { Trash2, Search } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useAuth } from "@/contexts/AuthContext";
+import { formatDate } from "@/utils/dateUtils";
 import { initiativeApi } from "@/lib/initiativeApi";
 import { toast } from "sonner";
 
@@ -88,13 +89,6 @@ const Volunteers = ({ language }) => {
     }
     return result;
   }, [initiatives]);
-
-  // Component-specific functions
-  const formatDate = (dateString) => {
-    return new Date(dateString).toLocaleDateString(
-      language === "ar" ? "ar-SA" : "en-US"
-    );
-  };
 
   // Filter volunteers based on search term
   const filteredVolunteers = flattenedVolunteers.filter((volunteer) => {

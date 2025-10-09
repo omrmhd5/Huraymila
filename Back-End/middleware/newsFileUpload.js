@@ -2,21 +2,21 @@ const multer = require("multer");
 const path = require("path");
 const fs = require("fs");
 
-// Configure storage for initiative images
+// Configure storage for news images
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    // Create public/initiatives folder if it doesn't exist
+    // Create public/news folder if it doesn't exist
     const publicDir = path.join(__dirname, "../public");
-    const initiativesDir = path.join(publicDir, "initiatives");
+    const newsDir = path.join(publicDir, "news");
     if (!fs.existsSync(publicDir)) {
       fs.mkdirSync(publicDir, { recursive: true });
     }
-    if (!fs.existsSync(initiativesDir)) {
-      fs.mkdirSync(initiativesDir, { recursive: true });
+    if (!fs.existsSync(newsDir)) {
+      fs.mkdirSync(newsDir, { recursive: true });
     }
 
-    // For now, store in temp folder - will move to initiative-specific folder after creation
-    const tempDir = path.join(initiativesDir, "temp");
+    // For now, store in temp folder - will move to news-specific folder after creation
+    const tempDir = path.join(newsDir, "temp");
     if (!fs.existsSync(tempDir)) {
       fs.mkdirSync(tempDir, { recursive: true });
     }
@@ -34,9 +34,8 @@ const storage = multer.diskStorage({
   },
 });
 
-// File filter for images only
 const fileFilter = (req, file, cb) => {
-  // Accept only image files
+  // Check if file is an image
   if (file.mimetype.startsWith("image/")) {
     cb(null, true);
   } else {
@@ -44,58 +43,52 @@ const fileFilter = (req, file, cb) => {
   }
 };
 
-// Configure multer for initiative images
-const uploadInitiativeImage = multer({
-  storage: storage,
-  fileFilter: fileFilter,
+const upload = multer({
+  storage,
+  fileFilter,
   limits: {
-    fileSize: 10 * 1024 * 1024, // 10MB limit per image
-    files: 1, // Maximum 1 image per initiative
+    fileSize: 5 * 1024 * 1024, // 5MB limit
   },
 });
 
-// Helper function to move image to initiative-specific folder
-const moveImageToInitiativeFolder = (initiativeId, tempFile) => {
-  const initiativeDir = path.join(
-    __dirname,
-    "../public/initiatives",
-    initiativeId
-  );
+// Helper function to move image to news-specific folder
+const moveImageToNewsFolder = (newsId, tempFile) => {
+  const newsDir = path.join(__dirname, "../public/news", newsId);
 
-  // Create initiative-specific directory
-  if (!fs.existsSync(initiativeDir)) {
-    fs.mkdirSync(initiativeDir, { recursive: true });
+  // Create news-specific directory
+  if (!fs.existsSync(newsDir)) {
+    fs.mkdirSync(newsDir, { recursive: true });
   }
 
   const oldPath = tempFile.path;
   const extension = path.extname(tempFile.originalname);
   const originalName = path.basename(tempFile.originalname, extension);
   const newFilename = `${originalName}${extension}`;
-  const newPath = path.join(initiativeDir, newFilename);
+  const newPath = path.join(newsDir, newFilename);
 
   try {
-    // Remove existing photo if it exists
+    // Remove existing image if it exists
     if (fs.existsSync(newPath)) {
       fs.unlinkSync(newPath);
     }
 
-    // Move file from temp to initiative folder
+    // Move file from temp to news folder
     fs.renameSync(oldPath, newPath);
 
-    return `/public/initiatives/${initiativeId}/${newFilename}`;
+    return `/public/news/${newsId}/${newFilename}`;
   } catch (error) {
-    console.error("Error moving initiative image:", error);
+    console.error("Error moving news image:", error);
     throw error;
   }
 };
 
 // Helper function to delete physical image file
-const deleteInitiativeImage = (imageUrl) => {
+const deleteNewsImage = (imageUrl) => {
   try {
     if (!imageUrl) return;
 
     // Convert URL path to actual file system path
-    // imageUrl format: "/public/initiatives/{initiativeId}/photo.ext"
+    // imageUrl format: "/public/news/{newsId}/{filename}"
     const relativePath = imageUrl.startsWith("/")
       ? imageUrl.substring(1)
       : imageUrl;
@@ -103,39 +96,32 @@ const deleteInitiativeImage = (imageUrl) => {
 
     if (fs.existsSync(fullPath)) {
       fs.unlinkSync(fullPath);
-      console.log(`Deleted initiative image: ${fullPath}`);
+      console.log(`Deleted news image: ${fullPath}`);
     }
   } catch (error) {
-    console.error(`Error deleting initiative image ${imageUrl}:`, error);
+    console.error(`Error deleting news image ${imageUrl}:`, error);
   }
 };
 
-// Helper function to delete entire initiative folder
-const deleteInitiativeFolder = (initiativeId) => {
+// Helper function to delete entire news folder
+const deleteNewsFolder = (newsId) => {
   try {
-    const initiativeDir = path.join(
-      __dirname,
-      "../public/initiatives",
-      initiativeId
-    );
+    const newsDir = path.join(__dirname, "../public/news", newsId);
 
-    if (fs.existsSync(initiativeDir)) {
+    if (fs.existsSync(newsDir)) {
       // Remove all files in the directory
-      const files = fs.readdirSync(initiativeDir);
+      const files = fs.readdirSync(newsDir);
       files.forEach((file) => {
-        const filePath = path.join(initiativeDir, file);
+        const filePath = path.join(newsDir, file);
         fs.unlinkSync(filePath);
       });
 
       // Remove the directory itself
-      fs.rmdirSync(initiativeDir);
-      console.log(`Deleted initiative folder: ${initiativeDir}`);
+      fs.rmdirSync(newsDir);
+      console.log(`Deleted news folder: ${newsDir}`);
     }
   } catch (error) {
-    console.error(
-      `Error deleting initiative folder for ${initiativeId}:`,
-      error
-    );
+    console.error(`Error deleting news folder for ${newsId}:`, error);
   }
 };
 
@@ -157,9 +143,9 @@ const cleanupTempFiles = (files) => {
 };
 
 module.exports = {
-  uploadInitiativeImage,
-  moveImageToInitiativeFolder,
-  deleteInitiativeImage,
-  deleteInitiativeFolder,
+  upload,
+  moveImageToNewsFolder,
+  deleteNewsImage,
+  deleteNewsFolder,
   cleanupTempFiles,
 };

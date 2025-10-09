@@ -31,6 +31,7 @@ import {
 } from "lucide-react";
 import { useTheme } from "@/contexts/ThemeContext";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { formatDate } from "@/utils/dateUtils";
 import { useAuth } from "@/contexts/AuthContext";
 import { initiativeApi } from "@/lib/initiativeApi";
 import { toast } from "sonner";
@@ -171,17 +172,6 @@ const AllInitiatives = () => {
           return 0;
       }
     });
-
-  const formatDate = (dateString) => {
-    return new Date(dateString).toLocaleDateString(
-      language === "ar" ? "ar-SA" : "en-US",
-      {
-        year: "numeric",
-        month: "short",
-        day: "numeric",
-      }
-    );
-  };
 
   const getStatusBadge = (status) => {
     const statusConfig = {
