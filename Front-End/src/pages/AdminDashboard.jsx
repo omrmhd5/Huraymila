@@ -380,6 +380,10 @@ import { initiativeApi } from "@/lib/initiativeApi";
 import { newsApi } from "@/lib/newsApi";
 import { successStoryApi } from "@/lib/successStoryApi";
 import { getAllAgencies } from "@/lib/api";
+import {
+  getHealthIndicators,
+  updateHealthIndicators,
+} from "@/lib/healthIndicatorApi";
 import { useAuth } from "@/contexts/AuthContext";
 import { useTheme } from "@/contexts/ThemeContext";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -420,62 +424,7 @@ const AdminDashboard = () => {
   });
 
   // Health indicators state for editing
-  const [healthIndicators, setHealthIndicators] = useState([
-    {
-      id: "airQuality",
-      title: "جودة الهواء",
-      currentValue: 85,
-      targetValue: 90,
-      unit: "%",
-      description: "PM2.5: 12 μg/m³",
-      status: "جيد",
-    },
-    {
-      id: "waterQuality",
-      title: "جودة المياه",
-      currentValue: 92,
-      targetValue: 95,
-      unit: "%",
-      description: "نقاء 99.8%",
-      status: "ممتاز",
-    },
-    {
-      id: "vaccination",
-      title: "معدل التطعيمات",
-      currentValue: 96,
-      targetValue: 95,
-      unit: "%",
-      description: "96% من السكان",
-      status: "عالي",
-    },
-    {
-      id: "physicalActivity",
-      title: "النشاط البدني",
-      currentValue: 68,
-      targetValue: 80,
-      unit: "%",
-      description: "68% يمارسون الرياضة",
-      status: "متوسط",
-    },
-    {
-      id: "trafficAccidents",
-      title: "الحوادث المرورية",
-      currentValue: 12,
-      targetValue: 10,
-      unit: "حادث/شهر",
-      description: "12 حادث/شهر",
-      status: "منخفض",
-    },
-    {
-      id: "recycling",
-      title: "إعادة التدوير",
-      currentValue: 74,
-      targetValue: 80,
-      unit: "%",
-      description: "74% من النفايات",
-      status: "جيد",
-    },
-  ]);
+  const [healthIndicators, setHealthIndicators] = useState([]);
 
   // Commented out useEffects for development
   // useEffect(() => {
@@ -589,6 +538,10 @@ const AdminDashboard = () => {
       // Fetch agencies
       const agencies = await getAllAgencies(token);
 
+      // Fetch health indicators
+      const healthIndicatorsData = await getHealthIndicators();
+      const healthIndicators = healthIndicatorsData?.indicators || [];
+
       setData((prev) => ({
         ...prev,
         initiatives,
@@ -605,6 +558,7 @@ const AdminDashboard = () => {
         success_stories: successStories.length,
         agencies: agencies.length,
       }));
+      setHealthIndicators(healthIndicators);
     } catch (error) {
       console.error("Error fetching data:", error);
     }
@@ -695,34 +649,37 @@ const AdminDashboard = () => {
     );
   };
 
-  const saveHealthIndicator = (id) => {
-    // Here you would typically save to backend
-    console.log(
-      `Saving health indicator ${id}:`,
-      healthIndicators.find((ind) => ind.id === id)
-    );
-    // You could add a toast notification here
-  };
+  const saveHealthIndicator = async (id) => {
+    try {
+      setActionLoading(true);
 
-  const resetHealthIndicator = (id) => {
-    // Reset to original values
-    const originalValues = {
-      airQuality: { currentValue: 85, targetValue: 90 },
-      waterQuality: { currentValue: 92, targetValue: 95 },
-      vaccination: { currentValue: 96, targetValue: 95 },
-      physicalActivity: { currentValue: 68, targetValue: 80 },
-      trafficAccidents: { currentValue: 12, targetValue: 10 },
-      recycling: { currentValue: 74, targetValue: 80 },
-    };
+      // Prepare the indicators data for API call
+      const indicatorsToUpdate = healthIndicators.map((indicator) => ({
+        id: indicator.id,
+        currentValue: indicator.currentValue,
+        targetValue: indicator.targetValue,
+      }));
 
-    if (originalValues[id]) {
-      setHealthIndicators((prev) =>
-        prev.map((indicator) =>
-          indicator.id === id
-            ? { ...indicator, ...originalValues[id] }
-            : indicator
-        )
+      // Call the API to update all indicators
+      await updateHealthIndicators(token, indicatorsToUpdate);
+
+      toast.success(
+        language === "ar"
+          ? "تم حفظ المؤشرات الصحية بنجاح"
+          : "Health indicators saved successfully"
       );
+
+      // Refresh data to get updated values
+      await fetchAllData();
+    } catch (error) {
+      console.error("Error saving health indicators:", error);
+      toast.error(
+        language === "ar"
+          ? "فشل في حفظ المؤشرات الصحية: " + error.message
+          : "Failed to save health indicators: " + error.message
+      );
+    } finally {
+      setActionLoading(false);
     }
   };
 
@@ -1500,18 +1457,8 @@ const AdminDashboard = () => {
                                   : "font-english"
                               }`}>
                               {language === "ar"
-                                ? indicator.title
-                                : indicator.id === "airQuality"
-                                ? "Air Quality"
-                                : indicator.id === "waterQuality"
-                                ? "Water Quality"
-                                : indicator.id === "vaccination"
-                                ? "Vaccination Rate"
-                                : indicator.id === "physicalActivity"
-                                ? "Physical Activity"
-                                : indicator.id === "trafficAccidents"
-                                ? "Traffic Accidents"
-                                : "Recycling"}
+                                ? indicator.title.ar
+                                : indicator.title.en}
                             </CardTitle>
                             <p
                               className={`text-xs text-muted-foreground ${
@@ -1519,14 +1466,18 @@ const AdminDashboard = () => {
                                   ? "font-arabic"
                                   : "font-english"
                               }`}>
-                              {indicator.description}
+                              {language === "ar"
+                                ? indicator.description.ar
+                                : indicator.description.en}
                             </p>
                           </div>
                         </div>
                         <Badge
                           variant="outline"
                           className="text-xs border font-medium bg-green-100 text-green-700">
-                          {indicator.status}
+                          {language === "ar"
+                            ? indicator.status.ar
+                            : indicator.status.en}
                         </Badge>
                       </div>
                     </CardHeader>
@@ -1658,17 +1609,15 @@ const AdminDashboard = () => {
                             className={`flex-1 ${
                               language === "ar" ? "font-arabic" : "font-english"
                             }`}
-                            onClick={() => saveHealthIndicator(indicator.id)}>
-                            {language === "ar" ? "حفظ" : "Save"}
-                          </Button>
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            className={`flex-1 ${
-                              language === "ar" ? "font-arabic" : "font-english"
-                            }`}
-                            onClick={() => resetHealthIndicator(indicator.id)}>
-                            {language === "ar" ? "إعادة تعيين" : "Reset"}
+                            onClick={() => saveHealthIndicator(indicator.id)}
+                            disabled={actionLoading}>
+                            {actionLoading
+                              ? language === "ar"
+                                ? "جاري الحفظ..."
+                                : "Saving..."
+                              : language === "ar"
+                              ? "حفظ"
+                              : "Save"}
                           </Button>
                         </div>
                       </div>

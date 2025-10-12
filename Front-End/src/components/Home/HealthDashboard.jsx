@@ -1,3 +1,4 @@
+import React, { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
@@ -14,17 +15,24 @@ import {
   Target,
   Sparkles,
   Award,
+  Loader2,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useTheme } from "@/contexts/ThemeContext";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { getHealthIndicators } from "@/lib/healthIndicatorApi";
 
 const HealthDashboard = () => {
   const { language } = useTheme();
   const { t } = useLanguage();
+  const [indicators, setIndicators] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  const indicators = [
+  // Default indicators as fallback
+  const defaultIndicators = [
     {
+      id: "airQuality",
       title: t("healthDashboard.indicators.airQuality.title"),
       value: 85,
       status: t("healthDashboard.indicators.airQuality.status"),
@@ -40,6 +48,7 @@ const HealthDashboard = () => {
       inverted: false,
     },
     {
+      id: "waterQuality",
       title: t("healthDashboard.indicators.waterQuality.title"),
       value: 92,
       status: t("healthDashboard.indicators.waterQuality.status"),
@@ -55,6 +64,7 @@ const HealthDashboard = () => {
       inverted: false,
     },
     {
+      id: "vaccination",
       title: t("healthDashboard.indicators.vaccination.title"),
       value: 96,
       status: t("healthDashboard.indicators.vaccination.status"),
@@ -70,6 +80,7 @@ const HealthDashboard = () => {
       inverted: false,
     },
     {
+      id: "physicalActivity",
       title: t("healthDashboard.indicators.physicalActivity.title"),
       value: 68,
       status: t("healthDashboard.indicators.physicalActivity.status"),
@@ -85,6 +96,7 @@ const HealthDashboard = () => {
       inverted: false,
     },
     {
+      id: "trafficAccidents",
       title: t("healthDashboard.indicators.trafficAccidents.title"),
       value: 12,
       status: t("healthDashboard.indicators.trafficAccidents.status"),
@@ -100,6 +112,7 @@ const HealthDashboard = () => {
       inverted: true, // Lower is better
     },
     {
+      id: "recycling",
       title: t("healthDashboard.indicators.recycling.title"),
       value: 74,
       status: t("healthDashboard.indicators.recycling.status"),
@@ -115,6 +128,109 @@ const HealthDashboard = () => {
       inverted: false,
     },
   ];
+
+  // Icon mapping for indicators
+  const iconMap = {
+    airQuality: Wind,
+    waterQuality: Droplets,
+    vaccination: Shield,
+    physicalActivity: Activity,
+    trafficAccidents: Car,
+    recycling: Recycle,
+  };
+
+  // Color mapping for indicators
+  const colorMap = {
+    airQuality: {
+      color: "text-green-600",
+      bgColor: "bg-green-100",
+      ringColor: "ring-green-500",
+      progressColor: "from-green-500 to-green-600",
+    },
+    waterQuality: {
+      color: "text-blue-600",
+      bgColor: "bg-blue-100",
+      ringColor: "ring-blue-500",
+      progressColor: "from-blue-500 to-blue-600",
+    },
+    vaccination: {
+      color: "text-purple-600",
+      bgColor: "bg-purple-100",
+      ringColor: "ring-purple-500",
+      progressColor: "from-purple-500 to-purple-600",
+    },
+    physicalActivity: {
+      color: "text-orange-600",
+      bgColor: "bg-orange-100",
+      ringColor: "ring-orange-500",
+      progressColor: "from-orange-500 to-orange-600",
+    },
+    trafficAccidents: {
+      color: "text-red-600",
+      bgColor: "bg-red-100",
+      ringColor: "ring-red-500",
+      progressColor: "from-red-500 to-red-600",
+    },
+    recycling: {
+      color: "text-teal-600",
+      bgColor: "bg-teal-100",
+      ringColor: "ring-teal-500",
+      progressColor: "from-teal-500 to-teal-600",
+    },
+  };
+
+  // Fetch health indicators from API
+  useEffect(() => {
+    const fetchIndicators = async () => {
+      try {
+        setLoading(true);
+        const data = await getHealthIndicators();
+
+        if (data && data.indicators) {
+          // Transform API data to match component format
+          const transformedIndicators = data.indicators.map((indicator) => {
+            const iconConfig = iconMap[indicator.id];
+            const colorConfig = colorMap[indicator.id];
+
+            return {
+              id: indicator.id,
+              title:
+                language === "ar" ? indicator.title.ar : indicator.title.en,
+              value: indicator.currentValue,
+              status:
+                language === "ar" ? indicator.status.ar : indicator.status.en,
+              trend: indicator.id === "trafficAccidents" ? "down" : "up",
+              description:
+                language === "ar"
+                  ? indicator.description.ar
+                  : indicator.description.en,
+              icon: iconConfig,
+              ...colorConfig,
+              target: indicator.targetValue,
+              detail:
+                language === "ar"
+                  ? indicator.description.ar
+                  : indicator.description.en,
+              inverted: indicator.id === "trafficAccidents",
+            };
+          });
+
+          setIndicators(transformedIndicators);
+        } else {
+          throw new Error("Invalid data format received from API");
+        }
+      } catch (error) {
+        console.error("Error fetching health indicators:", error);
+        setError(error.message);
+        // Fallback to default indicators
+        setIndicators(defaultIndicators);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchIndicators();
+  }, [language, t]);
 
   const isRTL = language === "ar";
 
@@ -140,6 +256,32 @@ const HealthDashboard = () => {
     }
   };
 
+  // Show loading state
+  if (loading) {
+    return (
+      <section className="py-20 bg-primary/10">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-6">
+              {t("healthDashboard.title")}
+            </h2>
+            <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
+              {t("healthDashboard.subtitle")}
+            </p>
+          </div>
+          <div className="flex items-center justify-center py-20">
+            <Loader2 className="h-8 w-8 animate-spin text-primary" />
+            <span className="ml-2 text-muted-foreground">
+              {language === "ar"
+                ? "جاري تحميل المؤشرات..."
+                : "Loading indicators..."}
+            </span>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
   return (
     <section className="py-20 bg-primary/10">
       <div className="container mx-auto px-4">
@@ -151,6 +293,13 @@ const HealthDashboard = () => {
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
             {t("healthDashboard.subtitle")}
           </p>
+          {error && (
+            <div className="mt-4 text-sm text-orange-600">
+              {language === "ar"
+                ? "تم تحميل البيانات الافتراضية بسبب خطأ في الاتصال"
+                : "Loaded default data due to connection error"}
+            </div>
+          )}
         </div>
 
         {/* Indicators Grid */}
