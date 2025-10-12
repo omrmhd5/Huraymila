@@ -31,7 +31,7 @@ import { useAuth } from "@/contexts/AuthContext";
 
 const AdminLayout = () => {
   const { language, theme, setLanguage, setTheme } = useTheme();
-  const { user, logout } = useAuth();
+  const { user, logout, loading: authLoading } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const isRTL = language === "ar";
@@ -108,8 +108,11 @@ const AdminLayout = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    checkUserAccess();
-  }, [user]);
+    // Only check access after auth loading is complete
+    if (!authLoading) {
+      checkUserAccess();
+    }
+  }, [user, authLoading]);
 
   const checkUserAccess = async () => {
     if (!user) {
@@ -188,7 +191,7 @@ const AdminLayout = () => {
   };
 
   // Show loading state while checking role
-  if (loading) {
+  if (authLoading || loading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center">

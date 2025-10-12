@@ -24,6 +24,6 @@ router.get("/", governorOnly, getAgencies);
 router.get("/:id", governorOnly, getAgencyById);
 router.post("/", governorOnly, createAgency);
 router.put("/:id", governorOnly, updateAgency);
-router.delete("/:id", governorOnly, deleteAgency);
+router.delete("/:id", governorOrAgency, deleteAgency);
 
 module.exports = router;

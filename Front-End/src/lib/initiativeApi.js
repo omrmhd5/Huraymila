@@ -260,4 +260,65 @@ export const initiativeApi = {
 
     return response.json();
   },
+
+  // Get pending initiatives (governor only)
+  getPendingInitiatives: async (token) => {
+    const response = await fetch(`${API_BASE_URL}/initiatives/pending/all`, {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(
+        errorData.message || "Failed to fetch pending initiatives"
+      );
+    }
+
+    return response.json();
+  },
+
+  // Approve initiative (governor only)
+  approveInitiative: async (token, initiativeId) => {
+    const response = await fetch(
+      `${API_BASE_URL}/initiatives/${initiativeId}/approve`,
+      {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || "Failed to approve initiative");
+    }
+
+    return response.json();
+  },
+
+  // Decline initiative (governor only)
+  declineInitiative: async (token, initiativeId) => {
+    const response = await fetch(
+      `${API_BASE_URL}/initiatives/${initiativeId}/decline`,
+      {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || "Failed to decline initiative");
+    }
+
+    return response.json();
+  },
 };

@@ -12,6 +12,9 @@ const {
   removeVolunteerFromInitiative,
   applyToInitiative,
   withdrawFromInitiative,
+  getPendingInitiatives,
+  approveInitiative,
+  declineInitiative,
 } = require("../Controllers/initiativeController");
 const {
   governorOnly,
@@ -55,5 +58,10 @@ router.delete(
 // Volunteer application routes (for volunteers)
 router.post("/:id/apply", volunteerOnly, applyToInitiative);
 router.delete("/:id/withdraw", volunteerOnly, withdrawFromInitiative);
+
+// Governor approval routes
+router.get("/pending/all", governorOnly, getPendingInitiatives);
+router.patch("/:id/approve", governorOnly, approveInitiative);
+router.patch("/:id/decline", governorOnly, declineInitiative);
 
 module.exports = router;

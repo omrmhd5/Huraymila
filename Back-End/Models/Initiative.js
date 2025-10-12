@@ -25,6 +25,15 @@ const initiativeSchema = new mongoose.Schema(
       enum: ["gathering volunteers", "active", "completed", "cancelled"],
       default: "gathering volunteers",
     },
+    approvalStatus: {
+      type: String,
+      enum: ["pending", "approved", "declined"],
+      default: "pending",
+    },
+    declineReason: {
+      type: String,
+      trim: true,
+    },
     currentVolunteers: {
       type: Number,
       default: 0,

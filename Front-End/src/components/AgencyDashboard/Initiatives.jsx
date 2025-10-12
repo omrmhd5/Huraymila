@@ -231,6 +231,31 @@ const Initiatives = ({ language }) => {
     }
   };
 
+  const getApprovalStatusBadge = (approvalStatus) => {
+    switch (approvalStatus) {
+      case "pending":
+        return (
+          <Badge variant="default" className="bg-orange-500">
+            {language === "ar" ? "في انتظار الموافقة" : "Pending Approval"}
+          </Badge>
+        );
+      case "approved":
+        return (
+          <Badge variant="default" className="bg-green-500">
+            {language === "ar" ? "معتمد" : "Approved"}
+          </Badge>
+        );
+      case "declined":
+        return (
+          <Badge variant="default" className="bg-red-500">
+            {language === "ar" ? "مرفوض" : "Declined"}
+          </Badge>
+        );
+      default:
+        return null;
+    }
+  };
+
   // Unified modal handlers
   const openInitiativeModal = (mode, initiative = null) => {
     if (mode === "edit" && initiative) {
@@ -569,6 +594,7 @@ const Initiatives = ({ language }) => {
                           {initiative.title}
                         </h3>
                         {getStatusBadge(initiative.status)}
+                        {getApprovalStatusBadge(initiative.approvalStatus)}
                       </div>
                       <p
                         className={`text-muted-foreground mb-3 ${

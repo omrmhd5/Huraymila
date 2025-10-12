@@ -7,10 +7,10 @@ const {
   cleanupTempFiles,
 } = require("../middleware/initiativeFileUpload");
 
-// Get all initiatives
+// Get all initiatives (only approved ones for public)
 const getAllInitiatives = async (req, res) => {
   try {
-    const initiatives = await Initiative.find()
+    const initiatives = await Initiative.find({ approvalStatus: "approved" })
       .populate("agency", "name email")
       .populate("volunteers.volunteer", "fullName email phoneNumber")
       .sort({ createdAt: -1 });
@@ -330,7 +330,7 @@ const deleteInitiative = async (req, res) => {
     // Check if user has permission to delete
     if (
       req.user.type === "agency" &&
-      existingInitiative.agency.toString() !== req.user.agencyId
+      existingInitiative.agency._id.toString() !== req.user.agencyId
     ) {
       return res.status(403).json({
         success: false,
@@ -679,6 +679,103 @@ const withdrawFromInitiative = async (req, res) => {
   }
 };
 
+// Get pending initiatives (governor only)
+const getPendingInitiatives = async (req, res) => {
+  try {
+    const initiatives = await Initiative.find({ approvalStatus: "pending" })
+      .populate("agency", "name email")
+      .sort({ createdAt: -1 });
+
+    res.json({
+      success: true,
+      count: initiatives.length,
+      data: initiatives,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Error fetching pending initiatives",
+      error: error.message,
+    });
+  }
+};
+
+// Approve initiative (governor only)
+const approveInitiative = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const initiative = await Initiative.findById(id);
+
+    if (!initiative) {
+      return res.status(404).json({
+        success: false,
+        message: "Initiative not found",
+      });
+    }
+
+    if (initiative.approvalStatus !== "pending") {
+      return res.status(400).json({
+        success: false,
+        message: "Initiative is not pending approval",
+      });
+    }
+
+    initiative.approvalStatus = "approved";
+    await initiative.save();
+
+    res.json({
+      success: true,
+      message: "Initiative approved successfully",
+      data: initiative,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Error approving initiative",
+      error: error.message,
+    });
+  }
+};
+
+// Decline initiative (governor only)
+const declineInitiative = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const initiative = await Initiative.findById(id);
+
+    if (!initiative) {
+      return res.status(404).json({
+        success: false,
+        message: "Initiative not found",
+      });
+    }
+
+    if (initiative.approvalStatus !== "pending") {
+      return res.status(400).json({
+        success: false,
+        message: "Initiative is not pending approval",
+      });
+    }
+
+    initiative.approvalStatus = "declined";
+    await initiative.save();
+
+    res.json({
+      success: true,
+      message: "Initiative declined successfully",
+      data: initiative,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Error declining initiative",
+      error: error.message,
+    });
+  }
+};
+
 module.exports = {
   getAllInitiatives,
   getInitiativeById,
@@ -691,4 +788,7 @@ module.exports = {
   removeVolunteerFromInitiative,
   applyToInitiative,
   withdrawFromInitiative,
+  getPendingInitiatives,
+  approveInitiative,
+  declineInitiative,
 };

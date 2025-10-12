@@ -425,6 +425,7 @@ const AdminDashboard = () => {
 
   // Health indicators state for editing
   const [healthIndicators, setHealthIndicators] = useState([]);
+  const [pendingInitiatives, setPendingInitiatives] = useState([]);
 
   // Commented out useEffects for development
   // useEffect(() => {
@@ -463,12 +464,38 @@ const AdminDashboard = () => {
 
   const fetchAllData = async () => {
     try {
-      // Fetch initiatives
-      const res = await fetch(
-        `${import.meta.env.VITE_API_BASE_URL}/initiatives`
-      );
-      const json = await res.json();
-      const initiativesRaw = Array.isArray(json?.data) ? json.data : [];
+      // Fetch initiatives - use authenticated endpoint to get all initiatives
+      let initiativesRaw = [];
+      if (token) {
+        try {
+          const res = await fetch(
+            `${import.meta.env.VITE_API_BASE_URL}/initiatives?includeAll=true`,
+            {
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+              },
+            }
+          );
+          const json = await res.json();
+          initiativesRaw = Array.isArray(json?.data) ? json.data : [];
+        } catch (authError) {
+          console.error("Error fetching initiatives with auth:", authError);
+          // Fallback to public endpoint
+          const res = await fetch(
+            `${import.meta.env.VITE_API_BASE_URL}/initiatives`
+          );
+          const json = await res.json();
+          initiativesRaw = Array.isArray(json?.data) ? json.data : [];
+        }
+      } else {
+        // Fallback to public endpoint if no token
+        const res = await fetch(
+          `${import.meta.env.VITE_API_BASE_URL}/initiatives`
+        );
+        const json = await res.json();
+        initiativesRaw = Array.isArray(json?.data) ? json.data : [];
+      }
 
       const initiatives = initiativesRaw.map((i) => ({
         id: i._id || i.id,
@@ -482,6 +509,7 @@ const AdminDashboard = () => {
         maxVolunteers: i.maxVolunteers || i.max_volunteers || 0,
         organized_agency: i?.agency?.name || "",
         created_at: i.createdAt || i.created_at,
+        approvalStatus: i.approvalStatus || "approved", // Default to approved for backward compatibility
       }));
 
       const volunteers = [];
@@ -542,6 +570,27 @@ const AdminDashboard = () => {
       const healthIndicatorsData = await getHealthIndicators();
       const healthIndicators = healthIndicatorsData?.indicators || [];
 
+      // Fetch pending initiatives
+      try {
+        if (token) {
+          const pendingData = await initiativeApi.getPendingInitiatives(token);
+          setPendingInitiatives(pendingData?.data || []);
+        } else {
+          // Fallback: filter pending initiatives from all initiatives
+          const pendingFromAll = initiativesRaw.filter(
+            (i) => i.approvalStatus === "pending"
+          );
+          setPendingInitiatives(pendingFromAll);
+        }
+      } catch (pendingError) {
+        console.error("Error fetching pending initiatives:", pendingError);
+        // Fallback: filter pending initiatives from all initiatives
+        const pendingFromAll = initiativesRaw.filter(
+          (i) => i.approvalStatus === "pending"
+        );
+        setPendingInitiatives(pendingFromAll);
+      }
+
       setData((prev) => ({
         ...prev,
         initiatives,
@@ -568,6 +617,51 @@ const AdminDashboard = () => {
     // Commented out signOut for development
     // await signOut();
     navigate("/");
+  };
+
+  // Approval functions
+  const handleApproveInitiative = async (initiativeId) => {
+    try {
+      setActionLoading(true);
+      await initiativeApi.approveInitiative(token, initiativeId);
+      toast.success(
+        language === "ar"
+          ? "تم قبول المبادرة بنجاح"
+          : "Initiative approved successfully"
+      );
+      await fetchAllData();
+    } catch (error) {
+      console.error("Error approving initiative:", error);
+      toast.error(
+        language === "ar"
+          ? "فشل في قبول المبادرة: " + error.message
+          : "Failed to approve initiative: " + error.message
+      );
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
+  const handleDeclineInitiative = async (initiativeId) => {
+    try {
+      setActionLoading(true);
+      await initiativeApi.declineInitiative(token, initiativeId);
+      toast.success(
+        language === "ar"
+          ? "تم رفض المبادرة بنجاح"
+          : "Initiative declined successfully"
+      );
+      await fetchAllData();
+    } catch (error) {
+      console.error("Error declining initiative:", error);
+      toast.error(
+        language === "ar"
+          ? "فشل في رفض المبادرة: " + error.message
+          : "Failed to decline initiative: " + error.message
+      );
+    } finally {
+      setActionLoading(false);
+    }
   };
 
   // Status badge helper function
@@ -1317,7 +1411,7 @@ const AdminDashboard = () => {
 
       {/* Data Tables */}
       <Tabs defaultValue="health" className="space-y-6">
-        <TabsList className="grid w-full grid-cols-3 lg:grid-cols-6">
+        <TabsList className="grid w-full grid-cols-4 lg:grid-cols-7">
           {[
             {
               value: "health",
@@ -1328,6 +1422,11 @@ const AdminDashboard = () => {
               value: "initiatives",
               ar: "المبادرات",
               en: "Initiatives",
+            },
+            {
+              value: "pending-initiatives",
+              ar: "المبادرات المعلقة",
+              en: "Pending Initiatives",
             },
             {
               value: "volunteers",
@@ -1627,6 +1726,136 @@ const AdminDashboard = () => {
               })}
             </div>
           </div>
+        </TabsContent>
+
+        {/* Pending Initiatives Tab */}
+        <TabsContent value="pending-initiatives">
+          <Card>
+            <CardHeader>
+              <CardTitle
+                className={`${
+                  language === "ar"
+                    ? "text-right font-arabic"
+                    : "text-left font-english"
+                }`}>
+                {language === "ar"
+                  ? "المبادرات المعلقة"
+                  : "Pending Initiatives"}
+              </CardTitle>
+              <CardDescription
+                className={`${
+                  language === "ar"
+                    ? "text-right font-arabic"
+                    : "text-left font-english"
+                }`}>
+                {language === "ar"
+                  ? "المبادرات التي تنتظر موافقة المحافظ"
+                  : "Initiatives awaiting governor approval"}
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                {pendingInitiatives.length === 0 ? (
+                  <div className="text-center py-8">
+                    <p
+                      className={`text-muted-foreground ${
+                        language === "ar" ? "font-arabic" : "font-english"
+                      }`}>
+                      {language === "ar"
+                        ? "لا توجد مبادرات معلقة حالياً"
+                        : "No pending initiatives at the moment"}
+                    </p>
+                  </div>
+                ) : (
+                  pendingInitiatives.map((initiative) => (
+                    <Card
+                      key={initiative._id}
+                      className="border-l-4 border-l-orange-500">
+                      <CardContent className="p-6">
+                        <div className="flex justify-between items-start mb-4">
+                          <div className="flex-1">
+                            <h3
+                              className={`text-lg font-semibold mb-2 ${
+                                language === "ar"
+                                  ? "font-arabic"
+                                  : "font-english"
+                              }`}>
+                              {initiative.title}
+                            </h3>
+                            <p
+                              className={`text-muted-foreground mb-3 ${
+                                language === "ar"
+                                  ? "font-arabic"
+                                  : "font-english"
+                              }`}>
+                              {initiative.description}
+                            </p>
+                            <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                              <span
+                                className={`${
+                                  language === "ar"
+                                    ? "font-arabic"
+                                    : "font-english"
+                                }`}>
+                                {language === "ar" ? "الجهة:" : "Agency:"}{" "}
+                                {initiative.agency?.name}
+                              </span>
+                              <span
+                                className={`${
+                                  language === "ar"
+                                    ? "font-arabic"
+                                    : "font-english"
+                                }`}>
+                                {language === "ar"
+                                  ? "تاريخ الإنشاء:"
+                                  : "Created:"}{" "}
+                                {new Date(
+                                  initiative.createdAt
+                                ).toLocaleDateString()}
+                              </span>
+                            </div>
+                          </div>
+                          {initiative.imageUrl && (
+                            <img
+                              src={`${
+                                import.meta.env.VITE_API_BASE_URL?.replace(
+                                  "/api",
+                                  ""
+                                ) || "http://localhost:5000"
+                              }${initiative.imageUrl}`}
+                              alt={initiative.title}
+                              className="w-24 h-24 object-cover rounded-lg ml-4"
+                            />
+                          )}
+                        </div>
+                        <div className="flex gap-3 justify-end">
+                          <Button
+                            onClick={() =>
+                              handleDeclineInitiative(initiative._id)
+                            }
+                            variant="outline"
+                            size="sm"
+                            className="text-red-600 border-red-300 hover:bg-red-50"
+                            disabled={actionLoading}>
+                            {language === "ar" ? "رفض" : "Decline"}
+                          </Button>
+                          <Button
+                            onClick={() =>
+                              handleApproveInitiative(initiative._id)
+                            }
+                            size="sm"
+                            className="bg-green-600 hover:bg-green-700"
+                            disabled={actionLoading}>
+                            {language === "ar" ? "قبول" : "Approve"}
+                          </Button>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))
+                )}
+              </div>
+            </CardContent>
+          </Card>
         </TabsContent>
 
         {/* Initiatives Tab */}
