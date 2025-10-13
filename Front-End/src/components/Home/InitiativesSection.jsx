@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import {
   Card,
   CardContent,
@@ -22,11 +22,14 @@ import {
 import { useNavigate } from "react-router-dom";
 import { useTheme } from "@/contexts/ThemeContext";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { initiativeApi } from "@/lib/initiativeApi";
 
 const InitiativesSection = () => {
   const { language } = useTheme();
   const { t } = useLanguage();
   const navigate = useNavigate();
+  const [initiatives, setInitiatives] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   // Function to navigate and scroll to top
   const navigateToTop = (path) => {
@@ -34,81 +37,23 @@ const InitiativesSection = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  const initiatives = [
-    {
-      id: 1,
-      title: "برنامج التوعية الصحية",
-      titleEn: "Health Awareness Program",
-      description: "برنامج شامل للتوعية بأهمية الصحة الوقائية والتغذية السليمة",
-      descriptionEn:
-        "Comprehensive program for awareness of preventive health and proper nutrition",
-      category: "health",
-      status: "active",
-      startDate: "2024-01-15",
-      endDate: "2024-06-30",
-      location: "مركز المدينة الصحي",
-      locationEn: "City Health Center",
-      participants: 150,
-      maxParticipants: 200,
-      progress: 75,
-      image: "/assets/health-workshop.jpg",
-    },
-    {
-      id: 2,
-      title: "مشروع التشجير الحضري",
-      titleEn: "Urban Afforestation Project",
-      description:
-        "مشروع لزيادة المساحات الخضراء وتحسين جودة الهواء في المدينة",
-      descriptionEn:
-        "Project to increase green spaces and improve air quality in the city",
-      category: "environment",
-      status: "active",
-      startDate: "2024-02-01",
-      endDate: "2024-12-31",
-      location: "مختلف أحياء المدينة",
-      locationEn: "Various City Neighborhoods",
-      participants: 80,
-      maxParticipants: 120,
-      progress: 45,
-      image: "/assets/green-garden.jpg",
-    },
-    {
-      id: 3,
-      title: "مبادرة المشي الصحي",
-      titleEn: "Healthy Walking Initiative",
-      description: "تشجيع المشي كرياضة يومية لتعزيز الصحة البدنية",
-      descriptionEn:
-        "Encouraging walking as a daily exercise to promote physical health",
-      category: "health",
-      status: "completed",
-      startDate: "2023-09-01",
-      endDate: "2024-03-31",
-      location: "المسارات الصحية",
-      locationEn: "Health Trails",
-      participants: 200,
-      maxParticipants: 200,
-      progress: 100,
-      image: "/assets/walking-initiative.jpg",
-    },
-    {
-      id: 4,
-      title: "برنامج التثقيف الصحي للأطفال",
-      titleEn: "Children's Health Education Program",
-      description: "برنامج تعليمي تفاعلي لتعزيز الثقافة الصحية لدى الأطفال",
-      descriptionEn:
-        "Interactive educational program to promote health culture among children",
-      category: "education",
-      status: "planning",
-      startDate: "2024-07-01",
-      endDate: "2024-12-31",
-      location: "المدارس والمراكز المجتمعية",
-      locationEn: "Schools and Community Centers",
-      participants: 0,
-      maxParticipants: 50,
-      progress: 0,
-      image: "/assets/health-workshop.jpg",
-    },
-  ];
+  // Fetch approved initiatives from API
+  useEffect(() => {
+    const fetchInitiatives = async () => {
+      try {
+        setLoading(true);
+        const response = await initiativeApi.getAllInitiatives({ limit: 3 });
+        setInitiatives(response.data || []);
+      } catch (error) {
+        console.error("Error fetching initiatives:", error);
+        setInitiatives([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchInitiatives();
+  }, []);
 
   const isRTL = language === "ar";
 
@@ -137,6 +82,16 @@ const InitiativesSection = () => {
     };
 
     const categoryInfo = categoryLabels[category];
+
+    // Handle undefined category
+    if (!categoryInfo) {
+      return (
+        <Badge variant="default" className="bg-gray-500">
+          {category || "Other"}
+        </Badge>
+      );
+    }
+
     return (
       <Badge variant="default" className={categoryInfo.color}>
         {language === "ar" ? categoryInfo.ar : categoryInfo.en}
@@ -161,9 +116,24 @@ const InitiativesSection = () => {
         en: t("initiativesSection.status.planning"),
         color: "bg-yellow-500",
       },
+      "gathering volunteers": {
+        ar: "جمع المتطوعين",
+        en: "Gathering Volunteers",
+        color: "bg-orange-500",
+      },
     };
 
     const statusInfo = statusLabels[status];
+
+    // Handle undefined status
+    if (!statusInfo) {
+      return (
+        <Badge variant="default" className="bg-gray-500">
+          {status || "Unknown"}
+        </Badge>
+      );
+    }
+
     return (
       <Badge variant="default" className={statusInfo.color}>
         {language === "ar" ? statusInfo.ar : statusInfo.en}
@@ -201,149 +171,176 @@ const InitiativesSection = () => {
           </p>
         </div>
 
+        {/* Loading State */}
+        {loading && (
+          <div className="text-center py-12">
+            <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+            <p className="text-muted-foreground">
+              {language === "ar"
+                ? "جاري تحميل المبادرات..."
+                : "Loading initiatives..."}
+            </p>
+          </div>
+        )}
+
         {/* Initiatives Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
-          {initiatives.slice(0, 3).map((initiative) => (
-            <Card
-              key={initiative.id}
-              className="group hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
-              {/* Initiative Image */}
-              <div className="relative h-48 overflow-hidden rounded-t-lg">
-                <img
-                  src={initiative.image}
-                  alt={
-                    language === "ar" ? initiative.title : initiative.titleEn
-                  }
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                />
-                <div className="absolute top-4 right-4 flex gap-2">
-                  {getCategoryBadge(initiative.category)}
-                  {getStatusBadge(initiative.status)}
-                </div>
-              </div>
-
-              <CardHeader>
-                <CardTitle className="text-xl mb-2">
-                  {language === "ar" ? initiative.title : initiative.titleEn}
-                </CardTitle>
-                <CardDescription className="text-base leading-relaxed">
-                  {language === "ar"
-                    ? initiative.description
-                    : initiative.descriptionEn}
-                </CardDescription>
-              </CardHeader>
-
-              <CardContent className="space-y-4">
-                {/* Progress Bar */}
-                {initiative.status !== "planning" && (
-                  <div className="space-y-2">
-                    <div className="flex items-center justify-between text-sm">
-                      <span className="text-muted-foreground">
-                        {initiative.participants}{" "}
-                        {t("initiativesSection.details.of")}{" "}
-                        {initiative.maxParticipants}{" "}
-                        {t("initiativesSection.details.participants")}
-                      </span>
-                      <span className="font-medium">
-                        {Math.round(
-                          (initiative.participants /
-                            initiative.maxParticipants) *
-                            100
-                        )}
-                        %
-                      </span>
-                    </div>
-                    <div className="w-full bg-muted rounded-full h-2">
-                      <div
-                        className="bg-primary h-2 rounded-full transition-all duration-300"
-                        style={{
-                          width: `${
-                            (initiative.participants /
-                              initiative.maxParticipants) *
-                            100
-                          }%`,
-                        }}></div>
-                    </div>
-                    <p
-                      className={`text-xs text-muted-foreground ${
-                        isRTL ? "font-arabic text-right" : "font-sans text-left"
-                      }`}>
-                      {initiative.maxParticipants - initiative.participants}{" "}
-                      {t("initiativesSection.details.participantsNeeded")}
-                    </p>
-                  </div>
-                )}
-
-                {/* Initiative Details */}
-                <div className="grid grid-cols-2 gap-4 text-sm">
-                  <div className="flex items-center gap-2">
-                    <Calendar className="w-4 h-4 text-muted-foreground" />
-                    <div>
-                      <p className="font-medium">
-                        {t("initiativesSection.details.startDate")}
-                      </p>
-                      <p className="text-muted-foreground">
-                        {formatDate(initiative.startDate)}
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center gap-2">
-                    <Clock className="w-4 h-4 text-muted-foreground" />
-                    <div>
-                      <p className="font-medium">
-                        {t("initiativesSection.details.endDate")}
-                      </p>
-                      <p className="text-muted-foreground">
-                        {formatDate(initiative.endDate)}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-2 gap-4 text-sm">
-                  <div className="flex items-center gap-2">
-                    <MapPin className="w-4 h-4 text-muted-foreground" />
-                    <div>
-                      <p className="font-medium">
-                        {t("initiativesSection.details.location")}
-                      </p>
-                      <p className="text-muted-foreground">
-                        {language === "ar"
-                          ? initiative.location
-                          : initiative.locationEn}
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center gap-2">
-                    <Users className="w-4 h-4 text-muted-foreground" />
-                    <div>
-                      <p className="font-medium">
-                        {t("initiativesSection.details.participantsLabel")}
-                      </p>
-                      <p className="text-muted-foreground">
-                        {initiative.participants}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Action Button */}
-                <Button
-                  className="w-full group-hover:bg-primary/90 transition-colors"
-                  onClick={() =>
-                    navigateToTop(`/initiatives/${initiative.id}`)
-                  }>
-                  {t("initiativesSection.details.viewDetails")}
-                  <ArrowRight
-                    className={`w-4 h-4 ${isRTL ? "mr-2" : "ml-2"}`}
+        {!loading && (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
+            {initiatives.slice(0, 3).map((initiative) => (
+              <Card
+                key={initiative.id}
+                className="group hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
+                {/* Initiative Image */}
+                <div className="relative h-48 overflow-hidden rounded-t-lg">
+                  <img
+                    src={
+                      initiative.imageUrl
+                        ? `${
+                            import.meta.env.VITE_API_BASE_URL?.replace(
+                              "/api",
+                              ""
+                            ) || "http://localhost:5000"
+                          }${initiative.imageUrl}`
+                        : "/assets/health-workshop.jpg"
+                    }
+                    alt={initiative.title}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                   />
-                </Button>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
+                  <div className="absolute top-4 right-4 flex gap-2">
+                    {initiative.category &&
+                      getCategoryBadge(initiative.category)}
+                    {initiative.status && getStatusBadge(initiative.status)}
+                  </div>
+                </div>
+
+                <CardHeader>
+                  <CardTitle className="text-xl mb-2">
+                    {initiative.title}
+                  </CardTitle>
+                  <CardDescription className="text-base leading-relaxed">
+                    {initiative.description}
+                  </CardDescription>
+                </CardHeader>
+
+                <CardContent className="space-y-4">
+                  {/* Progress Bar */}
+                  {initiative.status !== "planning" && (
+                    <div className="space-y-2">
+                      <div className="flex items-center justify-between text-sm">
+                        <span className="text-muted-foreground">
+                          {initiative.volunteers?.length || 0}{" "}
+                          {t("initiativesSection.details.of")}{" "}
+                          {initiative.maxVolunteers || 0}{" "}
+                          {t("initiativesSection.details.participants")}
+                        </span>
+                        <span className="font-medium">
+                          {initiative.maxVolunteers
+                            ? Math.round(
+                                ((initiative.volunteers?.length || 0) /
+                                  initiative.maxVolunteers) *
+                                  100
+                              )
+                            : 0}
+                          %
+                        </span>
+                      </div>
+                      <div className="w-full bg-muted rounded-full h-2">
+                        <div
+                          className="bg-primary h-2 rounded-full transition-all duration-300"
+                          style={{
+                            width: `${
+                              initiative.maxVolunteers
+                                ? ((initiative.volunteers?.length || 0) /
+                                    initiative.maxVolunteers) *
+                                  100
+                                : 0
+                            }%`,
+                          }}></div>
+                      </div>
+                      <p
+                        className={`text-xs text-muted-foreground ${
+                          isRTL
+                            ? "font-arabic text-right"
+                            : "font-sans text-left"
+                        }`}>
+                        {initiative.maxVolunteers -
+                          (initiative.volunteers?.length || 0)}{" "}
+                        {t("initiativesSection.details.participantsNeeded")}
+                      </p>
+                    </div>
+                  )}
+
+                  {/* Initiative Details */}
+                  <div className="grid grid-cols-2 gap-4 text-sm">
+                    <div className="flex items-center gap-2">
+                      <Calendar className="w-4 h-4 text-muted-foreground" />
+                      <div>
+                        <p className="font-medium">
+                          {t("initiativesSection.details.startDate")}
+                        </p>
+                        <p className="text-muted-foreground">
+                          {formatDate(initiative.startDate)}
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-2">
+                      <Clock className="w-4 h-4 text-muted-foreground" />
+                      <div>
+                        <p className="font-medium">
+                          {t("initiativesSection.details.endDate")}
+                        </p>
+                        <p className="text-muted-foreground">
+                          {formatDate(initiative.endDate)}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-4 text-sm">
+                    <div className="flex items-center gap-2">
+                      <MapPin className="w-4 h-4 text-muted-foreground" />
+                      <div>
+                        <p className="font-medium">
+                          {t("initiativesSection.details.location")}
+                        </p>
+                        <p className="text-muted-foreground">
+                          {initiative.location || "N/A"}
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-2">
+                      <Users className="w-4 h-4 text-muted-foreground" />
+                      <div>
+                        <p className="font-medium">
+                          {t("initiativesSection.details.participantsLabel")}
+                        </p>
+                        <p className="text-muted-foreground">
+                          {initiative.volunteers?.length || 0}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Action Button */}
+                  <Button
+                    className="w-full group-hover:bg-primary/90 transition-colors"
+                    onClick={() =>
+                      navigateToTop(
+                        `/initiatives/${initiative._id || initiative.id}`
+                      )
+                    }>
+                    {t("initiativesSection.details.viewDetails")}
+                    <ArrowRight
+                      className={`w-4 h-4 ${isRTL ? "mr-2" : "ml-2"}`}
+                    />
+                  </Button>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        )}
 
         {/* Call to Action */}
         <div className="text-center">

@@ -165,31 +165,34 @@ const createSuccessStory = async (req, res) => {
 // Submit success story by volunteer (requires approval)
 const submitSuccessStoryByVolunteer = async (req, res) => {
   try {
-    const { title, subtitle, description, author, date, quote, before, after } =
+    const { title, subtitle, description, date, quote, before, after } =
       req.body;
 
-    // Validate required fields
-    if (
-      !title ||
-      !subtitle ||
-      !description ||
-      !author ||
-      !quote ||
-      !before ||
-      !after
-    ) {
+    // Validate required fields (author is no longer required from client)
+    if (!title || !subtitle || !description || !quote || !before || !after) {
       return res.status(400).json({
         success: false,
         message: "All fields are required",
       });
     }
 
-    // Create success story data
+    // Fetch volunteer information to get fullName
+    const Volunteer = require("../Models/Volunteer");
+    const volunteer = await Volunteer.findById(req.user.volunteerId);
+
+    if (!volunteer) {
+      return res.status(404).json({
+        success: false,
+        message: "Volunteer not found",
+      });
+    }
+
+    // Create success story data with volunteer's fullName as author
     const successStoryData = {
       title,
       subtitle,
       description,
-      author,
+      author: volunteer.fullName, // Automatically set from volunteer's fullName
       date: date || new Date(),
       quote,
       before,
@@ -404,7 +407,11 @@ const getPrioritizedSuccessStories = async (req, res) => {
 
     // Get success stories sorted by priority (ascending) then by date (descending)
     // Priority 1 is highest, 5 is lowest, null priority comes last
+    // ONLY show approved success stories
     const successStories = await SuccessStory.aggregate([
+      {
+        $match: { approvalStatus: "approved" }, // Filter for approved only
+      },
       {
         $addFields: {
           sortPriority: {

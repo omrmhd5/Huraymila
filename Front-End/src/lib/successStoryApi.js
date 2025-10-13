@@ -224,11 +224,10 @@ export const successStoryApi = {
   submitSuccessStory: async (token, successStoryData, imageFile = null) => {
     const formData = new FormData();
 
-    // Append all success story data
+    // Append all success story data (author is automatically set by backend)
     formData.append("title", successStoryData.title);
     formData.append("subtitle", successStoryData.subtitle);
     formData.append("description", successStoryData.description);
-    formData.append("author", successStoryData.author);
     formData.append("date", successStoryData.date);
     formData.append("quote", successStoryData.quote);
     formData.append("before", successStoryData.before);

@@ -64,7 +64,6 @@ const VolunteerDashboard = () => {
     title: "",
     subtitle: "",
     description: "",
-    author: "",
     quote: "",
     before: "",
     after: "",
@@ -214,12 +213,11 @@ const VolunteerDashboard = () => {
       return;
     }
 
-    // Validate form
+    // Validate form (author is automatically set on backend)
     if (
       !successStoryForm.title ||
       !successStoryForm.subtitle ||
       !successStoryForm.description ||
-      !successStoryForm.author ||
       !successStoryForm.quote ||
       !successStoryForm.before ||
       !successStoryForm.after
@@ -251,7 +249,6 @@ const VolunteerDashboard = () => {
         title: "",
         subtitle: "",
         description: "",
-        author: "",
         quote: "",
         before: "",
         after: "",
@@ -918,17 +915,23 @@ const VolunteerDashboard = () => {
               <Label
                 htmlFor="author"
                 className={isRTL ? "text-right" : "text-left"}>
-                {language === "ar" ? "الكاتب *" : "Author *"}
+                {language === "ar" ? "الكاتب" : "Author"}
               </Label>
               <Input
                 id="author"
-                value={successStoryForm.author}
-                onChange={(e) => handleFormChange("author", e.target.value)}
-                placeholder={
-                  language === "ar" ? "أدخل اسم الكاتب" : "Enter author name"
-                }
-                className={isRTL ? "text-right" : ""}
+                value={user?.fullName || ""}
+                disabled
+                className={cn(isRTL ? "text-right" : "", "bg-muted")}
               />
+              <p
+                className={cn(
+                  "text-xs text-muted-foreground",
+                  isRTL ? "text-right" : "text-left"
+                )}>
+                {language === "ar"
+                  ? "سيتم استخدام اسمك تلقائياً ككاتب لقصة النجاح"
+                  : "Your name will be automatically used as the author"}
+              </p>
             </div>
 
             <div className="grid gap-2">
