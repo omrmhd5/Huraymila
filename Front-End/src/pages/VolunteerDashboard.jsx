@@ -14,6 +14,8 @@ import {
   Trash2,
   Loader2,
   BookOpen,
+  PlusCircle,
+  Star,
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -22,7 +24,20 @@ import { useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import AnimatedSection from "@/components/animations/AnimatedSection";
 import { initiativeApi } from "@/lib/initiativeApi";
+import { successStoryApi } from "@/lib/successStoryApi";
 import { toast } from "sonner";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
+import { Badge } from "@/components/ui/badge";
 
 const VolunteerDashboard = () => {
   const {
@@ -39,6 +54,23 @@ const VolunteerDashboard = () => {
   const [userInitiatives, setUserInitiatives] = useState([]);
   const [loading, setLoading] = useState(true);
   const [withdrawing, setWithdrawing] = useState(null);
+
+  // Success story states
+  const [showSuccessStoryModal, setShowSuccessStoryModal] = useState(false);
+  const [submittingStory, setSubmittingStory] = useState(false);
+  const [mySuccessStories, setMySuccessStories] = useState([]);
+  const [loadingStories, setLoadingStories] = useState(false);
+  const [successStoryForm, setSuccessStoryForm] = useState({
+    title: "",
+    subtitle: "",
+    description: "",
+    author: "",
+    quote: "",
+    before: "",
+    after: "",
+    date: new Date().toISOString().split("T")[0],
+  });
+  const [storyImage, setStoryImage] = useState(null);
 
   const normalizeVolunteerInitiatives = (rawInitiatives) => {
     if (!Array.isArray(rawInitiatives)) return [];
@@ -104,6 +136,24 @@ const VolunteerDashboard = () => {
     loadInitiatives();
   }, [user, token, fetchCurrentUser]);
 
+  // Load volunteer's success stories
+  useEffect(() => {
+    const loadSuccessStories = async () => {
+      if (!token) return;
+      try {
+        setLoadingStories(true);
+        const response = await successStoryApi.getMySuccessStories(token);
+        setMySuccessStories(response.data || []);
+      } catch (error) {
+        console.error("Error loading success stories:", error);
+      } finally {
+        setLoadingStories(false);
+      }
+    };
+
+    loadSuccessStories();
+  }, [token]);
+
   // Handle withdraw from initiative
   const handleWithdraw = async (initiativeId, initiativeTitle) => {
     if (!token) {
@@ -152,6 +202,113 @@ const VolunteerDashboard = () => {
       );
     } finally {
       setWithdrawing(null);
+    }
+  };
+
+  // Handle success story submission
+  const handleSubmitSuccessStory = async () => {
+    if (!token) {
+      toast.error(
+        language === "ar" ? "يجب تسجيل الدخول أولاً" : "Please sign in first"
+      );
+      return;
+    }
+
+    // Validate form
+    if (
+      !successStoryForm.title ||
+      !successStoryForm.subtitle ||
+      !successStoryForm.description ||
+      !successStoryForm.author ||
+      !successStoryForm.quote ||
+      !successStoryForm.before ||
+      !successStoryForm.after
+    ) {
+      toast.error(
+        language === "ar"
+          ? "يرجى ملء جميع الحقول المطلوبة"
+          : "Please fill in all required fields"
+      );
+      return;
+    }
+
+    try {
+      setSubmittingStory(true);
+      await successStoryApi.submitSuccessStory(
+        token,
+        successStoryForm,
+        storyImage
+      );
+
+      toast.success(
+        language === "ar"
+          ? "تم إرسال قصة النجاح بنجاح! في انتظار موافقة المحافظ"
+          : "Success story submitted successfully! Awaiting governor approval"
+      );
+
+      // Reset form and close modal
+      setSuccessStoryForm({
+        title: "",
+        subtitle: "",
+        description: "",
+        author: "",
+        quote: "",
+        before: "",
+        after: "",
+        date: new Date().toISOString().split("T")[0],
+      });
+      setStoryImage(null);
+      setShowSuccessStoryModal(false);
+
+      // Refresh success stories list
+      const response = await successStoryApi.getMySuccessStories(token);
+      setMySuccessStories(response.data || []);
+    } catch (error) {
+      console.error("Error submitting success story:", error);
+      toast.error(
+        error.message ||
+          (language === "ar"
+            ? "فشل في إرسال قصة النجاح"
+            : "Failed to submit success story")
+      );
+    } finally {
+      setSubmittingStory(false);
+    }
+  };
+
+  const handleFormChange = (field, value) => {
+    setSuccessStoryForm((prev) => ({ ...prev, [field]: value }));
+  };
+
+  const handleImageChange = (e) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setStoryImage(file);
+    }
+  };
+
+  const getApprovalStatusBadge = (status) => {
+    switch (status) {
+      case "pending":
+        return (
+          <Badge variant="default" className="bg-orange-500">
+            {language === "ar" ? "في انتظار الموافقة" : "Pending Approval"}
+          </Badge>
+        );
+      case "approved":
+        return (
+          <Badge variant="default" className="bg-green-500">
+            {language === "ar" ? "معتمد" : "Approved"}
+          </Badge>
+        );
+      case "declined":
+        return (
+          <Badge variant="default" className="bg-red-500">
+            {language === "ar" ? "مرفوض" : "Declined"}
+          </Badge>
+        );
+      default:
+        return null;
     }
   };
 
@@ -422,6 +579,17 @@ const VolunteerDashboard = () => {
                       />
                       {language === "ar" ? "الصفحة الرئيسية" : "Home Page"}
                     </Button>
+                    <Button
+                      variant="default"
+                      className="w-full justify-start"
+                      onClick={() => setShowSuccessStoryModal(true)}>
+                      <PlusCircle
+                        className={cn("w-4 h-4", isRTL ? "ml-2" : "mr-2")}
+                      />
+                      {language === "ar"
+                        ? "إضافة قصة نجاح"
+                        : "Add Success Story"}
+                    </Button>
                   </CardContent>
                 </Card>
               </div>
@@ -575,6 +743,324 @@ const VolunteerDashboard = () => {
           </div>
         </section>
       </AnimatedSection>
+
+      {/* My Success Stories */}
+      <AnimatedSection animation="fadeInUp" delay={400} duration={400}>
+        <section className="py-12">
+          <div className="container mx-auto px-4">
+            <Card>
+              <CardHeader>
+                <CardTitle
+                  className={cn(
+                    "flex items-center gap-2",
+                    isRTL
+                      ? "flex-row-reverse font-arabic text-right"
+                      : "font-sans text-left"
+                  )}>
+                  <Star className="w-5 h-5" />
+                  {language === "ar"
+                    ? "قصص النجاح الخاصة بي"
+                    : "My Success Stories"}
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                {loadingStories ? (
+                  <div className="text-center py-8">
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
+                    <p className="text-muted-foreground">
+                      {language === "ar" ? "يتم التحميل..." : "Loading..."}
+                    </p>
+                  </div>
+                ) : mySuccessStories && mySuccessStories.length > 0 ? (
+                  <div className="grid gap-4">
+                    {mySuccessStories.map((story, index) => (
+                      <div
+                        key={story._id || index}
+                        className={cn(
+                          "flex items-start justify-between p-4 bg-background border rounded-lg hover:shadow-sm transition-shadow",
+                          isRTL ? "flex-row-reverse" : ""
+                        )}>
+                        <div
+                          className={cn(
+                            "flex-1",
+                            isRTL ? "text-right" : "text-left"
+                          )}>
+                          <div
+                            className={cn(
+                              "flex items-center gap-2 mb-2",
+                              isRTL ? "flex-row-reverse" : ""
+                            )}>
+                            <h3
+                              className={cn(
+                                "font-semibold text-lg",
+                                isRTL ? "font-arabic" : "font-sans"
+                              )}>
+                              {story.title}
+                            </h3>
+                            {getApprovalStatusBadge(story.approvalStatus)}
+                          </div>
+                          <p
+                            className={cn(
+                              "text-sm text-muted-foreground mb-2",
+                              isRTL ? "font-arabic" : "font-sans"
+                            )}>
+                            {story.subtitle}
+                          </p>
+                          <p
+                            className={cn(
+                              "text-xs text-muted-foreground",
+                              isRTL ? "font-arabic" : "font-sans"
+                            )}>
+                            {language === "ar"
+                              ? "تم الإرسال في:"
+                              : "Submitted on:"}{" "}
+                            {new Date(story.createdAt).toLocaleDateString(
+                              language === "ar" ? "ar-SA" : "en-US"
+                            )}
+                          </p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="text-center py-12">
+                    <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mx-auto mb-4">
+                      <Star className="w-8 h-8 text-muted-foreground" />
+                    </div>
+                    <h3
+                      className={cn(
+                        "text-lg font-semibold mb-2",
+                        isRTL ? "font-arabic" : "font-sans"
+                      )}>
+                      {language === "ar"
+                        ? "لم تقم بإرسال أي قصص نجاح بعد"
+                        : "No success stories submitted yet"}
+                    </h3>
+                    <p
+                      className={cn(
+                        "text-muted-foreground mb-6",
+                        isRTL ? "font-arabic" : "font-sans"
+                      )}>
+                      {language === "ar"
+                        ? "شارك قصة نجاحك مع المجتمع"
+                        : "Share your success story with the community"}
+                    </p>
+                    <Button onClick={() => setShowSuccessStoryModal(true)}>
+                      <PlusCircle
+                        className={cn("w-4 h-4", isRTL ? "ml-2" : "mr-2")}
+                      />
+                      {language === "ar"
+                        ? "إضافة قصة نجاح"
+                        : "Add Success Story"}
+                    </Button>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </div>
+        </section>
+      </AnimatedSection>
+
+      {/* Success Story Modal */}
+      <Dialog
+        open={showSuccessStoryModal}
+        onOpenChange={setShowSuccessStoryModal}>
+        <DialogContent
+          className={cn(
+            "max-w-2xl max-h-[90vh] overflow-y-auto",
+            isRTL ? "font-arabic" : "font-sans"
+          )}>
+          <DialogHeader>
+            <DialogTitle className={isRTL ? "text-right" : "text-left"}>
+              {language === "ar" ? "إضافة قصة نجاح" : "Add Success Story"}
+            </DialogTitle>
+            <DialogDescription className={isRTL ? "text-right" : "text-left"}>
+              {language === "ar"
+                ? "شارك قصة نجاحك. سيتم مراجعتها من قبل المحافظ قبل النشر."
+                : "Share your success story. It will be reviewed by the governor before publication."}
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="grid gap-4 py-4">
+            <div className="grid gap-2">
+              <Label
+                htmlFor="title"
+                className={isRTL ? "text-right" : "text-left"}>
+                {language === "ar" ? "العنوان *" : "Title *"}
+              </Label>
+              <Input
+                id="title"
+                value={successStoryForm.title}
+                onChange={(e) => handleFormChange("title", e.target.value)}
+                placeholder={language === "ar" ? "أدخل العنوان" : "Enter title"}
+                className={isRTL ? "text-right" : ""}
+              />
+            </div>
+
+            <div className="grid gap-2">
+              <Label
+                htmlFor="subtitle"
+                className={isRTL ? "text-right" : "text-left"}>
+                {language === "ar" ? "العنوان الفرعي *" : "Subtitle *"}
+              </Label>
+              <Input
+                id="subtitle"
+                value={successStoryForm.subtitle}
+                onChange={(e) => handleFormChange("subtitle", e.target.value)}
+                placeholder={
+                  language === "ar" ? "أدخل العنوان الفرعي" : "Enter subtitle"
+                }
+                className={isRTL ? "text-right" : ""}
+              />
+            </div>
+
+            <div className="grid gap-2">
+              <Label
+                htmlFor="author"
+                className={isRTL ? "text-right" : "text-left"}>
+                {language === "ar" ? "الكاتب *" : "Author *"}
+              </Label>
+              <Input
+                id="author"
+                value={successStoryForm.author}
+                onChange={(e) => handleFormChange("author", e.target.value)}
+                placeholder={
+                  language === "ar" ? "أدخل اسم الكاتب" : "Enter author name"
+                }
+                className={isRTL ? "text-right" : ""}
+              />
+            </div>
+
+            <div className="grid gap-2">
+              <Label
+                htmlFor="description"
+                className={isRTL ? "text-right" : "text-left"}>
+                {language === "ar" ? "الوصف *" : "Description *"}
+              </Label>
+              <Textarea
+                id="description"
+                value={successStoryForm.description}
+                onChange={(e) =>
+                  handleFormChange("description", e.target.value)
+                }
+                placeholder={
+                  language === "ar" ? "أدخل الوصف" : "Enter description"
+                }
+                rows={3}
+                className={isRTL ? "text-right" : ""}
+              />
+            </div>
+
+            <div className="grid gap-2">
+              <Label
+                htmlFor="quote"
+                className={isRTL ? "text-right" : "text-left"}>
+                {language === "ar" ? "اقتباس *" : "Quote *"}
+              </Label>
+              <Textarea
+                id="quote"
+                value={successStoryForm.quote}
+                onChange={(e) => handleFormChange("quote", e.target.value)}
+                placeholder={
+                  language === "ar"
+                    ? "أدخل اقتباساً ملهماً"
+                    : "Enter an inspiring quote"
+                }
+                rows={2}
+                className={isRTL ? "text-right" : ""}
+              />
+            </div>
+
+            <div className="grid gap-2">
+              <Label
+                htmlFor="before"
+                className={isRTL ? "text-right" : "text-left"}>
+                {language === "ar" ? "قبل *" : "Before *"}
+              </Label>
+              <Textarea
+                id="before"
+                value={successStoryForm.before}
+                onChange={(e) => handleFormChange("before", e.target.value)}
+                placeholder={
+                  language === "ar"
+                    ? "صف الوضع قبل التحسين"
+                    : "Describe the situation before improvement"
+                }
+                rows={3}
+                className={isRTL ? "text-right" : ""}
+              />
+            </div>
+
+            <div className="grid gap-2">
+              <Label
+                htmlFor="after"
+                className={isRTL ? "text-right" : "text-left"}>
+                {language === "ar" ? "بعد *" : "After *"}
+              </Label>
+              <Textarea
+                id="after"
+                value={successStoryForm.after}
+                onChange={(e) => handleFormChange("after", e.target.value)}
+                placeholder={
+                  language === "ar"
+                    ? "صف الوضع بعد التحسين"
+                    : "Describe the situation after improvement"
+                }
+                rows={3}
+                className={isRTL ? "text-right" : ""}
+              />
+            </div>
+
+            <div className="grid gap-2">
+              <Label
+                htmlFor="image"
+                className={isRTL ? "text-right" : "text-left"}>
+                {language === "ar" ? "الصورة (اختياري)" : "Image (Optional)"}
+              </Label>
+              <Input
+                id="image"
+                type="file"
+                accept="image/*"
+                onChange={handleImageChange}
+                className={isRTL ? "text-right" : ""}
+              />
+            </div>
+          </div>
+
+          <DialogFooter className={cn(isRTL ? "flex-row-reverse" : "")}>
+            <Button
+              variant="outline"
+              onClick={() => setShowSuccessStoryModal(false)}
+              disabled={submittingStory}>
+              {language === "ar" ? "إلغاء" : "Cancel"}
+            </Button>
+            <Button
+              onClick={handleSubmitSuccessStory}
+              disabled={submittingStory}>
+              {submittingStory ? (
+                <>
+                  <Loader2
+                    className={cn(
+                      "w-4 h-4 animate-spin",
+                      isRTL ? "ml-2" : "mr-2"
+                    )}
+                  />
+                  {language === "ar" ? "جاري الإرسال..." : "Submitting..."}
+                </>
+              ) : (
+                <>
+                  <PlusCircle
+                    className={cn("w-4 h-4", isRTL ? "ml-2" : "mr-2")}
+                  />
+                  {language === "ar"
+                    ? "إرسال قصة النجاح"
+                    : "Submit Success Story"}
+                </>
+              )}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

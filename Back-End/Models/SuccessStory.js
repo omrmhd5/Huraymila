@@ -53,6 +53,17 @@ const successStorySchema = new mongoose.Schema(
       min: 1,
       max: 5,
     },
+    // Approval workflow fields
+    approvalStatus: {
+      type: String,
+      enum: ["pending", "approved", "declined"],
+      default: "approved", // Governor submissions are auto-approved, volunteer submissions start as pending
+    },
+    submittedBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Volunteer",
+      required: false, // Optional because governor submissions don't have this
+    },
   },
   {
     timestamps: true,

@@ -426,6 +426,7 @@ const AdminDashboard = () => {
   // Health indicators state for editing
   const [healthIndicators, setHealthIndicators] = useState([]);
   const [pendingInitiatives, setPendingInitiatives] = useState([]);
+  const [pendingSuccessStories, setPendingSuccessStories] = useState([]);
 
   // Commented out useEffects for development
   // useEffect(() => {
@@ -591,6 +592,18 @@ const AdminDashboard = () => {
         setPendingInitiatives(pendingFromAll);
       }
 
+      // Fetch pending success stories
+      try {
+        if (token) {
+          const pendingStoriesData =
+            await successStoryApi.getPendingSuccessStories(token);
+          setPendingSuccessStories(pendingStoriesData?.data || []);
+        }
+      } catch (pendingError) {
+        console.error("Error fetching pending success stories:", pendingError);
+        setPendingSuccessStories([]);
+      }
+
       setData((prev) => ({
         ...prev,
         initiatives,
@@ -658,6 +671,50 @@ const AdminDashboard = () => {
         language === "ar"
           ? "فشل في رفض المبادرة: " + error.message
           : "Failed to decline initiative: " + error.message
+      );
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
+  const handleApproveSuccessStory = async (storyId) => {
+    try {
+      setActionLoading(true);
+      await successStoryApi.approveSuccessStory(token, storyId);
+      toast.success(
+        language === "ar"
+          ? "تم قبول قصة النجاح بنجاح"
+          : "Success story approved successfully"
+      );
+      await fetchAllData();
+    } catch (error) {
+      console.error("Error approving success story:", error);
+      toast.error(
+        language === "ar"
+          ? "فشل في قبول قصة النجاح: " + error.message
+          : "Failed to approve success story: " + error.message
+      );
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
+  const handleDeclineSuccessStory = async (storyId) => {
+    try {
+      setActionLoading(true);
+      await successStoryApi.declineSuccessStory(token, storyId);
+      toast.success(
+        language === "ar"
+          ? "تم رفض قصة النجاح بنجاح"
+          : "Success story declined successfully"
+      );
+      await fetchAllData();
+    } catch (error) {
+      console.error("Error declining success story:", error);
+      toast.error(
+        language === "ar"
+          ? "فشل في رفض قصة النجاح: " + error.message
+          : "Failed to decline success story: " + error.message
       );
     } finally {
       setActionLoading(false);
@@ -1411,7 +1468,7 @@ const AdminDashboard = () => {
 
       {/* Data Tables */}
       <Tabs defaultValue="health" className="space-y-6">
-        <TabsList className="grid w-full grid-cols-4 lg:grid-cols-7">
+        <TabsList className="grid w-full grid-cols-4 lg:grid-cols-8">
           {[
             {
               value: "health",
@@ -1442,6 +1499,11 @@ const AdminDashboard = () => {
               value: "success_stories",
               ar: "قصص النجاح",
               en: "Success Stories",
+            },
+            {
+              value: "pending-success-stories",
+              ar: "قصص النجاح المعلقة",
+              en: "Pending Success Stories",
             },
             {
               value: "reports",
@@ -1843,6 +1905,197 @@ const AdminDashboard = () => {
                             onClick={() =>
                               handleApproveInitiative(initiative._id)
                             }
+                            size="sm"
+                            className="bg-green-600 hover:bg-green-700"
+                            disabled={actionLoading}>
+                            {language === "ar" ? "قبول" : "Approve"}
+                          </Button>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))
+                )}
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        {/* Pending Success Stories Tab */}
+        <TabsContent value="pending-success-stories">
+          <Card>
+            <CardHeader>
+              <CardTitle
+                className={`${
+                  language === "ar"
+                    ? "text-right font-arabic"
+                    : "text-left font-english"
+                }`}>
+                {language === "ar"
+                  ? "قصص النجاح المعلقة"
+                  : "Pending Success Stories"}
+              </CardTitle>
+              <CardDescription
+                className={`${
+                  language === "ar"
+                    ? "text-right font-arabic"
+                    : "text-left font-english"
+                }`}>
+                {language === "ar"
+                  ? "قصص النجاح المقدمة من المتطوعين في انتظار الموافقة"
+                  : "Success stories submitted by volunteers awaiting approval"}
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                {pendingSuccessStories.length === 0 ? (
+                  <div className="text-center py-8">
+                    <p
+                      className={`text-muted-foreground ${
+                        language === "ar" ? "font-arabic" : "font-english"
+                      }`}>
+                      {language === "ar"
+                        ? "لا توجد قصص نجاح معلقة حالياً"
+                        : "No pending success stories at the moment"}
+                    </p>
+                  </div>
+                ) : (
+                  pendingSuccessStories.map((story) => (
+                    <Card
+                      key={story._id}
+                      className="border-l-4 border-l-purple-500">
+                      <CardContent className="p-6">
+                        <div className="flex justify-between items-start mb-4">
+                          <div className="flex-1">
+                            <h3
+                              className={`text-lg font-semibold mb-2 ${
+                                language === "ar"
+                                  ? "font-arabic"
+                                  : "font-english"
+                              }`}>
+                              {story.title}
+                            </h3>
+                            <p
+                              className={`text-sm font-medium text-muted-foreground mb-2 ${
+                                language === "ar"
+                                  ? "font-arabic"
+                                  : "font-english"
+                              }`}>
+                              {story.subtitle}
+                            </p>
+                            <p
+                              className={`text-muted-foreground mb-3 ${
+                                language === "ar"
+                                  ? "font-arabic"
+                                  : "font-english"
+                              }`}>
+                              {story.description}
+                            </p>
+                            <div className="mb-3 p-3 bg-muted/50 rounded-lg italic">
+                              <p
+                                className={`text-sm ${
+                                  language === "ar"
+                                    ? "font-arabic"
+                                    : "font-english"
+                                }`}>
+                                "{story.quote}"
+                              </p>
+                            </div>
+                            <div className="grid md:grid-cols-2 gap-4 mb-3">
+                              <div>
+                                <h4
+                                  className={`text-sm font-semibold mb-1 ${
+                                    language === "ar"
+                                      ? "font-arabic"
+                                      : "font-english"
+                                  }`}>
+                                  {language === "ar" ? "قبل:" : "Before:"}
+                                </h4>
+                                <p
+                                  className={`text-sm text-muted-foreground ${
+                                    language === "ar"
+                                      ? "font-arabic"
+                                      : "font-english"
+                                  }`}>
+                                  {story.before}
+                                </p>
+                              </div>
+                              <div>
+                                <h4
+                                  className={`text-sm font-semibold mb-1 ${
+                                    language === "ar"
+                                      ? "font-arabic"
+                                      : "font-english"
+                                  }`}>
+                                  {language === "ar" ? "بعد:" : "After:"}
+                                </h4>
+                                <p
+                                  className={`text-sm text-muted-foreground ${
+                                    language === "ar"
+                                      ? "font-arabic"
+                                      : "font-english"
+                                  }`}>
+                                  {story.after}
+                                </p>
+                              </div>
+                            </div>
+                            <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                              <span
+                                className={`${
+                                  language === "ar"
+                                    ? "font-arabic"
+                                    : "font-english"
+                                }`}>
+                                {language === "ar" ? "الكاتب:" : "Author:"}{" "}
+                                {story.author}
+                              </span>
+                              <span
+                                className={`${
+                                  language === "ar"
+                                    ? "font-arabic"
+                                    : "font-english"
+                                }`}>
+                                {language === "ar" ? "المتطوع:" : "Volunteer:"}{" "}
+                                {story.submittedBy?.fullName ||
+                                  story.submittedBy?.email ||
+                                  "N/A"}
+                              </span>
+                              <span
+                                className={`${
+                                  language === "ar"
+                                    ? "font-arabic"
+                                    : "font-english"
+                                }`}>
+                                {language === "ar"
+                                  ? "تاريخ الإرسال:"
+                                  : "Submitted:"}{" "}
+                                {new Date(story.createdAt).toLocaleDateString()}
+                              </span>
+                            </div>
+                          </div>
+                          {story.imageUrl && (
+                            <img
+                              src={`${
+                                import.meta.env.VITE_API_BASE_URL?.replace(
+                                  "/api",
+                                  ""
+                                ) || "http://localhost:5000"
+                              }${story.imageUrl}`}
+                              alt={story.title}
+                              className="w-32 h-32 object-cover rounded-lg ml-4"
+                            />
+                          )}
+                        </div>
+                        <div className="flex gap-3 justify-end">
+                          <Button
+                            onClick={() => handleDeclineSuccessStory(story._id)}
+                            variant="outline"
+                            size="sm"
+                            className="text-red-600 border-red-300 hover:bg-red-50"
+                            disabled={actionLoading}>
+                            {language === "ar" ? "رفض" : "Decline"}
+                          </Button>
+                          <Button
+                            onClick={() => handleApproveSuccessStory(story._id)}
                             size="sm"
                             className="bg-green-600 hover:bg-green-700"
                             disabled={actionLoading}>

@@ -6,18 +6,23 @@ const {
   cleanupTempFiles,
 } = require("../middleware/successStoryFileUpload");
 
-// Get all success stories
+// Get all success stories (only approved for public)
 const getAllSuccessStories = async (req, res) => {
   try {
     const { limit = 50, page = 1 } = req.query;
     const skip = (page - 1) * limit;
 
-    const successStories = await SuccessStory.find()
+    // Only show approved success stories to public
+    const successStories = await SuccessStory.find({
+      approvalStatus: "approved",
+    })
       .sort({ date: -1 })
       .limit(parseInt(limit))
       .skip(skip);
 
-    const total = await SuccessStory.countDocuments();
+    const total = await SuccessStory.countDocuments({
+      approvalStatus: "approved",
+    });
 
     res.json({
       success: true,
@@ -60,7 +65,7 @@ const getSuccessStoryById = async (req, res) => {
   }
 };
 
-// Create new success story
+// Create new success story (governor only - auto-approved)
 const createSuccessStory = async (req, res) => {
   try {
     const {
@@ -101,6 +106,7 @@ const createSuccessStory = async (req, res) => {
       quote,
       before,
       after,
+      approvalStatus: "approved", // Governor submissions are auto-approved
     };
 
     // Handle priority if provided
@@ -151,6 +157,82 @@ const createSuccessStory = async (req, res) => {
     res.status(500).json({
       success: false,
       message: "Error creating success story",
+      error: error.message,
+    });
+  }
+};
+
+// Submit success story by volunteer (requires approval)
+const submitSuccessStoryByVolunteer = async (req, res) => {
+  try {
+    const { title, subtitle, description, author, date, quote, before, after } =
+      req.body;
+
+    // Validate required fields
+    if (
+      !title ||
+      !subtitle ||
+      !description ||
+      !author ||
+      !quote ||
+      !before ||
+      !after
+    ) {
+      return res.status(400).json({
+        success: false,
+        message: "All fields are required",
+      });
+    }
+
+    // Create success story data
+    const successStoryData = {
+      title,
+      subtitle,
+      description,
+      author,
+      date: date || new Date(),
+      quote,
+      before,
+      after,
+      approvalStatus: "pending", // Volunteer submissions need approval
+      submittedBy: req.user.volunteerId, // From auth middleware
+    };
+
+    // Create success story
+    const successStory = new SuccessStory(successStoryData);
+    await successStory.save();
+
+    // Handle image upload if provided
+    if (req.file) {
+      try {
+        const imageUrl = moveImageToSuccessStoryFolder(
+          successStory._id.toString(),
+          req.file
+        );
+        successStory.imageUrl = imageUrl;
+        await successStory.save();
+      } catch (imageError) {
+        console.error("Error handling image upload:", imageError);
+        // Clean up temp file
+        cleanupTempFiles([req.file]);
+        return res.status(500).json({
+          success: false,
+          message: "Error uploading image",
+          error: imageError.message,
+        });
+      }
+    }
+
+    res.status(201).json({
+      success: true,
+      message: "Success story submitted successfully and is pending approval",
+      data: successStory,
+    });
+  } catch (error) {
+    console.error("Error submitting success story:", error);
+    res.status(500).json({
+      success: false,
+      message: "Error submitting success story",
       error: error.message,
     });
   }
@@ -401,12 +483,139 @@ const getAvailablePriorities = async (req, res) => {
   }
 };
 
+// Get pending success stories (governor only)
+const getPendingSuccessStories = async (req, res) => {
+  try {
+    const successStories = await SuccessStory.find({
+      approvalStatus: "pending",
+    })
+      .populate("submittedBy", "fullName email")
+      .sort({ createdAt: -1 });
+
+    res.json({
+      success: true,
+      count: successStories.length,
+      data: successStories,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Error fetching pending success stories",
+      error: error.message,
+    });
+  }
+};
+
+// Approve success story (governor only)
+const approveSuccessStory = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const successStory = await SuccessStory.findById(id);
+
+    if (!successStory) {
+      return res.status(404).json({
+        success: false,
+        message: "Success story not found",
+      });
+    }
+
+    if (successStory.approvalStatus !== "pending") {
+      return res.status(400).json({
+        success: false,
+        message: "Success story is not pending approval",
+      });
+    }
+
+    successStory.approvalStatus = "approved";
+    await successStory.save();
+
+    res.json({
+      success: true,
+      message: "Success story approved successfully",
+      data: successStory,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Error approving success story",
+      error: error.message,
+    });
+  }
+};
+
+// Decline success story (governor only)
+const declineSuccessStory = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const successStory = await SuccessStory.findById(id);
+
+    if (!successStory) {
+      return res.status(404).json({
+        success: false,
+        message: "Success story not found",
+      });
+    }
+
+    if (successStory.approvalStatus !== "pending") {
+      return res.status(400).json({
+        success: false,
+        message: "Success story is not pending approval",
+      });
+    }
+
+    successStory.approvalStatus = "declined";
+    await successStory.save();
+
+    res.json({
+      success: true,
+      message: "Success story declined successfully",
+      data: successStory,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Error declining success story",
+      error: error.message,
+    });
+  }
+};
+
+// Get volunteer's submitted success stories
+const getMySuccessStories = async (req, res) => {
+  try {
+    const volunteerId = req.user.volunteerId;
+
+    const successStories = await SuccessStory.find({
+      submittedBy: volunteerId,
+    }).sort({ createdAt: -1 });
+
+    res.json({
+      success: true,
+      count: successStories.length,
+      data: successStories,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Error fetching your success stories",
+      error: error.message,
+    });
+  }
+};
+
 module.exports = {
   getAllSuccessStories,
   getSuccessStoryById,
   createSuccessStory,
+  submitSuccessStoryByVolunteer,
   updateSuccessStory,
   deleteSuccessStory,
   getPrioritizedSuccessStories,
   getAvailablePriorities,
+  getPendingSuccessStories,
+  approveSuccessStory,
+  declineSuccessStory,
+  getMySuccessStories,
 };

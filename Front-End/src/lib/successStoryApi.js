@@ -219,4 +219,122 @@ export const successStoryApi = {
     if (!imagePath) return "/assets/placeholder.svg";
     return `${API_BASE_URL.replace("/api", "")}${imagePath}`;
   },
+
+  // Volunteer: Submit success story (requires approval)
+  submitSuccessStory: async (token, successStoryData, imageFile = null) => {
+    const formData = new FormData();
+
+    // Append all success story data
+    formData.append("title", successStoryData.title);
+    formData.append("subtitle", successStoryData.subtitle);
+    formData.append("description", successStoryData.description);
+    formData.append("author", successStoryData.author);
+    formData.append("date", successStoryData.date);
+    formData.append("quote", successStoryData.quote);
+    formData.append("before", successStoryData.before);
+    formData.append("after", successStoryData.after);
+
+    // Append image if provided
+    if (imageFile) {
+      formData.append("image", imageFile);
+    }
+
+    const response = await fetch(`${API_BASE_URL}/success-stories/submit`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      body: formData,
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || "Failed to submit success story");
+    }
+
+    return response.json();
+  },
+
+  // Volunteer: Get my submitted success stories
+  getMySuccessStories: async (token) => {
+    const response = await fetch(`${API_BASE_URL}/success-stories/my/stories`, {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(
+        errorData.message || "Failed to fetch your success stories"
+      );
+    }
+
+    return response.json();
+  },
+
+  // Governor: Get pending success stories
+  getPendingSuccessStories: async (token) => {
+    const response = await fetch(
+      `${API_BASE_URL}/success-stories/pending/all`,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(
+        errorData.message || "Failed to fetch pending success stories"
+      );
+    }
+
+    return response.json();
+  },
+
+  // Governor: Approve success story
+  approveSuccessStory: async (token, id) => {
+    const response = await fetch(
+      `${API_BASE_URL}/success-stories/${id}/approve`,
+      {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || "Failed to approve success story");
+    }
+
+    return response.json();
+  },
+
+  // Governor: Decline success story
+  declineSuccessStory: async (token, id) => {
+    const response = await fetch(
+      `${API_BASE_URL}/success-stories/${id}/decline`,
+      {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || "Failed to decline success story");
+    }
+
+    return response.json();
+  },
 };
