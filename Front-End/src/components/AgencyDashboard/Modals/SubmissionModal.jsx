@@ -464,10 +464,10 @@ const SubmissionModal = ({
                                   onClick={async () => {
                                     try {
                                       // Extract submission ID and filename from file URL
-                                      // URL format: "/submissions/{submissionId}/{filename}"
+                                      // URL format: "/public/submissions/{submissionId}/{filename}"
                                       const urlParts = file.url.split("/");
-                                      const submissionId = urlParts[2];
-                                      const filename = urlParts[3];
+                                      const submissionId = urlParts[3];
+                                      const filename = urlParts[4];
 
                                       if (!token) {
                                         toast.error(

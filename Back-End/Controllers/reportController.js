@@ -165,7 +165,7 @@ const getReportById = async (req, res) => {
   try {
     const { id } = req.params;
     const volunteerId = req.user?.volunteerId;
-    const isAdmin = req.user?.role === "admin" || req.user?.role === "governor";
+    const isGovernor = req.user?.type === "governor";
 
     const report = await Report.findById(id)
       .populate("volunteer", "fullName email phoneNumber")
@@ -180,7 +180,7 @@ const getReportById = async (req, res) => {
 
     // Check access rights - volunteer can only see their own reports
     if (
-      !isAdmin &&
+      !isGovernor &&
       report.volunteer._id.toString() !== volunteerId?.toString()
     ) {
       return res.status(403).json({
@@ -261,7 +261,7 @@ const deleteReport = async (req, res) => {
   try {
     const { id } = req.params;
     const volunteerId = req.user?.volunteerId;
-    const isAdmin = req.user?.role === "admin" || req.user?.role === "governor";
+    const isGovernor = req.user?.type === "governor";
 
     const report = await Report.findById(id);
 
@@ -275,7 +275,7 @@ const deleteReport = async (req, res) => {
     // Check permissions
     const isOwner =
       volunteerId && report.volunteer.toString() === volunteerId.toString();
-    const canDelete = isAdmin || (isOwner && report.status === "pending");
+    const canDelete = isGovernor || (isOwner && report.status === "pending");
 
     if (!canDelete) {
       return res.status(403).json({

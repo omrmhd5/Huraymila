@@ -358,12 +358,12 @@ const downloadSubmissionFile = async (req, res) => {
       });
     }
 
-    // Check if user has access (either owns the submission or is admin)
+    // Check if user has access (either owns the submission or is governor)
     const isOwner =
       agencyId && submission.agency.toString() === agencyId.toString();
-    const isAdmin = req.user?.role === "admin"; // Assuming you have role-based auth
+    const isGovernor = req.user?.type === "governor";
 
-    if (!isOwner && !isAdmin) {
+    if (!isOwner && !isGovernor) {
       return res.status(403).json({
         success: false,
         message: "Access denied",
@@ -387,6 +387,7 @@ const downloadSubmissionFile = async (req, res) => {
     const filePath = path.join(
       __dirname,
       "..",
+      "public",
       "submissions",
       submissionId,
       filename
