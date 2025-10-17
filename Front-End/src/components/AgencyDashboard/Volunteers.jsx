@@ -58,7 +58,7 @@ const Volunteers = ({ language }) => {
         const res = await initiativeApi.getMyInitiatives(token);
         setInitiatives(res.data || []);
       } catch (error) {
-        console.error("Error loading initiatives:", error);
+        // Error loading initiatives
         toast.error(t("initiatives.loadError") || "Failed to load initiatives");
       } finally {
         setLoading(false);
@@ -146,7 +146,7 @@ const Volunteers = ({ language }) => {
       const res = await initiativeApi.getMyInitiatives(token);
       setInitiatives(res.data || []);
     } catch (error) {
-      console.error("Error removing volunteer:", error);
+      // Error removing volunteer
       toast.error(
         error.message ||
           t("volunteers.removeFailed") ||

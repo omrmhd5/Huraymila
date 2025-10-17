@@ -77,7 +77,7 @@ const SubmissionsView = () => {
 
         setStandardsList(mappedStandards);
       } catch (error) {
-        console.error("Error fetching standards:", error);
+        // Error fetching standards
         setStandardsList([]);
       } finally {
         setLoading(false);
@@ -112,7 +112,7 @@ const SubmissionsView = () => {
           );
           setSubmissions(submissionsData);
         } catch (error) {
-          console.error("Error fetching submissions:", error);
+          // Error fetching submissions
           setSubmissions([]);
         }
       }
@@ -185,7 +185,7 @@ const SubmissionsView = () => {
       );
       setSubmissions(updatedSubmissions);
     } catch (error) {
-      console.error("Error updating submission status:", error);
+      // Error updating submission status
     }
   };
 
@@ -343,7 +343,7 @@ const SubmissionsView = () => {
                                   window.URL.revokeObjectURL(downloadUrl);
                                   document.body.removeChild(a);
                                 } catch (error) {
-                                  console.error("Download error:", error);
+                                  // Download error
                                   toast.error(
                                     language === "ar"
                                       ? "فشل في تحميل الملف"
@@ -741,7 +741,7 @@ const SubmissionsView = () => {
                             window.URL.revokeObjectURL(downloadUrl);
                             document.body.removeChild(a);
                           } catch (error) {
-                            console.error("Download error:", error);
+                            // Download error
                             toast.error(
                               language === "ar"
                                 ? "فشل في تحميل الملف"

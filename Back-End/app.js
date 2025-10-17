@@ -48,8 +48,10 @@ mongoose
   .connect(process.env.MONGODB_URI || "mongodb://localhost:27017/huraymila")
   .then(() => {
     app.listen(PORT, () => {
-      console.log(`Server is running on http://localhost:${PORT} `);
+      // Server is running
     });
-    console.log("MongoDB connected successfully");
+    // MongoDB connected successfully
   })
-  .catch((err) => console.log("MongoDB connection error:", err));
+  .catch((err) => {
+    /* MongoDB connection error */
+  });

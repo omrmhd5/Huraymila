@@ -84,7 +84,7 @@ const moveImageToInitiativeFolder = (initiativeId, tempFile) => {
 
     return `/public/initiatives/${initiativeId}/${newFilename}`;
   } catch (error) {
-    console.error("Error moving initiative image:", error);
+    // Error moving initiative image
     throw error;
   }
 };
@@ -103,10 +103,10 @@ const deleteInitiativeImage = (imageUrl) => {
 
     if (fs.existsSync(fullPath)) {
       fs.unlinkSync(fullPath);
-      console.log(`Deleted initiative image: ${fullPath}`);
+      // Deleted initiative image
     }
   } catch (error) {
-    console.error(`Error deleting initiative image ${imageUrl}:`, error);
+    // Error deleting initiative image
   }
 };
 
@@ -129,13 +129,10 @@ const deleteInitiativeFolder = (initiativeId) => {
 
       // Remove the directory itself
       fs.rmdirSync(initiativeDir);
-      console.log(`Deleted initiative folder: ${initiativeDir}`);
+      // Deleted initiative folder
     }
   } catch (error) {
-    console.error(
-      `Error deleting initiative folder for ${initiativeId}:`,
-      error
-    );
+    // Error deleting initiative folder
   }
 };
 
@@ -151,7 +148,7 @@ const cleanupTempFiles = (files) => {
         fs.unlinkSync(file.path);
       }
     } catch (error) {
-      console.error("Error cleaning up temp file:", error);
+      // Error cleaning up temp file
     }
   });
 };

@@ -117,7 +117,7 @@ const Report = () => {
         navigate("/volunteer-dashboard");
       }, 1500);
     } catch (error) {
-      console.error("Error submitting report:", error);
+      // Error submitting report
       toast.error(
         error.message ||
           (language === "ar"

@@ -149,7 +149,7 @@ const SuccessStoryModal = ({
       onSuccess();
       onClose();
     } catch (error) {
-      console.error("Error saving success story:", error);
+      // Error saving success story
       toast.error(
         language === "ar"
           ? "فشل في حفظ قصة النجاح: " + error.message

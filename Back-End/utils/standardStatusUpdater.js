@@ -10,7 +10,7 @@ const updateStandardStatus = async (standardNumber) => {
     // Get the standard with assigned agencies
     const standard = await Standard.findOne({ number: standardNumber });
     if (!standard) {
-      console.log(`Standard ${standardNumber} not found`);
+      // Standard not found
       return;
     }
 
@@ -79,12 +79,8 @@ const updateStandardStatus = async (standardNumber) => {
       { new: true }
     );
 
-    console.log(
-      `Updated Standard ${standardNumber}: status=${overallStatus}, progress=${progress}%`
-    );
-    console.log(
-      `Submission breakdown: approved=${statusCounts.approved}, pending=${statusCounts.pending}, rejected=${statusCounts.rejected}, total=${statusCounts.total_submissions}`
-    );
+    // Log: Updated Standard status and progress
+    // Log: Submission breakdown
 
     return {
       standardNumber,
@@ -93,7 +89,7 @@ const updateStandardStatus = async (standardNumber) => {
       statusCounts,
     };
   } catch (error) {
-    console.error(`Error updating standard ${standardNumber} status:`, error);
+    // Error updating standard status
     throw error;
   }
 };
@@ -112,7 +108,7 @@ const updateMultipleStandardsStatus = async (standardNumbers) => {
         results.push(result);
       }
     } catch (error) {
-      console.error(`Failed to update standard ${standardNumber}:`, error);
+      // Failed to update standard
     }
   }
 

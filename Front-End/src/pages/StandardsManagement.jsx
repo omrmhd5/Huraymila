@@ -86,10 +86,7 @@ const StandardsManagement = () => {
             );
             return { standardNumber: standard.number, submissions };
           } catch (error) {
-            console.error(
-              `Error fetching submissions for standard ${standard.number}:`,
-              error
-            );
+            // Error fetching submissions for standard
             return { standardNumber: standard.number, submissions: [] };
           }
         });
@@ -109,7 +106,7 @@ const StandardsManagement = () => {
           token
         );
       } catch (error) {
-        console.error("Error fetching standards:", error);
+        // Error fetching standards
         setStandardsList([]);
       } finally {
         setLoading(false);

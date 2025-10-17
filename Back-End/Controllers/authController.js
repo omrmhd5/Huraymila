@@ -89,7 +89,7 @@ const unifiedLogin = async (req, res) => {
           : "/volunteer-dashboard",
     });
   } catch (error) {
-    console.error("Login error:", error);
+    // Login error
     res.status(500).json({
       success: false,
       message: "Error during login",
@@ -131,7 +131,7 @@ const getCurrentUser = async (req, res) => {
       user: { ...user.toObject(), type },
     });
   } catch (error) {
-    console.error("Get current user error:", error);
+    // Get current user error
     res.status(500).json({
       success: false,
       message: "Error fetching user data",
@@ -200,7 +200,7 @@ const volunteerSignup = async (req, res) => {
       redirectTo: "/volunteer-dashboard",
     });
   } catch (error) {
-    console.error("Volunteer signup error:", error);
+    // Volunteer signup error
     res.status(500).json({
       success: false,
       message: "Error creating volunteer account",

@@ -96,7 +96,7 @@ const moveFilesToSubmissionFolder = (submissionId, tempFiles) => {
         path: `/public/submissions/${submissionId}/${finalFilename}`,
       });
     } catch (error) {
-      console.error("Error moving file:", error);
+      // Error moving file
     }
   });
 
@@ -111,7 +111,7 @@ const cleanupTempFiles = (files) => {
         fs.unlinkSync(file.path);
       }
     } catch (error) {
-      console.error("Error cleaning up temp file:", error);
+      // Error cleaning up temp file
     }
   });
 };
@@ -129,10 +129,10 @@ const deletePhysicalFiles = (fileUrls) => {
 
       if (fs.existsSync(fullPath)) {
         fs.unlinkSync(fullPath);
-        console.log(`Deleted physical file: ${fullPath}`);
+        // Deleted physical file
       }
     } catch (error) {
-      console.error(`Error deleting physical file ${fileUrl}:`, error);
+      // Error deleting physical file
     }
   });
 };
@@ -156,13 +156,10 @@ const deleteSubmissionFolder = (submissionId) => {
 
       // Remove the directory itself
       fs.rmdirSync(submissionDir);
-      console.log(`Deleted submission folder: ${submissionDir}`);
+      // Deleted submission folder
     }
   } catch (error) {
-    console.error(
-      `Error deleting submission folder for ${submissionId}:`,
-      error
-    );
+    // Error deleting submission folder
   }
 };
 

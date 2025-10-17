@@ -62,7 +62,7 @@ const createSubmission = async (req, res) => {
         await newSubmission.save();
       } catch (error) {
         // If file moving fails, clean up and delete the submission
-        console.error("Error moving files:", error);
+        // Error moving files
         await Submission.findByIdAndDelete(newSubmission._id);
         cleanupTempFiles(req.files);
 
@@ -80,7 +80,7 @@ const createSubmission = async (req, res) => {
     try {
       await updateStandardStatus(newSubmission.standardNumber);
     } catch (statusUpdateError) {
-      console.error("Error updating standard status:", statusUpdateError);
+      // Error updating standard status
       // Don't fail the submission creation if status update fails
     }
 
@@ -199,7 +199,7 @@ const updateSubmissionStatus = async (req, res) => {
     try {
       await updateStandardStatus(submission.standardNumber);
     } catch (statusUpdateError) {
-      console.error("Error updating standard status:", statusUpdateError);
+      // Error updating standard status
       // Don't fail the status update if standard update fails
     }
 
@@ -265,7 +265,7 @@ const updateMySubmission = async (req, res) => {
           finalFileUrls = [...existingFileUrls];
         }
       } catch (error) {
-        console.error("Error parsing existingFileUrls:", error);
+        // Error parsing existingFileUrls
       }
     }
 
@@ -276,10 +276,7 @@ const updateMySubmission = async (req, res) => {
     );
 
     if (filesToDelete.length > 0) {
-      console.log(
-        `Deleting ${filesToDelete.length} removed files:`,
-        filesToDelete
-      );
+      // Log: Deleting removed files
       deletePhysicalFiles(filesToDelete);
     }
 
@@ -290,7 +287,7 @@ const updateMySubmission = async (req, res) => {
         const newFileUrls = movedFiles.map((file) => file.path);
         finalFileUrls = [...finalFileUrls, ...newFileUrls];
       } catch (error) {
-        console.error("Error moving files during update:", error);
+        // Error moving files during update
         cleanupTempFiles(req.files);
         return res.status(500).json({
           success: false,
@@ -322,7 +319,7 @@ const updateMySubmission = async (req, res) => {
     try {
       await updateStandardStatus(existingSubmission.standardNumber);
     } catch (error) {
-      console.error("Error updating standard status:", error);
+      // Error updating standard status
       // Don't fail the submission update if standard update fails
     }
 
@@ -332,7 +329,7 @@ const updateMySubmission = async (req, res) => {
       data: populated,
     });
   } catch (error) {
-    console.error("Error updating submission:", error);
+    // Error updating submission
     // Clean up any uploaded files
     if (req.files && req.files.length > 0) {
       cleanupTempFiles(req.files);
@@ -406,7 +403,7 @@ const downloadSubmissionFile = async (req, res) => {
     // Send file
     res.download(filePath, filename, (err) => {
       if (err) {
-        console.error("Error downloading file:", err);
+        // Error downloading file
         if (!res.headersSent) {
           res.status(500).json({
             success: false,
@@ -416,7 +413,7 @@ const downloadSubmissionFile = async (req, res) => {
       }
     });
   } catch (error) {
-    console.error("Error in downloadSubmissionFile:", error);
+    // Error in downloadSubmissionFile
     res.status(500).json({
       success: false,
       message: "Server error",

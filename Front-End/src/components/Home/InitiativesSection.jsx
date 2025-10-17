@@ -45,7 +45,7 @@ const InitiativesSection = () => {
         const response = await initiativeApi.getAllInitiatives({ limit: 3 });
         setInitiatives(response.data || []);
       } catch (error) {
-        console.error("Error fetching initiatives:", error);
+        // Error fetching initiatives
         setInitiatives([]);
       } finally {
         setLoading(false);

@@ -64,7 +64,7 @@ const RequiredStandards = ({ assignedStandards, loading = false }) => {
 
         setSubmissions(submissionsByStandard);
       } catch (error) {
-        console.error("Error loading submissions:", error);
+        // Error loading submissions
         toast.error(
           language === "ar"
             ? "فشل في تحميل التقديمات"
@@ -290,7 +290,7 @@ const RequiredStandards = ({ assignedStandards, loading = false }) => {
         }
       }
     } catch (error) {
-      console.error("Error handling submission:", error);
+      // Error handling submission
       toast.error(
         language === "ar"
           ? "حدث خطأ في معالجة التقديم"

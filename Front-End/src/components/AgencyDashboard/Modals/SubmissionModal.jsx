@@ -238,7 +238,7 @@ const SubmissionModal = ({
       await onSubmit(submissionData);
       onClose();
     } catch (error) {
-      console.error("Error submitting:", error);
+      // Error submitting
       toast.error(
         language === "ar"
           ? "حدث خطأ أثناء الحفظ"
@@ -495,7 +495,7 @@ const SubmissionModal = ({
                                       window.URL.revokeObjectURL(url);
                                       document.body.removeChild(a);
                                     } catch (error) {
-                                      console.error("Download error:", error);
+                                      // Download error
                                       toast.error(
                                         language === "ar"
                                           ? "فشل في تحميل الملف"

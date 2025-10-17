@@ -13,7 +13,7 @@ export const mapBackendStandardsToLanguageContext = (
 ) => {
   // Safety check for undefined languageStandards
   if (!languageStandards || !Array.isArray(languageStandards)) {
-    console.warn("Language standards not available, using fallback text");
+    // Language standards not available, using fallback text
     return backendStandards.map((backendStandard) => ({
       _id: backendStandard._id,
       id: backendStandard._id || backendStandard.number,
@@ -103,7 +103,7 @@ export const updateStandardsFromSubmissions = async (
         token
       );
     } catch (error) {
-      console.error(`Error updating standard ${standard.number}:`, error);
+      // Error updating standard
     }
   });
 

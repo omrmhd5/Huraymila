@@ -86,7 +86,7 @@ const AllSuccessStories = () => {
         });
         setStoriesData(response.data || []);
       } catch (error) {
-        console.error("Error fetching success stories:", error);
+        // Error fetching success stories
         setError(error.message);
       } finally {
         setLoading(false);
@@ -359,7 +359,7 @@ const AllSuccessStories = () => {
           : "Success story added successfully!"
       );
     } catch (error) {
-      console.error("Error creating success story:", error);
+      // Error creating success story
       alert(
         language === "ar"
           ? "فشل في إضافة قصة النجاح: " + error.message

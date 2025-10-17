@@ -76,7 +76,7 @@ const Initiatives = ({ language }) => {
       const response = await initiativeApi.getMyInitiatives(token);
       setInitiatives(response.data || []);
     } catch (error) {
-      console.error("Error loading initiatives:", error);
+      // Error loading initiatives
       toast.error(t("initiatives.loadError") || "Failed to load initiatives");
     } finally {
       setLoading(false);
@@ -105,7 +105,7 @@ const Initiatives = ({ language }) => {
       await loadInitiatives(); // Refresh the list
       closeInitiativeModal();
     } catch (error) {
-      console.error("Error creating initiative:", error);
+      // Error creating initiative
       toast.error(error.message || "Failed to create initiative");
     } finally {
       setActionLoading(false);
@@ -139,7 +139,7 @@ const Initiatives = ({ language }) => {
       await loadInitiatives(); // Refresh the list
       closeInitiativeModal();
     } catch (error) {
-      console.error("Error updating initiative:", error);
+      // Error updating initiative
       toast.error(error.message || "Failed to update initiative");
     } finally {
       setActionLoading(false);
@@ -157,7 +157,7 @@ const Initiatives = ({ language }) => {
       await loadInitiatives(); // Refresh the list
       closeDeleteModal();
     } catch (error) {
-      console.error("Error deleting initiative:", error);
+      // Error deleting initiative
       toast.error(error.message || "Failed to delete initiative");
     } finally {
       setActionLoading(false);
@@ -173,7 +173,7 @@ const Initiatives = ({ language }) => {
       toast.success("Volunteer approved successfully");
       await loadInitiatives(); // Refresh the list
     } catch (error) {
-      console.error("Error approving volunteer:", error);
+      // Error approving volunteer
       toast.error(error.message || "Failed to approve volunteer");
     } finally {
       setActionLoading(false);
@@ -188,7 +188,7 @@ const Initiatives = ({ language }) => {
       toast.success("Volunteer removed successfully");
       await loadInitiatives(); // Refresh the list
     } catch (error) {
-      console.error("Error removing volunteer:", error);
+      // Error removing volunteer
       toast.error(error.message || "Failed to remove volunteer");
     } finally {
       setActionLoading(false);

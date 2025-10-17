@@ -212,7 +212,7 @@ const toggleAgencyAssignment = async (req, res) => {
       },
     });
   } catch (error) {
-    console.error("Error toggling agency assignment:", error);
+    // Error toggling agency assignment
     res.status(500).json({
       success: false,
       message: "Error toggling agency assignment",

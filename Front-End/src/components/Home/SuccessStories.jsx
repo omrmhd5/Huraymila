@@ -46,7 +46,7 @@ const SuccessStories = () => {
         const response = await successStoryApi.getPrioritizedSuccessStories(3);
         setStories(response.data || []);
       } catch (error) {
-        console.error("Error fetching prioritized success stories:", error);
+        // Error fetching prioritized success stories
         setStories([]);
       } finally {
         setLoading(false);

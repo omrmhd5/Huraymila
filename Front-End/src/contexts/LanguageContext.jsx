@@ -3540,9 +3540,7 @@ export const LanguageProvider = ({ children }) => {
       if (value && typeof value === "object" && k in value) {
         value = value[k];
       } else {
-        console.warn(
-          `Translation key not found: ${key} for language: ${language}`
-        );
+        // Warning: Translation key not found
         return key;
       }
     }

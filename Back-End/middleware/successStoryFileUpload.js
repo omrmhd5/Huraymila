@@ -84,7 +84,7 @@ const deleteSuccessStoryImage = (imageUrl) => {
       fs.unlinkSync(imagePath);
     }
   } catch (error) {
-    console.error("Error deleting success story image:", error);
+    // Error deleting success story image
   }
 };
 
@@ -96,7 +96,7 @@ const deleteSuccessStoryFolder = (successStoryId) => {
       fs.rmSync(successStoryDir, { recursive: true, force: true });
     }
   } catch (error) {
-    console.error("Error deleting success story folder:", error);
+    // Error deleting success story folder
   }
 };
 
@@ -107,7 +107,7 @@ const cleanupTempFiles = (files) => {
       try {
         fs.unlinkSync(file.path);
       } catch (error) {
-        console.error("Error cleaning up temp file:", error);
+        // Error cleaning up temp file
       }
     }
   });

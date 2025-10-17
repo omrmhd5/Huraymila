@@ -77,7 +77,7 @@ const moveImageToNewsFolder = (newsId, tempFile) => {
 
     return `/public/news/${newsId}/${newFilename}`;
   } catch (error) {
-    console.error("Error moving news image:", error);
+    // Error moving news image
     throw error;
   }
 };
@@ -96,10 +96,10 @@ const deleteNewsImage = (imageUrl) => {
 
     if (fs.existsSync(fullPath)) {
       fs.unlinkSync(fullPath);
-      console.log(`Deleted news image: ${fullPath}`);
+      // Deleted news image
     }
   } catch (error) {
-    console.error(`Error deleting news image ${imageUrl}:`, error);
+    // Error deleting news image
   }
 };
 
@@ -118,10 +118,10 @@ const deleteNewsFolder = (newsId) => {
 
       // Remove the directory itself
       fs.rmdirSync(newsDir);
-      console.log(`Deleted news folder: ${newsDir}`);
+      // Deleted news folder
     }
   } catch (error) {
-    console.error(`Error deleting news folder for ${newsId}:`, error);
+    // Error deleting news folder
   }
 };
 
@@ -137,7 +137,7 @@ const cleanupTempFiles = (files) => {
         fs.unlinkSync(file.path);
       }
     } catch (error) {
-      console.error("Error cleaning up temp file:", error);
+      // Error cleaning up temp file
     }
   });
 };

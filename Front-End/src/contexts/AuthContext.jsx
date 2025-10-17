@@ -25,7 +25,7 @@ export const AuthProvider = ({ children }) => {
         setToken(storedToken);
         setUser(JSON.parse(storedUser));
       } catch (error) {
-        console.error("Error parsing stored user data:", error);
+        // Error parsing stored user data
         localStorage.removeItem("authToken");
         localStorage.removeItem("user");
       }
@@ -71,7 +71,7 @@ export const AuthProvider = ({ children }) => {
         userType: data.type,
       };
     } catch (error) {
-      console.error("Login error:", error);
+      // Login error
       return { success: false, error: error.message };
     } finally {
       setLoading(false);
@@ -137,7 +137,7 @@ export const AuthProvider = ({ children }) => {
       }
       return null;
     } catch (error) {
-      console.error("Error fetching current user:", error);
+      // Error fetching current user
       return null;
     }
   };
@@ -181,7 +181,7 @@ export const AuthProvider = ({ children }) => {
         };
       }
     } catch (error) {
-      console.error("Volunteer signup error:", error);
+      // Volunteer signup error
       return {
         success: false,
         error: "Network error occurred",

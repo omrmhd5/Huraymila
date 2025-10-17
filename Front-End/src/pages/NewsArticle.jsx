@@ -26,7 +26,7 @@ const NewsArticle = () => {
         const response = await newsApi.getNewsById(id);
         setNews(response.data);
       } catch (error) {
-        console.error("Error fetching news:", error);
+        // Error fetching news
         setError("Failed to load news article");
       } finally {
         setLoading(false);

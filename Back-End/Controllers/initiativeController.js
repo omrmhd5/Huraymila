@@ -184,7 +184,7 @@ const createInitiative = async (req, res) => {
         await initiative.save();
       } catch (error) {
         // If image moving fails, clean up and delete the initiative
-        console.error("Error moving image:", error);
+        // Error moving image
         await Initiative.findByIdAndDelete(initiative._id);
         cleanupTempFiles(req.file);
 
@@ -503,7 +503,7 @@ const removeVolunteerFromInitiative = async (req, res) => {
       data: initiative,
     });
   } catch (error) {
-    console.error("Error removing volunteer:", error);
+    // Error removing volunteer
     res.status(500).json({
       success: false,
       message: "Error removing volunteer",
@@ -602,7 +602,7 @@ const applyToInitiative = async (req, res) => {
       },
     });
   } catch (error) {
-    console.error("Error applying to initiative:", error);
+    // Error applying to initiative
     res.status(500).json({
       success: false,
       message: "Error applying to initiative",
@@ -670,7 +670,7 @@ const withdrawFromInitiative = async (req, res) => {
       data: initiative,
     });
   } catch (error) {
-    console.error("Error withdrawing from initiative:", error);
+    // Error withdrawing from initiative
     res.status(500).json({
       success: false,
       message: "Error withdrawing from initiative",

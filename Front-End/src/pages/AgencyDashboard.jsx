@@ -85,7 +85,7 @@ const AgencyDashboard = () => {
 
         setAssignedStandards(agencyAssignedStandards);
       } catch (error) {
-        console.error("Error loading assigned standards:", error);
+        // Error loading assigned standards
         toast.error(
           language === "ar"
             ? "فشل في تحميل المعايير المخصصة"
@@ -121,7 +121,7 @@ const AgencyDashboard = () => {
 
         setVolunteersCount(totalVolunteers);
       } catch (error) {
-        console.error("Error loading agency stats:", error);
+        // Error loading agency stats
         toast.error(
           language === "ar"
             ? "فشل في تحميل إحصائيات الجهة"

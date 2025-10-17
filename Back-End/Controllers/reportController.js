@@ -61,7 +61,7 @@ const createReport = async (req, res) => {
         await newReport.save();
       } catch (error) {
         // If file moving fails, clean up and delete the report
-        console.error("Error moving files:", error);
+        // Error moving files
         await Report.findByIdAndDelete(newReport._id);
         cleanupTempFiles(req.files);
 
@@ -89,7 +89,7 @@ const createReport = async (req, res) => {
       cleanupTempFiles(req.files);
     }
 
-    console.error("Error creating report:", error);
+    // Error creating report
     res.status(500).json({
       success: false,
       message: "Error creating report",
@@ -120,7 +120,7 @@ const getAllReports = async (req, res) => {
       data: reports,
     });
   } catch (error) {
-    console.error("Error fetching reports:", error);
+    // Error fetching reports
     res.status(500).json({
       success: false,
       message: "Error fetching reports",
@@ -151,7 +151,7 @@ const getMyReports = async (req, res) => {
       data: reports,
     });
   } catch (error) {
-    console.error("Error fetching my reports:", error);
+    // Error fetching my reports
     res.status(500).json({
       success: false,
       message: "Error fetching your reports",
@@ -194,7 +194,7 @@ const getReportById = async (req, res) => {
       data: report,
     });
   } catch (error) {
-    console.error("Error fetching report:", error);
+    // Error fetching report
     res.status(500).json({
       success: false,
       message: "Error fetching report",
@@ -247,7 +247,7 @@ const updateReportStatus = async (req, res) => {
       data: report,
     });
   } catch (error) {
-    console.error("Error updating report status:", error);
+    // Error updating report status
     res.status(500).json({
       success: false,
       message: "Error updating report status",
@@ -297,7 +297,7 @@ const deleteReport = async (req, res) => {
       message: "Report deleted successfully",
     });
   } catch (error) {
-    console.error("Error deleting report:", error);
+    // Error deleting report
     res.status(500).json({
       success: false,
       message: "Error deleting report",
@@ -328,7 +328,7 @@ const getReportsStatistics = async (req, res) => {
       },
     });
   } catch (error) {
-    console.error("Error fetching report statistics:", error);
+    // Error fetching report statistics
     res.status(500).json({
       success: false,
       message: "Error fetching statistics",

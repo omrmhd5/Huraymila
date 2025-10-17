@@ -220,7 +220,7 @@ const HealthDashboard = () => {
           throw new Error("Invalid data format received from API");
         }
       } catch (error) {
-        console.error("Error fetching health indicators:", error);
+        // Error fetching health indicators
         setError(error.message);
         // Fallback to default indicators
         setIndicators(defaultIndicators);

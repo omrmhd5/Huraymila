@@ -204,7 +204,7 @@ const createNews = async (req, res) => {
         news.imageUrl = imageUrl;
         await news.save();
       } catch (error) {
-        console.error("Error moving image:", error);
+        // Error moving image
         // Clean up the created news if image processing fails
         await News.findByIdAndDelete(news._id);
         return res.status(500).json({
@@ -225,7 +225,7 @@ const createNews = async (req, res) => {
       try {
         cleanupTempFiles([req.file]);
       } catch (cleanupError) {
-        console.error("Error cleaning up temp file:", cleanupError);
+        // Error cleaning up temp file
       }
     }
 
@@ -264,7 +264,7 @@ const updateNews = async (req, res) => {
         // Move new image
         imageUrl = moveImageToNewsFolder(id, req.file);
       } catch (error) {
-        console.error("Error processing image:", error);
+        // Error processing image
         return res.status(500).json({
           success: false,
           message: "Error processing image",
@@ -323,7 +323,7 @@ const updateNews = async (req, res) => {
       try {
         cleanupTempFiles([req.file]);
       } catch (cleanupError) {
-        console.error("Error cleaning up temp file:", cleanupError);
+        // Error cleaning up temp file
       }
     }
 
@@ -354,7 +354,7 @@ const deleteNews = async (req, res) => {
       try {
         deleteNewsImage(news.imageUrl);
       } catch (error) {
-        console.error("Error deleting news image:", error);
+        // Error deleting news image
         // Continue with news deletion even if image deletion fails
       }
     }

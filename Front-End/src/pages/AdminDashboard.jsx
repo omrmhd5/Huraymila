@@ -490,7 +490,7 @@ const AdminDashboard = () => {
           const json = await res.json();
           initiativesRaw = Array.isArray(json?.data) ? json.data : [];
         } catch (authError) {
-          console.error("Error fetching initiatives with auth:", authError);
+          // Error fetching initiatives with auth
           // Fallback to public endpoint
           const res = await fetch(
             `${import.meta.env.VITE_API_BASE_URL}/initiatives`
@@ -600,7 +600,7 @@ const AdminDashboard = () => {
           }));
         }
       } catch (reportError) {
-        console.error("Error fetching reports:", reportError);
+        // Error fetching reports
         reports = [];
       }
 
@@ -617,7 +617,7 @@ const AdminDashboard = () => {
           setPendingInitiatives(pendingFromAll);
         }
       } catch (pendingError) {
-        console.error("Error fetching pending initiatives:", pendingError);
+        // Error fetching pending initiatives
         // Fallback: filter pending initiatives from all initiatives
         const pendingFromAll = initiativesRaw.filter(
           (i) => i.approvalStatus === "pending"
@@ -633,7 +633,7 @@ const AdminDashboard = () => {
           setPendingSuccessStories(pendingStoriesData?.data || []);
         }
       } catch (pendingError) {
-        console.error("Error fetching pending success stories:", pendingError);
+        // Error fetching pending success stories
         setPendingSuccessStories([]);
       }
 
@@ -657,7 +657,7 @@ const AdminDashboard = () => {
       }));
       setHealthIndicators(healthIndicators);
     } catch (error) {
-      console.error("Error fetching data:", error);
+      // Error fetching data
     }
   };
 
@@ -679,7 +679,7 @@ const AdminDashboard = () => {
       );
       await fetchAllData();
     } catch (error) {
-      console.error("Error approving initiative:", error);
+      // Error approving initiative
       toast.error(
         language === "ar"
           ? "فشل في قبول المبادرة: " + error.message
@@ -701,7 +701,7 @@ const AdminDashboard = () => {
       );
       await fetchAllData();
     } catch (error) {
-      console.error("Error declining initiative:", error);
+      // Error declining initiative
       toast.error(
         language === "ar"
           ? "فشل في رفض المبادرة: " + error.message
@@ -723,7 +723,7 @@ const AdminDashboard = () => {
       );
       await fetchAllData();
     } catch (error) {
-      console.error("Error approving success story:", error);
+      // Error approving success story
       toast.error(
         language === "ar"
           ? "فشل في قبول قصة النجاح: " + error.message
@@ -745,7 +745,7 @@ const AdminDashboard = () => {
       );
       await fetchAllData();
     } catch (error) {
-      console.error("Error declining success story:", error);
+      // Error declining success story
       toast.error(
         language === "ar"
           ? "فشل في رفض قصة النجاح: " + error.message
@@ -858,7 +858,7 @@ const AdminDashboard = () => {
       // Refresh data to get updated values
       await fetchAllData();
     } catch (error) {
-      console.error("Error saving health indicators:", error);
+      // Error saving health indicators
       toast.error(
         language === "ar"
           ? "فشل في حفظ المؤشرات الصحية: " + error.message
@@ -871,20 +871,20 @@ const AdminDashboard = () => {
 
   // Initiative action handlers
   const handleViewInitiative = (id) => {
-    console.log(`Viewing initiative ${id}`);
+    // Viewing initiative
     // Navigate to initiative details page
     navigate(`/initiatives/${id}`);
   };
 
   // News action handlers
   const handleViewNews = (id) => {
-    console.log(`Viewing news ${id}`);
+    // Viewing news
     // Navigate to news article page
     navigate(`/news/${id}`);
   };
 
   const handleEditNews = (id) => {
-    console.log(`Editing news ${id}`);
+    // Editing news
     const news = data.news.find((article) => article.id === id);
     setNewsModal({
       isOpen: true,
@@ -894,7 +894,7 @@ const AdminDashboard = () => {
   };
 
   const handleDeleteNews = (id) => {
-    console.log(`Opening delete modal for news ${id}`);
+    // Opening delete modal for news
     const news = data.news.find((article) => article.id === id);
     setDeleteNewsModal({
       isOpen: true,
@@ -914,7 +914,7 @@ const AdminDashboard = () => {
       fetchAllData(); // Refresh data
       setDeleteNewsModal({ isOpen: false, news: null });
     } catch (error) {
-      console.error("Error deleting news:", error);
+      // Error deleting news
       toast.error(
         language === "ar"
           ? "فشل في حذف الخبر: " + error.message
@@ -931,13 +931,13 @@ const AdminDashboard = () => {
 
   // Success Stories action handlers
   const handleViewSuccessStory = (id) => {
-    console.log(`Viewing success story ${id}`);
+    // Viewing success story
     // Navigate to success story page
     navigate(`/success-stories/${id}`);
   };
 
   const handleEditSuccessStory = (id) => {
-    console.log(`Editing success story ${id}`);
+    // Editing success story
     const successStory = data.success_stories.find(
       (story) => story._id || story.id === id
     );
@@ -949,7 +949,7 @@ const AdminDashboard = () => {
   };
 
   const handleDeleteSuccessStory = (id) => {
-    console.log(`Opening delete modal for success story ${id}`);
+    // Opening delete modal for success story
     const successStory = data.success_stories.find(
       (story) => story._id || story.id === id
     );
@@ -976,7 +976,7 @@ const AdminDashboard = () => {
       fetchAllData(); // Refresh data
       setDeleteSuccessStoryModal({ isOpen: false, successStory: null });
     } catch (error) {
-      console.error("Error deleting success story:", error);
+      // Error deleting success story
       toast.error(
         language === "ar"
           ? "فشل في حذف قصة النجاح: " + error.message
@@ -1012,7 +1012,7 @@ const AdminDashboard = () => {
       );
       fetchAllData(); // Refresh data
     } catch (error) {
-      console.error("Error updating priority:", error);
+      // Error updating priority
       toast.error(
         language === "ar"
           ? "فشل في تحديث الأولوية: " + error.message
@@ -1084,7 +1084,7 @@ const AdminDashboard = () => {
             : "News reordered successfully"
         );
       } catch (error) {
-        console.error("Error updating priorities:", error);
+        // Error updating priorities
         toast.error(
           language === "ar"
             ? "فشل في تحديث الأولويات: " + error.message
@@ -1169,7 +1169,7 @@ const AdminDashboard = () => {
             : "Success stories reordered successfully"
         );
       } catch (error) {
-        console.error("Error updating success story priorities:", error);
+        // Error updating success story priorities
         toast.error(
           language === "ar"
             ? "فشل في تحديث الأولويات: " + error.message
@@ -1361,7 +1361,7 @@ const AdminDashboard = () => {
       await fetchAllData();
       closeInitiativeModal();
     } catch (error) {
-      console.error("Error updating initiative:", error);
+      // Error updating initiative
     } finally {
       setActionLoading(false);
     }
@@ -1378,7 +1378,7 @@ const AdminDashboard = () => {
       await fetchAllData();
       setDeleteModal({ isOpen: false, initiative: null });
     } catch (e) {
-      console.error(e);
+      // Error
     } finally {
       setActionLoading(false);
     }
@@ -2951,10 +2951,7 @@ const AdminDashboard = () => {
                             );
                             await fetchAllData();
                           } catch (error) {
-                            console.error(
-                              "Error updating report status:",
-                              error
-                            );
+                            // Error updating report status
                             toast.error(
                               language === "ar"
                                 ? "فشل في تحديث حالة البلاغ: " + error.message

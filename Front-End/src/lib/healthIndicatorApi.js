@@ -17,7 +17,7 @@ export const getHealthIndicators = async () => {
 
     return result.data;
   } catch (error) {
-    console.error("Error fetching health indicators:", error);
+    // Error fetching health indicators
     throw error;
   }
 };
@@ -49,7 +49,7 @@ export const updateHealthIndicators = async (token, indicators) => {
 
     return result.data;
   } catch (error) {
-    console.error("Error updating health indicators:", error);
+    // Error updating health indicators
     throw error;
   }
 };

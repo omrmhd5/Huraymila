@@ -9,12 +9,12 @@ const seedHealthIndicators = async () => {
       process.env.MONGODB_URI || "mongodb://localhost:27017/huraymila"
     );
 
-    console.log("Connected to MongoDB");
+    // Connected to MongoDB
 
     // Check if health indicators already exist
     const existingIndicators = await HealthIndicator.findOne();
     if (existingIndicators) {
-      console.log("Health indicators already exist in the database");
+      // Health indicators already exist in the database
       return;
     }
 
@@ -136,13 +136,13 @@ const seedHealthIndicators = async () => {
     });
 
     await healthIndicators.save();
-    console.log("Health indicators seeded successfully!");
+    // Health indicators seeded successfully!
 
     // Close the connection
     await mongoose.connection.close();
-    console.log("Database connection closed");
+    // Database connection closed
   } catch (error) {
-    console.error("Error seeding health indicators:", error);
+    // Error seeding health indicators
     process.exit(1);
   }
 };

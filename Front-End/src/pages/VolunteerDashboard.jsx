@@ -141,7 +141,6 @@ const VolunteerDashboard = () => {
         const initiativesRaw = fetchedUser?.initiatives || [];
         setUserInitiatives(normalizeVolunteerInitiatives(initiativesRaw));
       } catch (error) {
-        console.error("Error loading initiatives:", error);
         const fallback = normalizeVolunteerInitiatives(user?.initiatives || []);
         setUserInitiatives(fallback);
       } finally {
@@ -161,7 +160,7 @@ const VolunteerDashboard = () => {
         const response = await successStoryApi.getMySuccessStories(token);
         setMySuccessStories(response.data || []);
       } catch (error) {
-        console.error("Error loading success stories:", error);
+        // Error loading success stories
       } finally {
         setLoadingStories(false);
       }
@@ -179,7 +178,7 @@ const VolunteerDashboard = () => {
         const response = await reportApi.getMyReports(token);
         setMyReports(response.data || []);
       } catch (error) {
-        console.error("Error loading reports:", error);
+        // Error loading reports
       } finally {
         setLoadingReports(false);
       }
@@ -224,10 +223,10 @@ const VolunteerDashboard = () => {
           setUserInitiatives([]);
         }
       } catch (error) {
-        console.error("Error refreshing user data after withdrawal:", error);
+        // Error refreshing user data after withdrawal
       }
     } catch (error) {
-      console.error("Error withdrawing from initiative:", error);
+      // Error withdrawing from initiative
       toast.error(
         error.message ||
           (language === "ar"
@@ -296,7 +295,7 @@ const VolunteerDashboard = () => {
       const response = await successStoryApi.getMySuccessStories(token);
       setMySuccessStories(response.data || []);
     } catch (error) {
-      console.error("Error submitting success story:", error);
+      // Error submitting success story
       toast.error(
         error.message ||
           (language === "ar"

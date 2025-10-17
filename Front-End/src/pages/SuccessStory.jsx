@@ -39,7 +39,7 @@ const SuccessStory = () => {
         const response = await successStoryApi.getSuccessStoryById(id);
         setStory(response.data);
       } catch (error) {
-        console.error("Error fetching success story:", error);
+        // Error fetching success story
         setError(error.message);
       } finally {
         setLoading(false);

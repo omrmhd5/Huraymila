@@ -136,7 +136,7 @@ const createSuccessStory = async (req, res) => {
         successStory.imageUrl = imageUrl;
         await successStory.save();
       } catch (imageError) {
-        console.error("Error handling image upload:", imageError);
+        // Error handling image upload
         // Clean up temp file
         cleanupTempFiles([req.file]);
         return res.status(500).json({
@@ -153,7 +153,7 @@ const createSuccessStory = async (req, res) => {
       data: successStory,
     });
   } catch (error) {
-    console.error("Error creating success story:", error);
+    // Error creating success story
     res.status(500).json({
       success: false,
       message: "Error creating success story",
@@ -215,7 +215,7 @@ const submitSuccessStoryByVolunteer = async (req, res) => {
         successStory.imageUrl = imageUrl;
         await successStory.save();
       } catch (imageError) {
-        console.error("Error handling image upload:", imageError);
+        // Error handling image upload
         // Clean up temp file
         cleanupTempFiles([req.file]);
         return res.status(500).json({
@@ -232,7 +232,7 @@ const submitSuccessStoryByVolunteer = async (req, res) => {
       data: successStory,
     });
   } catch (error) {
-    console.error("Error submitting success story:", error);
+    // Error submitting success story
     res.status(500).json({
       success: false,
       message: "Error submitting success story",
@@ -335,7 +335,7 @@ const updateSuccessStory = async (req, res) => {
         const imageUrl = moveImageToSuccessStoryFolder(id, req.file);
         updateData.imageUrl = imageUrl;
       } catch (imageError) {
-        console.error("Error handling image update:", imageError);
+        // Error handling image update
         cleanupTempFiles([req.file]);
         return res.status(500).json({
           success: false,
@@ -358,7 +358,7 @@ const updateSuccessStory = async (req, res) => {
       data: updatedSuccessStory,
     });
   } catch (error) {
-    console.error("Error updating success story:", error);
+    // Error updating success story
     res.status(500).json({
       success: false,
       message: "Error updating success story",
@@ -391,7 +391,7 @@ const deleteSuccessStory = async (req, res) => {
       message: "Success story deleted successfully",
     });
   } catch (error) {
-    console.error("Error deleting success story:", error);
+    // Error deleting success story
     res.status(500).json({
       success: false,
       message: "Error deleting success story",

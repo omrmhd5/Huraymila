@@ -92,7 +92,7 @@ const AgencyManagement = () => {
         );
         setAllStandards(mappedStandards);
       } catch (error) {
-        console.error("Error fetching data:", error);
+        // Error fetching data
         toast.error("Failed to load data");
       }
     };
@@ -188,7 +188,7 @@ const AgencyManagement = () => {
       setShowAddForm(false);
       setEditingAgency(null);
     } catch (error) {
-      console.error("Error saving agency:", error);
+      // Error saving agency
       toast.error(t("agencyManagement.operationError"));
     }
   };
@@ -223,7 +223,7 @@ const AgencyManagement = () => {
       toast.success(t("agencyManagement.agencyDeleted"));
       setDeleteConfirm({ show: false, agencyId: null, agencyName: "" });
     } catch (error) {
-      console.error("Error deleting agency:", error);
+      // Error deleting agency
       toast.error(t("agencyManagement.deleteError"));
     }
   };
@@ -240,7 +240,7 @@ const AgencyManagement = () => {
       );
       setViewStandards({ show: true, agency: updatedAgency || agency });
     } catch (error) {
-      console.error("Error fetching agency data:", error);
+      // Error fetching agency data
       // Fallback to original agency data
       setViewStandards({ show: true, agency });
     }
@@ -291,7 +291,7 @@ const AgencyManagement = () => {
           : t("agencyManagement.standardUnassignedSuccess")
       );
     } catch (error) {
-      console.error("Error toggling standard assignment:", error);
+      // Error toggling standard assignment
       toast.error(t("agencyManagement.standardToggleError"));
     } finally {
       setIsToggling(false);

@@ -107,7 +107,7 @@ const deleteReportFiles = (filesUrls) => {
         fs.unlinkSync(filePath);
       }
     } catch (error) {
-      console.error(`Error deleting report file ${fileUrl}:`, error);
+      // Error deleting report file
     }
   });
 };
@@ -120,7 +120,7 @@ const deleteReportFolder = (reportId) => {
       fs.rmSync(reportDir, { recursive: true, force: true });
     }
   } catch (error) {
-    console.error("Error deleting report folder:", error);
+    // Error deleting report folder
   }
 };
 
@@ -133,7 +133,7 @@ const cleanupTempFiles = (files) => {
       try {
         fs.unlinkSync(file.path);
       } catch (error) {
-        console.error("Error cleaning up temp file:", error);
+        // Error cleaning up temp file
       }
     }
   });

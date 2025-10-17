@@ -122,7 +122,7 @@ const NewsModal = ({
       onSuccess?.();
       onClose();
     } catch (error) {
-      console.error("Error saving news:", error);
+      // Error saving news
       toast.error(
         language === "ar" ? "فشل في حفظ الخبر" : "Failed to save news article"
       );

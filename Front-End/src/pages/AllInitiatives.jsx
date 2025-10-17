@@ -65,7 +65,7 @@ const AllInitiatives = () => {
       const response = await initiativeApi.getAllInitiatives();
       setInitiatives(response.data || []);
     } catch (error) {
-      console.error("Error loading initiatives:", error);
+      // Error loading initiatives
       setError("Failed to load initiatives");
       toast.error("Failed to load initiatives");
     } finally {
@@ -117,7 +117,7 @@ const AllInitiatives = () => {
       // Refresh initiatives to show updated data
       await loadInitiatives();
     } catch (error) {
-      console.error("Error applying to initiative:", error);
+      // Error applying to initiative
       toast.error(
         error.message ||
           (language === "ar" ? "فشل في تقديم الطلب" : "Failed to apply")

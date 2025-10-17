@@ -57,7 +57,7 @@ const AllNews = () => {
         const response = await newsApi.getAllNews({ limit: 100 });
         setNewsData(response.data || []);
       } catch (error) {
-        console.error("Error fetching news:", error);
+        // Error fetching news
         setError("Failed to load news articles");
       } finally {
         setLoading(false);

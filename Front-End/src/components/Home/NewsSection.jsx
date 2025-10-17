@@ -48,7 +48,7 @@ const NewsSection = () => {
         const response = await newsApi.getPrioritizedNews(5);
         setNews(response.data || []);
       } catch (error) {
-        console.error("Error fetching prioritized news:", error);
+        // Error fetching prioritized news
         setNews([]);
       } finally {
         setLoading(false);

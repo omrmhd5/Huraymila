@@ -10,7 +10,7 @@ export const getAllStandardsByNumber = async () => {
     const standards = await response.json();
     return standards.data; // Returns array of standards with number, status, progress, assigned_agencies
   } catch (error) {
-    console.error("Error fetching standards:", error);
+    // Error fetching standards
     throw error;
   }
 };
@@ -33,7 +33,7 @@ export const getSubmissionsByStandardNumber = async (standardNumber, token) => {
     const submissions = await response.json();
     return submissions.data; // Returns array of submissions
   } catch (error) {
-    console.error("Error fetching submissions:", error);
+    // Error fetching submissions
     throw error;
   }
 };
@@ -58,7 +58,7 @@ export const updateSubmissionStatus = async (submissionId, status, token) => {
     const submission = await response.json();
     return submission.data; // Returns updated submission
   } catch (error) {
-    console.error("Error updating submission status:", error);
+    // Error updating submission status
     throw error;
   }
 };
@@ -88,7 +88,7 @@ export const updateStandardFromSubmissions = async (
     const standard = await response.json();
     return standard.data; // Returns updated standard
   } catch (error) {
-    console.error("Error updating standard from submissions:", error);
+    // Error updating standard from submissions
     throw error;
   }
 };
@@ -115,7 +115,7 @@ export const getAllAgencies = async (token) => {
     const agencies = await response.json();
     return agencies.data;
   } catch (error) {
-    console.error("Error fetching agencies:", error);
+    // Error fetching agencies
     throw error;
   }
 };
@@ -129,7 +129,7 @@ export const getAgencyById = async (id) => {
     const agency = await response.json();
     return agency.data;
   } catch (error) {
-    console.error("Error fetching agency:", error);
+    // Error fetching agency
     throw error;
   }
 };
@@ -150,13 +150,13 @@ export const createAgency = async (agencyData, token) => {
       body: JSON.stringify(agencyData),
     });
     if (!response.ok) {
-      console.log(response);
+      // Response logged
       throw new Error("Failed to create agency");
     }
     const agency = await response.json();
     return agency.data;
   } catch (error) {
-    console.error("Error creating agency:", error);
+    // Error creating agency
     throw error;
   }
 };
@@ -182,7 +182,7 @@ export const updateAgency = async (id, agencyData, token) => {
     const agency = await response.json();
     return agency.data;
   } catch (error) {
-    console.error("Error updating agency:", error);
+    // Error updating agency
     throw error;
   }
 };
@@ -207,7 +207,7 @@ export const deleteAgency = async (id, token) => {
     const result = await response.json();
     return result;
   } catch (error) {
-    console.error("Error deleting agency:", error);
+    // Error deleting agency
     throw error;
   }
 };
@@ -242,7 +242,7 @@ export const toggleAgencyAssignment = async (
     const result = await response.json();
     return result.data;
   } catch (error) {
-    console.error("Error toggling agency assignment:", error);
+    // Error toggling agency assignment
     throw error;
   }
 };
