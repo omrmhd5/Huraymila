@@ -1,30 +1,51 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { ArrowLeft, Upload, X, FileImage, FileVideo } from "lucide-react";
+import {
+  ArrowLeft,
+  Upload,
+  X,
+  FileImage,
+  FileVideo,
+  AlertTriangle,
+} from "lucide-react";
 import { useTheme } from "@/contexts/ThemeContext";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useAuth } from "@/contexts/AuthContext";
+import { toast } from "sonner";
+import { cn } from "@/lib/utils";
+import { reportApi } from "@/lib/reportApi";
 
 const Report = () => {
   const { language } = useTheme();
   const { t } = useLanguage();
   const navigate = useNavigate();
+  const { user, loading: authLoading, token } = useAuth();
   const isRTL = language === "ar";
 
   const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    password: "",
-    reportName: "",
-    description: "",
+    title: "",
+    details: "",
   });
 
   const [files, setFiles] = useState([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Redirect to login if not authenticated or not a volunteer
+  useEffect(() => {
+    if (!authLoading && (!user || user.type !== "volunteer")) {
+      toast.error(
+        language === "ar"
+          ? "يجب تسجيل الدخول كمتطوع لتقديم بلاغ"
+          : "You must be signed in as a volunteer to submit a report"
+      );
+      navigate("/auth");
+    }
+  }, [user, authLoading, navigate, language]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -60,20 +81,74 @@ const Report = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // Validate form
+    if (!formData.title || !formData.details) {
+      toast.error(
+        language === "ar"
+          ? "يرجى ملء جميع الحقول المطلوبة"
+          : "Please fill in all required fields"
+      );
+      return;
+    }
+
     setIsSubmitting(true);
 
-    // Simulate form submission
-    await new Promise((resolve) => setTimeout(resolve, 2000));
+    try {
+      // Call the API to create the report
+      await reportApi.createReport(token, formData, files);
 
-    // Show success message (you can replace this with actual API call)
-    alert(t("report.reportSubmitted"));
+      // Show success message
+      toast.success(
+        language === "ar"
+          ? "تم تقديم البلاغ بنجاح! سيتم مراجعته قريباً"
+          : "Report submitted successfully! It will be reviewed soon"
+      );
 
-    setIsSubmitting(false);
-    navigate("/");
+      // Reset form
+      setFormData({
+        title: "",
+        details: "",
+      });
+      setFiles([]);
+
+      // Navigate back to dashboard
+      setTimeout(() => {
+        navigate("/volunteer-dashboard");
+      }, 1500);
+    } catch (error) {
+      console.error("Error submitting report:", error);
+      toast.error(
+        error.message ||
+          (language === "ar"
+            ? "فشل في تقديم البلاغ"
+            : "Failed to submit report")
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
+  // Show loading state while checking authentication
+  if (authLoading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-muted-foreground">
+            {language === "ar" ? "يتم التحميل..." : "Loading..."}
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!user) {
+    return null; // Will redirect to login
+  }
+
   return (
-    <div className="min-h-screen bg-muted/30 py-8">
+    <div className={cn("min-h-screen bg-muted/30 py-8", isRTL ? "rtl" : "ltr")}>
       <div className="container mx-auto px-4 max-w-4xl">
         {/* Header */}
         <div className="mb-8">
@@ -81,183 +156,205 @@ const Report = () => {
             variant="ghost"
             onClick={() => navigate(-1)}
             className={`mb-4 ${isRTL ? "mr-0" : "ml-0"}`}>
-            <ArrowLeft className={`w-4 h-4 ${isRTL ? "ml-2" : "mr-2"}`} />
-            {t("report.back")}
+            <ArrowLeft className={cn("w-4 h-4", isRTL ? "ml-2" : "mr-2")} />
+            {language === "ar" ? "رجوع" : "Back"}
           </Button>
 
-          <h1
-            className={`text-4xl font-bold text-foreground mb-4 ${
-              isRTL ? "font-arabic text-right" : "font-sans text-left"
-            }`}>
-            {t("report.title")}
-          </h1>
+          <div
+            className={cn(
+              "flex items-center gap-3 mb-4",
+              isRTL ? "flex-row-reverse" : ""
+            )}>
+            <div className="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center">
+              <AlertTriangle className="w-6 h-6 text-orange-600" />
+            </div>
+            <div>
+              <h1
+                className={cn(
+                  "text-4xl font-bold text-foreground",
+                  isRTL ? "font-arabic text-right" : "font-sans text-left"
+                )}>
+                {language === "ar" ? "تقديم بلاغ" : "Submit Report"}
+              </h1>
+            </div>
+          </div>
+
           <p
-            className={`text-lg text-muted-foreground ${
+            className={cn(
+              "text-lg text-muted-foreground",
               isRTL ? "font-arabic text-right" : "font-sans text-left"
-            }`}>
-            {t("report.subtitle")}
+            )}>
+            {language === "ar"
+              ? "أبلغ عن مشكلة أو ملاحظة في منطقتك. سيتم مراجعة البلاغ من قبل المسؤولين"
+              : "Report an issue or observation in your area. The report will be reviewed by administrators"}
           </p>
         </div>
 
         <form onSubmit={handleSubmit}>
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            {/* Personal Information */}
-            <Card>
-              <CardHeader>
-                <CardTitle
-                  className={`text-xl ${
-                    isRTL ? "font-arabic text-right" : "font-sans text-left"
-                  }`}>
-                  {t("report.yourInformation")}
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-6">
-                <div>
-                  <Label
-                    htmlFor="name"
-                    className={`text-sm font-medium ${
-                      isRTL ? "font-arabic" : "font-sans"
-                    }`}>
-                    {t("report.fullName")} *
-                  </Label>
-                  <Input
-                    id="name"
-                    name="name"
-                    type="text"
-                    value={formData.name}
-                    onChange={handleInputChange}
-                    required
-                    className={`mt-2 ${isRTL ? "text-right" : "text-left"}`}
-                    placeholder={t("report.fullNamePlaceholder")}
-                  />
-                </div>
-
-                <div>
-                  <Label
-                    htmlFor="email"
-                    className={`text-sm font-medium ${
-                      isRTL ? "font-arabic" : "font-sans"
-                    }`}>
-                    {t("report.emailAddress")} *
-                  </Label>
-                  <Input
-                    id="email"
-                    name="email"
-                    type="email"
-                    value={formData.email}
-                    onChange={handleInputChange}
-                    required
-                    className={`mt-2 ${isRTL ? "text-right" : "text-left"}`}
-                    placeholder={t("report.emailPlaceholder")}
-                  />
-                </div>
-
-                <div>
-                  <Label
-                    htmlFor="password"
-                    className={`text-sm font-medium ${
-                      isRTL ? "font-arabic" : "font-sans"
-                    }`}>
-                    {t("report.password")} *
-                  </Label>
-                  <Input
-                    id="password"
-                    name="password"
-                    type="password"
-                    value={formData.password}
-                    onChange={handleInputChange}
-                    required
-                    className={`mt-2 ${isRTL ? "text-right" : "text-left"}`}
-                    placeholder={t("report.passwordPlaceholder")}
-                  />
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Report Information */}
-            <Card>
-              <CardHeader>
-                <CardTitle
-                  className={`text-xl ${
-                    isRTL ? "font-arabic text-right" : "font-sans text-left"
-                  }`}>
-                  {t("report.reportDetails")}
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-6">
-                <div>
-                  <Label
-                    htmlFor="reportName"
-                    className={`text-sm font-medium ${
-                      isRTL ? "font-arabic" : "font-sans"
-                    }`}>
-                    {t("report.reportTitle")} *
-                  </Label>
-                  <Input
-                    id="reportName"
-                    name="reportName"
-                    type="text"
-                    value={formData.reportName}
-                    onChange={handleInputChange}
-                    required
-                    className={`mt-2 ${isRTL ? "text-right" : "text-left"}`}
-                    placeholder={t("report.reportTitlePlaceholder")}
-                  />
-                </div>
-
-                <div>
-                  <Label
-                    htmlFor="description"
-                    className={`text-sm font-medium ${
-                      isRTL ? "font-arabic" : "font-sans"
-                    }`}>
-                    {t("report.reportDescription")} *
-                  </Label>
-                  <Textarea
-                    id="description"
-                    name="description"
-                    value={formData.description}
-                    onChange={handleInputChange}
-                    required
-                    rows={4}
-                    className={`mt-2 ${isRTL ? "text-right" : "text-left"}`}
-                    placeholder={t("report.reportDescriptionPlaceholder")}
-                  />
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-
-          {/* File Upload Section */}
-          <Card className="mt-8">
+          {/* Volunteer Information Card (Read-only) */}
+          <Card className="mb-8">
             <CardHeader>
               <CardTitle
-                className={`text-xl ${
+                className={cn(
+                  "text-xl",
                   isRTL ? "font-arabic text-right" : "font-sans text-left"
-                }`}>
-                {t("report.uploadFiles")}
+                )}>
+                {language === "ar"
+                  ? "معلومات المتطوع"
+                  : "Volunteer Information"}
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div
+                className={cn(
+                  "grid grid-cols-1 md:grid-cols-2 gap-4 p-4 bg-muted/50 rounded-lg",
+                  isRTL ? "text-right" : "text-left"
+                )}>
+                <div>
+                  <p
+                    className={cn(
+                      "text-sm text-muted-foreground mb-1",
+                      isRTL ? "font-arabic" : "font-sans"
+                    )}>
+                    {language === "ar" ? "الاسم الكامل" : "Full Name"}
+                  </p>
+                  <p
+                    className={cn(
+                      "font-medium",
+                      isRTL ? "font-arabic" : "font-sans"
+                    )}>
+                    {user?.fullName}
+                  </p>
+                </div>
+                <div>
+                  <p
+                    className={cn(
+                      "text-sm text-muted-foreground mb-1",
+                      isRTL ? "font-arabic" : "font-sans"
+                    )}>
+                    {language === "ar" ? "البريد الإلكتروني" : "Email"}
+                  </p>
+                  <p
+                    className={cn(
+                      "font-medium",
+                      isRTL ? "font-arabic" : "font-sans"
+                    )}>
+                    {user?.email}
+                  </p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Report Information */}
+          <Card className="mb-8">
+            <CardHeader>
+              <CardTitle
+                className={cn(
+                  "text-xl",
+                  isRTL ? "font-arabic text-right" : "font-sans text-left"
+                )}>
+                {language === "ar" ? "تفاصيل البلاغ" : "Report Details"}
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <div>
+                <Label
+                  htmlFor="title"
+                  className={cn(
+                    "text-sm font-medium",
+                    isRTL ? "font-arabic" : "font-sans"
+                  )}>
+                  {language === "ar" ? "عنوان البلاغ" : "Report Title"} *
+                </Label>
+                <Input
+                  id="title"
+                  name="title"
+                  type="text"
+                  value={formData.title}
+                  onChange={handleInputChange}
+                  required
+                  className={cn("mt-2", isRTL ? "text-right" : "text-left")}
+                  placeholder={
+                    language === "ar"
+                      ? "مثال: طريق تالف في حي..."
+                      : "Example: Damaged road in..."
+                  }
+                />
+              </div>
+
+              <div>
+                <Label
+                  htmlFor="details"
+                  className={cn(
+                    "text-sm font-medium",
+                    isRTL ? "font-arabic" : "font-sans"
+                  )}>
+                  {language === "ar" ? "تفاصيل البلاغ" : "Report Details"} *
+                </Label>
+                <Textarea
+                  id="details"
+                  name="details"
+                  value={formData.details}
+                  onChange={handleInputChange}
+                  required
+                  rows={6}
+                  className={cn("mt-2", isRTL ? "text-right" : "text-left")}
+                  placeholder={
+                    language === "ar"
+                      ? "قم بوصف المشكلة بالتفصيل..."
+                      : "Describe the issue in detail..."
+                  }
+                />
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* File Upload Section */}
+          <Card>
+            <CardHeader>
+              <CardTitle
+                className={cn(
+                  "text-xl",
+                  isRTL ? "font-arabic text-right" : "font-sans text-left"
+                )}>
+                {language === "ar"
+                  ? "رفع الملفات (اختياري)"
+                  : "Upload Files (Optional)"}
               </CardTitle>
               <p
-                className={`text-sm text-muted-foreground ${
+                className={cn(
+                  "text-sm text-muted-foreground",
                   isRTL ? "font-arabic text-right" : "font-sans text-left"
-                }`}>
-                {t("report.uploadDescription")}
+                )}>
+                {language === "ar"
+                  ? "يمكنك إرفاق صور أو فيديوهات توضح المشكلة"
+                  : "You can attach photos or videos illustrating the issue"}
               </p>
             </CardHeader>
             <CardContent>
               <div className="space-y-6">
                 {/* Upload Area */}
-                <div className="border-2 border-dashed border-muted-foreground/25 rounded-lg p-8 text-center hover:border-primary/50 transition-colors relative">
-                  <Upload className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
+                <div className="border-2 border-dashed border-muted-foreground/25 rounded-lg p-8 text-center hover:border-orange-500/50 transition-colors relative cursor-pointer group">
+                  <Upload className="w-12 h-12 text-muted-foreground mx-auto mb-4 group-hover:text-orange-500 transition-colors" />
                   <div className="space-y-2">
                     <p
-                      className={`text-lg font-medium ${
+                      className={cn(
+                        "text-lg font-medium",
                         isRTL ? "font-arabic" : "font-sans"
-                      }`}>
-                      {t("report.dragFiles")}
+                      )}>
+                      {language === "ar"
+                        ? "اسحب وأفلت الملفات هنا"
+                        : "Drag and drop files here"}
                     </p>
-                    <p className="text-sm text-muted-foreground">
-                      {t("report.supportedFormats")}
+                    <p
+                      className={cn(
+                        "text-sm text-muted-foreground",
+                        isRTL ? "font-arabic" : "font-sans"
+                      )}>
+                      {language === "ar"
+                        ? "أو انقر للاختيار (صور وفيديوهات)"
+                        : "or click to select (images and videos)"}
                     </p>
                   </div>
                   <input
@@ -273,27 +370,38 @@ const Report = () => {
                 {files.length > 0 && (
                   <div className="space-y-3">
                     <h4
-                      className={`font-medium ${
+                      className={cn(
+                        "font-medium",
                         isRTL ? "font-arabic text-right" : "font-sans text-left"
-                      }`}>
-                      {t("report.uploadedFiles")}
+                      )}>
+                      {language === "ar"
+                        ? `الملفات المرفقة (${files.length})`
+                        : `Uploaded Files (${files.length})`}
                     </h4>
                     <div className="space-y-2">
                       {files.map((file) => (
                         <div
                           key={file.id}
-                          className="flex items-center justify-between p-3 bg-muted/50 rounded-lg">
-                          <div className="flex items-center space-x-3">
+                          className={cn(
+                            "flex items-center justify-between p-3 bg-muted/50 rounded-lg",
+                            isRTL ? "flex-row-reverse" : ""
+                          )}>
+                          <div
+                            className={cn(
+                              "flex items-center gap-3",
+                              isRTL ? "flex-row-reverse" : ""
+                            )}>
                             {file.type === "image" ? (
                               <FileImage className="w-5 h-5 text-blue-500" />
                             ) : (
                               <FileVideo className="w-5 h-5 text-red-500" />
                             )}
-                            <div>
+                            <div className={isRTL ? "text-right" : "text-left"}>
                               <p
-                                className={`text-sm font-medium ${
+                                className={cn(
+                                  "text-sm font-medium",
                                   isRTL ? "font-arabic" : "font-sans"
-                                }`}>
+                                )}>
                                 {file.name}
                               </p>
                               <p className="text-xs text-muted-foreground">
@@ -306,7 +414,7 @@ const Report = () => {
                             variant="ghost"
                             size="sm"
                             onClick={() => removeFile(file.id)}
-                            className="text-destructive hover:text-destructive">
+                            className="text-destructive hover:text-destructive hover:bg-destructive/10">
                             <X className="w-4 h-4" />
                           </Button>
                         </div>
@@ -319,13 +427,40 @@ const Report = () => {
           </Card>
 
           {/* Submit Button */}
-          <div className="mt-8 text-center">
+          <div className="mt-8 flex items-center justify-center gap-4">
+            <Button
+              type="button"
+              variant="outline"
+              size="lg"
+              onClick={() => navigate(-1)}
+              disabled={isSubmitting}
+              className={cn(
+                "px-8 py-6 text-lg",
+                isRTL ? "font-arabic" : "font-sans"
+              )}>
+              {language === "ar" ? "إلغاء" : "Cancel"}
+            </Button>
             <Button
               type="submit"
               size="lg"
               disabled={isSubmitting}
-              className="px-12 py-6 text-lg">
-              {isSubmitting ? t("report.submitting") : t("report.submitReport")}
+              className={cn(
+                "px-12 py-6 text-lg bg-orange-600 hover:bg-orange-700",
+                isRTL ? "font-arabic" : "font-sans"
+              )}>
+              {isSubmitting ? (
+                <>
+                  <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin mr-2" />
+                  {language === "ar" ? "جاري الإرسال..." : "Submitting..."}
+                </>
+              ) : (
+                <>
+                  <AlertTriangle
+                    className={cn("w-5 h-5", isRTL ? "ml-2" : "mr-2")}
+                  />
+                  {language === "ar" ? "تقديم البلاغ" : "Submit Report"}
+                </>
+              )}
             </Button>
           </div>
         </form>

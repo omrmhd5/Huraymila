@@ -20,6 +20,14 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import {
   Building2,
   Target,
   FileText,
@@ -379,6 +387,7 @@ import DeleteSuccessStoryModal from "@/components/AdminDashboard/DeleteSuccessSt
 import { initiativeApi } from "@/lib/initiativeApi";
 import { newsApi } from "@/lib/newsApi";
 import { successStoryApi } from "@/lib/successStoryApi";
+import { reportApi } from "@/lib/reportApi";
 import { getAllAgencies } from "@/lib/api";
 import {
   getHealthIndicators,
@@ -571,6 +580,30 @@ const AdminDashboard = () => {
       const healthIndicatorsData = await getHealthIndicators();
       const healthIndicators = healthIndicatorsData?.indicators || [];
 
+      // Fetch reports
+      let reports = [];
+      try {
+        if (token) {
+          const reportsRes = await reportApi.getAllReports(token);
+          reports = (reportsRes.data || []).map((report) => ({
+            id: report._id || report.id,
+            title: report.title,
+            details: report.details,
+            report_type: language === "ar" ? "بلاغ عام" : "General Report",
+            status: report.status,
+            volunteer: report.volunteer,
+            filesUrls: report.filesUrls || [],
+            created_at: report.createdAt || report.created_at,
+            reviewedBy: report.reviewedBy,
+            reviewedAt: report.reviewedAt,
+            adminNotes: report.adminNotes,
+          }));
+        }
+      } catch (reportError) {
+        console.error("Error fetching reports:", reportError);
+        reports = [];
+      }
+
       // Fetch pending initiatives
       try {
         if (token) {
@@ -611,6 +644,7 @@ const AdminDashboard = () => {
         news,
         success_stories: successStories,
         agencies,
+        reports,
       }));
       setStats((prev) => ({
         ...prev,
@@ -619,6 +653,7 @@ const AdminDashboard = () => {
         news: news.length,
         success_stories: successStories.length,
         agencies: agencies.length,
+        reports: reports.length,
       }));
       setHealthIndicators(healthIndicators);
     } catch (error) {
@@ -956,6 +991,15 @@ const AdminDashboard = () => {
     setDeleteSuccessStoryModal({ isOpen: false, successStory: null });
   };
 
+  // Report view modal handlers
+  const handleViewReport = (report) => {
+    setReportViewModal({ isOpen: true, report });
+  };
+
+  const closeReportViewModal = () => {
+    setReportViewModal({ isOpen: false, report: null });
+  };
+
   const handlePriorityChange = async (newsId, newPriority) => {
     try {
       setActionLoading(true);
@@ -1220,6 +1264,12 @@ const AdminDashboard = () => {
   const [deleteSuccessStoryModal, setDeleteSuccessStoryModal] = useState({
     isOpen: false,
     successStory: null,
+  });
+
+  // Report view modal state
+  const [reportViewModal, setReportViewModal] = useState({
+    isOpen: false,
+    report: null,
   });
 
   // News search state
@@ -2801,58 +2851,271 @@ const AdminDashboard = () => {
         <TabsContent value="reports">
           <Card>
             <CardHeader>
-              <CardTitle className="font-arabic text-right">البلاغات</CardTitle>
-              <CardDescription className="font-arabic text-right">
-                جميع البلاغات المقدمة
+              <CardTitle
+                className={`${
+                  language === "ar"
+                    ? "text-right font-arabic"
+                    : "text-left font-english"
+                }`}>
+                {language === "ar" ? "البلاغات" : "Reports"}
+              </CardTitle>
+              <CardDescription
+                className={`${
+                  language === "ar"
+                    ? "text-right font-arabic"
+                    : "text-left font-english"
+                }`}>
+                {language === "ar"
+                  ? "جميع البلاغات المقدمة"
+                  : "All submitted reports"}
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead className="text-right font-arabic">
-                      نوع البلاغ
-                    </TableHead>
-                    <TableHead className="text-right font-arabic">
-                      الحالة
-                    </TableHead>
-                    <TableHead className="text-right font-arabic">
-                      العنوان
-                    </TableHead>
-                    <TableHead className="text-right font-arabic">
-                      تاريخ الإنشاء
-                    </TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {data.reports.slice(0, 10).map((report) => (
-                    <TableRow key={report.id}>
-                      <TableCell className="text-right font-arabic">
-                        {report.report_type}
-                      </TableCell>
-                      <TableCell className="text-right">
-                        <Badge
-                          variant={
-                            report.status === "مكتمل"
-                              ? "default"
-                              : report.status === "قيد المراجعة"
-                              ? "secondary"
-                              : "outline"
-                          }
-                          className="font-arabic">
-                          {report.status}
-                        </Badge>
-                      </TableCell>
-                      <TableCell className="text-right font-arabic">
-                        {report.title}
-                      </TableCell>
-                      <TableCell className="text-right font-arabic">
-                        {formatDate(report.created_at)}
-                      </TableCell>
+              <div className="overflow-x-auto">
+                <Table className="w-full">
+                  <TableHeader>
+                    <TableRow>
+                      {language === "ar" ? (
+                        // Arabic order: right to left - Actions | Created At | Status | Volunteer Email | Title
+                        <>
+                          <TableHead className="text-center font-arabic">
+                            الإجراءات
+                          </TableHead>
+                          <TableHead className="text-right font-arabic">
+                            تاريخ الإنشاء
+                          </TableHead>
+                          <TableHead className="text-center font-arabic">
+                            الحالة
+                          </TableHead>
+                          <TableHead className="text-right font-arabic">
+                            بريد المتطوع
+                          </TableHead>
+                          <TableHead className="text-right font-arabic">
+                            العنوان
+                          </TableHead>
+                        </>
+                      ) : (
+                        // English order: left to right - Title | Volunteer Email | Status | Created At | Actions
+                        <>
+                          <TableHead className="text-left font-english">
+                            Title
+                          </TableHead>
+                          <TableHead className="text-left font-english">
+                            Volunteer Email
+                          </TableHead>
+                          <TableHead className="text-center font-english">
+                            Status
+                          </TableHead>
+                          <TableHead className="text-left font-english">
+                            Created At
+                          </TableHead>
+                          <TableHead className="text-center font-english">
+                            Actions
+                          </TableHead>
+                        </>
+                      )}
                     </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
+                  </TableHeader>
+                  <TableBody>
+                    {data.reports.length === 0 ? (
+                      <TableRow>
+                        <TableCell
+                          colSpan={5}
+                          className={`text-center py-8 ${
+                            language === "ar" ? "font-arabic" : "font-english"
+                          }`}>
+                          {language === "ar"
+                            ? "لا توجد بلاغات حالياً"
+                            : "No reports at the moment"}
+                        </TableCell>
+                      </TableRow>
+                    ) : (
+                      data.reports.slice(0, 10).map((report) => {
+                        const statusConfig = reportApi.getStatusConfig(
+                          report.status,
+                          language
+                        );
+
+                        const handleStatusChange = async (newStatus) => {
+                          try {
+                            setActionLoading(true);
+                            await reportApi.updateReportStatus(
+                              token,
+                              report.id,
+                              newStatus
+                            );
+                            toast.success(
+                              language === "ar"
+                                ? "تم تحديث حالة البلاغ بنجاح"
+                                : "Report status updated successfully"
+                            );
+                            await fetchAllData();
+                          } catch (error) {
+                            console.error(
+                              "Error updating report status:",
+                              error
+                            );
+                            toast.error(
+                              language === "ar"
+                                ? "فشل في تحديث حالة البلاغ: " + error.message
+                                : "Failed to update report status: " +
+                                    error.message
+                            );
+                          } finally {
+                            setActionLoading(false);
+                          }
+                        };
+
+                        return (
+                          <TableRow key={report.id}>
+                            {language === "ar" ? (
+                              // Arabic order: right to left
+                              <>
+                                <TableCell className="text-center">
+                                  <div className="flex items-center justify-center gap-2 flex-wrap">
+                                    <Button
+                                      size="sm"
+                                      variant="outline"
+                                      className="h-8 w-8 p-0"
+                                      onClick={() => handleViewReport(report)}>
+                                      <Eye className="h-4 w-4" />
+                                    </Button>
+                                    <Button
+                                      size="sm"
+                                      variant="outline"
+                                      className="h-8 bg-green-50 hover:bg-green-100 text-green-700 border-green-300"
+                                      onClick={() =>
+                                        handleStatusChange("resolved")
+                                      }
+                                      disabled={
+                                        actionLoading ||
+                                        report.status === "resolved"
+                                      }>
+                                      <span className="text-xs">محلول</span>
+                                    </Button>
+                                    <Button
+                                      size="sm"
+                                      variant="outline"
+                                      className="h-8 bg-blue-50 hover:bg-blue-100 text-blue-700 border-blue-300"
+                                      onClick={() =>
+                                        handleStatusChange("under review")
+                                      }
+                                      disabled={
+                                        actionLoading ||
+                                        report.status === "under review"
+                                      }>
+                                      <span className="text-xs">
+                                        قيد المراجعة
+                                      </span>
+                                    </Button>
+                                    <Button
+                                      size="sm"
+                                      variant="outline"
+                                      className="h-8 bg-red-50 hover:bg-red-100 text-red-700 border-red-300"
+                                      onClick={() =>
+                                        handleStatusChange("rejected")
+                                      }
+                                      disabled={
+                                        actionLoading ||
+                                        report.status === "rejected"
+                                      }>
+                                      <span className="text-xs">مرفوض</span>
+                                    </Button>
+                                  </div>
+                                </TableCell>
+                                <TableCell className="text-right font-arabic">
+                                  {formatDate(report.created_at)}
+                                </TableCell>
+                                <TableCell className="text-center">
+                                  <Badge
+                                    className={`${statusConfig.color} text-white font-arabic`}>
+                                    {statusConfig.text}
+                                  </Badge>
+                                </TableCell>
+                                <TableCell className="text-right font-arabic">
+                                  {report.volunteer?.email || "N/A"}
+                                </TableCell>
+                                <TableCell className="text-right font-arabic">
+                                  {report.title}
+                                </TableCell>
+                              </>
+                            ) : (
+                              // English order: left to right
+                              <>
+                                <TableCell className="text-left font-english">
+                                  {report.title}
+                                </TableCell>
+                                <TableCell className="text-left font-english">
+                                  {report.volunteer?.email || "N/A"}
+                                </TableCell>
+                                <TableCell className="text-center">
+                                  <Badge
+                                    className={`${statusConfig.color} text-white font-english`}>
+                                    {statusConfig.text}
+                                  </Badge>
+                                </TableCell>
+                                <TableCell className="text-left font-english">
+                                  {formatDate(report.created_at)}
+                                </TableCell>
+                                <TableCell className="text-center">
+                                  <div className="flex items-center justify-center gap-2 flex-wrap">
+                                    <Button
+                                      size="sm"
+                                      variant="outline"
+                                      className="h-8 w-8 p-0"
+                                      onClick={() => handleViewReport(report)}>
+                                      <Eye className="h-4 w-4" />
+                                    </Button>
+                                    <Button
+                                      size="sm"
+                                      variant="outline"
+                                      className="h-8 bg-green-50 hover:bg-green-100 text-green-700 border-green-300"
+                                      onClick={() =>
+                                        handleStatusChange("resolved")
+                                      }
+                                      disabled={
+                                        actionLoading ||
+                                        report.status === "resolved"
+                                      }>
+                                      <span className="text-xs">Resolved</span>
+                                    </Button>
+                                    <Button
+                                      size="sm"
+                                      variant="outline"
+                                      className="h-8 bg-blue-50 hover:bg-blue-100 text-blue-700 border-blue-300"
+                                      onClick={() =>
+                                        handleStatusChange("under review")
+                                      }
+                                      disabled={
+                                        actionLoading ||
+                                        report.status === "under review"
+                                      }>
+                                      <span className="text-xs">Review</span>
+                                    </Button>
+                                    <Button
+                                      size="sm"
+                                      variant="outline"
+                                      className="h-8 bg-red-50 hover:bg-red-100 text-red-700 border-red-300"
+                                      onClick={() =>
+                                        handleStatusChange("rejected")
+                                      }
+                                      disabled={
+                                        actionLoading ||
+                                        report.status === "rejected"
+                                      }>
+                                      <span className="text-xs">Reject</span>
+                                    </Button>
+                                  </div>
+                                </TableCell>
+                              </>
+                            )}
+                          </TableRow>
+                        );
+                      })
+                    )}
+                  </TableBody>
+                </Table>
+              </div>
             </CardContent>
           </Card>
         </TabsContent>
@@ -2939,6 +3202,241 @@ const AdminDashboard = () => {
         loading={actionLoading}
         language={language}
       />
+
+      {/* Report View Modal */}
+      {reportViewModal.isOpen && reportViewModal.report && (
+        <Dialog
+          open={reportViewModal.isOpen}
+          onOpenChange={closeReportViewModal}>
+          <DialogContent
+            className={cn(
+              "max-w-4xl max-h-[90vh] overflow-y-auto",
+              language === "ar" ? "font-arabic" : "font-sans"
+            )}>
+            <DialogHeader>
+              <DialogTitle
+                className={cn(
+                  "text-2xl",
+                  language === "ar" ? "text-right" : "text-left"
+                )}>
+                {language === "ar" ? "تفاصيل البلاغ" : "Report Details"}
+              </DialogTitle>
+            </DialogHeader>
+
+            <div className="space-y-6 py-4">
+              {/* Report Title */}
+              <div>
+                <h3
+                  className={cn(
+                    "text-sm font-medium text-muted-foreground mb-2",
+                    language === "ar" ? "text-right" : "text-left"
+                  )}>
+                  {language === "ar" ? "العنوان" : "Title"}
+                </h3>
+                <p
+                  className={cn(
+                    "text-lg font-semibold",
+                    language === "ar" ? "text-right" : "text-left"
+                  )}>
+                  {reportViewModal.report.title}
+                </p>
+              </div>
+
+              {/* Report Details */}
+              <div>
+                <h3
+                  className={cn(
+                    "text-sm font-medium text-muted-foreground mb-2",
+                    language === "ar" ? "text-right" : "text-left"
+                  )}>
+                  {language === "ar" ? "التفاصيل" : "Details"}
+                </h3>
+                <p
+                  className={cn(
+                    "text-base whitespace-pre-wrap",
+                    language === "ar" ? "text-right" : "text-left"
+                  )}>
+                  {reportViewModal.report.details}
+                </p>
+              </div>
+
+              {/* Volunteer Info & Status Row */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                  <h3
+                    className={cn(
+                      "text-sm font-medium text-muted-foreground mb-2",
+                      language === "ar" ? "text-right" : "text-left"
+                    )}>
+                    {language === "ar" ? "بريد المتطوع" : "Volunteer Email"}
+                  </h3>
+                  <p
+                    className={cn(
+                      "text-base",
+                      language === "ar" ? "text-right" : "text-left"
+                    )}>
+                    {reportViewModal.report.volunteer?.email || "N/A"}
+                  </p>
+                </div>
+
+                <div>
+                  <h3
+                    className={cn(
+                      "text-sm font-medium text-muted-foreground mb-2",
+                      language === "ar" ? "text-right" : "text-left"
+                    )}>
+                    {language === "ar" ? "الحالة" : "Status"}
+                  </h3>
+                  <Badge
+                    className={`${
+                      reportApi.getStatusConfig(
+                        reportViewModal.report.status,
+                        language
+                      ).color
+                    } text-white`}>
+                    {
+                      reportApi.getStatusConfig(
+                        reportViewModal.report.status,
+                        language
+                      ).text
+                    }
+                  </Badge>
+                </div>
+
+                <div>
+                  <h3
+                    className={cn(
+                      "text-sm font-medium text-muted-foreground mb-2",
+                      language === "ar" ? "text-right" : "text-left"
+                    )}>
+                    {language === "ar" ? "تاريخ الإنشاء" : "Created At"}
+                  </h3>
+                  <p
+                    className={cn(
+                      "text-base",
+                      language === "ar" ? "text-right" : "text-left"
+                    )}>
+                    {formatDate(reportViewModal.report.created_at)}
+                  </p>
+                </div>
+              </div>
+
+              {/* Files Section */}
+              {reportViewModal.report.filesUrls &&
+                reportViewModal.report.filesUrls.length > 0 && (
+                  <div>
+                    <h3
+                      className={cn(
+                        "text-sm font-medium text-muted-foreground mb-3",
+                        language === "ar" ? "text-right" : "text-left"
+                      )}>
+                      {language === "ar"
+                        ? `الملفات المرفقة (${reportViewModal.report.filesUrls.length})`
+                        : `Attached Files (${reportViewModal.report.filesUrls.length})`}
+                    </h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      {reportViewModal.report.filesUrls.map(
+                        (fileUrl, index) => {
+                          const fullUrl = reportApi.getFileUrl(fileUrl);
+                          const isVideo = fileUrl.match(
+                            /\.(mp4|webm|ogg|mov)$/i
+                          );
+                          const isImage = fileUrl.match(
+                            /\.(jpg|jpeg|png|gif|webp|bmp)$/i
+                          );
+
+                          return (
+                            <div
+                              key={index}
+                              className="border rounded-lg p-2 bg-muted/30">
+                              {isImage && (
+                                <a
+                                  href={fullUrl}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="block">
+                                  <img
+                                    src={fullUrl}
+                                    alt={`Report file ${index + 1}`}
+                                    className="w-full h-48 object-cover rounded cursor-pointer hover:opacity-90 transition-opacity"
+                                  />
+                                  <p className="text-xs text-center mt-2 text-muted-foreground">
+                                    {language === "ar"
+                                      ? "انقر للعرض بالحجم الكامل"
+                                      : "Click to view full size"}
+                                  </p>
+                                </a>
+                              )}
+                              {isVideo && (
+                                <div>
+                                  <video
+                                    controls
+                                    className="w-full h-48 rounded"
+                                    preload="metadata">
+                                    <source src={fullUrl} />
+                                    {language === "ar"
+                                      ? "متصفحك لا يدعم تشغيل الفيديو"
+                                      : "Your browser does not support the video tag"}
+                                  </video>
+                                  <p className="text-xs text-center mt-2 text-muted-foreground">
+                                    {language === "ar" ? "فيديو" : "Video"}
+                                  </p>
+                                </div>
+                              )}
+                              {!isImage && !isVideo && (
+                                <div className="flex items-center justify-center h-48 bg-muted rounded">
+                                  <div className="text-center">
+                                    <FileImage className="w-12 h-12 mx-auto mb-2 text-muted-foreground" />
+                                    <a
+                                      href={fullUrl}
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                      className="text-sm text-primary hover:underline">
+                                      {language === "ar"
+                                        ? "تحميل الملف"
+                                        : "Download File"}
+                                    </a>
+                                  </div>
+                                </div>
+                              )}
+                            </div>
+                          );
+                        }
+                      )}
+                    </div>
+                  </div>
+                )}
+
+              {/* Admin Notes (if any) */}
+              {reportViewModal.report.adminNotes && (
+                <div className="bg-blue-50 p-4 rounded-lg">
+                  <h3
+                    className={cn(
+                      "text-sm font-medium text-blue-900 mb-2",
+                      language === "ar" ? "text-right" : "text-left"
+                    )}>
+                    {language === "ar" ? "ملاحظات المسؤول" : "Admin Notes"}
+                  </h3>
+                  <p
+                    className={cn(
+                      "text-base text-blue-800",
+                      language === "ar" ? "text-right" : "text-left"
+                    )}>
+                    {reportViewModal.report.adminNotes}
+                  </p>
+                </div>
+              )}
+            </div>
+
+            <DialogFooter
+              className={cn(language === "ar" ? "flex-row-reverse" : "")}>
+              <Button variant="outline" onClick={closeReportViewModal}>
+                {language === "ar" ? "إغلاق" : "Close"}
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+      )}
     </div>
   );
 };

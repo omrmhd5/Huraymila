@@ -16,6 +16,8 @@ import {
   BookOpen,
   PlusCircle,
   Star,
+  AlertTriangle,
+  FileImage,
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -25,6 +27,7 @@ import { cn } from "@/lib/utils";
 import AnimatedSection from "@/components/animations/AnimatedSection";
 import { initiativeApi } from "@/lib/initiativeApi";
 import { successStoryApi } from "@/lib/successStoryApi";
+import { reportApi } from "@/lib/reportApi";
 import { toast } from "sonner";
 import {
   Dialog,
@@ -60,6 +63,20 @@ const VolunteerDashboard = () => {
   const [submittingStory, setSubmittingStory] = useState(false);
   const [mySuccessStories, setMySuccessStories] = useState([]);
   const [loadingStories, setLoadingStories] = useState(false);
+
+  // Reports states
+  const [myReports, setMyReports] = useState([]);
+  const [loadingReports, setLoadingReports] = useState(false);
+  const [reportViewModal, setReportViewModal] = useState({
+    isOpen: false,
+    report: null,
+  });
+
+  // Success story view states
+  const [successStoryViewModal, setSuccessStoryViewModal] = useState({
+    isOpen: false,
+    story: null,
+  });
   const [successStoryForm, setSuccessStoryForm] = useState({
     title: "",
     subtitle: "",
@@ -151,6 +168,24 @@ const VolunteerDashboard = () => {
     };
 
     loadSuccessStories();
+  }, [token]);
+
+  // Load volunteer's reports
+  useEffect(() => {
+    const loadReports = async () => {
+      if (!token) return;
+      try {
+        setLoadingReports(true);
+        const response = await reportApi.getMyReports(token);
+        setMyReports(response.data || []);
+      } catch (error) {
+        console.error("Error loading reports:", error);
+      } finally {
+        setLoadingReports(false);
+      }
+    };
+
+    loadReports();
   }, [token]);
 
   // Handle withdraw from initiative
@@ -309,6 +344,43 @@ const VolunteerDashboard = () => {
     }
   };
 
+  // Handle report view
+  const handleViewReport = (report) => {
+    setReportViewModal({
+      isOpen: true,
+      report: report,
+    });
+  };
+
+  const closeReportViewModal = () => {
+    setReportViewModal({
+      isOpen: false,
+      report: null,
+    });
+  };
+
+  // Format date helper
+  const formatDate = (dateString) => {
+    return new Date(dateString).toLocaleDateString(
+      language === "ar" ? "ar-SA" : "en-US"
+    );
+  };
+
+  // Handle success story view
+  const handleViewSuccessStory = (story) => {
+    setSuccessStoryViewModal({
+      isOpen: true,
+      story: story,
+    });
+  };
+
+  const closeSuccessStoryViewModal = () => {
+    setSuccessStoryViewModal({
+      isOpen: false,
+      story: null,
+    });
+  };
+
   // Match Agency loading gate
   if (authLoading) {
     return (
@@ -364,7 +436,7 @@ const VolunteerDashboard = () => {
       <AnimatedSection animation="fadeInUp" delay={100} duration={400}>
         <section className="py-12 -mt-8 relative">
           <div className="container mx-auto px-4">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+            <div className="grid grid-cols-1 md:grid-cols-5 gap-6 mb-12">
               {/* Total Initiatives */}
               <Card className="text-center hover:shadow-lg transition-shadow">
                 <CardContent className="pt-6">
@@ -430,6 +502,46 @@ const VolunteerDashboard = () => {
                     {language === "ar"
                       ? "المبادرات المكتملة"
                       : "Completed Initiatives"}
+                  </p>
+                </CardContent>
+              </Card>
+
+              {/* Total Reports */}
+              <Card className="text-center hover:shadow-lg transition-shadow">
+                <CardContent className="pt-6">
+                  <div className="inline-flex items-center justify-center w-12 h-12 bg-orange-100 rounded-full mb-4">
+                    <AlertTriangle className="w-6 h-6 text-orange-600" />
+                  </div>
+                  <div className="text-3xl font-bold text-orange-600 mb-2">
+                    {myReports.length || 0}
+                  </div>
+                  <p
+                    className={cn(
+                      "text-sm text-muted-foreground",
+                      isRTL ? "font-arabic" : "font-sans"
+                    )}>
+                    {language === "ar" ? "إجمالي البلاغات" : "Total Reports"}
+                  </p>
+                </CardContent>
+              </Card>
+
+              {/* Total Success Stories */}
+              <Card className="text-center hover:shadow-lg transition-shadow">
+                <CardContent className="pt-6">
+                  <div className="inline-flex items-center justify-center w-12 h-12 bg-yellow-100 rounded-full mb-4">
+                    <Star className="w-6 h-6 text-yellow-600" />
+                  </div>
+                  <div className="text-3xl font-bold text-yellow-600 mb-2">
+                    {mySuccessStories.length || 0}
+                  </div>
+                  <p
+                    className={cn(
+                      "text-sm text-muted-foreground",
+                      isRTL ? "font-arabic" : "font-sans"
+                    )}>
+                    {language === "ar"
+                      ? "إجمالي قصص النجاح"
+                      : "Total Success Stories"}
                   </p>
                 </CardContent>
               </Card>
@@ -586,6 +698,15 @@ const VolunteerDashboard = () => {
                       {language === "ar"
                         ? "إضافة قصة نجاح"
                         : "Add Success Story"}
+                    </Button>
+                    <Button
+                      variant="outline"
+                      className="w-full justify-start border-orange-200 hover:bg-orange-50"
+                      onClick={() => navigate("/report")}>
+                      <AlertTriangle
+                        className={cn("w-4 h-4", isRTL ? "ml-2" : "mr-2")}
+                      />
+                      {language === "ar" ? "تقديم بلاغ" : "Submit Report"}
                     </Button>
                   </CardContent>
                 </Card>
@@ -811,10 +932,25 @@ const VolunteerDashboard = () => {
                             {language === "ar"
                               ? "تم الإرسال في:"
                               : "Submitted on:"}{" "}
-                            {new Date(story.createdAt).toLocaleDateString(
-                              language === "ar" ? "ar-SA" : "en-US"
-                            )}
+                            {story.createdAt
+                              ? new Date(story.createdAt).toLocaleDateString(
+                                  language === "ar" ? "ar-SA" : "en-US"
+                                )
+                              : "N/A"}
                           </p>
+                        </div>
+                        <div
+                          className={cn(
+                            "flex items-center gap-2",
+                            isRTL ? "flex-row-reverse" : ""
+                          )}>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => handleViewSuccessStory(story)}
+                            className="hover:bg-primary hover:text-primary-foreground">
+                            <Eye className="w-4 h-4" />
+                          </Button>
                         </div>
                       </div>
                     ))}
@@ -849,6 +985,180 @@ const VolunteerDashboard = () => {
                       {language === "ar"
                         ? "إضافة قصة نجاح"
                         : "Add Success Story"}
+                    </Button>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </div>
+        </section>
+      </AnimatedSection>
+
+      {/* My Reports */}
+      <AnimatedSection animation="fadeInUp" delay={500} duration={400}>
+        <section className="py-12 bg-muted/50">
+          <div className="container mx-auto px-4">
+            <Card>
+              <CardHeader>
+                <CardTitle
+                  className={cn(
+                    "flex items-center gap-2",
+                    isRTL
+                      ? "flex-row-reverse font-arabic text-right"
+                      : "font-sans text-left"
+                  )}>
+                  <AlertTriangle className="w-5 h-5" />
+                  {language === "ar" ? "بلاغاتي" : "My Reports"}
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                {loadingReports ? (
+                  <div className="text-center py-8">
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
+                    <p className="text-muted-foreground">
+                      {language === "ar" ? "يتم التحميل..." : "Loading..."}
+                    </p>
+                  </div>
+                ) : myReports && myReports.length > 0 ? (
+                  <div className="grid gap-4">
+                    {myReports.map((report, index) => (
+                      <div
+                        key={report._id || index}
+                        className={cn(
+                          "flex items-start justify-between p-4 bg-background border rounded-lg hover:shadow-sm transition-shadow",
+                          isRTL ? "flex-row-reverse" : ""
+                        )}>
+                        <div
+                          className={cn(
+                            "flex-1",
+                            isRTL ? "text-right" : "text-left"
+                          )}>
+                          <div
+                            className={cn(
+                              "flex items-center gap-2 mb-2",
+                              isRTL ? "flex-row-reverse" : ""
+                            )}>
+                            <h3
+                              className={cn(
+                                "font-semibold text-lg",
+                                isRTL ? "font-arabic" : "font-sans"
+                              )}>
+                              {report.title}
+                            </h3>
+                            <Badge
+                              className={`${
+                                reportApi.getStatusConfig(
+                                  report.status,
+                                  language
+                                ).color
+                              } text-white`}>
+                              {
+                                reportApi.getStatusConfig(
+                                  report.status,
+                                  language
+                                ).text
+                              }
+                            </Badge>
+                          </div>
+                          <p
+                            className={cn(
+                              "text-sm text-muted-foreground mb-2",
+                              isRTL ? "font-arabic" : "font-sans"
+                            )}>
+                            {report.details.length > 100
+                              ? `${report.details.substring(0, 100)}...`
+                              : report.details}
+                          </p>
+                          <p
+                            className={cn(
+                              "text-xs text-muted-foreground",
+                              isRTL ? "font-arabic" : "font-sans"
+                            )}>
+                            {language === "ar"
+                              ? "تم الإرسال في:"
+                              : "Submitted on:"}{" "}
+                            {report.created_at
+                              ? formatDate(report.created_at)
+                              : "N/A"}
+                            {report.filesUrls &&
+                              report.filesUrls.length > 0 && (
+                                <span className="ml-2">
+                                  • {report.filesUrls.length}{" "}
+                                  {language === "ar"
+                                    ? "ملف مرفق"
+                                    : "attached files"}
+                                </span>
+                              )}
+                          </p>
+                          {report.adminNotes && (
+                            <div className="mt-2 p-2 bg-blue-50 rounded text-xs">
+                              <p
+                                className={cn(
+                                  "text-blue-800 font-medium",
+                                  isRTL
+                                    ? "font-arabic text-right"
+                                    : "font-sans text-left"
+                                )}>
+                                {language === "ar"
+                                  ? "ملاحظات المسؤول:"
+                                  : "Admin Notes:"}
+                              </p>
+                              <p
+                                className={cn(
+                                  "text-blue-700",
+                                  isRTL
+                                    ? "font-arabic text-right"
+                                    : "font-sans text-left"
+                                )}>
+                                {report.adminNotes}
+                              </p>
+                            </div>
+                          )}
+                        </div>
+                        <div
+                          className={cn(
+                            "flex items-center gap-2",
+                            isRTL ? "flex-row-reverse" : ""
+                          )}>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => handleViewReport(report)}
+                            className="hover:bg-primary hover:text-primary-foreground">
+                            <Eye className="w-4 h-4" />
+                          </Button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="text-center py-12">
+                    <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mx-auto mb-4">
+                      <AlertTriangle className="w-8 h-8 text-muted-foreground" />
+                    </div>
+                    <h3
+                      className={cn(
+                        "text-lg font-semibold mb-2",
+                        isRTL ? "font-arabic" : "font-sans"
+                      )}>
+                      {language === "ar"
+                        ? "لم تقم بتقديم أي بلاغات بعد"
+                        : "No reports submitted yet"}
+                    </h3>
+                    <p
+                      className={cn(
+                        "text-muted-foreground mb-6",
+                        isRTL ? "font-arabic" : "font-sans"
+                      )}>
+                      {language === "ar"
+                        ? "قدم بلاغاً عن أي مشاكل أو اقتراحات"
+                        : "Submit a report for any issues or suggestions"}
+                    </p>
+                    <Button onClick={() => navigate("/report")}>
+                      <AlertTriangle
+                        className={cn("w-4 h-4", isRTL ? "ml-2" : "mr-2")}
+                      />
+                      {language === "ar" ? "تقديم بلاغ" : "Submit Report"}
                     </Button>
                   </div>
                 )}
@@ -1064,6 +1374,447 @@ const VolunteerDashboard = () => {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* Report View Modal */}
+      {reportViewModal.isOpen && reportViewModal.report && (
+        <Dialog
+          open={reportViewModal.isOpen}
+          onOpenChange={closeReportViewModal}>
+          <DialogContent
+            className={cn(
+              "max-w-4xl max-h-[90vh] overflow-y-auto",
+              language === "ar" ? "font-arabic" : "font-sans"
+            )}>
+            <DialogHeader>
+              <DialogTitle
+                className={cn(
+                  "text-2xl",
+                  language === "ar" ? "text-right" : "text-left"
+                )}>
+                {language === "ar" ? "تفاصيل البلاغ" : "Report Details"}
+              </DialogTitle>
+            </DialogHeader>
+
+            <div className="space-y-6 py-4">
+              {/* Report Title */}
+              <div>
+                <h3
+                  className={cn(
+                    "text-sm font-medium text-muted-foreground mb-2",
+                    language === "ar" ? "text-right" : "text-left"
+                  )}>
+                  {language === "ar" ? "العنوان" : "Title"}
+                </h3>
+                <p
+                  className={cn(
+                    "text-lg font-semibold",
+                    language === "ar" ? "text-right" : "text-left"
+                  )}>
+                  {reportViewModal.report.title}
+                </p>
+              </div>
+
+              {/* Report Details */}
+              <div>
+                <h3
+                  className={cn(
+                    "text-sm font-medium text-muted-foreground mb-2",
+                    language === "ar" ? "text-right" : "text-left"
+                  )}>
+                  {language === "ar" ? "التفاصيل" : "Details"}
+                </h3>
+                <p
+                  className={cn(
+                    "text-base whitespace-pre-wrap",
+                    language === "ar" ? "text-right" : "text-left"
+                  )}>
+                  {reportViewModal.report.details}
+                </p>
+              </div>
+
+              {/* Status & Created Date Row */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <h3
+                    className={cn(
+                      "text-sm font-medium text-muted-foreground mb-2",
+                      language === "ar" ? "text-right" : "text-left"
+                    )}>
+                    {language === "ar" ? "الحالة" : "Status"}
+                  </h3>
+                  <Badge
+                    className={`${
+                      reportApi.getStatusConfig(
+                        reportViewModal.report.status,
+                        language
+                      ).color
+                    } text-white`}>
+                    {
+                      reportApi.getStatusConfig(
+                        reportViewModal.report.status,
+                        language
+                      ).text
+                    }
+                  </Badge>
+                </div>
+
+                <div>
+                  <h3
+                    className={cn(
+                      "text-sm font-medium text-muted-foreground mb-2",
+                      language === "ar" ? "text-right" : "text-left"
+                    )}>
+                    {language === "ar" ? "تاريخ الإنشاء" : "Created At"}
+                  </h3>
+                  <p
+                    className={cn(
+                      "text-base",
+                      language === "ar" ? "text-right" : "text-left"
+                    )}>
+                    {formatDate(reportViewModal.report.created_at)}
+                  </p>
+                </div>
+              </div>
+
+              {/* Files Section */}
+              {reportViewModal.report.filesUrls &&
+                reportViewModal.report.filesUrls.length > 0 && (
+                  <div>
+                    <h3
+                      className={cn(
+                        "text-sm font-medium text-muted-foreground mb-3",
+                        language === "ar" ? "text-right" : "text-left"
+                      )}>
+                      {language === "ar"
+                        ? `الملفات المرفقة (${reportViewModal.report.filesUrls.length})`
+                        : `Attached Files (${reportViewModal.report.filesUrls.length})`}
+                    </h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      {reportViewModal.report.filesUrls.map(
+                        (fileUrl, index) => {
+                          const fullUrl = reportApi.getFileUrl(fileUrl);
+                          const isVideo = fileUrl.match(
+                            /\.(mp4|webm|ogg|mov)$/i
+                          );
+                          const isImage = fileUrl.match(
+                            /\.(jpg|jpeg|png|gif|webp|bmp)$/i
+                          );
+
+                          return (
+                            <div
+                              key={index}
+                              className="border rounded-lg p-2 bg-muted/30">
+                              {isImage && (
+                                <a
+                                  href={fullUrl}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="block">
+                                  <img
+                                    src={fullUrl}
+                                    alt={`Report file ${index + 1}`}
+                                    className="w-full h-48 object-cover rounded cursor-pointer hover:opacity-90 transition-opacity"
+                                  />
+                                  <p className="text-xs text-center mt-2 text-muted-foreground">
+                                    {language === "ar"
+                                      ? "انقر للعرض بالحجم الكامل"
+                                      : "Click to view full size"}
+                                  </p>
+                                </a>
+                              )}
+                              {isVideo && (
+                                <div>
+                                  <video
+                                    controls
+                                    className="w-full h-48 rounded"
+                                    preload="metadata">
+                                    <source src={fullUrl} />
+                                    {language === "ar"
+                                      ? "متصفحك لا يدعم تشغيل الفيديو"
+                                      : "Your browser does not support the video tag"}
+                                  </video>
+                                  <p className="text-xs text-center mt-2 text-muted-foreground">
+                                    {language === "ar" ? "فيديو" : "Video"}
+                                  </p>
+                                </div>
+                              )}
+                              {!isImage && !isVideo && (
+                                <div className="flex items-center justify-center h-48 bg-muted rounded">
+                                  <div className="text-center">
+                                    <FileImage className="w-12 h-12 mx-auto mb-2 text-muted-foreground" />
+                                    <a
+                                      href={fullUrl}
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                      className="text-sm text-primary hover:underline">
+                                      {language === "ar"
+                                        ? "تحميل الملف"
+                                        : "Download File"}
+                                    </a>
+                                  </div>
+                                </div>
+                              )}
+                            </div>
+                          );
+                        }
+                      )}
+                    </div>
+                  </div>
+                )}
+
+              {/* Admin Notes (if any) */}
+              {reportViewModal.report.adminNotes && (
+                <div className="bg-blue-50 p-4 rounded-lg">
+                  <h3
+                    className={cn(
+                      "text-sm font-medium text-blue-900 mb-2",
+                      language === "ar" ? "text-right" : "text-left"
+                    )}>
+                    {language === "ar" ? "ملاحظات المسؤول" : "Admin Notes"}
+                  </h3>
+                  <p
+                    className={cn(
+                      "text-base text-blue-800",
+                      language === "ar" ? "text-right" : "text-left"
+                    )}>
+                    {reportViewModal.report.adminNotes}
+                  </p>
+                </div>
+              )}
+            </div>
+
+            <DialogFooter
+              className={cn(language === "ar" ? "flex-row-reverse" : "")}>
+              <Button variant="outline" onClick={closeReportViewModal}>
+                {language === "ar" ? "إغلاق" : "Close"}
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+      )}
+
+      {/* Success Story View Modal */}
+      {successStoryViewModal.isOpen && successStoryViewModal.story && (
+        <Dialog
+          open={successStoryViewModal.isOpen}
+          onOpenChange={closeSuccessStoryViewModal}>
+          <DialogContent
+            className={cn(
+              "max-w-4xl max-h-[90vh] overflow-y-auto",
+              language === "ar" ? "font-arabic" : "font-sans"
+            )}>
+            <DialogHeader>
+              <DialogTitle
+                className={cn(
+                  "text-2xl",
+                  language === "ar" ? "text-right" : "text-left"
+                )}>
+                {language === "ar"
+                  ? "تفاصيل قصة النجاح"
+                  : "Success Story Details"}
+              </DialogTitle>
+            </DialogHeader>
+
+            <div className="space-y-6 py-4">
+              {/* Story Title */}
+              <div>
+                <h3
+                  className={cn(
+                    "text-sm font-medium text-muted-foreground mb-2",
+                    language === "ar" ? "text-right" : "text-left"
+                  )}>
+                  {language === "ar" ? "العنوان" : "Title"}
+                </h3>
+                <p
+                  className={cn(
+                    "text-lg font-semibold",
+                    language === "ar" ? "text-right" : "text-left"
+                  )}>
+                  {successStoryViewModal.story.title}
+                </p>
+              </div>
+
+              {/* Story Subtitle */}
+              <div>
+                <h3
+                  className={cn(
+                    "text-sm font-medium text-muted-foreground mb-2",
+                    language === "ar" ? "text-right" : "text-left"
+                  )}>
+                  {language === "ar" ? "العنوان الفرعي" : "Subtitle"}
+                </h3>
+                <p
+                  className={cn(
+                    "text-base",
+                    language === "ar" ? "text-right" : "text-left"
+                  )}>
+                  {successStoryViewModal.story.subtitle}
+                </p>
+              </div>
+
+              {/* Author & Status Row */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                  <h3
+                    className={cn(
+                      "text-sm font-medium text-muted-foreground mb-2",
+                      language === "ar" ? "text-right" : "text-left"
+                    )}>
+                    {language === "ar" ? "الكاتب" : "Author"}
+                  </h3>
+                  <p
+                    className={cn(
+                      "text-base",
+                      language === "ar" ? "text-right" : "text-left"
+                    )}>
+                    {successStoryViewModal.story.author ||
+                      user?.fullName ||
+                      "N/A"}
+                  </p>
+                </div>
+
+                <div>
+                  <h3
+                    className={cn(
+                      "text-sm font-medium text-muted-foreground mb-2",
+                      language === "ar" ? "text-right" : "text-left"
+                    )}>
+                    {language === "ar" ? "الحالة" : "Status"}
+                  </h3>
+                  {getApprovalStatusBadge(
+                    successStoryViewModal.story.approvalStatus
+                  )}
+                </div>
+
+                <div>
+                  <h3
+                    className={cn(
+                      "text-sm font-medium text-muted-foreground mb-2",
+                      language === "ar" ? "text-right" : "text-left"
+                    )}>
+                    {language === "ar" ? "تاريخ الإرسال" : "Submitted At"}
+                  </h3>
+                  <p
+                    className={cn(
+                      "text-base",
+                      language === "ar" ? "text-right" : "text-left"
+                    )}>
+                    {successStoryViewModal.story.createdAt
+                      ? new Date(
+                          successStoryViewModal.story.createdAt
+                        ).toLocaleDateString(
+                          language === "ar" ? "ar-SA" : "en-US"
+                        )
+                      : "N/A"}
+                  </p>
+                </div>
+              </div>
+
+              {/* Description */}
+              <div>
+                <h3
+                  className={cn(
+                    "text-sm font-medium text-muted-foreground mb-2",
+                    language === "ar" ? "text-right" : "text-left"
+                  )}>
+                  {language === "ar" ? "الوصف" : "Description"}
+                </h3>
+                <p
+                  className={cn(
+                    "text-base whitespace-pre-wrap",
+                    language === "ar" ? "text-right" : "text-left"
+                  )}>
+                  {successStoryViewModal.story.description}
+                </p>
+              </div>
+
+              {/* Quote */}
+              {successStoryViewModal.story.quote && (
+                <div className="bg-yellow-50 p-4 rounded-lg border-l-4 border-yellow-400">
+                  <h3
+                    className={cn(
+                      "text-sm font-medium text-yellow-900 mb-2",
+                      language === "ar" ? "text-right" : "text-left"
+                    )}>
+                    {language === "ar" ? "اقتباس ملهم" : "Inspiring Quote"}
+                  </h3>
+                  <p
+                    className={cn(
+                      "text-base text-yellow-800 italic",
+                      language === "ar" ? "text-right" : "text-left"
+                    )}>
+                    "{successStoryViewModal.story.quote}"
+                  </p>
+                </div>
+              )}
+
+              {/* Before and After */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <h3
+                    className={cn(
+                      "text-sm font-medium text-muted-foreground mb-2",
+                      language === "ar" ? "text-right" : "text-left"
+                    )}>
+                    {language === "ar" ? "قبل" : "Before"}
+                  </h3>
+                  <p
+                    className={cn(
+                      "text-base whitespace-pre-wrap",
+                      language === "ar" ? "text-right" : "text-left"
+                    )}>
+                    {successStoryViewModal.story.before}
+                  </p>
+                </div>
+
+                <div>
+                  <h3
+                    className={cn(
+                      "text-sm font-medium text-muted-foreground mb-2",
+                      language === "ar" ? "text-right" : "text-left"
+                    )}>
+                    {language === "ar" ? "بعد" : "After"}
+                  </h3>
+                  <p
+                    className={cn(
+                      "text-base whitespace-pre-wrap",
+                      language === "ar" ? "text-right" : "text-left"
+                    )}>
+                    {successStoryViewModal.story.after}
+                  </p>
+                </div>
+              </div>
+
+              {/* Story Image */}
+              {successStoryViewModal.story.imageUrl && (
+                <div>
+                  <h3
+                    className={cn(
+                      "text-sm font-medium text-muted-foreground mb-3",
+                      language === "ar" ? "text-right" : "text-left"
+                    )}>
+                    {language === "ar" ? "صورة القصة" : "Story Image"}
+                  </h3>
+                  <div className="flex justify-center">
+                    <img
+                      src={successStoryViewModal.story.imageUrl}
+                      alt={successStoryViewModal.story.title}
+                      className="max-w-full h-auto max-h-96 rounded-lg shadow-md"
+                    />
+                  </div>
+                </div>
+              )}
+            </div>
+
+            <DialogFooter
+              className={cn(language === "ar" ? "flex-row-reverse" : "")}>
+              <Button variant="outline" onClick={closeSuccessStoryViewModal}>
+                {language === "ar" ? "إغلاق" : "Close"}
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+      )}
     </div>
   );
 };
