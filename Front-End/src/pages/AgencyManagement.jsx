@@ -301,18 +301,18 @@ const AgencyManagement = () => {
   return (
     <div className="space-y-6">
       {/* Page Header */}
-      <div className="flex justify-between items-center">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-foreground mb-2">
+          <h1 className="text-2xl md:text-3xl font-bold text-foreground mb-2">
             {t("agencyManagement.title")}
           </h1>
-          <p className="text-muted-foreground">
+          <p className="text-sm md:text-base text-muted-foreground">
             {t("agencyManagement.subtitle")}
           </p>
         </div>
         <Button
           onClick={() => setShowAddForm(true)}
-          className="flex items-center gap-2">
+          className="flex items-center gap-2 w-full md:w-auto">
           <Plus className="w-4 h-4" />
           {t("agencyManagement.addNewAgency")}
         </Button>
@@ -328,13 +328,18 @@ const AgencyManagement = () => {
         <CardContent>
           <div className="space-y-4">
             {agenciesList.map((agency) => (
-              <div key={agency.id} className="border rounded-lg p-4">
-                <div className={`flex items-start justify-between`}>
-                  <div className="flex-1">
-                    <div className={`flex items-center gap-3 mb-1 `}>
-                      <h3 className="text-lg font-semibold">{agency.name}</h3>
+              <div key={agency.id} className="border rounded-lg p-3 md:p-4">
+                <div
+                  className={`flex flex-col md:flex-row items-start md:justify-between gap-4`}>
+                  <div className="flex-1 w-full">
+                    <div className={`flex items-center gap-3 mb-1`}>
+                      <h3 className="text-base md:text-lg font-semibold">
+                        {agency.name}
+                      </h3>
                     </div>
-                    <p className="text-muted-foreground mb-6">{agency.email}</p>
+                    <p className="text-sm md:text-base text-muted-foreground mb-4 md:mb-6">
+                      {agency.email}
+                    </p>
 
                     {/* Assigned Standards Count */}
                     <div className="mb-4">
@@ -353,7 +358,7 @@ const AgencyManagement = () => {
                     {/* Contact Information Row */}
                     <div className={`mb-4`}>
                       <div
-                        className={`grid grid-cols-2 md:grid-cols-4 gap-4 text-sm `}>
+                        className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4 text-sm`}>
                         {[
                           {
                             key: "contactPerson",
@@ -390,25 +395,28 @@ const AgencyManagement = () => {
                   </div>
 
                   <div
-                    className={`flex items-center gap-2 ${
-                      language === "ar" ? "mr-4" : "ml-4"
+                    className={`flex items-center gap-2 w-full md:w-auto flex-shrink-0 ${
+                      language === "ar" ? "md:mr-4" : "md:ml-4"
                     }`}>
                     <Button
                       variant="outline"
                       size="sm"
-                      onClick={() => handleEdit(agency)}>
+                      onClick={() => handleEdit(agency)}
+                      className="flex-1 md:flex-initial">
                       <Edit className="w-4 h-4" />
                     </Button>
                     <Button
                       variant="outline"
                       size="sm"
-                      onClick={() => handleViewStandards(agency)}>
+                      onClick={() => handleViewStandards(agency)}
+                      className="flex-1 md:flex-initial">
                       <Eye className="w-4 h-4" />
                     </Button>
                     <Button
                       variant="outline"
                       size="sm"
-                      onClick={() => handleDelete(agency._id)}>
+                      onClick={() => handleDelete(agency._id)}
+                      className="flex-1 md:flex-initial text-destructive hover:text-destructive">
                       <Trash2 className="w-4 h-4" />
                     </Button>
                   </div>

@@ -1473,11 +1473,11 @@ const AdminDashboard = () => {
   return (
     <div className="space-y-6">
       {/* Page Header */}
-      <div className="mb-6">
-        <h1 className="text-3xl font-bold text-foreground mb-2">
+      <div className="mb-4 md:mb-6">
+        <h1 className="text-2xl md:text-3xl font-bold text-foreground mb-2">
           {language === "ar" ? "لوحة التحكم" : "Dashboard"}
         </h1>
-        <p className="text-muted-foreground">
+        <p className="text-sm md:text-base text-muted-foreground">
           {language === "ar"
             ? "نظرة عامة على النظام والإحصائيات"
             : "System overview and statistics"}
@@ -1485,30 +1485,32 @@ const AdminDashboard = () => {
       </div>
 
       {/* Stats Overview */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+      <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-6 mb-6 md:mb-8">
         {statCards.map((stat, index) => (
           <Card
             key={index}
             className="hover:shadow-md transition-all duration-300 border-0 bg-card/95 backdrop-blur-sm group">
-            <CardContent className="p-6">
+            <CardContent className="p-3 md:p-6">
               <div className="flex items-center justify-between">
                 <div>
                   <p
-                    className={`text-sm font-medium text-muted-foreground mb-1 ${
+                    className={`text-xs md:text-sm font-medium text-muted-foreground mb-1 ${
                       language === "ar" ? "font-arabic" : "font-english"
                     }`}>
                     {language === "ar" ? stat.title.ar : stat.title.en}
                   </p>
-                  <p className="text-2xl font-bold text-foreground">
+                  <p className="text-xl md:text-2xl font-bold text-foreground">
                     {stat.value}
                   </p>
                 </div>
                 <div
                   className={cn(
-                    "w-12 h-12 rounded-lg flex items-center justify-center",
+                    "w-8 h-8 md:w-12 md:h-12 rounded-lg flex items-center justify-center",
                     stat.bgColor
                   )}>
-                  <stat.icon className={cn("w-6 h-6", stat.color)} />
+                  <stat.icon
+                    className={cn("w-4 h-4 md:w-6 md:h-6", stat.color)}
+                  />
                 </div>
               </div>
             </CardContent>
@@ -1517,60 +1519,64 @@ const AdminDashboard = () => {
       </div>
 
       {/* Data Tables */}
-      <Tabs defaultValue="health" className="space-y-6">
-        <TabsList className="grid w-full grid-cols-4 lg:grid-cols-8">
-          {[
-            {
-              value: "health",
-              ar: "الصحة",
-              en: "Health",
-            },
-            {
-              value: "initiatives",
-              ar: "المبادرات",
-              en: "Initiatives",
-            },
-            {
-              value: "pending-initiatives",
-              ar: "المبادرات المعلقة",
-              en: "Pending Initiatives",
-            },
-            {
-              value: "volunteers",
-              ar: "المتطوعين",
-              en: "Volunteers",
-            },
-            {
-              value: "news",
-              ar: "الأخبار",
-              en: "News",
-            },
-            {
-              value: "success_stories",
-              ar: "قصص النجاح",
-              en: "Success Stories",
-            },
-            {
-              value: "pending-success-stories",
-              ar: "قصص النجاح المعلقة",
-              en: "Pending Success Stories",
-            },
-            {
-              value: "reports",
-              ar: "البلاغات",
-              en: "Reports",
-            },
-          ]
-            .sort(() => (language === "ar" ? -1 : 1))
-            .map((tab) => (
-              <TabsTrigger
-                key={tab.value}
-                value={tab.value}
-                className={language === "ar" ? "font-arabic" : "font-english"}>
-                {language === "ar" ? tab.ar : tab.en}
-              </TabsTrigger>
-            ))}
-        </TabsList>
+      <Tabs defaultValue="health" className="space-y-4 md:space-y-6">
+        <div className="overflow-x-auto -mx-4 px-4">
+          <TabsList className="inline-flex min-w-max w-max">
+            {[
+              {
+                value: "health",
+                ar: "الصحة",
+                en: "Health",
+              },
+              {
+                value: "initiatives",
+                ar: "المبادرات",
+                en: "Initiatives",
+              },
+              {
+                value: "pending-initiatives",
+                ar: "المبادرات المعلقة",
+                en: "Pending Initiatives",
+              },
+              {
+                value: "volunteers",
+                ar: "المتطوعين",
+                en: "Volunteers",
+              },
+              {
+                value: "news",
+                ar: "الأخبار",
+                en: "News",
+              },
+              {
+                value: "success_stories",
+                ar: "قصص النجاح",
+                en: "Success Stories",
+              },
+              {
+                value: "pending-success-stories",
+                ar: "قصص النجاح المعلقة",
+                en: "Pending Success Stories",
+              },
+              {
+                value: "reports",
+                ar: "البلاغات",
+                en: "Reports",
+              },
+            ]
+              .sort(() => (language === "ar" ? -1 : 1))
+              .map((tab) => (
+                <TabsTrigger
+                  key={tab.value}
+                  value={tab.value}
+                  className={`text-xs md:text-sm whitespace-nowrap ${
+                    language === "ar" ? "font-arabic" : "font-english"
+                  }`}>
+                  {language === "ar" ? tab.ar : tab.en}
+                </TabsTrigger>
+              ))}
+          </TabsList>
+        </div>
 
         {/* Health Metrics Tab */}
         <TabsContent value="health">

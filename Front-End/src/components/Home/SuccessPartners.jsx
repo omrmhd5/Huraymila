@@ -80,11 +80,11 @@ const SuccessPartners = () => {
   ];
 
   return (
-    <section className="w-full bg-secondary/15 backdrop-blur-sm py-12 overflow-hidden">
-      <div className="w-full px-4 mb-8">
+    <section className="w-full bg-secondary/15 backdrop-blur-sm py-6 md:py-10 lg:py-12 overflow-hidden">
+      <div className="w-full px-4 mb-4 md:mb-6 lg:mb-8">
         <h3
           className={cn(
-            "text-xl md:text-2xl font-bold text-foreground text-center",
+            "text-lg md:text-xl lg:text-2xl font-bold text-foreground text-center",
             isRTL ? "font-arabic" : "font-english"
           )}>
           {t("successPartners.title")}
@@ -110,8 +110,8 @@ const SuccessPartners = () => {
             {partners.map((partner, index) => (
               <div
                 key={`first-${index}`}
-                className="flex-shrink-0 w-32 sm:w-40 mx-2 bg-card backdrop-blur-md rounded-lg p-4 text-center border border-border hover:bg-card/70 transition-all duration-300 group">
-                <div className="w-12 h-12 sm:w-14 sm:h-14 mx-auto mb-3 group-hover:scale-110 transition-transform duration-300 flex items-center justify-center">
+                className="flex-shrink-0 w-24 sm:w-32 md:w-36 lg:w-40 mx-1 sm:mx-2 bg-card backdrop-blur-md rounded-lg p-2 sm:p-3 md:p-4 text-center border border-border hover:bg-card/70 transition-all duration-300 group">
+                <div className="w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 mx-auto mb-2 sm:mb-2 md:mb-3 group-hover:scale-110 transition-transform duration-300 flex items-center justify-center">
                   <img
                     src={partner.logo}
                     alt={partner.name}
@@ -129,7 +129,7 @@ const SuccessPartners = () => {
                 </div>
                 <div
                   className={cn(
-                    "text-foreground text-xs leading-tight",
+                    "text-foreground text-[10px] sm:text-xs leading-tight",
                     isRTL ? "font-arabic" : "font-english"
                   )}>
                   {partner.name}
@@ -141,8 +141,8 @@ const SuccessPartners = () => {
             {partners.map((partner, index) => (
               <div
                 key={`second-${index}`}
-                className="flex-shrink-0 w-32 sm:w-40 mx-2 bg-card backdrop-blur-md rounded-lg p-4 text-center border border-border hover:bg-card/70 transition-all duration-300 group">
-                <div className="w-12 h-12 sm:w-14 sm:h-14 mx-auto mb-3 group-hover:scale-110 transition-transform duration-300 flex items-center justify-center">
+                className="flex-shrink-0 w-24 sm:w-32 md:w-36 lg:w-40 mx-1 sm:mx-2 bg-card backdrop-blur-md rounded-lg p-2 sm:p-3 md:p-4 text-center border border-border hover:bg-card/70 transition-all duration-300 group">
+                <div className="w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 mx-auto mb-2 sm:mb-2 md:mb-3 group-hover:scale-110 transition-transform duration-300 flex items-center justify-center">
                   <img
                     src={partner.logo}
                     alt={partner.name}
@@ -160,7 +160,7 @@ const SuccessPartners = () => {
                 </div>
                 <div
                   className={cn(
-                    "text-foreground text-xs leading-tight",
+                    "text-foreground text-[10px] sm:text-xs leading-tight",
                     isRTL ? "font-arabic" : "font-english"
                   )}>
                   {partner.name}

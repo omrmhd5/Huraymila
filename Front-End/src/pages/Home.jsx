@@ -38,16 +38,13 @@ const Home = () => {
         <AnimatedSection animation="fadeInUp" delay={50} duration={400}>
           <AboutSection />
         </AnimatedSection>
-        <AnimatedSection animation="fadeInUp" delay={100} duration={400}>
-          <SuccessStories />
-        </AnimatedSection>
         <AnimatedSection animation="fadeInRight" delay={150} duration={400}>
           <NewsSection />
         </AnimatedSection>
         <AnimatedSection animation="scaleIn" delay={200} duration={400}>
           <HealthDashboard />
         </AnimatedSection>
-        {/* <InteractiveMap /> */}
+        <InteractiveMap />
         <AnimatedSection animation="fadeInUp" delay={250} duration={400}>
           <InitiativesSection />
         </AnimatedSection>

@@ -56,14 +56,7 @@ const AboutSection = () => {
           value: t("aboutHuraymila.stats.populationValue"),
           label: t("aboutHuraymila.stats.population"),
         },
-        {
-          value: t("aboutHuraymila.stats.foundedValue"),
-          label: t("aboutHuraymila.stats.founded"),
-        },
-        {
-          value: t("aboutHuraymila.stats.elevationValue"),
-          label: t("aboutHuraymila.stats.elevation"),
-        },
+
         {
           value: t("aboutHuraymila.stats.areaValue"),
           label: t("aboutHuraymila.stats.area"),
@@ -214,7 +207,7 @@ const AboutSection = () => {
                 )}>
                 {current.aboutHuraymila.description}
               </p>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-8">
+              <div className="grid grid-cols-2 md:grid-cols-2 gap-6 mb-8">
                 {current.aboutHuraymila.facts.map((fact, index) => (
                   <div key={index} className="text-center">
                     <div className="text-2xl font-bold text-primary mb-2">

@@ -99,26 +99,13 @@ const AboutHuraymila = () => {
       value: t("aboutHuraymila.stats.populationValue"),
       icon: Users,
     },
-    {
-      label: t("aboutHuraymila.stats.founded"),
-      value: t("aboutHuraymila.stats.foundedValue"),
-      icon: Calendar,
-    },
-    {
-      label: t("aboutHuraymila.stats.elevation"),
-      value: t("aboutHuraymila.stats.elevationValue"),
-      icon: Mountain,
-    },
+
     {
       label: t("aboutHuraymila.stats.area"),
       value: t("aboutHuraymila.stats.areaValue"),
       icon: Globe,
     },
-    {
-      label: t("aboutHuraymila.stats.populationDensity"),
-      value: t("aboutHuraymila.stats.populationDensityValue"),
-      icon: Users,
-    },
+
     {
       label: t("aboutHuraymila.stats.saudis"),
       value: t("aboutHuraymila.stats.saudisValue"),
@@ -134,11 +121,7 @@ const AboutHuraymila = () => {
       value: t("aboutHuraymila.stats.householdsValue"),
       icon: Building2,
     },
-    {
-      label: t("aboutHuraymila.stats.dialingCode"),
-      value: t("aboutHuraymila.stats.dialingCodeValue"),
-      icon: Phone,
-    },
+
     {
       label: t("aboutHuraymila.stats.coordinates"),
       value: t("aboutHuraymila.stats.coordinatesValue"),

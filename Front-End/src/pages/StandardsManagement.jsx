@@ -271,20 +271,20 @@ const StandardsManagement = () => {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 md:space-y-6">
       {/* Page Header */}
       <div className="space-y-2">
-        <h1 className="text-3xl font-bold text-foreground">
+        <h1 className="text-2xl md:text-3xl font-bold text-foreground">
           {t("standardsManagement.title")}
         </h1>
-        <p className="text-muted-foreground">
+        <p className="text-sm md:text-base text-muted-foreground">
           {t("standardsManagement.subtitle")}
         </p>
       </div>
 
       {/* Summary Statistics */}
       <div
-        className={`grid grid-cols-1 md:grid-cols-5 gap-4
+        className={`grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 md:gap-4
     ${language === "ar" ? "flex-row-reverse" : ""}`}>
         {[
           {
@@ -325,12 +325,15 @@ const StandardsManagement = () => {
           .sort(() => (language === "ar" ? -1 : 1))
           .map((stat, index) => (
             <Card key={index}>
-              <CardContent className="p-4">
+              <CardContent className="p-3 md:p-4">
                 <div className="text-center">
-                  <div className={`text-2xl font-bold ${stat.color}`}>
+                  <div
+                    className={`text-xl md:text-2xl font-bold ${stat.color}`}>
                     {stat.value}
                   </div>
-                  <p className="text-sm text-muted-foreground">{stat.label}</p>
+                  <p className="text-xs md:text-sm text-muted-foreground">
+                    {stat.label}
+                  </p>
                 </div>
               </CardContent>
             </Card>
@@ -346,7 +349,7 @@ const StandardsManagement = () => {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-4">
             <div className="space-y-2">
               <label className="text-sm font-medium">
                 {t("standardsManagement.searchStandards")}

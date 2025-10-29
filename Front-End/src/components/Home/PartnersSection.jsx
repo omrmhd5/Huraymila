@@ -1,3 +1,4 @@
+import React from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import {
   Building,
@@ -34,6 +35,16 @@ import { useLanguage } from "@/contexts/LanguageContext";
 const PartnersSection = () => {
   const { language } = useTheme();
   const { t } = useLanguage();
+  const [dimensions, setDimensions] = React.useState({ width: 0 });
+
+  React.useEffect(() => {
+    const handleResize = () => {
+      setDimensions({ width: window.innerWidth });
+    };
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   const connections = [
     {
@@ -194,20 +205,20 @@ const PartnersSection = () => {
   const isRTL = language === "ar";
 
   return (
-    <section className="py-20 bg-primary/10 overflow-hidden">
+    <section className="py-10 md:py-16 lg:py-20 bg-primary/10 overflow-hidden">
       <div className="container mx-auto px-4">
         {/* Header */}
-        <div className="text-center mb-16">
+        <div className="text-center mb-8 md:mb-12 lg:mb-16">
           <h2
             className={cn(
-              "text-4xl font-bold text-foreground mb-4",
+              "text-2xl md:text-3xl lg:text-4xl font-bold text-foreground mb-3 md:mb-4",
               isRTL ? "font-arabic" : "font-english"
             )}>
             {t("partnersSection.title")}
           </h2>
           <p
             className={cn(
-              "text-lg text-muted-foreground max-w-4xl mx-auto",
+              "text-base md:text-lg text-muted-foreground max-w-4xl mx-auto",
               isRTL ? "font-arabic" : "font-english"
             )}>
             {t("partnersSection.subtitle")}
@@ -215,46 +226,46 @@ const PartnersSection = () => {
         </div>
 
         {/* Hexagonal Network */}
-        <div className="relative w-full max-w-7xl mx-auto h-[800px] mb-16">
+        <div className="relative w-full max-w-7xl mx-auto h-[400px] md:h-[600px] lg:h-[800px] mb-8 md:mb-16 overflow-hidden">
           {/* Central Hub - Community */}
           <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-20">
             {/* Central Community Hub without shadow */}
-            <div className="w-56 h-56 rounded-full border-4 border-amber-400/80 bg-gradient-to-br from-amber-100/95 to-orange-100/85 dark:from-amber-900/95 dark:to-orange-900/85 flex items-center justify-center relative overflow-hidden">
+            <div className="w-40 h-40 md:w-48 md:h-48 lg:w-56 lg:h-56 rounded-full border-4 border-amber-400/80 bg-gradient-to-br from-amber-100/95 to-orange-100/85 dark:from-amber-900/95 dark:to-orange-900/85 flex items-center justify-center relative overflow-hidden">
               {/* Animated Inner Rings */}
               <div
-                className="absolute w-48 h-48 rounded-full border-2 border-amber-300/40 animate-ping"
+                className="absolute w-32 h-32 md:w-40 md:h-40 lg:w-48 lg:h-48 rounded-full border-2 border-amber-300/40 animate-ping hidden md:block"
                 style={{
                   animationDuration: "4s",
                 }}></div>
               <div
-                className="absolute w-40 h-40 rounded-full border border-amber-200/30 animate-ping"
+                className="absolute w-28 h-28 md:w-36 md:h-36 lg:w-40 lg:h-40 rounded-full border border-amber-200/30 animate-ping hidden md:block"
                 style={{
                   animationDelay: "2s",
                   animationDuration: "4s",
                 }}></div>
 
-              <div className="text-center z-10 relative">
-                <div className="w-14 h-14 rounded-full bg-gradient-to-br from-amber-500 to-orange-500 flex items-center justify-center mb-3 mx-auto animate-pulse">
-                  <Users className="h-7 w-7 text-white" />
+              <div className="text-center z-10 relative px-2">
+                <div className="w-10 h-10 md:w-12 md:h-12 lg:w-14 lg:h-14 rounded-full bg-gradient-to-br from-amber-500 to-orange-500 flex items-center justify-center mb-2 md:mb-3 mx-auto animate-pulse">
+                  <Users className="h-5 w-5 md:h-6 md:w-6 lg:h-7 lg:w-7 text-white" />
                 </div>
                 <h3
                   className={cn(
-                    "text-lg font-bold text-foreground mb-2",
+                    "text-xs md:text-sm lg:text-lg font-bold text-foreground mb-1 md:mb-2",
                     isRTL ? "font-arabic" : "font-english"
                   )}>
                   {t("partnersSection.centerEntity.name")}
                 </h3>
                 <p
                   className={cn(
-                    "text-sm text-muted-foreground mb-2",
+                    "text-[10px] md:text-xs lg:text-sm text-muted-foreground mb-1 md:mb-2 hidden lg:block",
                     isRTL ? "font-arabic" : "font-english"
                   )}>
                   {t("partnersSection.centerEntity.description")}
                 </p>
-                <div className="text-amber-600 dark:text-amber-400 font-bold text-sm mb-1">
+                <div className="text-amber-600 dark:text-amber-400 font-bold text-[10px] md:text-xs lg:text-sm mb-1">
                   {t("partnersSection.centerEntity.stats")}
                 </div>
-                <div className="text-amber-700 dark:text-amber-300 font-bold text-xs">
+                <div className="text-amber-700 dark:text-amber-300 font-bold text-[9px] md:text-[10px] lg:text-xs hidden lg:block">
                   {t("partnersSection.centerEntity.organizations")}
                 </div>
               </div>
@@ -264,7 +275,12 @@ const PartnersSection = () => {
           {/* Connection Lines - Rendered from Center */}
           {connections.map((connection, index) => {
             const angle = index * (360 / connections.length) * (Math.PI / 180); // Dynamic angle based on actual count
-            const radius = 350;
+            const radius =
+              dimensions.width < 768
+                ? 150
+                : dimensions.width < 1024
+                ? 250
+                : 350;
             return (
               <div key={`line-${index}`}>
                 {/* Static Connection Line to Center */}
@@ -316,7 +332,12 @@ const PartnersSection = () => {
           {/* Partner Organizations in Network Pattern */}
           {connections.map((connection, index) => {
             const angle = index * (360 / connections.length) * (Math.PI / 180); // Dynamic angle based on actual count
-            const radius = 350;
+            const radius =
+              dimensions.width < 768
+                ? 150
+                : dimensions.width < 1024
+                ? 250
+                : 350;
             const x = Math.cos(angle) * radius;
             const y = Math.sin(angle) * radius;
             return (
@@ -357,12 +378,12 @@ const PartnersSection = () => {
                 })}
 
                 {/* Partner Card */}
-                <Card className="w-32 h-24 group-hover:shadow-xl transition-all duration-300 border-2 border-amber-200/60 hover:border-amber-300/80 cursor-pointer relative overflow-hidden bg-white/90 backdrop-blur-sm shadow-md">
+                <Card className="w-20 h-16 md:w-28 md:h-20 lg:w-32 lg:h-24 group-hover:shadow-xl transition-all duration-300 border-2 border-amber-200/60 hover:border-amber-300/80 cursor-pointer relative overflow-hidden bg-white/90 backdrop-blur-sm shadow-md">
                   {/* Clear Background */}
                   <div className="absolute inset-0 bg-gradient-to-br from-amber-50/80 to-orange-50/60"></div>
 
-                  <CardContent className="p-2 text-center relative z-10 h-full flex flex-col justify-center">
-                    <div className="w-10 h-10 mx-auto mb-2 group-hover:scale-110 transition-transform duration-300 flex items-center justify-center">
+                  <CardContent className="p-1 md:p-1.5 lg:p-2 text-center relative z-10 h-full flex flex-col justify-center">
+                    <div className="w-6 h-6 md:w-8 md:h-8 lg:w-10 lg:h-10 mx-auto mb-1 md:mb-1.5 lg:mb-2 group-hover:scale-110 transition-transform duration-300 flex items-center justify-center">
                       <img
                         src={connection.logo}
                         alt={connection.name}
@@ -380,7 +401,7 @@ const PartnersSection = () => {
                     </div>
                     <h4
                       className={cn(
-                        "font-semibold text-amber-700 group-hover:text-black transition-colors text-xs leading-tight",
+                        "font-semibold text-amber-700 group-hover:text-black transition-colors text-[9px] md:text-[10px] lg:text-xs leading-tight",
                         isRTL ? "font-arabic" : "font-english"
                       )}>
                       {connection.name}
@@ -396,49 +417,57 @@ const PartnersSection = () => {
         </div>
 
         {/* Impact Statistics */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-          <Card className="text-center p-6 bg-gradient-to-br from-primary/10 to-primary/5 border-primary/20">
-            <Users className="h-8 w-8 text-primary mx-auto mb-3" />
-            <div className="text-3xl font-bold text-primary mb-1">17</div>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
+          <Card className="text-center p-4 md:p-6 bg-gradient-to-br from-primary/10 to-primary/5 border-primary/20">
+            <Users className="h-6 w-6 md:h-8 md:w-8 text-primary mx-auto mb-2 md:mb-3" />
+            <div className="text-2xl md:text-3xl font-bold text-primary mb-1">
+              17
+            </div>
             <p
               className={cn(
-                "text-sm text-muted-foreground",
+                "text-xs md:text-sm text-muted-foreground",
                 isRTL ? "font-arabic" : "font-english"
               )}>
               {t("partnersSection.stats.partnerOrganizations")}
             </p>
           </Card>
 
-          <Card className="text-center p-6 bg-gradient-to-br from-secondary/10 to-secondary/5 border-secondary/20">
-            <Target className="h-8 w-8 text-secondary mx-auto mb-3" />
-            <div className="text-3xl font-bold text-secondary mb-1">50+</div>
+          <Card className="text-center p-4 md:p-6 bg-gradient-to-br from-secondary/10 to-secondary/5 border-secondary/20">
+            <Target className="h-6 w-6 md:h-8 md:w-8 text-secondary mx-auto mb-2 md:mb-3" />
+            <div className="text-2xl md:text-3xl font-bold text-secondary mb-1">
+              50+
+            </div>
             <p
               className={cn(
-                "text-sm text-muted-foreground",
+                "text-xs md:text-sm text-muted-foreground",
                 isRTL ? "font-arabic" : "font-english"
               )}>
               {t("partnersSection.stats.integratedInitiatives")}
             </p>
           </Card>
 
-          <Card className="text-center p-6 bg-gradient-to-br from-accent/10 to-accent/5 border-accent/20">
-            <UserCheck className="h-8 w-8 text-accent mx-auto mb-3" />
-            <div className="text-3xl font-bold text-accent mb-1">500+</div>
+          <Card className="text-center p-4 md:p-6 bg-gradient-to-br from-accent/10 to-accent/5 border-accent/20">
+            <UserCheck className="h-6 w-6 md:h-8 md:w-8 text-accent mx-auto mb-2 md:mb-3" />
+            <div className="text-2xl md:text-3xl font-bold text-accent mb-1">
+              500+
+            </div>
             <p
               className={cn(
-                "text-sm text-muted-foreground",
+                "text-xs md:text-sm text-muted-foreground",
                 isRTL ? "font-arabic" : "font-english"
               )}>
               {t("partnersSection.stats.activeVolunteers")}
             </p>
           </Card>
 
-          <Card className="text-center p-6 bg-gradient-to-br from-primary/10 to-secondary/10 border-primary/20">
-            <HandHeart className="h-8 w-8 text-primary mx-auto mb-3" />
-            <div className="text-3xl font-bold text-primary mb-1">95%</div>
+          <Card className="text-center p-4 md:p-6 bg-gradient-to-br from-primary/10 to-secondary/10 border-primary/20">
+            <HandHeart className="h-6 w-6 md:h-8 md:w-8 text-primary mx-auto mb-2 md:mb-3" />
+            <div className="text-2xl md:text-3xl font-bold text-primary mb-1">
+              95%
+            </div>
             <p
               className={cn(
-                "text-sm text-muted-foreground",
+                "text-xs md:text-sm text-muted-foreground",
                 isRTL ? "font-arabic" : "font-english"
               )}>
               {t("partnersSection.stats.communitySatisfaction")}
