@@ -42,7 +42,7 @@ const HeroSection = () => {
           <div className="max-w-4xl mx-auto">
             {/* Logo */}
             <div className="mb-8 flex justify-center">
-              <div className="w-20 h-20 sm:w-24 sm:h-24 md:w-28 md:h-28 pt-5">
+              <div className="w-20 h-20 sm:w-24 sm:h-24 md:w-56 md:h-56 pt-5">
                 <img
                   src="/assets/Logo.png"
                   alt="Logo"
