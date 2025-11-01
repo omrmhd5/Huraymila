@@ -24,10 +24,18 @@ import {
   Activity,
   BookOpen,
   HandHeart,
+  Youtube,
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useTheme } from "@/contexts/ThemeContext";
 import { useLanguage } from "@/contexts/LanguageContext";
+
+// Custom X Logo Component
+const XLogo = ({ className }) => (
+  <svg viewBox="0 0 24 24" className={className} fill="currentColor">
+    <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+  </svg>
+);
 
 const About = () => {
   const { loading } = useAuth();
@@ -99,6 +107,18 @@ const About = () => {
                 <Badge variant="outline" className="mb-4 px-4 py-2 text-sm">
                   {t("aboutPage.subtitle")}
                 </Badge>
+              </AnimatedSection>
+              <AnimatedSection animation="fadeIn" delay={300}>
+                <div className="max-w-5xl mx-auto mb-8">
+                  <p
+                    className={`text-lg md:text-xl text-foreground/90 leading-relaxed bg-primary/5 border border-primary/20 rounded-lg p-6 ${
+                      isRTL ? "font-arabic" : "font-sans"
+                    }`}>
+                    {isRTL
+                      ? "انطلق برنامج مدينة حريملاء الصحية بتوجيهٍ كريم من صاحب السمو الملكي أمير منطقة الرياض – حفظه الله – ليكون نموذجًا تنمويًا شاملًا يُعزز الصحة العامة، ويحمي البيئة، ويُفعّل المشاركة المجتمعية، انسجامًا مع رؤية المملكة 2030 وبرنامج جودة الحياة"
+                      : "The Huraymila Healthy City Program was launched under the gracious directive of His Royal Highness the Prince of Riyadh Region – may God protect him – to be a comprehensive development model that promotes public health, protects the environment, and activates community participation, in line with the Kingdom's Vision 2030 and the Quality of Life Program"}
+                  </p>
+                </div>
               </AnimatedSection>
               <AnimatedSection animation="fadeInUp" delay={400}>
                 <h1
@@ -343,55 +363,66 @@ const About = () => {
 
               <Card className="text-center hover:shadow-lg transition-all duration-300 hover:-translate-y-1 hover:scale-105">
                 <CardContent className="p-6">
-                  <div className="w-16 h-16 bg-green-500 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <Phone className="w-8 h-8 text-white" />
-                  </div>
-                  <h3
-                    className={`font-semibold text-foreground mb-2 ${
-                      isRTL ? "font-arabic" : "font-sans"
-                    }`}>
-                    {t("contact.phone")}
-                  </h3>
-                  <p className="text-sm text-muted-foreground">
-                    {t("aboutPage.phone")}
-                  </p>
+                  <a
+                    href="https://twitter.com/Hrm_HCP"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="block">
+                    <div className="w-16 h-16 bg-black rounded-full flex items-center justify-center mx-auto mb-4">
+                      <XLogo className="w-8 h-8 text-white" />
+                    </div>
+                    <h3
+                      className={`font-semibold text-foreground mb-2 ${
+                        isRTL ? "font-arabic" : "font-sans"
+                      }`}>
+                      {isRTL ? "إكس" : "X"}
+                    </h3>
+                    <p className="text-sm text-muted-foreground">@Hrm_HCP</p>
+                  </a>
                 </CardContent>
               </Card>
 
               <Card className="text-center hover:shadow-lg transition-all duration-300 hover:-translate-y-1 hover:scale-105">
                 <CardContent className="p-6">
-                  <div className="w-16 h-16 bg-purple-500 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <Mail className="w-8 h-8 text-white" />
-                  </div>
-                  <h3
-                    className={`font-semibold text-foreground mb-2 ${
-                      isRTL ? "font-arabic" : "font-sans"
-                    }`}>
-                    {t("contact.email")}
-                  </h3>
-                  <p className="text-sm text-muted-foreground">
-                    {t("aboutPage.email")}
-                  </p>
+                  <a
+                    href="mailto:Hrmhcp11@gmail.com"
+                    className="block">
+                    <div className="w-16 h-16 bg-purple-500 rounded-full flex items-center justify-center mx-auto mb-4">
+                      <Mail className="w-8 h-8 text-white" />
+                    </div>
+                    <h3
+                      className={`font-semibold text-foreground mb-2 ${
+                        isRTL ? "font-arabic" : "font-sans"
+                      }`}>
+                      {t("contact.email")}
+                    </h3>
+                    <p className="text-sm text-muted-foreground break-all">
+                      Hrmhcp11@gmail.com
+                    </p>
+                  </a>
                 </CardContent>
               </Card>
 
               <Card className="text-center hover:shadow-lg transition-all duration-300 hover:-translate-y-1 hover:scale-105">
                 <CardContent className="p-6">
-                  <div className="w-16 h-16 bg-orange-500 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <Calendar className="w-8 h-8 text-white" />
-                  </div>
-                  <h3
-                    className={`font-semibold text-foreground mb-2 ${
-                      isRTL ? "font-arabic" : "font-sans"
-                    }`}>
-                    {t("contact.workingHours")}
-                  </h3>
-                  <p
-                    className={`text-sm text-muted-foreground ${
-                      isRTL ? "font-arabic" : "font-sans"
-                    }`}>
-                    {t("aboutPage.workingHours")}
-                  </p>
+                  <a
+                    href="https://youtube.com/channel/UChLyo00EAZd8YHhtKYFn-Ug?si=QsIMWTPtsnw9xA42"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="block">
+                    <div className="w-16 h-16 bg-[#FF0000] rounded-full flex items-center justify-center mx-auto mb-4">
+                      <Youtube className="w-8 h-8 text-white" />
+                    </div>
+                    <h3
+                      className={`font-semibold text-foreground mb-2 ${
+                        isRTL ? "font-arabic" : "font-sans"
+                      }`}>
+                      {isRTL ? "يوتيوب" : "YouTube"}
+                    </h3>
+                    <p className="text-sm text-muted-foreground">
+                      {isRTL ? "قناة حريملاء الصحية" : "Huraymila Healthy City"}
+                    </p>
+                  </a>
                 </CardContent>
               </Card>
             </StaggeredContainer>

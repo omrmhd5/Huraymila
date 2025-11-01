@@ -20,11 +20,18 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Mail, Phone, MapPin, Clock, Send, MessageSquare } from "lucide-react";
+import { Mail, Phone, MapPin, Clock, Send, MessageSquare, Youtube } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useTheme } from "@/contexts/ThemeContext";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { toast } from "sonner";
+
+// Custom X Logo Component
+const XLogo = ({ className }) => (
+  <svg viewBox="0 0 24 24" className={className} fill="currentColor">
+    <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+  </svg>
+);
 
 const Contact = () => {
   const { user, loading } = useAuth();
@@ -90,18 +97,29 @@ const Contact = () => {
     }
   };
 
+  const isRTL = language === "ar";
+
   const contactInfo = [
     {
       icon: Mail,
       title: t("contact.emailContact"),
-      value: t("contact.emailAddress"),
+      value: "Hrmhcp11@gmail.com",
       description: t("contact.emailContactDesc"),
+      link: "mailto:Hrmhcp11@gmail.com",
     },
     {
-      icon: Phone,
-      title: t("contact.phoneContact"),
-      value: t("contact.phoneNumber"),
-      description: t("contact.phoneContactDesc"),
+      icon: XLogo,
+      title: isRTL ? "إكس" : "X",
+      value: "@Hrm_HCP",
+      description: isRTL ? "تابعنا على إكس" : "Follow us on X",
+      link: "https://twitter.com/Hrm_HCP",
+    },
+    {
+      icon: Youtube,
+      title: isRTL ? "يوتيوب" : "YouTube",
+      value: isRTL ? "قناة حريملاء الصحية" : "Huraymila Healthy City",
+      description: isRTL ? "شاهد قناتنا على يوتيوب" : "Watch our YouTube channel",
+      link: "https://youtube.com/channel/UChLyo00EAZd8YHhtKYFn-Ug?si=QsIMWTPtsnw9xA42",
     },
     {
       icon: MapPin,
@@ -140,24 +158,41 @@ const Contact = () => {
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  {contactInfo.map((info, index) => (
-                    <div key={index} className="flex items-start gap-3">
-                      <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center flex-shrink-0">
-                        <info.icon className="w-5 h-5 text-primary" />
+                  {contactInfo.map((info, index) => {
+                    const content = (
+                      <div className="flex items-start gap-3">
+                        <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center flex-shrink-0">
+                          <info.icon className="w-5 h-5 text-primary" />
+                        </div>
+                        <div>
+                          <h4 className="font-medium text-foreground">
+                            {info.title}
+                          </h4>
+                          <p className="text-sm font-medium text-primary">
+                            {info.value}
+                          </p>
+                          <p className="text-xs text-muted-foreground">
+                            {info.description}
+                          </p>
+                        </div>
                       </div>
-                      <div>
-                        <h4 className="font-medium text-foreground">
-                          {info.title}
-                        </h4>
-                        <p className="text-sm font-medium text-primary">
-                          {info.value}
-                        </p>
-                        <p className="text-xs text-muted-foreground">
-                          {info.description}
-                        </p>
+                    );
+
+                    return info.link ? (
+                      <a
+                        key={index}
+                        href={info.link}
+                        target={info.link.startsWith("http") ? "_blank" : undefined}
+                        rel={info.link.startsWith("http") ? "noopener noreferrer" : undefined}
+                        className="block hover:bg-accent/10 p-2 rounded-lg transition-colors">
+                        {content}
+                      </a>
+                    ) : (
+                      <div key={index} className="p-2">
+                        {content}
                       </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </CardContent>
               </Card>
             </div>

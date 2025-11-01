@@ -2768,7 +2768,7 @@ const AdminDashboard = () => {
                   }`}>
                   <MessageSquare className="w-4 h-4" />
                   {language === "ar"
-                    ? "إرسال رسائل ترويجية"
+                    ? "إرسال رسائل نصية"
                     : "Send Promotion Messages"}
                 </Button>
               </div>
@@ -3473,9 +3473,7 @@ const AdminDashboard = () => {
       {/* Promotion Message Modal */}
       <Dialog
         open={promotionMessageModal.isOpen}
-        onOpenChange={(open) =>
-          setPromotionMessageModal({ isOpen: open })
-        }>
+        onOpenChange={(open) => setPromotionMessageModal({ isOpen: open })}>
         <DialogContent
           className={cn(
             "max-w-2xl",
@@ -3488,15 +3486,13 @@ const AdminDashboard = () => {
                 language === "ar" ? "text-right" : "text-left"
               )}>
               {language === "ar"
-                ? "إرسال رسائل ترويجية"
+                ? "إرسال رسائل نصية"
                 : "Send Promotion Messages"}
             </DialogTitle>
             <DialogDescription
-              className={cn(
-                language === "ar" ? "text-right" : "text-left"
-              )}>
+              className={cn(language === "ar" ? "text-right" : "text-left")}>
               {language === "ar"
-                ? "أدخل محتوى الرسالة الترويجية لإرسالها إلى جميع المتطوعين"
+                ? "أدخل محتوى الرسالة النصية لإرسالها إلى جميع المتطوعين"
                 : "Enter the promotion message content to send to all volunteers"}
             </DialogDescription>
           </DialogHeader>
@@ -3532,7 +3528,9 @@ const AdminDashboard = () => {
               <Label
                 htmlFor="promotion-message"
                 className={cn(
-                  language === "ar" ? "text-right font-arabic" : "text-left font-english"
+                  language === "ar"
+                    ? "text-right font-arabic"
+                    : "text-left font-english"
                 )}>
                 {language === "ar" ? "محتوى الرسالة" : "Message Content"}
               </Label>
@@ -3540,7 +3538,7 @@ const AdminDashboard = () => {
                 id="promotion-message"
                 placeholder={
                   language === "ar"
-                    ? "أدخل نص الرسالة الترويجية هنا..."
+                    ? "أدخل نص الرسالة النصية هنا..."
                     : "Enter the promotion message text here..."
                 }
                 value={promotionMessageContent}
@@ -3556,7 +3554,9 @@ const AdminDashboard = () => {
               <p
                 className={cn(
                   "text-xs text-muted-foreground",
-                  language === "ar" ? "text-right font-arabic" : "text-left font-english"
+                  language === "ar"
+                    ? "text-right font-arabic"
+                    : "text-left font-english"
                 )}>
                 {language === "ar"
                   ? `عدد الأحرف: ${promotionMessageContent.length}`

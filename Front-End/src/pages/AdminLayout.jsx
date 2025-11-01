@@ -42,7 +42,7 @@ const AdminLayout = () => {
         title: "الجدول الزمني للبرنامج",
         phases: [
           {
-            year: "2024",
+            year: "2025",
             title: "إطلاق البرنامج",
             description: "بداية المبادرات الأساسية وتأسيس الشراكات",
             status: "مكتمل",
@@ -73,7 +73,7 @@ const AdminLayout = () => {
         title: "Program Timeline",
         phases: [
           {
-            year: "2024",
+            year: "2025",
             title: "Program Launch",
             description:
               "Start of basic initiatives and establishing partnerships",

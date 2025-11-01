@@ -3,13 +3,10 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import {
   Mail,
-  Phone,
   MapPin,
-  Twitter,
   Heart,
   ArrowUp,
   Youtube,
-  Music,
 } from "lucide-react";
 import { useTheme } from "@/contexts/ThemeContext";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -92,23 +89,34 @@ const Footer = () => {
                   {t("footer.address")}
                 </p>
               </div>
-              <div className="flex items-center gap-3">
-                <Phone className="w-4 h-4 text-primary flex-shrink-0" />
+              <a 
+                href="https://twitter.com/Hrm_HCP"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-3 hover:text-primary transition-colors">
+                <XLogo className="w-4 h-4 text-primary flex-shrink-0" />
                 <p className="text-sm text-muted-foreground">
-                  {t("footer.phone")}
+                  @Hrm_HCP
                 </p>
-              </div>
-              <div className="flex items-center gap-3">
+              </a>
+              <a 
+                href="mailto:Hrmhcp11@gmail.com"
+                className="flex items-center gap-3 hover:text-primary transition-colors">
                 <Mail className="w-4 h-4 text-primary flex-shrink-0" />
                 <p className="text-sm text-muted-foreground">
-                  {t("footer.email")}
+                  Hrmhcp11@gmail.com
                 </p>
-              </div>
-              <div className="pt-2">
-                <p className="text-xs text-muted-foreground">
-                  {t("footer.workingHours")}
+              </a>
+              <a 
+                href="https://youtube.com/channel/UChLyo00EAZd8YHhtKYFn-Ug?si=QsIMWTPtsnw9xA42"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-3 hover:text-primary transition-colors">
+                <Youtube className="w-4 h-4 text-primary flex-shrink-0" />
+                <p className="text-sm text-muted-foreground">
+                  {isRTL ? "قناة حريملاء الصحية" : "Huraymila Healthy City"}
                 </p>
-              </div>
+              </a>
             </div>
           </div>
         </div>
@@ -128,15 +136,28 @@ const Footer = () => {
               </p>
             </div>
             <div className="flex items-center gap-3">
-              <Button variant="outline" size="sm" className="w-10 h-10 p-0">
-                <XLogo className="w-4 h-4" />
-              </Button>
-              <Button variant="outline" size="sm" className="w-10 h-10 p-0">
-                <Youtube className="w-4 h-4" />
-              </Button>
-              <Button variant="outline" size="sm" className="w-10 h-10 p-0">
-                <Music className="w-4 h-4" />
-              </Button>
+              <a
+                href="https://twitter.com/Hrm_HCP"
+                target="_blank"
+                rel="noopener noreferrer">
+                <Button variant="outline" size="sm" className="w-10 h-10 p-0">
+                  <XLogo className="w-4 h-4" />
+                </Button>
+              </a>
+              <a
+                href="https://youtube.com/channel/UChLyo00EAZd8YHhtKYFn-Ug?si=QsIMWTPtsnw9xA42"
+                target="_blank"
+                rel="noopener noreferrer">
+                <Button variant="outline" size="sm" className="w-10 h-10 p-0">
+                  <Youtube className="w-4 h-4" />
+                </Button>
+              </a>
+              <a
+                href="mailto:Hrmhcp11@gmail.com">
+                <Button variant="outline" size="sm" className="w-10 h-10 p-0">
+                  <Mail className="w-4 h-4" />
+                </Button>
+              </a>
             </div>
           </div>
         </div>
