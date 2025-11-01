@@ -28,6 +28,7 @@ import Initiative from "./pages/Initiative";
 import Report from "./pages/Report";
 import AboutHuraymila from "./pages/AboutHuraymila";
 import FAQ from "./pages/FAQ";
+import HealthyCityStructure from "./pages/HealthyCityStructure";
 
 const queryClient = new QueryClient();
 
@@ -61,6 +62,10 @@ const App = () => (
                   <Route path="/report" element={<Report />} />
                   <Route path="/about-huraymila" element={<AboutHuraymila />} />
                   <Route path="/faq" element={<FAQ />} />
+                  <Route
+                    path="/healthy-city-structure"
+                    element={<HealthyCityStructure />}
+                  />
                   <Route
                     path="/volunteer-dashboard"
                     element={<VolunteerDashboard />}
