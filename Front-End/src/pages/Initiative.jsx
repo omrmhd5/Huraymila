@@ -12,6 +12,11 @@ import { useAuth } from "@/contexts/AuthContext";
 import { initiativeApi } from "@/lib/initiativeApi";
 import { toast } from "sonner";
 
+// Import mock images
+import healthWorkshopImg from "@/assets/health-workshop.jpg";
+import greenGardenImg from "@/assets/green-garden.jpg";
+import communityActivitiesImg from "@/assets/najdi-community-activities.jpg";
+
 const Initiative = () => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -25,19 +30,99 @@ const Initiative = () => {
 
   const isRTL = language === "ar";
 
-  // Load initiative on component mount
+  // Mock initiatives data
+  const getMockInitiatives = () => [
+    {
+      _id: "mock-1",
+      id: "mock-1",
+      title:
+        language === "ar"
+          ? "ورشة التثقيف الصحي"
+          : "Health Education Workshop",
+      description:
+        language === "ar"
+          ? "انضم إلينا في ورشة عمل تفاعلية لتعزيز الوعي الصحي وتعلم أساسيات الحياة الصحية. سنغطي موضوعات التغذية، والتمارين الرياضية، والوقاية من الأمراض. هذه المبادرة مصممة لجميع أفراد المجتمع من مختلف الأعمار، وسنوفر مواد تعليمية شاملة ونصائح عملية يمكن تطبيقها في الحياة اليومية."
+          : "Join us for an interactive workshop to promote health awareness and learn the basics of healthy living. We'll cover topics on nutrition, exercise, and disease prevention. This initiative is designed for all community members of different ages, and we'll provide comprehensive educational materials and practical tips that can be applied in daily life.",
+      startDate: new Date("2025-11-15").toISOString(),
+      endDate: new Date("2025-11-16").toISOString(),
+      status: "gathering volunteers",
+      currentVolunteers: 12,
+      maxVolunteers: 30,
+      imageUrl: healthWorkshopImg,
+      isMock: true,
+      volunteers: [],
+    },
+    {
+      _id: "mock-2",
+      id: "mock-2",
+      title:
+        language === "ar"
+          ? "مبادرة الحديقة الخضراء"
+          : "Green Garden Initiative",
+      description:
+        language === "ar"
+          ? "ساعدنا في إنشاء مساحات خضراء جميلة في حريملاء. سنقوم بزراعة الأشجار والنباتات وتنسيق الحدائق لتعزيز جمال مدينتنا وجودة الهواء. هذا المشروع يهدف إلى تحسين البيئة المحلية وخلق مساحات طبيعية للعائلات والأطفال للاستمتاع بها. سنعمل معًا على زراعة أشجار مثمرة ونباتات محلية تتناسب مع مناخنا."
+          : "Help us create beautiful green spaces in Huraymila. We'll plant trees and plants, and landscape gardens to enhance our city's beauty and air quality. This project aims to improve the local environment and create natural spaces for families and children to enjoy. We'll work together to plant fruit trees and local plants that suit our climate.",
+      startDate: new Date("2025-11-20").toISOString(),
+      endDate: new Date("2025-11-22").toISOString(),
+      status: "active",
+      currentVolunteers: 25,
+      maxVolunteers: 40,
+      imageUrl: greenGardenImg,
+      isMock: true,
+      volunteers: [],
+    },
+    {
+      _id: "mock-3",
+      id: "mock-3",
+      title:
+        language === "ar"
+          ? "فعاليات المجتمع النجدي"
+          : "Najdi Community Activities",
+      description:
+        language === "ar"
+          ? "احتفل بالتراث النجدي الأصيل من خلال الأنشطة المجتمعية المتنوعة. فعاليات ثقافية، ألعاب تراثية، ومأكولات شعبية في أجواء عائلية رائعة. سنقدم عروضاً للفنون الشعبية، ألعاباً تقليدية للأطفال، وورش عمل للحرف اليدوية النجدية. هذه فرصة رائعة للتعرف على تراثنا الغني ونقله للأجيال القادمة."
+          : "Celebrate authentic Najdi heritage through diverse community activities. Cultural events, traditional games, and popular foods in a wonderful family atmosphere. We'll present folk arts performances, traditional games for children, and workshops for Najdi handicrafts. This is a great opportunity to learn about our rich heritage and pass it on to future generations.",
+      startDate: new Date("2025-12-01").toISOString(),
+      endDate: new Date("2025-12-03").toISOString(),
+      status: "gathering volunteers",
+      currentVolunteers: 18,
+      maxVolunteers: 50,
+      imageUrl: communityActivitiesImg,
+      isMock: true,
+      volunteers: [],
+    },
+  ];
+
+  // Load initiative on component mount and language change
   useEffect(() => {
     if (id) {
       loadInitiative();
     }
-  }, [id]);
+  }, [id, language]);
 
   const loadInitiative = async () => {
     try {
       setLoading(true);
       setError(null);
-      const response = await initiativeApi.getInitiativeById(id);
-      setInitiative(response.data);
+
+      // Check if it's a mock initiative
+      if (id.startsWith("mock-")) {
+        const mockInitiatives = getMockInitiatives();
+        const mockInitiative = mockInitiatives.find(
+          (init) => init._id === id || init.id === id
+        );
+
+        if (mockInitiative) {
+          setInitiative(mockInitiative);
+        } else {
+          setError("Mock initiative not found");
+        }
+      } else {
+        // Load from API
+        const response = await initiativeApi.getInitiativeById(id);
+        setInitiative(response.data);
+      }
     } catch (error) {
       // Error loading initiative
       setError("Failed to load initiative");
@@ -134,6 +219,16 @@ const Initiative = () => {
       return;
     }
 
+    // Check if it's a mock initiative
+    if (id.startsWith("mock-")) {
+      toast.info(
+        language === "ar"
+          ? "هذه مبادرة تجريبية للعرض فقط. لا يمكن التقديم عليها حالياً."
+          : "This is a demo initiative for display only. You cannot apply at this time."
+      );
+      return;
+    }
+
     try {
       setIsApplying(true);
       await initiativeApi.applyToInitiative(token, id);
@@ -215,10 +310,14 @@ const Initiative = () => {
           {initiative.imageUrl && (
             <div className="mb-8">
               <img
-                src={`${
-                  import.meta.env.VITE_API_BASE_URL?.replace("/api", "") ||
-                  "http://localhost:5000"
-                }${initiative.imageUrl}`}
+                src={
+                  initiative.isMock
+                    ? initiative.imageUrl
+                    : `${
+                        import.meta.env.VITE_API_BASE_URL?.replace("/api", "") ||
+                        "http://localhost:5000"
+                      }${initiative.imageUrl}`
+                }
                 alt={initiative.title}
                 className="w-full h-64 md:h-96 object-cover rounded-lg"
               />

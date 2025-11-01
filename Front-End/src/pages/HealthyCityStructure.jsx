@@ -56,26 +56,23 @@ const orgStructure = {
       main_committee: {
         title: "كل الجهات",
         items: [
-          { name: "وزارة الصحة", icon: "health/heartbeat" },
-          { name: "وزارة التعليم", icon: "globe/book" },
-          { name: "وزارة البيئة والمياه والزراعة", icon: "rocket/environment" },
-          {
-            name: "وزارة الموارد البشرية والتنمية الاجتماعية",
-            icon: "people/handshake",
-          },
           { name: "مستشفى حريملاء العام", icon: "health/heartbeat" },
-          { name: "الدفاع المدني", icon: "shield/siren" },
-          { name: "شركة المياه الوطنية", icon: "screen/data" },
-          { name: "محافظة حريملاء", icon: "settings/community" },
-          { name: "أمانة منطقة الرياض", icon: "settings/community" },
+          { name: "بلدية حريملاء", icon: "settings/community" },
+          { name: "شرطة محافظة حريملاء", icon: "shield/siren" },
+          { name: "إدارة الدفاع المدني", icon: "shield/siren" },
+          { name: "شعبة مرور حريملاء", icon: "shield/siren" },
           { name: "القوة الخاصة للأمن البيئي", icon: "shield/siren" },
-          { name: "الشرطة", icon: "shield/siren" },
-          { name: "إدارة المرور", icon: "shield/siren" },
+          { name: "الكلية التطبيقية بحريملاء", icon: "globe/book" },
+          { name: "وزارة البيئة والمياه والزراعة", icon: "rocket/environment" },
+          { name: "شركة المياه الوطنية", icon: "screen/data" },
           { name: "جمعية حريملاء الخيرية", icon: "hands/volunteer" },
           { name: "جمعية التنمية الأهلية بحريملاء", icon: "people/handshake" },
-          { name: "جامعة الإمام محمد بن سعود الإسلامية", icon: "globe/book" },
-          { name: "منظمة الصحة العالمية", icon: "health/heartbeat" },
           { name: "جمعية أصدقاء المرضى بحريملاء", icon: "hands/volunteer" },
+          {
+            name: "ممثل وزارة الموارد البشرية والتنمية الاجتماعية",
+            icon: "people/handshake",
+          },
+          { name: "ممثل التعليم العام", icon: "globe/book" },
         ],
       },
       sub_committees: {
@@ -161,33 +158,42 @@ const OrgNode = ({ name, icon, level = 0, subtitle = null }) => {
     <Card className="bg-primary hover:opacity-90 transition-opacity border-0">
       <CardContent
         className={cn(
-          "p-4 text-white",
-          level === 0 && "p-5",
-          level === 1 && "p-4",
-          level === 2 && "p-3",
+          "text-white",
+          level === 0 && "p-8",
+          level === 1 && "p-5",
+          level === 2 && "p-4",
           level >= 3 && "p-3",
           isRTL && "font-arabic text-right"
         )}>
         {level >= 3 && IconComponent ? (
           // List item style with icon on left and text on right
           <div className="flex items-center gap-3" dir="rtl">
-            <IconComponent className="w-5 h-5 text-white flex-shrink-0" />
-            <p className="font-semibold text-white flex-1 text-right">{name}</p>
+            <IconComponent className="w-4 h-4 text-white flex-shrink-0" />
+            <p className="font-semibold text-white flex-1 text-right text-sm">
+              {name}
+            </p>
           </div>
         ) : (
           // Header/leader style - centered text
           <div className="text-center">
             <p
               className={cn(
-                "font-semibold text-white",
-                level === 0 && "text-base mb-1",
-                level === 1 && "text-sm mb-1",
-                level === 2 && "text-sm"
+                "font-bold text-white",
+                level === 0 && "text-2xl mb-2",
+                level === 1 && "text-lg mb-1",
+                level === 2 && "text-base"
               )}>
               {name}
             </p>
             {subtitle && (
-              <p className="text-white text-sm opacity-90">{subtitle}</p>
+              <p
+                className={cn(
+                  "text-white opacity-90",
+                  level === 0 && "text-base",
+                  level === 1 && "text-sm"
+                )}>
+                {subtitle}
+              </p>
             )}
           </div>
         )}
@@ -269,7 +275,7 @@ const HealthyCityStructure = () => {
         {/* Organizational Chart */}
         <div className="flex flex-col items-center max-w-7xl mx-auto">
           {/* Level 1 - Main Committee Chair */}
-          <div className="w-80">
+          <div className="w-[400px]">
             <OrgNode
               name={orgStructure.root.main_committee_chair[0]}
               subtitle={orgStructure.root.main_committee_chair[1]}
@@ -277,126 +283,28 @@ const HealthyCityStructure = () => {
             />
           </div>
 
-          {/* Connector that splits to 3 branches */}
+          {/* Connector that splits to 2 branches */}
           <div className="relative w-full" style={{ height: "48px" }}>
             {/* Vertical line down from Main Committee Chair */}
             <div
               className="absolute top-0 left-1/2 transform -translate-x-1/2 w-1 bg-white"
               style={{ height: "16px" }}></div>
-            {/* Horizontal line splitting to 3 branches */}
-            <div className="absolute top-4 left-[10%] right-[10%] h-1 bg-white"></div>
-            {/* Vertical line 1 - Sub-Committees */}
+            {/* Horizontal line splitting to 2 branches */}
+            <div className="absolute top-4 left-[25%] right-[25%] h-1 bg-white"></div>
+            {/* Vertical line 1 - All Entities */}
             <div
-              className="absolute top-4 left-[10%] w-1 bg-white"
+              className="absolute top-4 left-[25%] w-1 bg-white"
               style={{ height: "32px" }}></div>
-            {/* Vertical line 2 - Supporting Committees */}
+            {/* Vertical line 2 - City Coordinator */}
             <div
-              className="absolute top-4 left-1/2 transform -translate-x-1/2 w-1 bg-white"
-              style={{ height: "32px" }}></div>
-            {/* Vertical line 3 - All Entities */}
-            <div
-              className="absolute top-4 right-[10%] w-1 bg-white"
+              className="absolute top-4 right-[25%] w-1 bg-white"
               style={{ height: "32px" }}></div>
           </div>
 
-          {/* Level 2 - Three columns */}
-          <div className="flex justify-between gap-8 w-full px-8">
-            {/* Column 1 - Sub-Committees */}
-            <div className="flex flex-col items-center w-80">
-              <div className="w-full mb-3">
-                <OrgNode
-                  name={orgStructure.root.committees.sub_committees.title}
-                  level={1}
-                />
-              </div>
-
-              {/* Connector to items */}
-              <div className="pb-2">
-                <ConnectorLine direction="vertical" length={24} />
-              </div>
-
-              {/* Sub-Committees Items */}
-              <div className="space-y-2 w-full">
-                {orgStructure.root.committees.sub_committees.items.map(
-                  (item, index) => (
-                    <React.Fragment key={index}>
-                      <OrgNode name={item.name} icon={item.icon} level={3} />
-                      {index <
-                        orgStructure.root.committees.sub_committees.items
-                          .length -
-                          1 && (
-                        <div className="py-1">
-                          <ConnectorLine direction="vertical" length={16} />
-                        </div>
-                      )}
-                    </React.Fragment>
-                  )
-                )}
-              </div>
-
-              {/* Connector between sub-committees and city vertical units */}
-              <div className="py-2">
-                <ConnectorLine direction="vertical" length={24} />
-              </div>
-
-              {/* City Vertical Units Items (appended under Sub-Committees) */}
-              <div className="space-y-2 w-full">
-                {orgStructure.root.committees.city_vertical_units.items.map(
-                  (item, index) => (
-                    <React.Fragment key={index}>
-                      <OrgNode name={item.name} icon={item.icon} level={3} />
-                      {index <
-                        orgStructure.root.committees.city_vertical_units.items
-                          .length -
-                          1 && (
-                        <div className="py-1">
-                          <ConnectorLine direction="vertical" length={16} />
-                        </div>
-                      )}
-                    </React.Fragment>
-                  )
-                )}
-              </div>
-            </div>
-
-            {/* Column 2 - Supporting Committees */}
-            <div className="flex flex-col items-center w-80">
-              <div className="w-full mb-3">
-                <OrgNode
-                  name={
-                    orgStructure.root.committees.supporting_committees.title
-                  }
-                  level={1}
-                />
-              </div>
-
-              {/* Connector to items */}
-              <div className="pb-2">
-                <ConnectorLine direction="vertical" length={24} />
-              </div>
-
-              {/* Supporting Committees Items */}
-              <div className="space-y-2 w-full">
-                {orgStructure.root.committees.supporting_committees.items.map(
-                  (item, index) => (
-                    <React.Fragment key={index}>
-                      <OrgNode name={item.name} icon={item.icon} level={3} />
-                      {index <
-                        orgStructure.root.committees.supporting_committees.items
-                          .length -
-                          1 && (
-                        <div className="py-1">
-                          <ConnectorLine direction="vertical" length={16} />
-                        </div>
-                      )}
-                    </React.Fragment>
-                  )
-                )}
-              </div>
-            </div>
-
-            {/* Column 3 - All Entities */}
-            <div className="flex flex-col items-center w-80">
+          {/* Level 2 - Two columns */}
+          <div className="flex justify-end gap-40 w-full px-8">
+            {/* Column 1 - All Entities */}
+            <div className="flex flex-col items-center w-[340px]">
               <div className="w-full mb-3">
                 <OrgNode
                   name={orgStructure.root.committees.main_committee.title}
@@ -426,6 +334,141 @@ const HealthyCityStructure = () => {
                     </React.Fragment>
                   )
                 )}
+              </div>
+            </div>
+
+            {/* Column 2 - City Coordinator with sub-branches */}
+            <div className="flex flex-col items-center">
+              {/* City Coordinator */}
+              <div className="w-[340px] mb-3">
+                <OrgNode name={orgStructure.root.city_coordinator} level={1} />
+              </div>
+
+              {/* Connector that splits to 2 branches */}
+              <div className="relative w-full" style={{ height: "48px" }}>
+                {/* Vertical line down from City Coordinator */}
+                <div
+                  className="absolute top-0 left-1/2 transform -translate-x-1/2 w-1 bg-white"
+                  style={{ height: "16px" }}></div>
+                {/* Horizontal line splitting to 2 branches */}
+                <div className="absolute top-4 left-[20%] right-[20%] h-1 bg-white"></div>
+                {/* Vertical line 1 - Supporting Committees */}
+                <div
+                  className="absolute top-4 left-[20%] w-1 bg-white"
+                  style={{ height: "32px" }}></div>
+                {/* Vertical line 2 - Sub Committees */}
+                <div
+                  className="absolute top-4 right-[20%] w-1 bg-white"
+                  style={{ height: "32px" }}></div>
+              </div>
+
+              {/* Level 3 - Two sub-columns under City Coordinator */}
+              <div className="flex justify-center gap-8 w-full">
+                {/* Sub-Column 1 - Supporting Committees */}
+                <div className="flex flex-col items-center w-[280px]">
+                  <div className="w-full mb-3">
+                    <OrgNode
+                      name={
+                        orgStructure.root.committees.supporting_committees.title
+                      }
+                      level={2}
+                    />
+                  </div>
+
+                  {/* Connector to items */}
+                  <div className="pb-2">
+                    <ConnectorLine direction="vertical" length={24} />
+                  </div>
+
+                  {/* Supporting Committees Items */}
+                  <div className="space-y-2 w-full">
+                    {orgStructure.root.committees.supporting_committees.items.map(
+                      (item, index) => (
+                        <React.Fragment key={index}>
+                          <OrgNode
+                            name={item.name}
+                            icon={item.icon}
+                            level={3}
+                          />
+                          {index <
+                            orgStructure.root.committees.supporting_committees
+                              .items.length -
+                              1 && (
+                            <div className="py-1">
+                              <ConnectorLine direction="vertical" length={16} />
+                            </div>
+                          )}
+                        </React.Fragment>
+                      )
+                    )}
+                  </div>
+                </div>
+
+                {/* Sub-Column 2 - Sub Committees */}
+                <div className="flex flex-col items-center w-[280px]">
+                  <div className="w-full mb-3">
+                    <OrgNode
+                      name={orgStructure.root.committees.sub_committees.title}
+                      level={2}
+                    />
+                  </div>
+
+                  {/* Connector to items */}
+                  <div className="pb-2">
+                    <ConnectorLine direction="vertical" length={24} />
+                  </div>
+
+                  {/* Sub-Committees Items */}
+                  <div className="space-y-2 w-full">
+                    {orgStructure.root.committees.sub_committees.items.map(
+                      (item, index) => (
+                        <React.Fragment key={index}>
+                          <OrgNode
+                            name={item.name}
+                            icon={item.icon}
+                            level={3}
+                          />
+                          {index <
+                            orgStructure.root.committees.sub_committees.items
+                              .length -
+                              1 && (
+                            <div className="py-1">
+                              <ConnectorLine direction="vertical" length={16} />
+                            </div>
+                          )}
+                        </React.Fragment>
+                      )
+                    )}
+                  </div>
+
+                  {/* Connector between sub-committees and city vertical units */}
+                  <div className="py-2">
+                    <ConnectorLine direction="vertical" length={24} />
+                  </div>
+
+                  {/* City Vertical Units Items (appended under Sub-Committees) */}
+                  <div className="space-y-2 w-full">
+                    {orgStructure.root.committees.city_vertical_units.items.map(
+                      (item, index) => (
+                        <React.Fragment key={index}>
+                          <OrgNode
+                            name={item.name}
+                            icon={item.icon}
+                            level={3}
+                          />
+                          {index <
+                            orgStructure.root.committees.city_vertical_units
+                              .items.length -
+                              1 && (
+                            <div className="py-1">
+                              <ConnectorLine direction="vertical" length={16} />
+                            </div>
+                          )}
+                        </React.Fragment>
+                      )
+                    )}
+                  </div>
+                </div>
               </div>
             </div>
           </div>

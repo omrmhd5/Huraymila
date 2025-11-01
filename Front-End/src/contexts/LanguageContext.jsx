@@ -763,7 +763,7 @@ export const LanguageProvider = ({ children }) => {
           "إنشاء نظام متكامل لرصد وتقييم المبادرات",
         ],
         stats: {
-          founded: "سنة التأسيس",
+          founded: "سنة الأنطلاق",
           healthInitiatives: "مبادرة صحية",
           beneficiaries: "مستفيد",
           partnerOrganizations: "جهة شريكة",
