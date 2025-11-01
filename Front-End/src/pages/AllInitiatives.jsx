@@ -306,7 +306,7 @@ const AllInitiatives = () => {
               }`}>
               {t("initiatives.title")
                 ? language === "ar"
-                  ? "اكتشف المبادرات النشطة في مدينة حريملاء الصحية"
+                  ? "اكتشف المبادرات النشطة في محافظة حريملاء الصحية"
                   : "Discover Active Initiatives in Huraymila Healthy City"
                 : "Fallback subtitle"}
             </p>

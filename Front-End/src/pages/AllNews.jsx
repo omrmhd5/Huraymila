@@ -69,7 +69,7 @@ const AllNews = () => {
           : "New initiative aims to encourage Huraymila residents to practice daily walking",
       description:
         language === "ar"
-          ? "أطلقت مدينة حريملاء الصحية مبادرة المشي اليومي كجزء من برنامجها الشامل لتعزيز الصحة العامة. تهدف المبادرة إلى تشجيع المواطنين على ممارسة رياضة المشي لمدة 30 دقيقة يومياً في الممرات المخصصة والحدائق العامة. تتضمن المبادرة تنظيم مسيرات جماعية صباحية ومسائية، وتوفير مرشدين صحيين، وإقامة ورش عمل توعوية حول فوائد المشي للصحة البدنية والنفسية."
+          ? "أطلقت محافظة حريملاء الصحية مبادرة المشي اليومي كجزء من برنامجها الشامل لتعزيز الصحة العامة. تهدف المبادرة إلى تشجيع المواطنين على ممارسة رياضة المشي لمدة 30 دقيقة يومياً في الممرات المخصصة والحدائق العامة. تتضمن المبادرة تنظيم مسيرات جماعية صباحية ومسائية، وتوفير مرشدين صحيين، وإقامة ورش عمل توعوية حول فوائد المشي للصحة البدنية والنفسية."
           : "Huraymila Healthy City has launched the Daily Walking Initiative as part of its comprehensive program to promote public health. The initiative aims to encourage citizens to walk for 30 minutes daily in designated walkways and public gardens. The initiative includes organizing morning and evening group walks, providing health guides, and conducting awareness workshops on the physical and mental health benefits of walking.",
       date: new Date("2025-10-28").toISOString(),
       imageUrl: walkingInitiativeImg,
@@ -88,7 +88,7 @@ const AllNews = () => {
           : "Specialized training program to teach traditional pottery art",
       description:
         language === "ar"
-          ? "في إطار الحفاظ على التراث النجدي الأصيل، تنظم مدينة حريملاء الصحية سلسلة من ورش العمل المتخصصة في صناعة الفخار التقليدي. يشرف على الورش حرفيون متمرسون يمتلكون خبرة تمتد لعقود في هذا المجال. تتضمن الورش تعليم المشاركين تقنيات تشكيل الطين، والزخرفة التقليدية، وطرق الحرق القديمة. كما تهدف المبادرة إلى توثيق هذه الحرفة ونقلها للأجيال القادمة."
+          ? "في إطار الحفاظ على التراث النجدي الأصيل، تنظم محافظة حريملاء الصحية سلسلة من ورش العمل المتخصصة في صناعة الفخار التقليدي. يشرف على الورش حرفيون متمرسون يمتلكون خبرة تمتد لعقود في هذا المجال. تتضمن الورش تعليم المشاركين تقنيات تشكيل الطين، والزخرفة التقليدية، وطرق الحرق القديمة. كما تهدف المبادرة إلى توثيق هذه الحرفة ونقلها للأجيال القادمة."
           : "As part of preserving authentic Najdi heritage, Huraymila Healthy City organizes a series of specialized workshops in traditional pottery making. The workshops are supervised by experienced craftsmen with decades of expertise in this field. The workshops include teaching participants clay shaping techniques, traditional decoration, and ancient firing methods. The initiative also aims to document this craft and pass it on to future generations.",
       date: new Date("2025-10-25").toISOString(),
       imageUrl: traditionalPotteryImg,
@@ -107,7 +107,7 @@ const AllNews = () => {
           : "Pioneering project to reduce emissions and improve air quality",
       description:
         language === "ar"
-          ? "دشنت بلدية حريملاء بالتعاون مع برنامج المدينة الصحية نظام النقل المستدام الذي يشمل توفير دراجات هوائية عامة، ومسارات آمنة للمشاة، ومحطات شحن للمركبات الكهربائية. يهدف المشروع إلى تقليل الاعتماد على المركبات التقليدية، وخفض نسبة التلوث البيئي، وتعزيز أسلوب حياة صحي ونشط. تم تخصيص ميزانية كبيرة لتطوير البنية التحتية اللازمة وتوسيع نطاق الخدمة تدريجياً."
+          ? "دشنت بلدية حريملاء بالتعاون مع برنامج المحافظة الصحية نظام النقل المستدام الذي يشمل توفير دراجات هوائية عامة، ومسارات آمنة للمشاة، ومحطات شحن للمركبات الكهربائية. يهدف المشروع إلى تقليل الاعتماد على المركبات التقليدية، وخفض نسبة التلوث البيئي، وتعزيز أسلوب حياة صحي ونشط. تم تخصيص ميزانية كبيرة لتطوير البنية التحتية اللازمة وتوسيع نطاق الخدمة تدريجياً."
           : "Huraymila Municipality, in cooperation with the Healthy City Program, has launched a sustainable transportation system that includes providing public bicycles, safe pedestrian paths, and electric vehicle charging stations. The project aims to reduce dependence on traditional vehicles, lower environmental pollution rates, and promote a healthy and active lifestyle. A significant budget has been allocated to develop the necessary infrastructure and gradually expand the service scope.",
       date: new Date("2025-10-20").toISOString(),
       imageUrl: sustainableTransportImg,
@@ -122,11 +122,11 @@ const AllNews = () => {
         setLoading(true);
         const response = await newsApi.getAllNews({ limit: 100 });
         const backendNews = response.data || [];
-        
+
         // Append mock news to backend data
         const mockNews = getMockNews();
         const allNews = [...backendNews, ...mockNews];
-        
+
         setNewsData(allNews);
       } catch (error) {
         // Error fetching news - show only mock data

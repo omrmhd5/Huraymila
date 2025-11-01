@@ -127,7 +127,7 @@ const SuccessStories = () => {
       descriptionEn:
         "Success story of the health awareness program in schools and its positive impact on children",
       content:
-        "تم تطبيق برنامج التوعية الصحية في 5 مدارس ابتدائية في المدينة. تعلم الأطفال أهمية التغذية السليمة والنظافة الشخصية. النتائج كانت مذهلة: تحسن في عادات الأكل والنظافة لدى 90% من الأطفال.",
+        "تم تطبيق برنامج التوعية الصحية في 5 مدارس ابتدائية في المحافظة. تعلم الأطفال أهمية التغذية السليمة والنظافة الشخصية. النتائج كانت مذهلة: تحسن في عادات الأكل والنظافة لدى 90% من الأطفال.",
       contentEn:
         "The health awareness program was implemented in 5 primary schools in the city. Children learned about the importance of proper nutrition and personal hygiene. The results were amazing: improvement in eating and hygiene habits among 90% of children.",
       category: "education",
@@ -157,7 +157,7 @@ const SuccessStories = () => {
       descriptionEn:
         "Success story of the daily walking initiative in encouraging the community to exercise",
       content:
-        "بدأت المبادرة بـ 50 مشارك فقط. الآن يشارك أكثر من 300 شخص يومياً في المشي الصحي. تم إنشاء مسارات آمنة ومخصصة للمشي في مختلف أحياء المدينة. النتائج: تحسن في الصحة العامة وزيادة في النشاط المجتمعي.",
+        "بدأت المبادرة بـ 50 مشارك فقط. الآن يشارك أكثر من 300 شخص يومياً في المشي الصحي. تم إنشاء مسارات آمنة ومخصصة للمشي في مختلف أحياء المحافظة. النتائج: تحسن في الصحة العامة وزيادة في النشاط المجتمعي.",
       contentEn:
         "The initiative started with only 50 participants. Now more than 300 people participate daily in healthy walking. Safe and dedicated walking paths have been created in various city neighborhoods. Results: improvement in public health and increase in community activity.",
       category: "community",

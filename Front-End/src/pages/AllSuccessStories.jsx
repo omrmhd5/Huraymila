@@ -185,7 +185,7 @@ const AllSuccessStories = () => {
       author: "منسق التطوع سعد القحطاني",
       authorEn: "Volunteer Coordinator Saad Al-Qahtani",
       age: "مجتمع",
-      location: "مدينة حريملاء",
+      location: "محافظة حريملاء",
       locationEn: "Huraymila City",
       category: "مجتمع",
       categoryEn: "Community",
@@ -385,7 +385,7 @@ const AllSuccessStories = () => {
                 isRTL ? "font-arabic text-right" : "font-sans text-left"
               }`}>
               {language === "ar"
-                ? "اكتشف كيف غيرت مبادرتنا حياة الناس في مدينة حريملاء"
+                ? "اكتشف كيف غيرت مبادرتنا حياة الناس في محافظة حريملاء"
                 : "Discover how our initiatives have changed people's lives in Huraymila"}
             </p>
           </div>

@@ -115,7 +115,7 @@ const About = () => {
                       isRTL ? "font-arabic" : "font-sans"
                     }`}>
                     {isRTL
-                      ? "انطلق برنامج مدينة حريملاء الصحية بتوجيهٍ كريم من صاحب السمو الملكي أمير منطقة الرياض – حفظه الله – ليكون نموذجًا تنمويًا شاملًا يُعزز الصحة العامة، ويحمي البيئة، ويُفعّل المشاركة المجتمعية، انسجامًا مع رؤية المملكة 2030 وبرنامج جودة الحياة"
+                      ? "انطلق برنامج محافظة حريملاء الصحية بتوجيهٍ كريم من صاحب السمو الملكي أمير منطقة الرياض – حفظه الله – ليكون نموذجًا تنمويًا شاملًا يُعزز الصحة العامة، ويحمي البيئة، ويُفعّل المشاركة المجتمعية، انسجامًا مع رؤية المملكة 2030 وبرنامج جودة الحياة"
                       : "The Huraymila Healthy City Program was launched under the gracious directive of His Royal Highness the Prince of Riyadh Region – may God protect him – to be a comprehensive development model that promotes public health, protects the environment, and activates community participation, in line with the Kingdom's Vision 2030 and the Quality of Life Program"}
                   </p>
                 </div>
@@ -384,9 +384,7 @@ const About = () => {
 
               <Card className="text-center hover:shadow-lg transition-all duration-300 hover:-translate-y-1 hover:scale-105">
                 <CardContent className="p-6">
-                  <a
-                    href="mailto:Hrmhcp11@gmail.com"
-                    className="block">
+                  <a href="mailto:Hrmhcp11@gmail.com" className="block">
                     <div className="w-16 h-16 bg-purple-500 rounded-full flex items-center justify-center mx-auto mb-4">
                       <Mail className="w-8 h-8 text-white" />
                     </div>

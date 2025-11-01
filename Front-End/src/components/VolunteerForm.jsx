@@ -52,7 +52,7 @@ const VolunteerForm = () => {
         experienceDesc: "صف أي خبرة سابقة في التطوع أو المجالات ذات الصلة",
 
         motivation: "الدافع للتطوع",
-        motivationDesc: "لماذا تريد التطوع في مدينة حريملاء الصحية؟",
+        motivationDesc: "لماذا تريد التطوع في محافظة حريملاء الصحية؟",
 
         submit: "إرسال طلب التطوع",
         submitting: "جاري الإرسال...",

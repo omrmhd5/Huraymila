@@ -135,7 +135,7 @@ const SuccessStory = () => {
           <li>ورش توعية بيئية للأطفال</li>
         </ul>
         
-        <p>النتائج كانت مذهلة: انخفضت النفايات بنسبة 60%، وازدادت المساحات الخضراء بنسبة 200%، وأصبح الحي مثالاً يحتذى به في المدينة.</p>
+        <p>النتائج كانت مذهلة: انخفضت النفايات بنسبة 60%، وازدادت المساحات الخضراء بنسبة 200%، وأصبح الحي مثالاً يحتذى به في المحافظة.</p>
       `,
       contentEn: `
         <p>Al-Nakheel district was suffering from multiple environmental problems, from accumulated waste to lack of green spaces. A group of active residents started an initiative to transform the district into an environmentally friendly area.</p>
