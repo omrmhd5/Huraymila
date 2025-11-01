@@ -8,6 +8,8 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Alert, AlertDescription } from "@/components/ui/alert";
@@ -51,6 +53,7 @@ import {
   Pin,
   Search,
   GripVertical,
+  MessageSquare,
 } from "lucide-react";
 import {
   DndContext,
@@ -1271,6 +1274,12 @@ const AdminDashboard = () => {
     isOpen: false,
     report: null,
   });
+
+  // Promotion message modal state
+  const [promotionMessageModal, setPromotionMessageModal] = useState({
+    isOpen: false,
+  });
+  const [promotionMessageContent, setPromotionMessageContent] = useState("");
 
   // News search state
   const [newsSearchTerm, setNewsSearchTerm] = useState("");
@@ -2725,24 +2734,44 @@ const AdminDashboard = () => {
         <TabsContent value="volunteers">
           <Card>
             <CardHeader>
-              <CardTitle
-                className={`${
-                  language === "ar"
-                    ? "text-right font-arabic"
-                    : "text-left font-english"
+              <div
+                className={`flex items-center justify-between ${
+                  language === "ar" ? "flex-row-reverse" : "flex-row"
                 }`}>
-                {language === "ar" ? "المتطوعين" : "Volunteers"}
-              </CardTitle>
-              <CardDescription
-                className={`${
-                  language === "ar"
-                    ? "text-right font-arabic"
-                    : "text-left font-english"
-                }`}>
-                {language === "ar"
-                  ? "جميع طلبات التطوع المقدمة"
-                  : "All volunteer applications submitted"}
-              </CardDescription>
+                <div>
+                  <CardTitle
+                    className={`${
+                      language === "ar"
+                        ? "text-right font-arabic"
+                        : "text-left font-english"
+                    }`}>
+                    {language === "ar" ? "المتطوعين" : "Volunteers"}
+                  </CardTitle>
+                  <CardDescription
+                    className={`${
+                      language === "ar"
+                        ? "text-right font-arabic"
+                        : "text-left font-english"
+                    }`}>
+                    {language === "ar"
+                      ? "جميع طلبات التطوع المقدمة"
+                      : "All volunteer applications submitted"}
+                  </CardDescription>
+                </div>
+                <Button
+                  onClick={() => {
+                    setPromotionMessageModal({ isOpen: true });
+                    setPromotionMessageContent("");
+                  }}
+                  className={`bg-primary hover:bg-primary/90 flex items-center gap-2 ${
+                    language === "ar" ? "font-arabic" : "font-english"
+                  }`}>
+                  <MessageSquare className="w-4 h-4" />
+                  {language === "ar"
+                    ? "إرسال رسائل ترويجية"
+                    : "Send Promotion Messages"}
+                </Button>
+              </div>
             </CardHeader>
             <CardContent>
               {/* Search Bar */}
@@ -3440,6 +3469,136 @@ const AdminDashboard = () => {
           </DialogContent>
         </Dialog>
       )}
+
+      {/* Promotion Message Modal */}
+      <Dialog
+        open={promotionMessageModal.isOpen}
+        onOpenChange={(open) =>
+          setPromotionMessageModal({ isOpen: open })
+        }>
+        <DialogContent
+          className={cn(
+            "max-w-2xl",
+            language === "ar" ? "font-arabic" : "font-sans"
+          )}>
+          <DialogHeader>
+            <DialogTitle
+              className={cn(
+                "text-2xl",
+                language === "ar" ? "text-right" : "text-left"
+              )}>
+              {language === "ar"
+                ? "إرسال رسائل ترويجية"
+                : "Send Promotion Messages"}
+            </DialogTitle>
+            <DialogDescription
+              className={cn(
+                language === "ar" ? "text-right" : "text-left"
+              )}>
+              {language === "ar"
+                ? "أدخل محتوى الرسالة الترويجية لإرسالها إلى جميع المتطوعين"
+                : "Enter the promotion message content to send to all volunteers"}
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="space-y-6 py-4">
+            {/* Volunteer Count Info */}
+            <div
+              className={cn(
+                "p-4 bg-primary/10 rounded-lg border border-primary/20",
+                language === "ar" ? "text-right" : "text-left"
+              )}>
+              <p
+                className={cn(
+                  "text-sm font-medium text-primary mb-1",
+                  language === "ar" ? "font-arabic" : "font-english"
+                )}>
+                {language === "ar"
+                  ? "عدد المتطوعين المستلمين:"
+                  : "Number of Recipients:"}
+              </p>
+              <p
+                className={cn(
+                  "text-2xl font-bold text-primary",
+                  language === "ar" ? "font-arabic" : "font-english"
+                )}>
+                {data.volunteers.length}{" "}
+                {language === "ar" ? "متطوع" : "volunteers"}
+              </p>
+            </div>
+
+            {/* Message Content */}
+            <div className="space-y-2">
+              <Label
+                htmlFor="promotion-message"
+                className={cn(
+                  language === "ar" ? "text-right font-arabic" : "text-left font-english"
+                )}>
+                {language === "ar" ? "محتوى الرسالة" : "Message Content"}
+              </Label>
+              <Textarea
+                id="promotion-message"
+                placeholder={
+                  language === "ar"
+                    ? "أدخل نص الرسالة الترويجية هنا..."
+                    : "Enter the promotion message text here..."
+                }
+                value={promotionMessageContent}
+                onChange={(e) => setPromotionMessageContent(e.target.value)}
+                className={cn(
+                  "min-h-[200px]",
+                  language === "ar"
+                    ? "font-arabic text-right"
+                    : "font-english text-left"
+                )}
+                rows={8}
+              />
+              <p
+                className={cn(
+                  "text-xs text-muted-foreground",
+                  language === "ar" ? "text-right font-arabic" : "text-left font-english"
+                )}>
+                {language === "ar"
+                  ? `عدد الأحرف: ${promotionMessageContent.length}`
+                  : `Character count: ${promotionMessageContent.length}`}
+              </p>
+            </div>
+          </div>
+
+          <DialogFooter
+            className={cn(language === "ar" ? "flex-row-reverse" : "")}>
+            <Button
+              variant="outline"
+              onClick={() => setPromotionMessageModal({ isOpen: false })}>
+              {language === "ar" ? "إلغاء" : "Cancel"}
+            </Button>
+            <Button
+              onClick={() => {
+                if (!promotionMessageContent.trim()) {
+                  toast.error(
+                    language === "ar"
+                      ? "يرجى إدخال محتوى الرسالة"
+                      : "Please enter message content"
+                  );
+                  return;
+                }
+
+                // Simulate sending promotion messages
+                const volunteerCount = data.volunteers.length;
+                toast.success(
+                  language === "ar"
+                    ? `تم إرسال رسائل الترويج إلى ${volunteerCount} متطوع بنجاح`
+                    : `Promotion messages sent successfully to ${volunteerCount} volunteers`
+                );
+                setPromotionMessageModal({ isOpen: false });
+                setPromotionMessageContent("");
+              }}
+              className="bg-primary hover:bg-primary/90">
+              {language === "ar" ? "إرسال" : "Send Messages"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

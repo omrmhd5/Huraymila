@@ -60,8 +60,6 @@ const Navbar = () => {
     { href: "/about-huraymila", label: t("nav.aboutHuraymila") },
     { href: "/initiatives", label: t("nav.initiatives") },
     { href: "/news", label: t("nav.news") },
-    { href: "/success-stories", label: t("nav.successStories") },
-    { href: "/faq", label: t("nav.faq") },
     { href: "/contact", label: t("nav.contact") },
   ];
 
@@ -72,7 +70,9 @@ const Navbar = () => {
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
-          <div className="flex items-center gap-3">
+          <button
+            onClick={() => navigateToTop("/")}
+            className="flex items-center gap-3 hover:opacity-80 transition-opacity cursor-pointer">
             <div className="w-10 rounded-lg flex items-center justify-center">
               <img src="assets/Logo.png" alt="Logo" />
             </div>
@@ -84,7 +84,27 @@ const Navbar = () => {
                 {t("nav.nationalInitiative")}
               </p>
             </div>
-          </div>
+
+            {/* ✅ Saudi Vision Logo — DESKTOP ONLY */}
+            <div className="hidden md:block ml-4">
+              <div className="w-12 h-12">
+                <img
+                  src="/assets/logos/رؤية المملكة 2030.png"
+                  alt="Saudi Vision 2030"
+                  className="w-full h-full object-contain"
+                  onError={(e) => {
+                    e.target.style.display = "none";
+                    e.target.nextSibling.style.display = "flex";
+                  }}
+                />
+                <div
+                  className="w-full h-full bg-muted rounded flex items-center justify-center text-xs text-muted-foreground"
+                  style={{ display: "none" }}>
+                  V2030
+                </div>
+              </div>
+            </div>
+          </button>
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center gap-6">

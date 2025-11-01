@@ -40,10 +40,14 @@ const HeroSection = () => {
         {/* Content */}
         <div className="relative z-10 container mx-auto px-4 text-center">
           <div className="max-w-4xl mx-auto">
-            {/* Heritage Pattern Decoration */}
+            {/* Logo */}
             <div className="mb-8 flex justify-center">
-              <div className="w-16 h-16 bg-accent/20 rounded-full flex items-center justify-center backdrop-blur-sm">
-                <div className="w-8 h-8 border-2 border-accent rotate-45 rounded-sm"></div>
+              <div className="w-20 h-20 sm:w-24 sm:h-24 md:w-28 md:h-28 pt-5">
+                <img
+                  src="/assets/Logo.png"
+                  alt="Logo"
+                  className="w-full h-full object-contain"
+                />
               </div>
             </div>
 
@@ -115,26 +119,6 @@ const HeroSection = () => {
                   </div>
                 );
               })}
-            </div>
-          </div>
-        </div>
-
-        {/* ✅ Saudi Vision Logo — DESKTOP / TABLET ONLY */}
-        <div className="hidden sm:block absolute bottom-2 left-2 sm:bottom-4 sm:left-4 md:bottom-8 md:left-16 z-20">
-          <div className="w-16 h-16 sm:w-24 sm:h-24 md:w-32 md:h-32 lg:w-36 lg:h-36">
-            <img
-              src="/assets/logos/رؤية المملكة 2030.png"
-              alt="Saudi Vision 2030"
-              className="w-full h-full object-contain"
-              onError={(e) => {
-                e.target.style.display = "none";
-                e.target.nextSibling.style.display = "flex";
-              }}
-            />
-            <div
-              className="w-full h-full bg-muted rounded flex items-center justify-center text-xs text-muted-foreground"
-              style={{ display: "none" }}>
-              V2030
             </div>
           </div>
         </div>
