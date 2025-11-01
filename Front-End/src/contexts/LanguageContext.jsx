@@ -633,7 +633,7 @@ export const LanguageProvider = ({ children }) => {
         workingHours: "الأحد - الخميس: 8:00 ص - 4:00 م",
         socialMedia: "تابعنا على وسائل التواصل",
         socialMediaDesc: "للحصول على آخر الأخبار والتحديثات",
-        copyright: "© 2024 مبادرة مدينة حريملاء الصحية. جميع الحقوق محفوظة.",
+        copyright: "© 2025 مبادرة مدينة حريملاء الصحية. جميع الحقوق محفوظة.",
         madeWith: "صنع بـ",
         inSaudiArabia: "في المملكة العربية السعودية",
       },
@@ -644,7 +644,7 @@ export const LanguageProvider = ({ children }) => {
           title: "الجدول الزمني للبرنامج",
           phases: {
             launch: {
-              year: "2024",
+              year: "2025",
               title: "إطلاق البرنامج",
               description: "بداية المبادرات الأساسية وتأسيس الشراكات",
               status: "مكتمل",
@@ -2297,7 +2297,7 @@ export const LanguageProvider = ({ children }) => {
         socialMedia: "Follow Us on Social Media",
         socialMediaDesc: "For latest news and updates",
         copyright:
-          "© 2024 Huraymila Healthy City Initiative. All rights reserved.",
+          "© 2025 Huraymila Healthy City Initiative. All rights reserved.",
         madeWith: "Made with",
         inSaudiArabia: "in Saudi Arabia",
       },
@@ -2308,7 +2308,7 @@ export const LanguageProvider = ({ children }) => {
           title: "Program Timeline",
           phases: {
             launch: {
-              year: "2024",
+              year: "2025",
               title: "Program Launch",
               description:
                 "Start of basic initiatives and establishing partnerships",
