@@ -303,20 +303,8 @@ const HealthyCityStructure = () => {
 
           {/* Level 2 - Two columns */}
           <div className="flex justify-end gap-40 w-full px-8">
-            {/* Column 1 - All Entities */}
+            {/* Column 1 - All Entities (direct items, no header) */}
             <div className="flex flex-col items-center w-[340px]">
-              <div className="w-full mb-3">
-                <OrgNode
-                  name={orgStructure.root.committees.main_committee.title}
-                  level={1}
-                />
-              </div>
-
-              {/* Connector to items */}
-              <div className="pb-2">
-                <ConnectorLine direction="vertical" length={24} />
-              </div>
-
               {/* All Entities Items */}
               <div className="space-y-2 w-full">
                 {orgStructure.root.committees.main_committee.items.map(
