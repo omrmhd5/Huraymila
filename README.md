@@ -1,4 +1,4 @@
-🏙️ Huraymila Healthy City Platform
+# 🏙️ Huraymila Healthy City Platform
 
 A fully digital healthy-city management platform built for **Huraymila, Saudi Arabia**, designed to replace all paper-based healthy-city standard submissions with a centralized, secure, and scalable MERN-based system. The platform enables government agencies to submit compliance documents, track approval status, and manage initiatives through a unified Governor dashboard. It significantly improved operational efficiency by digitizing workflows, centralizing approvals, and enabling real-time tracking across all stakeholders.
 
