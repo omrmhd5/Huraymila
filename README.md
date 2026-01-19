@@ -97,10 +97,9 @@ The system improved document organization and retrieval by over **70%**, increas
   <img width="1919" height="914" alt="Volunteer Dashboard" src="https://github.com/user-attachments/assets/a9d8261c-0951-4fc3-a818-20c198ff6b82" />
 
 
----
+## Live Demo 🚀
 
-## 📄 License
-This project is proprietary and developed as part of a government digital transformation initiative. Not open source.
+[**View Live Demo**](https://huraymila.vercel.app/)
 
 ---
 
