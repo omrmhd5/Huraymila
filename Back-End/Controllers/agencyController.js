@@ -1,4 +1,5 @@
 const Agency = require("../Models/Agency");
+const bcrypt = require("bcryptjs");
 
 // Get agency profile (protected route)
 const getAgencyProfile = async (req, res) => {
@@ -86,7 +87,7 @@ const getAgencyById = async (req, res) => {
 
     const agency = await Agency.findById(id).populate(
       "assignedStandards",
-      "number status progress"
+      "number status progress",
     );
 
     if (!agency) {
