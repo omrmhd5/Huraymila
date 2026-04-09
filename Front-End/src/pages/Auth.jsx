@@ -60,7 +60,7 @@ const Auth = () => {
       setError(
         language === "ar"
           ? "البريد الإلكتروني وكلمة المرور مطلوبان"
-          : "Email and password are required"
+          : "Email and password are required",
       );
       setLoading(false);
       return;
@@ -77,12 +77,14 @@ const Auth = () => {
           result.error ||
             (language === "ar"
               ? "بيانات الدخول غير صحيحة"
-              : "Invalid credentials")
+              : "Invalid credentials"),
         );
       }
     } catch (err) {
       setError(
-        language === "ar" ? "حدث خطأ غير متوقع" : "An unexpected error occurred"
+        language === "ar"
+          ? "حدث خطأ غير متوقع"
+          : "An unexpected error occurred",
       );
     } finally {
       setLoading(false);
@@ -103,7 +105,7 @@ const Auth = () => {
       !formData.phone
     ) {
       setError(
-        language === "ar" ? "جميع الحقول مطلوبة" : "All fields are required"
+        language === "ar" ? "جميع الحقول مطلوبة" : "All fields are required",
       );
       setLoading(false);
       return;
@@ -113,7 +115,7 @@ const Auth = () => {
       setError(
         language === "ar"
           ? "كلمات المرور غير متطابقة"
-          : "Passwords do not match"
+          : "Passwords do not match",
       );
       setLoading(false);
       return;
@@ -123,7 +125,7 @@ const Auth = () => {
       setError(
         language === "ar"
           ? "كلمة المرور يجب أن تكون 6 أحرف على الأقل"
-          : "Password must be at least 6 characters"
+          : "Password must be at least 6 characters",
       );
       setLoading(false);
       return;
@@ -134,7 +136,7 @@ const Auth = () => {
         formData.fullName,
         formData.email,
         formData.password,
-        formData.phone
+        formData.phone,
       );
 
       if (result.success) {
@@ -142,7 +144,7 @@ const Auth = () => {
           result.message ||
             (language === "ar"
               ? "تم إنشاء الحساب بنجاح! تم تسجيل الدخول تلقائياً"
-              : "Account created successfully! You are now signed in")
+              : "Account created successfully! You are now signed in"),
         );
 
         // Clear form
@@ -163,12 +165,14 @@ const Auth = () => {
           result.error ||
             (language === "ar"
               ? "فشل في إنشاء الحساب"
-              : "Failed to create account")
+              : "Failed to create account"),
         );
       }
     } catch (err) {
       setError(
-        language === "ar" ? "حدث خطأ غير متوقع" : "An unexpected error occurred"
+        language === "ar"
+          ? "حدث خطأ غير متوقع"
+          : "An unexpected error occurred",
       );
     } finally {
       setLoading(false);
@@ -189,7 +193,7 @@ const Auth = () => {
               </div>
               <h1 className="text-2xl font-bold text-foreground mb-2">
                 {language === "ar"
-                  ? "محافظة حريملاء الصحية"
+                  ? "مدينة حريملاء الصحية"
                   : "Huraymila Healthy City"}
               </h1>
               <p className="text-muted-foreground">
@@ -205,13 +209,13 @@ const Auth = () => {
                 <CardTitle
                   className={cn(
                     "text-2xl",
-                    language === "ar" ? "font-arabic" : "font-english"
+                    language === "ar" ? "font-arabic" : "font-english",
                   )}>
                   {t("auth.title")}
                 </CardTitle>
                 <CardDescription
                   className={cn(
-                    language === "ar" ? "font-arabic" : "font-english"
+                    language === "ar" ? "font-arabic" : "font-english",
                   )}>
                   {t("auth.subtitle")}
                 </CardDescription>
@@ -224,7 +228,7 @@ const Auth = () => {
                       value="signin"
                       className={cn(
                         "font-medium",
-                        language === "ar" ? "font-arabic" : "font-english"
+                        language === "ar" ? "font-arabic" : "font-english",
                       )}>
                       {t("auth.signIn")}
                     </TabsTrigger>
@@ -232,7 +236,7 @@ const Auth = () => {
                       value="signup"
                       className={cn(
                         "font-medium",
-                        language === "ar" ? "font-arabic" : "font-english"
+                        language === "ar" ? "font-arabic" : "font-english",
                       )}>
                       {t("auth.signUp")}
                     </TabsTrigger>
@@ -245,7 +249,7 @@ const Auth = () => {
                         className={cn(
                           language === "ar"
                             ? "font-arabic text-right"
-                            : "font-english"
+                            : "font-english",
                         )}>
                         {error}
                       </AlertDescription>
@@ -258,7 +262,7 @@ const Auth = () => {
                         className={cn(
                           language === "ar"
                             ? "font-arabic text-right"
-                            : "font-english"
+                            : "font-english",
                         )}>
                         {success}
                       </AlertDescription>
@@ -272,7 +276,7 @@ const Auth = () => {
                         <Label
                           htmlFor="signin-email"
                           className={cn(
-                            language === "ar" ? "font-arabic" : "font-english"
+                            language === "ar" ? "font-arabic" : "font-english",
                           )}>
                           {t("auth.email")}
                         </Label>
@@ -280,7 +284,7 @@ const Auth = () => {
                           <Mail
                             className={cn(
                               "absolute w-4 h-4 text-muted-foreground top-1/2 -translate-y-1/2",
-                              language === "ar" ? "right-3" : "left-3"
+                              language === "ar" ? "right-3" : "left-3",
                             )}
                           />
                           <Input
@@ -292,7 +296,7 @@ const Auth = () => {
                             placeholder={t("auth.emailPlaceholder")}
                             className={cn(
                               "h-12",
-                              language === "ar" ? "pr-10 text-right" : "pl-10"
+                              language === "ar" ? "pr-10 text-right" : "pl-10",
                             )}
                             dir={language === "ar" ? "rtl" : "ltr"}
                             required
@@ -304,7 +308,7 @@ const Auth = () => {
                         <Label
                           htmlFor="signin-password"
                           className={cn(
-                            language === "ar" ? "font-arabic" : "font-english"
+                            language === "ar" ? "font-arabic" : "font-english",
                           )}>
                           {t("auth.password")}
                         </Label>
@@ -312,7 +316,7 @@ const Auth = () => {
                           <Lock
                             className={cn(
                               "absolute w-4 h-4 text-muted-foreground top-1/2 -translate-y-1/2",
-                              language === "ar" ? "right-3" : "left-3"
+                              language === "ar" ? "right-3" : "left-3",
                             )}
                           />
                           <Input
@@ -326,7 +330,7 @@ const Auth = () => {
                               "h-12",
                               language === "ar"
                                 ? "pr-10 pl-10 text-right"
-                                : "pl-10 pr-10"
+                                : "pl-10 pr-10",
                             )}
                             dir={language === "ar" ? "rtl" : "ltr"}
                             required
@@ -336,7 +340,7 @@ const Auth = () => {
                             onClick={() => setShowPassword(!showPassword)}
                             className={cn(
                               "absolute top-3 w-4 h-4 text-muted-foreground hover:text-foreground",
-                              language === "ar" ? "left-3" : "right-3"
+                              language === "ar" ? "left-3" : "right-3",
                             )}>
                             {showPassword ? (
                               <EyeOff className="w-4 h-4" />
@@ -351,7 +355,7 @@ const Auth = () => {
                         type="submit"
                         className={cn(
                           "w-full h-12 font-medium",
-                          language === "ar" ? "font-arabic" : "font-english"
+                          language === "ar" ? "font-arabic" : "font-english",
                         )}
                         disabled={loading}>
                         {loading ? (
@@ -375,7 +379,7 @@ const Auth = () => {
                         <Label
                           htmlFor="signup-name"
                           className={cn(
-                            language === "ar" ? "font-arabic" : "font-english"
+                            language === "ar" ? "font-arabic" : "font-english",
                           )}>
                           {t("auth.fullName")}
                         </Label>
@@ -383,7 +387,7 @@ const Auth = () => {
                           <User
                             className={cn(
                               "absolute w-4 h-4 text-muted-foreground top-1/2 -translate-y-1/2",
-                              language === "ar" ? "right-3" : "left-3"
+                              language === "ar" ? "right-3" : "left-3",
                             )}
                           />
                           <Input
@@ -395,7 +399,7 @@ const Auth = () => {
                             placeholder={t("auth.fullNamePlaceholder")}
                             className={cn(
                               "h-12",
-                              language === "ar" ? "pr-10 text-right" : "pl-10"
+                              language === "ar" ? "pr-10 text-right" : "pl-10",
                             )}
                             dir={language === "ar" ? "rtl" : "ltr"}
                             required
@@ -407,7 +411,7 @@ const Auth = () => {
                         <Label
                           htmlFor="signup-phone"
                           className={cn(
-                            language === "ar" ? "font-arabic" : "font-english"
+                            language === "ar" ? "font-arabic" : "font-english",
                           )}>
                           {t("auth.phone")}
                         </Label>
@@ -415,7 +419,7 @@ const Auth = () => {
                           <Phone
                             className={cn(
                               "absolute w-4 h-4 text-muted-foreground top-1/2 -translate-y-1/2",
-                              language === "ar" ? "right-3" : "left-3"
+                              language === "ar" ? "right-3" : "left-3",
                             )}
                           />
                           <Input
@@ -427,7 +431,7 @@ const Auth = () => {
                             placeholder={t("auth.phonePlaceholder")}
                             className={cn(
                               "h-12",
-                              language === "ar" ? "pr-10 text-right" : "pl-10"
+                              language === "ar" ? "pr-10 text-right" : "pl-10",
                             )}
                             dir={language === "ar" ? "rtl" : "ltr"}
                             required
@@ -439,7 +443,7 @@ const Auth = () => {
                         <Label
                           htmlFor="signup-email"
                           className={cn(
-                            language === "ar" ? "font-arabic" : "font-english"
+                            language === "ar" ? "font-arabic" : "font-english",
                           )}>
                           {t("auth.email")}
                         </Label>
@@ -447,7 +451,7 @@ const Auth = () => {
                           <Mail
                             className={cn(
                               "absolute w-4 h-4 text-muted-foreground top-1/2 -translate-y-1/2",
-                              language === "ar" ? "right-3" : "left-3"
+                              language === "ar" ? "right-3" : "left-3",
                             )}
                           />
                           <Input
@@ -459,7 +463,7 @@ const Auth = () => {
                             placeholder={t("auth.emailPlaceholder")}
                             className={cn(
                               "h-12",
-                              language === "ar" ? "pr-10 text-right" : "pl-10"
+                              language === "ar" ? "pr-10 text-right" : "pl-10",
                             )}
                             dir={language === "ar" ? "rtl" : "ltr"}
                             required
@@ -471,7 +475,7 @@ const Auth = () => {
                         <Label
                           htmlFor="signup-password"
                           className={cn(
-                            language === "ar" ? "font-arabic" : "font-english"
+                            language === "ar" ? "font-arabic" : "font-english",
                           )}>
                           {t("auth.password")}
                         </Label>
@@ -479,7 +483,7 @@ const Auth = () => {
                           <Lock
                             className={cn(
                               "absolute w-4 h-4 text-muted-foreground top-1/2 -translate-y-1/2",
-                              language === "ar" ? "right-3" : "left-3"
+                              language === "ar" ? "right-3" : "left-3",
                             )}
                           />
                           <Input
@@ -493,7 +497,7 @@ const Auth = () => {
                               "h-12",
                               language === "ar"
                                 ? "pr-10 pl-10 text-right"
-                                : "pl-10 pr-10"
+                                : "pl-10 pr-10",
                             )}
                             dir={language === "ar" ? "rtl" : "ltr"}
                             required
@@ -503,7 +507,7 @@ const Auth = () => {
                             onClick={() => setShowPassword(!showPassword)}
                             className={cn(
                               "absolute top-3 w-4 h-4 text-muted-foreground hover:text-foreground",
-                              language === "ar" ? "left-3" : "right-3"
+                              language === "ar" ? "left-3" : "right-3",
                             )}>
                             {showPassword ? (
                               <EyeOff className="w-4 h-4" />
@@ -518,7 +522,7 @@ const Auth = () => {
                         <Label
                           htmlFor="signup-confirm"
                           className={cn(
-                            language === "ar" ? "font-arabic" : "font-english"
+                            language === "ar" ? "font-arabic" : "font-english",
                           )}>
                           {t("auth.confirmPassword")}
                         </Label>
@@ -526,7 +530,7 @@ const Auth = () => {
                           <Lock
                             className={cn(
                               "absolute w-4 h-4 text-muted-foreground top-1/2 -translate-y-1/2",
-                              language === "ar" ? "right-3" : "left-3"
+                              language === "ar" ? "right-3" : "left-3",
                             )}
                           />
                           <Input
@@ -538,7 +542,7 @@ const Auth = () => {
                             placeholder={t("auth.passwordPlaceholder")}
                             className={cn(
                               "h-12",
-                              language === "ar" ? "pr-10 text-right" : "pl-10"
+                              language === "ar" ? "pr-10 text-right" : "pl-10",
                             )}
                             dir={language === "ar" ? "rtl" : "ltr"}
                             required
@@ -550,7 +554,7 @@ const Auth = () => {
                         type="submit"
                         className={cn(
                           "w-full h-12 font-medium",
-                          language === "ar" ? "font-arabic" : "font-english"
+                          language === "ar" ? "font-arabic" : "font-english",
                         )}
                         disabled={loading}>
                         {loading ? (
@@ -575,7 +579,7 @@ const Auth = () => {
                       variant="ghost"
                       className={cn(
                         "w-full",
-                        language === "ar" ? "font-arabic" : "font-english"
+                        language === "ar" ? "font-arabic" : "font-english",
                       )}>
                       {t("auth.backToHome")}
                     </Button>

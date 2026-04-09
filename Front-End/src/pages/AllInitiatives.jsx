@@ -163,7 +163,7 @@ const AllInitiatives = () => {
   const handleApplyToInitiative = async (initiativeId) => {
     if (!user) {
       toast.error(
-        language === "ar" ? "يجب تسجيل الدخول أولاً" : "Please sign in first"
+        language === "ar" ? "يجب تسجيل الدخول أولاً" : "Please sign in first",
       );
       navigate("/auth");
       return;
@@ -173,7 +173,7 @@ const AllInitiatives = () => {
       toast.error(
         language === "ar"
           ? "المتطوعون فقط يمكنهم التقدم للمبادرات"
-          : "Only volunteers can apply to initiatives"
+          : "Only volunteers can apply to initiatives",
       );
       return;
     }
@@ -183,7 +183,7 @@ const AllInitiatives = () => {
       toast.info(
         language === "ar"
           ? "هذه مبادرة تجريبية للعرض فقط"
-          : "This is a demo initiative for display only"
+          : "This is a demo initiative for display only",
       );
       return;
     }
@@ -195,7 +195,7 @@ const AllInitiatives = () => {
       toast.success(
         language === "ar"
           ? "تم تقديم طلب المشاركة بنجاح!"
-          : "Application submitted successfully!"
+          : "Application submitted successfully!",
       );
 
       // Refresh initiatives to show updated data
@@ -204,7 +204,7 @@ const AllInitiatives = () => {
       // Error applying to initiative
       toast.error(
         error.message ||
-          (language === "ar" ? "فشل في تقديم الطلب" : "Failed to apply")
+          (language === "ar" ? "فشل في تقديم الطلب" : "Failed to apply"),
       );
     } finally {
       setApplyingTo(null);
@@ -306,7 +306,7 @@ const AllInitiatives = () => {
               }`}>
               {t("initiatives.title")
                 ? language === "ar"
-                  ? "اكتشف المبادرات النشطة في محافظة حريملاء الصحية"
+                  ? "اكتشف المبادرات النشطة في مدينة حريملاء الصحية"
                   : "Discover Active Initiatives in Huraymila Healthy City"
                 : "Fallback subtitle"}
             </p>
@@ -445,7 +445,7 @@ const AllInitiatives = () => {
                           : `${
                               import.meta.env.VITE_API_BASE_URL?.replace(
                                 "/api",
-                                ""
+                                "",
                               ) || "http://localhost:5000"
                             }${initiative.imageUrl}`
                       }
@@ -516,7 +516,7 @@ const AllInitiatives = () => {
                         {Math.round(
                           ((initiative.currentVolunteers || 0) /
                             initiative.maxVolunteers) *
-                            100
+                            100,
                         )}
                         %
                       </span>
@@ -550,7 +550,7 @@ const AllInitiatives = () => {
                       className="flex-1 group-hover:bg-primary/90 transition-colors"
                       onClick={() =>
                         navigateToTop(
-                          `/initiatives/${initiative._id || initiative.id}`
+                          `/initiatives/${initiative._id || initiative.id}`,
                         )
                       }>
                       {language === "ar" ? "عرض التفاصيل" : "View Details"}
@@ -584,7 +584,7 @@ const AllInitiatives = () => {
                               size="sm"
                               onClick={() =>
                                 handleApplyToInitiative(
-                                  initiative._id || initiative.id
+                                  initiative._id || initiative.id,
                                 )
                               }
                               disabled={
@@ -607,8 +607,8 @@ const AllInitiatives = () => {
                                     ? "جاري التقديم..."
                                     : "Applying..."
                                   : language === "ar"
-                                  ? "تقدم"
-                                  : "Apply"}
+                                    ? "تقدم"
+                                    : "Apply"}
                               </span>
                             </Button>
                           )
@@ -626,7 +626,7 @@ const AllInitiatives = () => {
                           size="sm"
                           onClick={() =>
                             navigateToTop(
-                              `/initiatives/${initiative._id || initiative.id}`
+                              `/initiatives/${initiative._id || initiative.id}`,
                             )
                           }>
                           <UserPlus className="w-4 h-4" />

@@ -115,7 +115,7 @@ const About = () => {
                       isRTL ? "font-arabic" : "font-sans"
                     }`}>
                     {isRTL
-                      ? "انطلق برنامج محافظة حريملاء الصحية بتوجيهٍ كريم من صاحب السمو الملكي أمير منطقة الرياض – حفظه الله – ليكون نموذجًا تنمويًا شاملًا يُعزز الصحة العامة، ويحمي البيئة، ويُفعّل المشاركة المجتمعية، انسجامًا مع رؤية المملكة 2030 وبرنامج جودة الحياة"
+                      ? "انطلق برنامج مدينة حريملاء الصحية بتوجيهٍ كريم من صاحب السمو الملكي أمير منطقة الرياض – حفظه الله – ليكون نموذجًا تنمويًا شاملًا يُعزز الصحة العامة، ويحمي البيئة، ويُفعّل المشاركة المجتمعية، انسجامًا مع رؤية المملكة 2030 وبرنامج جودة الحياة"
                       : "The Huraymila Healthy City Program was launched under the gracious directive of His Royal Highness the Prince of Riyadh Region – may God protect him – to be a comprehensive development model that promotes public health, protects the environment, and activates community participation, in line with the Kingdom's Vision 2030 and the Quality of Life Program"}
                   </p>
                 </div>

@@ -69,7 +69,7 @@ const AllNews = () => {
           : "New initiative aims to encourage Huraymila residents to practice daily walking",
       description:
         language === "ar"
-          ? "أطلقت محافظة حريملاء الصحية مبادرة المشي اليومي كجزء من برنامجها الشامل لتعزيز الصحة العامة. تهدف المبادرة إلى تشجيع المواطنين على ممارسة رياضة المشي لمدة 30 دقيقة يومياً في الممرات المخصصة والحدائق العامة. تتضمن المبادرة تنظيم مسيرات جماعية صباحية ومسائية، وتوفير مرشدين صحيين، وإقامة ورش عمل توعوية حول فوائد المشي للصحة البدنية والنفسية."
+          ? "أطلقت مدينة حريملاء الصحية مبادرة المشي اليومي كجزء من برنامجها الشامل لتعزيز الصحة العامة. تهدف المبادرة إلى تشجيع المواطنين على ممارسة رياضة المشي لمدة 30 دقيقة يومياً في الممرات المخصصة والحدائق العامة. تتضمن المبادرة تنظيم مسيرات جماعية صباحية ومسائية، وتوفير مرشدين صحيين، وإقامة ورش عمل توعوية حول فوائد المشي للصحة البدنية والنفسية."
           : "Huraymila Healthy City has launched the Daily Walking Initiative as part of its comprehensive program to promote public health. The initiative aims to encourage citizens to walk for 30 minutes daily in designated walkways and public gardens. The initiative includes organizing morning and evening group walks, providing health guides, and conducting awareness workshops on the physical and mental health benefits of walking.",
       date: new Date("2025-10-28").toISOString(),
       imageUrl: walkingInitiativeImg,
@@ -88,7 +88,7 @@ const AllNews = () => {
           : "Specialized training program to teach traditional pottery art",
       description:
         language === "ar"
-          ? "في إطار الحفاظ على التراث النجدي الأصيل، تنظم محافظة حريملاء الصحية سلسلة من ورش العمل المتخصصة في صناعة الفخار التقليدي. يشرف على الورش حرفيون متمرسون يمتلكون خبرة تمتد لعقود في هذا المجال. تتضمن الورش تعليم المشاركين تقنيات تشكيل الطين، والزخرفة التقليدية، وطرق الحرق القديمة. كما تهدف المبادرة إلى توثيق هذه الحرفة ونقلها للأجيال القادمة."
+          ? "في إطار الحفاظ على التراث النجدي الأصيل، تنظم مدينة حريملاء الصحية سلسلة من ورش العمل المتخصصة في صناعة الفخار التقليدي. يشرف على الورش حرفيون متمرسون يمتلكون خبرة تمتد لعقود في هذا المجال. تتضمن الورش تعليم المشاركين تقنيات تشكيل الطين، والزخرفة التقليدية، وطرق الحرق القديمة. كما تهدف المبادرة إلى توثيق هذه الحرفة ونقلها للأجيال القادمة."
           : "As part of preserving authentic Najdi heritage, Huraymila Healthy City organizes a series of specialized workshops in traditional pottery making. The workshops are supervised by experienced craftsmen with decades of expertise in this field. The workshops include teaching participants clay shaping techniques, traditional decoration, and ancient firing methods. The initiative also aims to document this craft and pass it on to future generations.",
       date: new Date("2025-10-25").toISOString(),
       imageUrl: traditionalPotteryImg,
@@ -301,8 +301,8 @@ const AllNews = () => {
                       news.isMock
                         ? news.imageUrl
                         : news.imageUrl
-                        ? newsApi.getImageUrl(news.imageUrl)
-                        : "/assets/placeholder.svg"
+                          ? newsApi.getImageUrl(news.imageUrl)
+                          : "/assets/placeholder.svg"
                     }
                     alt={news.title}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
