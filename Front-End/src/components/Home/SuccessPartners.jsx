@@ -80,7 +80,7 @@ const SuccessPartners = () => {
   ];
 
   return (
-    <section className="w-full bg-secondary/15 backdrop-blur-sm py-6 md:py-10 lg:py-12 overflow-hidden">
+    <section className="w-full bg-background py-6 md:py-10 lg:py-12 overflow-hidden">
       <div className="w-full px-4 mb-4 md:mb-6 lg:mb-8">
         <h3
           className={cn(

@@ -2,12 +2,14 @@ import HeroSection from "@/components/Home/HeroSection";
 import AboutSection from "@/components/Home/AboutSection";
 import InitiativesSection from "@/components/Home/InitiativesSection";
 import InteractiveMap from "@/components/Home/InteractiveMap";
+import TimelineSection from "@/components/Home/TimelineSection";
 import NewsSection from "@/components/Home/NewsSection";
 import SuccessStories from "@/components/Home/SuccessStories";
 import PartnersSection from "@/components/Home/PartnersSection";
 import SuccessPartners from "@/components/Home/SuccessPartners";
 import QuickLinksSection from "@/components/Home/QuickLinksSection";
 import HealthDashboard from "@/components/Home/HealthDashboard";
+import StandardsStatsSection from "@/components/Home/StandardsStatsSection";
 import AnimatedSection from "@/components/animations/AnimatedSection";
 import { useAuth } from "@/contexts/AuthContext";
 import { useTheme } from "@/contexts/ThemeContext";
@@ -38,11 +40,17 @@ const Home = () => {
         <AnimatedSection animation="fadeInUp" delay={50} duration={400}>
           <AboutSection />
         </AnimatedSection>
+        <AnimatedSection animation="fadeInUp" delay={100} duration={400}>
+          <TimelineSection />
+        </AnimatedSection>
         <AnimatedSection animation="fadeInRight" delay={150} duration={400}>
           <NewsSection />
         </AnimatedSection>
         <AnimatedSection animation="scaleIn" delay={200} duration={400}>
           <HealthDashboard />
+        </AnimatedSection>
+        <AnimatedSection animation="fadeInUp" delay={210} duration={400}>
+          <StandardsStatsSection />
         </AnimatedSection>
         <InteractiveMap />
         {/*

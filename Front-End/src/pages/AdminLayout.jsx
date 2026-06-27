@@ -44,25 +44,25 @@ const AdminLayout = () => {
           {
             year: "2025",
             title: "إطلاق البرنامج",
-            description: "بداية المبادرات الأساسية وتأسيس الشراكات",
+            description: "بداية المبادرات الأساسية وتأسيس الشراكات واللجان الاستراتيجية",
             status: "مكتمل",
           },
           {
-            year: "2025",
+            year: "2026",
             title: "التوسع والتطوير",
-            description: "تنفيذ المشاريع الكبرى وزيادة المشاركة المجتمعية",
+            description: "تنفيذ المشاريع الكبرى وزيادة المشاركة واللجان المجتمعية",
             status: "قيد التنفيذ",
           },
           {
-            year: "2026",
+            year: "2027",
             title: "التقييم والتحسين",
-            description: "تقييم النتائج وتطوير المبادرات القائمة",
+            description: "تقييم النتائج وتطوير المبادرات القائمة لضمان الجودة والاستدامة",
             status: "مخطط",
           },
           {
-            year: "2027",
-            title: "الاعتماد العالمي",
-            description: "التقدم للحصول على اعتماد منظمة الصحة العالمية",
+            year: "2028",
+            title: "الاعتماد العالمي والمحلي (KSA)",
+            description: "التقدم للحصول على الاعتماد الرسمي لمدينة حريملاء الصحية من منظمة الصحة العالمية وبرنامج المدن الصحية في المملكة",
             status: "مخطط",
           },
         ],
@@ -76,27 +76,27 @@ const AdminLayout = () => {
             year: "2025",
             title: "Program Launch",
             description:
-              "Start of basic initiatives and establishing partnerships",
+              "Start of basic initiatives and establishing strategic partnerships and committees",
             status: "Completed",
           },
           {
-            year: "2025",
+            year: "2026",
             title: "Expansion & Development",
             description:
               "Implementation of major projects and increased community participation",
             status: "In Progress",
           },
           {
-            year: "2026",
+            year: "2027",
             title: "Evaluation & Improvement",
             description:
-              "Results evaluation and development of existing initiatives",
+              "Results evaluation and development of existing initiatives for quality and sustainability",
             status: "Planned",
           },
           {
-            year: "2027",
-            title: "Global Accreditation",
-            description: "Apply for WHO accreditation",
+            year: "2028",
+            title: "Global & National Accreditation (KSA)",
+            description: "Apply for official WHO and KSA Saudi Healthy Cities Program accreditation",
             status: "Planned",
           },
         ],
@@ -298,7 +298,7 @@ const AdminLayout = () => {
         </div>
       </div>
 
-      {/* Program Timeline */}
+      {/* Program Timeline
       <div className="bg-card/50 border-b border-border">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <h3
@@ -373,6 +373,7 @@ const AdminLayout = () => {
           </div>
         </div>
       </div>
+      */}
 
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
