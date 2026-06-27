@@ -17,6 +17,7 @@ import {
   PlusCircle,
   Star,
   AlertTriangle,
+  MessageSquare,
   FileImage,
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
@@ -509,7 +510,7 @@ const VolunteerDashboard = () => {
               <Card className="text-center hover:shadow-lg transition-shadow">
                 <CardContent className="pt-6">
                   <div className="inline-flex items-center justify-center w-12 h-12 bg-orange-100 rounded-full mb-4">
-                    <AlertTriangle className="w-6 h-6 text-orange-600" />
+                    <MessageSquare className="w-6 h-6 text-orange-600" />
                   </div>
                   <div className="text-3xl font-bold text-orange-600 mb-2">
                     {myReports.length || 0}
@@ -519,7 +520,7 @@ const VolunteerDashboard = () => {
                       "text-sm text-muted-foreground",
                       isRTL ? "font-arabic" : "font-sans"
                     )}>
-                    {language === "ar" ? "إجمالي البلاغات" : "Total Reports"}
+                    {language === "ar" ? "إجمالي المشاركات" : "Total Feedback"}
                   </p>
                 </CardContent>
               </Card>
@@ -702,10 +703,10 @@ const VolunteerDashboard = () => {
                       variant="outline"
                       className="w-full justify-start border-orange-200 hover:bg-orange-50"
                       onClick={() => navigate("/report")}>
-                      <AlertTriangle
+                      <MessageSquare
                         className={cn("w-4 h-4", isRTL ? "ml-2" : "mr-2")}
                       />
-                      {language === "ar" ? "تقديم بلاغ" : "Submit Report"}
+                      {language === "ar" ? "شاركنا رأيك" : "Share Your Feedback"}
                     </Button>
                   </CardContent>
                 </Card>
@@ -1006,8 +1007,8 @@ const VolunteerDashboard = () => {
                       ? "flex-row-reverse font-arabic text-right"
                       : "font-sans text-left"
                   )}>
-                  <AlertTriangle className="w-5 h-5" />
-                  {language === "ar" ? "بلاغاتي" : "My Reports"}
+                  <MessageSquare className="w-5 h-5" />
+                  {language === "ar" ? "ملاحظاتي ومقترحاتي" : "My Feedback"}
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -1133,7 +1134,7 @@ const VolunteerDashboard = () => {
                 ) : (
                   <div className="text-center py-12">
                     <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mx-auto mb-4">
-                      <AlertTriangle className="w-8 h-8 text-muted-foreground" />
+                      <MessageSquare className="w-8 h-8 text-muted-foreground" />
                     </div>
                     <h3
                       className={cn(
@@ -1141,8 +1142,8 @@ const VolunteerDashboard = () => {
                         isRTL ? "font-arabic" : "font-sans"
                       )}>
                       {language === "ar"
-                        ? "لم تقم بتقديم أي بلاغات بعد"
-                        : "No reports submitted yet"}
+                        ? "لم تقم بإرسال أي ملاحظات بعد"
+                        : "No feedback submitted yet"}
                     </h3>
                     <p
                       className={cn(
@@ -1150,14 +1151,14 @@ const VolunteerDashboard = () => {
                         isRTL ? "font-arabic" : "font-sans"
                       )}>
                       {language === "ar"
-                        ? "قدم بلاغاً عن أي مشاكل أو اقتراحات"
-                        : "Submit a report for any issues or suggestions"}
+                        ? "شاركنا ملاحظاتك أو اقتراحاتك لتحسين الخدمات"
+                        : "Share your observations or suggestions to improve services"}
                     </p>
                     <Button onClick={() => navigate("/report")}>
-                      <AlertTriangle
+                      <MessageSquare
                         className={cn("w-4 h-4", isRTL ? "ml-2" : "mr-2")}
                       />
-                      {language === "ar" ? "تقديم بلاغ" : "Submit Report"}
+                      {language === "ar" ? "شاركنا رأيك" : "Share Your Feedback"}
                     </Button>
                   </div>
                 )}
@@ -1390,7 +1391,7 @@ const VolunteerDashboard = () => {
                   "text-2xl",
                   language === "ar" ? "text-right" : "text-left"
                 )}>
-                {language === "ar" ? "تفاصيل البلاغ" : "Report Details"}
+                {language === "ar" ? "تفاصيل المشاركة" : "Feedback Details"}
               </DialogTitle>
             </DialogHeader>
 

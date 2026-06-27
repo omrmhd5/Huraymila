@@ -149,11 +149,11 @@ const AdminLayout = () => {
     },
     {
       value: "/admin/agency-management",
-      label: language === "ar" ? "إدارة الجهات" : "Agency Management",
+      label: language === "ar" ? "إدارة اللجان" : "Agency Management",
       icon: Building2,
       description:
         language === "ar"
-          ? "إدارة الشركاء والجهات"
+          ? "إدارة الشركاء واللجان"
           : "Manage Partners & Agencies",
     },
     {

@@ -11,7 +11,7 @@ import {
   X,
   FileImage,
   FileVideo,
-  AlertTriangle,
+  MessageSquare,
 } from "lucide-react";
 import { useTheme } from "@/contexts/ThemeContext";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -40,8 +40,8 @@ const Report = () => {
     if (!authLoading && (!user || user.type !== "volunteer")) {
       toast.error(
         language === "ar"
-          ? "يجب تسجيل الدخول كمتطوع لتقديم بلاغ"
-          : "You must be signed in as a volunteer to submit a report"
+          ? "يجب تسجيل الدخول كمتطوع لمشاركتنا رأيك"
+          : "You must be signed in as a volunteer to share your feedback"
       );
       navigate("/auth");
     }
@@ -101,8 +101,8 @@ const Report = () => {
       // Show success message
       toast.success(
         language === "ar"
-          ? "تم تقديم البلاغ بنجاح! سيتم مراجعته قريباً"
-          : "Report submitted successfully! It will be reviewed soon"
+          ? "تم إرسال مشاركتك بنجاح! سيتم مراجعتها قريباً"
+          : "Feedback submitted successfully! It will be reviewed soon"
       );
 
       // Reset form
@@ -121,8 +121,8 @@ const Report = () => {
       toast.error(
         error.message ||
           (language === "ar"
-            ? "فشل في تقديم البلاغ"
-            : "Failed to submit report")
+            ? "فشل في إرسال المشاركة"
+            : "Failed to submit feedback")
       );
     } finally {
       setIsSubmitting(false);
@@ -166,7 +166,7 @@ const Report = () => {
               isRTL ? "flex-row-reverse" : ""
             )}>
             <div className="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center">
-              <AlertTriangle className="w-6 h-6 text-orange-600" />
+              <MessageSquare className="w-6 h-6 text-orange-600" />
             </div>
             <div>
               <h1
@@ -174,7 +174,7 @@ const Report = () => {
                   "text-4xl font-bold text-foreground",
                   isRTL ? "font-arabic text-right" : "font-sans text-left"
                 )}>
-                {language === "ar" ? "تقديم بلاغ" : "Submit Report"}
+                {language === "ar" ? "شاركنا رأيك" : "Share Your Feedback"}
               </h1>
             </div>
           </div>
@@ -185,8 +185,8 @@ const Report = () => {
               isRTL ? "font-arabic text-right" : "font-sans text-left"
             )}>
             {language === "ar"
-              ? "أبلغ عن مشكلة أو ملاحظة في منطقتك. سيتم مراجعة البلاغ من قبل المسؤولين"
-              : "Report an issue or observation in your area. The report will be reviewed by administrators"}
+              ? "شاركنا ملاحظاتك أو مقترحاتك أو آرائك لتحسين الخدمات في مدينة حريملاء الصحية."
+              : "Share your observations, suggestions, or comments to improve services in Huraymila Healthy City."}
           </p>
         </div>
 
@@ -254,7 +254,7 @@ const Report = () => {
                   "text-xl",
                   isRTL ? "font-arabic text-right" : "font-sans text-left"
                 )}>
-                {language === "ar" ? "تفاصيل البلاغ" : "Report Details"}
+                {language === "ar" ? "تفاصيل المشاركة" : "Feedback Details"}
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-6">
@@ -265,7 +265,7 @@ const Report = () => {
                     "text-sm font-medium",
                     isRTL ? "font-arabic" : "font-sans"
                   )}>
-                  {language === "ar" ? "عنوان البلاغ" : "Report Title"} *
+                  {language === "ar" ? "عنوان الموضوع" : "Subject Title"} *
                 </Label>
                 <Input
                   id="title"
@@ -277,8 +277,8 @@ const Report = () => {
                   className={cn("mt-2", isRTL ? "text-right" : "text-left")}
                   placeholder={
                     language === "ar"
-                      ? "مثال: طريق تالف في حي..."
-                      : "Example: Damaged road in..."
+                      ? "أدخل عنواناً للموضوع..."
+                      : "Enter subject title..."
                   }
                 />
               </div>
@@ -290,7 +290,7 @@ const Report = () => {
                     "text-sm font-medium",
                     isRTL ? "font-arabic" : "font-sans"
                   )}>
-                  {language === "ar" ? "تفاصيل البلاغ" : "Report Details"} *
+                  {language === "ar" ? "تفاصيل المشاركة" : "Feedback Details"} *
                 </Label>
                 <Textarea
                   id="details"
@@ -302,8 +302,8 @@ const Report = () => {
                   className={cn("mt-2", isRTL ? "text-right" : "text-left")}
                   placeholder={
                     language === "ar"
-                      ? "قم بوصف المشكلة بالتفصيل..."
-                      : "Describe the issue in detail..."
+                      ? "اكتب تفاصيل مشاركتك أو رأيك هنا..."
+                      : "Write your detailed feedback here..."
                   }
                 />
               </div>
@@ -328,8 +328,8 @@ const Report = () => {
                   isRTL ? "font-arabic text-right" : "font-sans text-left"
                 )}>
                 {language === "ar"
-                  ? "يمكنك إرفاق صور أو فيديوهات توضح المشكلة"
-                  : "You can attach photos or videos illustrating the issue"}
+                    ? "يمكنك إرفاق صور أو فيديوهات لدعم رأيك"
+                    : "You can attach photos or videos to support your feedback"}
               </p>
             </CardHeader>
             <CardContent>
@@ -455,10 +455,10 @@ const Report = () => {
                 </>
               ) : (
                 <>
-                  <AlertTriangle
+                  <MessageSquare
                     className={cn("w-5 h-5", isRTL ? "ml-2" : "mr-2")}
                   />
-                  {language === "ar" ? "تقديم البلاغ" : "Submit Report"}
+                  {language === "ar" ? "إرسال المشاركة" : "Submit Feedback"}
                 </>
               )}
             </Button>

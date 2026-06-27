@@ -66,7 +66,7 @@ const HeroSection = () => {
               {t("home.description")}
             </p>
 
-            {/* Call to Action Buttons */}
+            {/* Call to Action Buttons
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16">
               <Button
                 size="lg"
@@ -76,6 +76,7 @@ const HeroSection = () => {
                 <ArrowRight className={`w-5 h-5 ${isRTL ? "mr-2" : "ml-2"}`} />
               </Button>
             </div>
+            */}
 
             {/* ✅ Saudi Vision Logo — MOBILE ONLY */}
             <div className="sm:hidden flex justify-center mb-8">

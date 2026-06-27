@@ -81,7 +81,7 @@ export const LanguageProvider = ({ children }) => {
         title: "مدينة حريملاء الصحية",
         subtitle: "مبادرة وطنية لتعزيز الصحة العامة وتحسين جودة الحياة",
         description:
-          "نعمل معاً لبناء محافظة صحية ومستدامة من خلال المبادرات المجتمعية والشراكات الاستراتيجية مع الجهات الحكومية والمؤسسات الصحية.",
+          "نعمل معاً لبناء محافظة صحية ومستدامة من خلال المبادرات المجتمعية والشراكات الاستراتيجية مع اللجان الحكومية والمؤسسات الصحية.",
         healthInitiatives: "مبادرة صحية",
         activeVolunteers: "متطوع نشط",
         environmentalProjects: "مشروع بيئي",
@@ -91,7 +91,8 @@ export const LanguageProvider = ({ children }) => {
 
       // About Section
       about: {
-        title: "عن برنامج مدينة حريملاء الصحية",
+        // title: "عن برنامج مدينة حريملاء الصحية",
+        title: "برنامج مدينة حريملاء الصحية",
         subtitle: "مبادرة وطنية رائدة ضمن برنامج المدن الصحية السعودي",
         description:
           "برنامج مدينة حريملاء الصحية هو مبادرة وطنية طموحة تهدف إلى تحويل محافظة حريملاء إلى نموذج متقدم للمدن الصحية في المملكة العربية السعودية، من خلال تطبيق أحدث المعايير العالمية وأفضل الممارسات في مجال الصحة المجتمعية والتنمية المستدامة.",
@@ -248,7 +249,7 @@ export const LanguageProvider = ({ children }) => {
       partnersSection: {
         title: "شبكة التكامل المجتمعي",
         subtitle:
-          "جودة الحياة تتحقق بتكامل المجتمع والجهات في تقديم الخدمات وتطويرها.",
+          "جودة الحياة تتحقق بتكامل المجتمع واللجان في تقديم الخدمات وتطويرها.",
         centerEntity: {
           name: "المجتمع والمتطوعون",
           description: "الركيزة الأساسية لكل المبادرات",
@@ -256,7 +257,7 @@ export const LanguageProvider = ({ children }) => {
           organizations: "17 جهة شريكة",
         },
         stats: {
-          partnerOrganizations: "جهات شريكة",
+          partnerOrganizations: "لجان شريكة",
           integratedInitiatives: "مبادرة تكاملية",
           activeVolunteers: "متطوع نشط",
           communitySatisfaction: "رضا المجتمع",
@@ -322,8 +323,8 @@ export const LanguageProvider = ({ children }) => {
         title: "روابط سريعة",
         subtitle: "الوصول السريع للخدمات المهمة",
         links: {
-          submitReport: "تقديم بلاغ",
-          volunteerInInitiatives: "تطوع في مبادرات",
+          submitReport: "شاركنا رأيك",
+          volunteerInInitiatives: "البحث عن مبادرات",
           login: "تسجيل الدخول",
         },
         getStarted: "ابدأ الآن",
@@ -547,13 +548,13 @@ export const LanguageProvider = ({ children }) => {
         educationTraining: "التعليم والتدريب",
         whatIsProgram: "ما هو برنامج مدينة حريملاء الصحية؟",
         whatIsProgramAnswer:
-          "برنامج مدينة حريملاء الصحية هو مبادرة شاملة تهدف إلى تحسين جودة الحياة والصحة العامة في محافظة حريملاء من خلال تعزيز التعاون بين الجهات الحكومية والجمعيات الأهلية والمجتمع المحلي.",
+          "برنامج مدينة حريملاء الصحية هو مبادرة شاملة تهدف إلى تحسين جودة الحياة والصحة العامة في محافظة حريملاء من خلال تعزيز التعاون بين اللجان الحكومية والجمعيات الأهلية والمجتمع المحلي.",
         programObjectives: "ما هي أهداف البرنامج؟",
         programObjectivesAnswer:
           "يهدف البرنامج إلى تحسين المؤشرات الصحية، تعزيز أنماط الحياة الصحية، دعم المبادرات المجتمعية، وتطوير البنية التحتية الصحية والاجتماعية في المحافظة.",
         whoCanParticipate: "من يمكنه المشاركة في البرنامج؟",
         whoCanParticipateAnswer:
-          "يمكن لجميع أفراد المجتمع المشاركة في البرنامج سواء كمتطوعين أو مستفيدين من الخدمات. كما يمكن للجهات الحكومية والجمعيات الأهلية والقطاع الخاص المشاركة كشركاء.",
+          "يمكن لجميع أفراد المجتمع المشاركة في البرنامج سواء كمتطوعين أو مستفيدين من الخدمات. كما يمكن للجان الحكومية والجمعيات الأهلية والقطاع الخاص المشاركة كشركاء.",
         initiativeTypes: "ما هي أنواع المبادرات المتاحة؟",
         initiativeTypesAnswer:
           "يشمل البرنامج مبادرات صحية متنوعة مثل برامج التوعية الصحية، فحوصات طبية مجانية، أنشطة رياضية، برامج التغذية الصحية، ومبادرات الصحة النفسية.",
@@ -833,11 +834,11 @@ export const LanguageProvider = ({ children }) => {
         highestRated: "الأعلى تقييماً",
       },
       agencyManagement: {
-        title: "إدارة الجهات",
-        subtitle: "إدارة الجهات الحكومية المشاركة في مبادرة المحافظة الصحية",
+        title: "إدارة اللجان",
+        subtitle: "إدارة اللجان الحكومية المشاركة في مبادرة المحافظة الصحية",
         addNewAgency: "إضافة جهة جديدة",
-        agenciesList: "قائمة الجهات",
-        manageAgencies: "إدارة جميع الجهات المشاركة",
+        agenciesList: "قائمة اللجان",
+        manageAgencies: "إدارة جميع اللجان المشاركة",
         agencyEmail: "بريد الجهة:",
         agencyPassword: "كلمة مرور الجهة:",
         contactPerson: "الشخص المسؤول:",
@@ -906,9 +907,9 @@ export const LanguageProvider = ({ children }) => {
         standardToggleError: "فشل في تحديث تعيين المعيار",
       },
       report: {
-        title: "تقديم بلاغ",
+        title: "شاركنا رأيك",
         subtitle:
-          "شاركنا ملاحظاتك وبلاغاتك لتحسين الخدمات في مدينة حريملاء الصحية",
+          "شاركنا ملاحظاتك وآرائك لتحسين الخدمات في مدينة حريملاء الصحية",
         back: "العودة",
         yourInformation: "معلوماتك الشخصية",
         fullName: "الاسم الكامل",
@@ -917,26 +918,26 @@ export const LanguageProvider = ({ children }) => {
         emailPlaceholder: "أدخل بريدك الإلكتروني",
         password: "كلمة المرور",
         passwordPlaceholder: "أدخل كلمة المرور",
-        reportDetails: "تفاصيل البلاغ",
-        reportTitle: "عنوان البلاغ",
-        reportTitlePlaceholder: "أدخل عنوان البلاغ",
-        reportDescription: "وصف البلاغ",
+        reportDetails: "تفاصيل الملاحظة",
+        reportTitle: "عنوان الموضوع",
+        reportTitlePlaceholder: "أدخل عنوان الموضوع",
+        reportDescription: "نص المشاركة",
         reportDescriptionPlaceholder:
-          "اكتب وصفاً مفصلاً للبلاغ أو المشكلة التي تريد الإبلاغ عنها",
+          "اكتب مشاركتك أو رأيك أو المشكلة التي تريد طرحها لتحسين الخدمات",
         uploadFiles: "رفع الملفات",
-        uploadDescription: "يمكنك رفع الصور أو الفيديوهات لدعم بلاغك (اختياري)",
+        uploadDescription: "يمكنك رفع الصور أو الفيديوهات لدعم رأيك (اختياري)",
         dragFiles: "اسحب الملفات هنا أو انقر للرفع",
         supportedFormats:
           "يدعم: JPG, PNG, MP4, MOV (حد أقصى 10 ميجابايت لكل ملف)",
         uploadedFiles: "الملفات المرفوعة:",
-        submitReport: "إرسال البلاغ",
+        submitReport: "إرسال المشاركة",
         submitting: "جاري الإرسال...",
-        reportSubmitted: "تم إرسال البلاغ بنجاح!",
+        reportSubmitted: "تم إرسال مشاركتك بنجاح!",
       },
       standardsManagement: {
         title: "إدارة معايير المحافظة الصحية",
         subtitle:
-          "مراقبة وإدارة المعايير الصحية الـ 80 مع متطلباتها والجهات المسؤولة عنها",
+          "مراقبة وإدارة المعايير الصحية الـ 80 مع متطلباتها واللجان المسؤولة عنها",
         totalStandards: "إجمالي المعايير",
         approved: "تمت الموافقة",
         pendingApproval: "في انتظار الموافقة",
@@ -947,7 +948,7 @@ export const LanguageProvider = ({ children }) => {
         searchPlaceholder: "ابحث في المعايير أو المتطلبات...",
         responsibleAgency: "الجهة المسؤولة",
         selectAgency: "اختر الجهة",
-        allAgencies: "جميع الجهات",
+        allAgencies: "جميع اللجان",
         submissionStatus: "حالة التقديم",
         selectStatus: "اختر الحالة",
         allStatuses: "جميع الحالات",
@@ -956,14 +957,14 @@ export const LanguageProvider = ({ children }) => {
         number: "الرقم",
         standard: "المعيار",
         requirements: "المتطلبات",
-        responsibleAgencies: "الجهات المسؤولة",
+        responsibleAgencies: "اللجان المسؤولة",
         status: "الحالة",
         submissions: "التقديمات",
         actions: "الإجراءات",
         view: "عرض",
         standardDetails: "تفاصيل المعيار",
         requirementsLabel: "المتطلبات",
-        responsibleAgenciesLabel: "الجهات المسؤولة",
+        responsibleAgenciesLabel: "اللجان المسؤولة",
         submitted: "تم رفع المعيار",
         notSubmitted: "لم  ترفع المعيار",
         approvedSubmissions: "نسبة المعايير المعتمدة",
@@ -977,7 +978,7 @@ export const LanguageProvider = ({ children }) => {
         submissions: "تقديمات",
         standardDetails: "تفاصيل المعيار",
         standardLabel: "معيار",
-        responsibleAgencies: "الجهات المسؤولة:",
+        responsibleAgencies: "اللجان المسؤولة:",
         submitted: "تم رفع المعيار",
         notSubmitted: "لم ترفع المعيار",
         requirements: "المتطلبات:",
@@ -993,7 +994,7 @@ export const LanguageProvider = ({ children }) => {
         submittedMaterials: "التقديمات المقدمة",
         filterByAgency: "تصفية حسب الجهة",
         selectAgency: "اختر الجهة",
-        allAgencies: "جميع الجهات",
+        allAgencies: "جميع اللجان",
         all: "الكل",
         text: "نصوص",
         pdf: "ملفات PDF",
@@ -1739,7 +1740,8 @@ export const LanguageProvider = ({ children }) => {
 
       // About Section
       about: {
-        title: "About Huraymila Healthy City Program",
+        // title: "About Huraymila Healthy City Program",
+        title: "Huraymila Healthy City Program",
         subtitle:
           "Leading national initiative within the Saudi Healthy Cities Program",
         description:
@@ -1978,8 +1980,8 @@ export const LanguageProvider = ({ children }) => {
         title: "Quick Links",
         subtitle: "Quick access to important services",
         links: {
-          submitReport: "Submit Report",
-          volunteerInInitiatives: "Volunteer in Initiatives",
+          submitReport: "Share Your Feedback",
+          volunteerInInitiatives: "Search for Initiatives",
           login: "Login",
         },
         getStarted: "Get Started",
@@ -2579,9 +2581,9 @@ export const LanguageProvider = ({ children }) => {
         standardToggleError: "Failed to update standard assignment",
       },
       report: {
-        title: "Submit Report",
+        title: "Share Your Feedback",
         subtitle:
-          "Share your observations and reports to improve services in Huraymila Healthy City",
+          "Share your observations and feedback to improve services in Huraymila Healthy City",
         back: "Back",
         yourInformation: "Your Information",
         fullName: "Full Name",
@@ -2590,21 +2592,21 @@ export const LanguageProvider = ({ children }) => {
         emailPlaceholder: "Enter your email address",
         password: "Password",
         passwordPlaceholder: "Enter your password",
-        reportDetails: "Report Details",
-        reportTitle: "Report Title",
-        reportTitlePlaceholder: "Enter report title",
-        reportDescription: "Report Description",
+        reportDetails: "Feedback Details",
+        reportTitle: "Subject Title",
+        reportTitlePlaceholder: "Enter subject title",
+        reportDescription: "Your Feedback",
         reportDescriptionPlaceholder:
-          "Write a detailed description of the report or issue you want to report",
+          "Write your detailed feedback, ideas, or issues you want to share",
         uploadFiles: "Upload Files",
         uploadDescription:
-          "You can upload photos or videos to support your report (optional)",
+          "You can upload photos or videos to support your feedback (optional)",
         dragFiles: "Drag files here or click to upload",
         supportedFormats: "Supports: JPG, PNG, MP4, MOV (max 10MB per file)",
         uploadedFiles: "Uploaded Files:",
-        submitReport: "Submit Report",
+        submitReport: "Submit Feedback",
         submitting: "Submitting...",
-        reportSubmitted: "Report submitted successfully!",
+        reportSubmitted: "Feedback submitted successfully!",
       },
       standardsManagement: {
         title: "Health City Standards Management",

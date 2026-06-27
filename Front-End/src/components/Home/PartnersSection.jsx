@@ -98,8 +98,8 @@ const PartnersSection = () => {
       logo: "/assets/logos/الدفاع_المدني_السعودي.png",
       flow:
         language === "ar"
-          ? "يقدم: حماية وأمان\nيستفيد: بلاغات المواطنين"
-          : "Provides: Protection & Safety\nBenefits: Citizen Reports",
+          ? "يقدم: حماية وأمان\nيستفيد: آراء المواطنين"
+          : "Provides: Protection & Safety\nBenefits: Citizen Feedback",
     },
     {
       name: t("successPartners.partners.nationalWaterCompany"),
@@ -143,8 +143,8 @@ const PartnersSection = () => {
       logo: "/assets/logos/الشرطة.png",
       flow:
         language === "ar"
-          ? "يقدم: أمن وحماية\nيستفيد: بلاغات المواطنين"
-          : "Provides: Security & Protection\nBenefits: Citizen Reports",
+          ? "يقدم: أمن وحماية\nيستفيد: آراء المواطنين"
+          : "Provides: Security & Protection\nBenefits: Citizen Feedback",
     },
     {
       name: t("successPartners.partners.trafficDepartment"),

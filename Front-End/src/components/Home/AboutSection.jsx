@@ -184,7 +184,7 @@ const AboutSection = () => {
           </Card>
         </div>
 
-        {/* About Huraymila */}
+        {/* About Huraymila
         <div className="mb-20">
           <Card className="bg-gradient-card border-0 shadow-card">
             <CardContent className="p-8 md:p-12">
@@ -241,6 +241,7 @@ const AboutSection = () => {
             </CardContent>
           </Card>
         </div>
+        */}
       </div>
     </section>
   );

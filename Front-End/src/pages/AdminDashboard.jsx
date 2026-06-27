@@ -592,7 +592,7 @@ const AdminDashboard = () => {
             id: report._id || report.id,
             title: report.title,
             details: report.details,
-            report_type: language === "ar" ? "بلاغ عام" : "General Report",
+            report_type: language === "ar" ? "مشاركة عامة" : "General Feedback",
             status: report.status,
             volunteer: report.volunteer,
             filesUrls: report.filesUrls || [],
@@ -1395,7 +1395,7 @@ const AdminDashboard = () => {
 
   const statCards = [
     {
-      title: { ar: "الجهات", en: "Agencies" },
+      title: { ar: "اللجان", en: "Agencies" },
       value: stats.agencies,
       icon: Building2,
       color: "text-blue-600",
@@ -1430,7 +1430,7 @@ const AdminDashboard = () => {
       bgColor: "bg-red-50",
     },
     {
-      title: { ar: "البلاغات", en: "Reports" },
+      title: { ar: "المشاركات والآراء", en: "Feedback" },
       value: stats.reports,
       icon: FileText,
       color: "text-orange-600",
@@ -1569,8 +1569,8 @@ const AdminDashboard = () => {
               },
               {
                 value: "reports",
-                ar: "البلاغات",
-                en: "Reports",
+                ar: "المشاركات والآراء",
+                en: "Feedback",
               },
             ]
               .sort(() => (language === "ar" ? -1 : 1))
@@ -2892,7 +2892,7 @@ const AdminDashboard = () => {
                     ? "text-right font-arabic"
                     : "text-left font-english"
                 }`}>
-                {language === "ar" ? "البلاغات" : "Reports"}
+                {language === "ar" ? "المشاركات والآراء" : "Feedback"}
               </CardTitle>
               <CardDescription
                 className={`${
@@ -2901,8 +2901,8 @@ const AdminDashboard = () => {
                     : "text-left font-english"
                 }`}>
                 {language === "ar"
-                  ? "جميع البلاغات المقدمة"
-                  : "All submitted reports"}
+                  ? "جميع المشاركات والآراء المقدمة"
+                  : "All submitted feedback"}
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -2960,8 +2960,8 @@ const AdminDashboard = () => {
                             language === "ar" ? "font-arabic" : "font-english"
                           }`}>
                           {language === "ar"
-                            ? "لا توجد بلاغات حالياً"
-                            : "No reports at the moment"}
+                            ? "لا توجد مشاركات أو آراء حالياً"
+                            : "No feedback at the moment"}
                         </TableCell>
                       </TableRow>
                     ) : (
@@ -2981,16 +2981,16 @@ const AdminDashboard = () => {
                             );
                             toast.success(
                               language === "ar"
-                                ? "تم تحديث حالة البلاغ بنجاح"
-                                : "Report status updated successfully"
+                                ? "تم تحديث حالة المشاركة بنجاح"
+                                : "Feedback status updated successfully"
                             );
                             await fetchAllData();
                           } catch (error) {
                             // Error updating report status
                             toast.error(
                               language === "ar"
-                                ? "فشل في تحديث حالة البلاغ: " + error.message
-                                : "Failed to update report status: " +
+                                ? "فشل في تحديث حالة المشاركة: " + error.message
+                                : "Failed to update feedback status: " +
                                     error.message
                             );
                           } finally {
@@ -3251,7 +3251,7 @@ const AdminDashboard = () => {
                   "text-2xl",
                   language === "ar" ? "text-right" : "text-left"
                 )}>
-                {language === "ar" ? "تفاصيل البلاغ" : "Report Details"}
+                {language === "ar" ? "تفاصيل المشاركة" : "Feedback Details"}
               </DialogTitle>
             </DialogHeader>
 

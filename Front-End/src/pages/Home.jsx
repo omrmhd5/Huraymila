@@ -45,9 +45,11 @@ const Home = () => {
           <HealthDashboard />
         </AnimatedSection>
         <InteractiveMap />
+        {/*
         <AnimatedSection animation="fadeInUp" delay={250} duration={400}>
           <InitiativesSection />
         </AnimatedSection>
+        */}
         <AnimatedSection animation="fadeInDown" delay={300} duration={400}>
           <PartnersSection />
         </AnimatedSection>
