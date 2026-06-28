@@ -1876,8 +1876,8 @@ const AdminDashboard = () => {
                     : "text-left font-english"
                 }`}>
                 {language === "ar"
-                  ? "المبادرات التي تنتظر موافقة المحافظ"
-                  : "Initiatives awaiting governor approval"}
+                  ? "المبادرات التي تنتظر موافقة منسق مدينة حريملاء الصحية"
+                  : "Initiatives awaiting coordinator approval"}
               </CardDescription>
             </CardHeader>
             <CardContent>

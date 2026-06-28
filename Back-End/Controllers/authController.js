@@ -58,6 +58,11 @@ const unifiedLogin = async (req, res) => {
     // Add appropriate ID based on user type
     if (userType === "governor") {
       tokenPayload.governorId = user._id;
+      // ALSO check if there's an agency with the same email, if so attach agencyId!
+      const matchingAgency = await Agency.findOne({ email: user.email });
+      if (matchingAgency) {
+        tokenPayload.agencyId = matchingAgency._id;
+      }
     } else if (userType === "agency") {
       tokenPayload.agencyId = user._id;
     } else if (userType === "volunteer") {
@@ -74,6 +79,17 @@ const unifiedLogin = async (req, res) => {
     const userData = user.toObject();
     delete userData.password;
     userData.type = userType;
+
+    // If governor, check if there's a matching agency to attach details for frontend
+    if (userType === "governor") {
+      const matchingAgency = await Agency.findOne({ email: user.email }).populate("assignedStandards");
+      if (matchingAgency) {
+        userData.assignedStandards = matchingAgency.assignedStandards;
+        userData.contactPerson = matchingAgency.contactPerson;
+        userData.agencyId = matchingAgency._id;
+        userData.isAgency = true;
+      }
+    }
 
     res.json({
       success: true,
@@ -106,6 +122,23 @@ const getCurrentUser = async (req, res) => {
     let user;
     if (type === "governor" && governorId) {
       user = await Governor.findById(governorId).select("-password");
+      
+      if (user) {
+        // Check if there is an agency with the same email
+        const matchingAgency = await Agency.findOne({ email: user.email }).populate("assignedStandards");
+        if (matchingAgency) {
+          // Attach agency details to the user object
+          const userObj = user.toObject();
+          userObj.assignedStandards = matchingAgency.assignedStandards;
+          userObj.contactPerson = matchingAgency.contactPerson;
+          userObj.agencyId = matchingAgency._id;
+          userObj.isAgency = true; // Flag for frontend
+          return res.json({
+            success: true,
+            user: { ...userObj, type },
+          });
+        }
+      }
     } else if (type === "agency" && agencyId) {
       user = await Agency.findById(agencyId)
         .select("-password")

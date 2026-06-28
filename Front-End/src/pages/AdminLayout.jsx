@@ -44,25 +44,29 @@ const AdminLayout = () => {
           {
             year: "2025",
             title: "إطلاق البرنامج",
-            description: "بداية المبادرات الأساسية وتأسيس الشراكات واللجان الاستراتيجية",
+            description:
+              "بداية المبادرات الأساسية وتأسيس الشراكات واللجان الاستراتيجية",
             status: "مكتمل",
           },
           {
             year: "2026",
             title: "التوسع والتطوير",
-            description: "تنفيذ المشاريع الكبرى وزيادة المشاركة واللجان المجتمعية",
+            description:
+              "تنفيذ المشاريع الكبرى وزيادة المشاركة واللجان المجتمعية",
             status: "قيد التنفيذ",
           },
           {
             year: "2027",
             title: "التقييم والتحسين",
-            description: "تقييم النتائج وتطوير المبادرات القائمة لضمان الجودة والاستدامة",
+            description:
+              "تقييم النتائج وتطوير المبادرات القائمة لضمان الجودة والاستدامة",
             status: "مخطط",
           },
           {
             year: "2028",
             title: "الاعتماد العالمي والمحلي (KSA)",
-            description: "التقدم للحصول على الاعتماد الرسمي لمدينة حريملاء الصحية من منظمة الصحة العالمية وبرنامج المدن الصحية في المملكة",
+            description:
+              "التقدم للحصول على الاعتماد الرسمي لمدينة حريملاء الصحية من منظمة الصحة العالمية وبرنامج المدن الصحية في المملكة",
             status: "مخطط",
           },
         ],
@@ -96,7 +100,8 @@ const AdminLayout = () => {
           {
             year: "2028",
             title: "Global & National Accreditation (KSA)",
-            description: "Apply for official WHO and KSA Saudi Healthy Cities Program accreditation",
+            description:
+              "Apply for official WHO and KSA Saudi Healthy Cities Program accreditation",
             status: "Planned",
           },
         ],
@@ -210,7 +215,7 @@ const AdminLayout = () => {
     <div
       className={cn(
         "min-h-screen bg-gradient-to-br from-background via-background to-muted/30",
-        language === "ar" ? "font-arabic" : "font-english"
+        language === "ar" ? "font-arabic" : "font-english",
       )}>
       {/* Navbar */}
       <nav className="bg-card/95 backdrop-blur-sm border-b border-border shadow-sm">
@@ -239,6 +244,16 @@ const AdminLayout = () => {
               <Button variant="ghost" size="sm" onClick={() => navigate("/")}>
                 <Home className="w-4 h-4" />
               </Button>
+              {user?.isAgency && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => navigate("/agency-dashboard")}
+                  className="flex items-center gap-2">
+                  <Database className="w-4 h-4" />
+                  {language === "ar" ? "تقديم المعايير" : "Submit Standards"}
+                </Button>
+              )}
               {/* Language Toggle */}
               <Button
                 variant="ghost"
@@ -282,7 +297,7 @@ const AdminLayout = () => {
                   value={tab.value}
                   className={cn(
                     "flex flex-col items-start gap-2 h-auto p-4 data-[state=active]:bg-primary/10 data-[state=active]:text-primary data-[state=active]:border-primary/20",
-                    "border border-transparent hover:border-border/50 transition-all duration-200"
+                    "border border-transparent hover:border-border/50 transition-all duration-200",
                   )}>
                   <div className="flex items-center gap-2">
                     <tab.icon className="w-4 h-4" />

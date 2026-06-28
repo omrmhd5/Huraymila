@@ -275,8 +275,8 @@ const VolunteerDashboard = () => {
 
       toast.success(
         language === "ar"
-          ? "تم إرسال قصة النجاح بنجاح! في انتظار موافقة المحافظ"
-          : "Success story submitted successfully! Awaiting governor approval"
+          ? "تم إرسال قصة النجاح بنجاح! في انتظار موافقة منسق مدينة حريملاء الصحية"
+          : "Success story submitted successfully! Awaiting coordinator approval"
       );
 
       // Reset form and close modal
@@ -1183,8 +1183,8 @@ const VolunteerDashboard = () => {
             </DialogTitle>
             <DialogDescription className={isRTL ? "text-right" : "text-left"}>
               {language === "ar"
-                ? "شارك قصة نجاحك. سيتم مراجعتها من قبل المحافظ قبل النشر."
-                : "Share your success story. It will be reviewed by the governor before publication."}
+                ? "شارك قصة نجاحك. سيتم مراجعتها من قبل منسق مدينة حريملاء الصحية قبل النشر."
+                : "Share your success story. It will be reviewed by the coordinator before publication."}
             </DialogDescription>
           </DialogHeader>
 

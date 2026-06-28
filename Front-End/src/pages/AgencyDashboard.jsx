@@ -44,7 +44,7 @@ const AgencyDashboard = () => {
 
   // Redirect to login if not authenticated or not an agency
   useEffect(() => {
-    if (!loading && (!user || user.type !== "agency")) {
+    if (!loading && (!user || (user.type !== "agency" && !(user.type === "governor" && user.isAgency)))) {
       navigate("/auth");
     }
   }, [user, loading, navigate]);
@@ -284,6 +284,11 @@ const AgencyDashboard = () => {
               <Button variant="ghost" size="sm" onClick={() => navigate("/")}>
                 <Home className="w-4 h-4" />
               </Button>
+              {user?.type === "governor" && (
+                <Button variant="outline" size="sm" onClick={() => navigate("/admin")}>
+                  {language === "ar" ? "لوحة تحكم منسق مدينة حريملاء الصحية" : "Coordinator Panel"}
+                </Button>
+              )}
               {/* Language Toggle */}
               <Button
                 variant="ghost"
@@ -315,6 +320,7 @@ const AgencyDashboard = () => {
 
       <main className="flex-1 container mx-auto px-4 py-8">
         {/* Program Timeline */}
+        {/*
         <div className="bg-card/50 border border-border rounded-lg mb-8">
           <div className="px-6 py-8">
             <h3
@@ -390,6 +396,7 @@ const AgencyDashboard = () => {
             </div>
           </div>
         </div>
+        */}
 
         {/* Agency Header */}
         <div className="bg-gradient-to-r from-primary/10 to-primary/5 rounded-lg p-6 mb-8">

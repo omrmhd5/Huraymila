@@ -20,6 +20,11 @@ const ProtectedRoute = ({
 
       // Check if specific user type is required
       if (requiredUserType && user.type !== requiredUserType) {
+        // Allow governor who is also an agency to access agency route
+        if (requiredUserType === "agency" && user.type === "governor" && user.isAgency) {
+          return;
+        }
+
         // Redirect based on user type
         if (user.type === "governor") {
           navigate("/admin");
@@ -48,7 +53,9 @@ const ProtectedRoute = ({
   }
 
   if (requiredUserType && user.type !== requiredUserType) {
-    return null;
+    if (!(requiredUserType === "agency" && user.type === "governor" && user.isAgency)) {
+      return null;
+    }
   }
 
   return children;

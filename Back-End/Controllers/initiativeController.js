@@ -122,9 +122,11 @@ const createInitiative = async (req, res) => {
     let agencyId;
     if (req.user.type === "agency") {
       agencyId = req.user.agencyId;
-    } else if (req.user.type === "governor" && req.body.agencyId) {
-      agencyId = req.body.agencyId;
-    } else {
+    } else if (req.user.type === "governor") {
+      agencyId = req.body.agencyId || req.user.agencyId;
+    }
+
+    if (!agencyId) {
       return res.status(400).json({
         success: false,
         message: "Agency ID is required",

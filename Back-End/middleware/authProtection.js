@@ -38,7 +38,7 @@ const governorOnly = (req, res, next) => {
 // Agency-only protection
 const agencyOnly = (req, res, next) => {
   auth(req, res, () => {
-    if (req.user.type !== "agency") {
+    if (req.user.type !== "agency" && !(req.user.type === "governor" && req.user.agencyId)) {
       return res.status(403).json({
         success: false,
         message: "Access denied. Agency privileges required.",

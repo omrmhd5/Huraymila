@@ -11,6 +11,7 @@ import {
   LogOut,
   Settings,
   Bell,
+  Database,
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useTheme } from "@/contexts/ThemeContext";
@@ -177,8 +178,8 @@ const Navbar = () => {
                       <p className="text-xs text-muted-foreground">
                         {user.type === "governor"
                           ? language === "ar"
-                            ? "المحافظ"
-                            : "Governor"
+                            ? "منسق مدينة حريملاء الصحية"
+                            : "Healthy City Coordinator"
                           : user.type === "agency"
                           ? language === "ar"
                             ? "الوكالة"
@@ -212,6 +213,22 @@ const Navbar = () => {
                       <User className="w-4 h-4" />
                       {t("nav.dashboard")}
                     </button>
+
+                    {user.type === "governor" && user.isAgency && (
+                      <button
+                        onClick={() => {
+                          navigateToTop("/agency-dashboard");
+                          setIsUserMenuOpen(false);
+                        }}
+                        className={`flex items-center gap-2 px-4 py-2 text-sm hover:bg-muted transition-colors w-full ${
+                          language === "ar"
+                            ? "text-right flex-row-reverse"
+                            : "text-left"
+                        }`}>
+                        <Database className="w-4 h-4" />
+                        {language === "ar" ? "تقديم المعايير" : "Submit Standards"}
+                      </button>
+                    )}
 
                     <button
                       onClick={() => {
