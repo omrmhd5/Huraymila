@@ -10,20 +10,8 @@ const SuccessPartners = () => {
 
   const partners = [
     {
-      name: t("successPartners.partners.ministryOfHealth"),
-      logo: "/assets/logos/وزارة الصحة.png",
-    },
-    {
-      name: t("successPartners.partners.ministryOfEducation"),
-      logo: "/assets/logos/وزارة التعليم.png",
-    },
-    {
       name: t("successPartners.partners.ministryOfEnvironment"),
       logo: "/assets/logos/وزارة البيئة والمياه والزراعة.jpg",
-    },
-    {
-      name: t("successPartners.partners.ministryOfHumanResources"),
-      logo: "/assets/logos/وزارة الموارد البشرية.png",
     },
     {
       name: t("successPartners.partners.huraymilaHospital"),
@@ -38,16 +26,8 @@ const SuccessPartners = () => {
       logo: "/assets/logos/شعار_شركة_المياه_الوطنية.jpeg",
     },
     {
-      name: t("successPartners.partners.huraymilaGovernorate"),
-      logo: "/assets/logos/الداخلية محافظة حريملاء.png",
-    },
-    {
       name: t("successPartners.partners.riyadhMunicipality"),
       logo: "/assets/logos/امانة الرياض.ico",
-    },
-    {
-      name: t("successPartners.partners.environmentalSecurity"),
-      logo: "/assets/logos/القوة الخاصة للامن البيئي.jpg",
     },
     {
       name: t("successPartners.partners.police"),
@@ -64,14 +44,6 @@ const SuccessPartners = () => {
     {
       name: t("successPartners.partners.developmentAssociation"),
       logo: "/assets/logos/جمعية التنمية الاهلية بحريملاء.jpg",
-    },
-    {
-      name: t("successPartners.partners.imamUniversity"),
-      logo: "/assets/logos/جامعة الامام محمد بن سعود .png",
-    },
-    {
-      name: t("successPartners.partners.who"),
-      logo: "/assets/logos/منظمة الصحة العالمية.png",
     },
     {
       name: t("successPartners.partners.friendsOfPatients"),

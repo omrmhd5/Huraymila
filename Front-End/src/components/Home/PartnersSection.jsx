@@ -48,24 +48,6 @@ const PartnersSection = () => {
 
   const connections = [
     {
-      name: t("successPartners.partners.ministryOfHealth"),
-      role: language === "ar" ? "خدمات صحية" : "Health Services",
-      logo: "/assets/logos/وزارة الصحة.png",
-      flow:
-        language === "ar"
-          ? "يقدم: برامج صحية\nيستفيد: تقارير المجتمع"
-          : "Provides: Health Programs\nBenefits: Community Reports",
-    },
-    {
-      name: t("successPartners.partners.ministryOfEducation"),
-      role: language === "ar" ? "تعليم وتدريب" : "Education & Training",
-      logo: "/assets/logos/وزارة التعليم.png",
-      flow:
-        language === "ar"
-          ? "يقدم: برامج تعليمية\nيستفيد: مشاركة المتطوعين"
-          : "Provides: Educational Programs\nBenefits: Volunteer Participation",
-    },
-    {
       name: t("successPartners.partners.ministryOfEnvironment"),
       role: language === "ar" ? "بيئة وزراعة" : "Environment & Agriculture",
       logo: "/assets/logos/وزارة البيئة والمياه والزراعة.jpg",
@@ -73,15 +55,6 @@ const PartnersSection = () => {
         language === "ar"
           ? "يقدم: برامج بيئية\nيستفيد: مشاركة مجتمعية"
           : "Provides: Environmental Programs\nBenefits: Community Participation",
-    },
-    {
-      name: t("successPartners.partners.ministryOfHumanResources"),
-      role: language === "ar" ? "تنمية اجتماعية" : "Social Development",
-      logo: "/assets/logos/وزارة الموارد البشرية.png",
-      flow:
-        language === "ar"
-          ? "يقدم: برامج تنموية\nيستفيد: مشاركة مجتمعية"
-          : "Provides: Development Programs\nBenefits: Community Participation",
     },
     {
       name: t("successPartners.partners.huraymilaHospital"),
@@ -111,15 +84,6 @@ const PartnersSection = () => {
           : "Provides: Clean Water\nBenefits: Quality Reports",
     },
     {
-      name: t("successPartners.partners.huraymilaGovernorate"),
-      role: language === "ar" ? "إدارة محلية" : "Local Administration",
-      logo: "/assets/logos/الداخلية محافظة حريملاء.png",
-      flow:
-        language === "ar"
-          ? "يقدم: خدمات إدارية\nيستفيد: ملاحظات المواطنين"
-          : "Provides: Administrative Services\nBenefits: Citizen Feedback",
-    },
-    {
       name: t("successPartners.partners.riyadhMunicipality"),
       role: language === "ar" ? "خدمات بلدية" : "Municipal Services",
       logo: "/assets/logos/امانة الرياض.ico",
@@ -127,15 +91,6 @@ const PartnersSection = () => {
         language === "ar"
           ? "يقدم: خدمات بلدية\nيستفيد: تقارير مجتمعية"
           : "Provides: Municipal Services\nBenefits: Community Reports",
-    },
-    {
-      name: t("successPartners.partners.environmentalSecurity"),
-      role: language === "ar" ? "أمن بيئي" : "Environmental Security",
-      logo: "/assets/logos/القوة الخاصة للامن البيئي.jpg",
-      flow:
-        language === "ar"
-          ? "يقدم: حماية بيئية\nيستفيد: تقارير البيئة"
-          : "Provides: Environmental Protection\nBenefits: Environmental Reports",
     },
     {
       name: t("successPartners.partners.police"),
@@ -172,24 +127,6 @@ const PartnersSection = () => {
         language === "ar"
           ? "يقدم: برامج تنموية\nيستفيد: مشاركة أهالي"
           : "Provides: Development Programs\nBenefits: Local Participation",
-    },
-    {
-      name: t("successPartners.partners.imamUniversity"),
-      role: language === "ar" ? "تعليم وبحث" : "Education & Research",
-      logo: "/assets/logos/جامعة الامام محمد بن سعود .png",
-      flow:
-        language === "ar"
-          ? "يقدم: برامج أكاديمية\nيستفيد: مشاركة طلابية"
-          : "Provides: Academic Programs\nBenefits: Student Participation",
-    },
-    {
-      name: t("successPartners.partners.who"),
-      role: language === "ar" ? "دعم دولي" : "International Support",
-      logo: "/assets/logos/منظمة الصحة العالمية.png",
-      flow:
-        language === "ar"
-          ? "يقدم: معايير عالمية\nيستفيد: تقارير محلية"
-          : "Provides: Global Standards\nBenefits: Local Reports",
     },
     {
       name: t("successPartners.partners.friendsOfPatients"),
@@ -421,7 +358,7 @@ const PartnersSection = () => {
           <Card className="text-center p-4 md:p-6 bg-gradient-to-br from-primary/10 to-primary/5 border-primary/20">
             <Users className="h-6 w-6 md:h-8 md:w-8 text-primary mx-auto mb-2 md:mb-3" />
             <div className="text-2xl md:text-3xl font-bold text-primary mb-1">
-              17
+              {connections.length}
             </div>
             <p
               className={cn(
