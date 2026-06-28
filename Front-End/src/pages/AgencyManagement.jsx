@@ -29,6 +29,8 @@ import {
   AlertCircle,
   X,
   CheckSquare,
+  MessageSquare,
+  Send,
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useTheme } from "@/contexts/ThemeContext";
@@ -42,6 +44,7 @@ import {
   getAllStandardsByNumber,
   toggleAgencyAssignment,
 } from "@/lib/api";
+import { smsApi } from "@/lib/smsApi";
 import { mapBackendStandardsToLanguageContext } from "@/lib/utils";
 
 const AgencyManagement = () => {
@@ -74,6 +77,26 @@ const AgencyManagement = () => {
     },
     assignedStandards: [],
   });
+
+  const [showSmsModal, setShowSmsModal] = useState(false);
+  const [smsMessage, setSmsMessage] = useState("");
+  const [isSendingSms, setIsSendingSms] = useState(false);
+
+  const handleSendSms = async (e) => {
+    e.preventDefault();
+    if (!smsMessage.trim()) return;
+    try {
+      setIsSendingSms(true);
+      const response = await smsApi.sendBroadcast(smsMessage, token);
+      toast.success(response.message || "تم الإرسال بنجاح");
+      setShowSmsModal(false);
+      setSmsMessage("");
+    } catch (error) {
+      toast.error(error.message || "فشل إرسال الرسالة");
+    } finally {
+      setIsSendingSms(false);
+    }
+  };
 
   // Initialize agencies list and standards from backend
   useEffect(() => {
@@ -310,12 +333,21 @@ const AgencyManagement = () => {
             {t("agencyManagement.subtitle")}
           </p>
         </div>
-        <Button
-          onClick={() => setShowAddForm(true)}
-          className="flex items-center gap-2 w-full md:w-auto">
-          <Plus className="w-4 h-4" />
-          {t("agencyManagement.addNewAgency")}
-        </Button>
+        <div className="flex flex-col md:flex-row gap-2 w-full md:w-auto">
+          <Button
+            onClick={() => setShowSmsModal(true)}
+            variant="secondary"
+            className="flex items-center gap-2 w-full md:w-auto bg-blue-600 hover:bg-blue-700 text-white">
+            <MessageSquare className="w-4 h-4" />
+            {language === "ar" ? "إرسال رسالة نصية للجهات" : "Send SMS to Agencies"}
+          </Button>
+          <Button
+            onClick={() => setShowAddForm(true)}
+            className="flex items-center gap-2 w-full md:w-auto">
+            <Plus className="w-4 h-4" />
+            {t("agencyManagement.addNewAgency")}
+          </Button>
+        </div>
       </div>
 
       <Card>
@@ -899,6 +931,58 @@ const AgencyManagement = () => {
               </div>
             </div>
           )}
+        </DialogContent>
+      </Dialog>
+
+      {/* SMS Broadcast Modal */}
+      <Dialog open={showSmsModal} onOpenChange={setShowSmsModal}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <MessageSquare className="w-5 h-5 text-blue-600" />
+              {language === "ar" ? "إرسال رسالة نصية (SMS)" : "Send SMS Broadcast"}
+            </DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 pt-4">
+            <p className="text-sm text-muted-foreground">
+              {language === "ar"
+                ? "سيتم إرسال هذه الرسالة إلى جميع أرقام هواتف مسؤولي الاتصال في جميع الجهات."
+                : "This message will be sent to all contact person phone numbers across all agencies."}
+            </p>
+            <div className="space-y-2">
+              <Label>
+                {language === "ar" ? "نص الرسالة" : "Message Body"}
+              </Label>
+              <Textarea
+                value={smsMessage}
+                onChange={(e) => setSmsMessage(e.target.value)}
+                placeholder={language === "ar" ? "اكتب رسالتك هنا..." : "Type your message here..."}
+                className="min-h-[100px] text-right"
+                dir="rtl"
+              />
+              <p className="text-xs text-muted-foreground text-left" dir="ltr">
+                {smsMessage.length} characters
+              </p>
+            </div>
+            <div className="flex justify-end gap-2 pt-4">
+              <Button variant="outline" onClick={() => setShowSmsModal(false)}>
+                {language === "ar" ? "إلغاء" : "Cancel"}
+              </Button>
+              <Button onClick={handleSendSms} disabled={isSendingSms || !smsMessage.trim()} className="bg-blue-600 hover:bg-blue-700">
+                {isSendingSms ? (
+                  <span className="flex items-center gap-2">
+                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                    {language === "ar" ? "جاري الإرسال..." : "Sending..."}
+                  </span>
+                ) : (
+                  <span className="flex items-center gap-2">
+                    <Send className="w-4 h-4" />
+                    {language === "ar" ? "إرسال" : "Send"}
+                  </span>
+                )}
+              </Button>
+            </div>
+          </div>
         </DialogContent>
       </Dialog>
     </div>
