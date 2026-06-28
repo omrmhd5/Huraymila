@@ -71,6 +71,7 @@ const Initiative = () => {
       imageUrl: greenGardenImg,
       isMock: true,
       volunteers: [],
+      registrationLink: "https://forms.gle/examplemocklink",
     },
     {
       _id: "mock-3",
@@ -389,7 +390,26 @@ const Initiative = () => {
 
           {/* Apply Button */}
           <div className="mt-8 text-center">
-            {user && user.type === "volunteer" ? (
+            {initiative.registrationLink ? (
+              <Button
+                size="lg"
+                onClick={() => window.open(initiative.registrationLink, "_blank")}
+                disabled={
+                  initiative.status !== "gathering volunteers" &&
+                  initiative.status !== "active"
+                }
+                className="px-8 py-6 text-lg">
+                <UserPlus className="w-5 h-5 mr-2" />
+                {initiative.status !== "gathering volunteers" &&
+                initiative.status !== "active"
+                  ? language === "ar"
+                    ? "المبادرة مغلقة"
+                    : "Initiative Closed"
+                  : language === "ar"
+                  ? "سجل للمشاركة"
+                  : "Register to Participate"}
+              </Button>
+            ) : user && user.type === "volunteer" ? (
               // Volunteer user - show apply/applied state
               hasUserApplied() ? (
                 <Button
@@ -435,28 +455,7 @@ const Initiative = () => {
                     : "Apply to Participate"}
                 </Button>
               )
-            ) : (
-              // Non-volunteer user - show sign in prompt
-              <div className="space-y-4">
-                <Button
-                  size="lg"
-                  onClick={() => navigate("/auth")}
-                  className="px-8 py-6 text-lg">
-                  <UserPlus className="w-5 h-5 mr-2" />
-                  {language === "ar"
-                    ? "سجل الدخول للتقديم"
-                    : "Sign In to Apply"}
-                </Button>
-                <p
-                  className={`text-sm text-muted-foreground ${
-                    isRTL ? "font-arabic" : "font-sans"
-                  }`}>
-                  {language === "ar"
-                    ? "يجب تسجيل الدخول كمتطوع للتقدم للمبادرات"
-                    : "You need to sign in as a volunteer to apply to initiatives"}
-                </p>
-              </div>
-            )}
+            ) : null}
 
             {/* Status messages */}
             {(initiative.currentVolunteers || 0) >=

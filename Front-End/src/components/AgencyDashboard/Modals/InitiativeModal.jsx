@@ -172,6 +172,32 @@ const InitiativeModal = ({
               }
             />
           </div>
+          <div>
+            <Label htmlFor="initiative-registrationLink">
+              {language === "ar" ? "رابط التسجيل (اختياري)" : "Registration Link (Optional)"}
+            </Label>
+            <Input
+              id="initiative-registrationLink"
+              type="url"
+              value={formData.registrationLink || ""}
+              onChange={(e) =>
+                onFormChange({
+                  ...formData,
+                  registrationLink: e.target.value,
+                })
+              }
+              className={`border-2 border-gray-300 focus:ring-2 focus:ring-blue-200 ${
+                language === "ar"
+                  ? "font-arabic text-right"
+                  : "font-sans text-left"
+              }`}
+              placeholder={
+                language === "ar"
+                  ? "أدخل رابط التسجيل (اختياري)"
+                  : "Enter registration link (optional)"
+              }
+            />
+          </div>
           <div className="grid grid-cols-2 gap-4">
             <div>
               <Label htmlFor="initiative-startDate">

@@ -62,6 +62,7 @@ const Initiatives = ({ language }) => {
     status: "gathering volunteers",
     currentVolunteers: 0,
     maxVolunteers: 10,
+    registrationLink: "",
   });
 
   // Load initiatives on component mount
@@ -95,6 +96,7 @@ const Initiatives = ({ language }) => {
           endDate: formData.endDate,
           status: formData.status,
           maxVolunteers: parseInt(formData.maxVolunteers),
+          registrationLink: formData.registrationLink,
         },
         imageFile
       );
@@ -129,6 +131,7 @@ const Initiatives = ({ language }) => {
           endDate: formData.endDate,
           status: formData.status,
           maxVolunteers: parseInt(formData.maxVolunteers),
+          registrationLink: formData.registrationLink,
         },
         imageFile
       );
@@ -267,6 +270,7 @@ const Initiatives = ({ language }) => {
         status: initiative.status,
         currentVolunteers: initiative.currentVolunteers || 0,
         maxVolunteers: initiative.maxVolunteers || 10,
+        registrationLink: initiative.registrationLink || "",
       });
     } else {
       // Add mode - reset form
@@ -278,6 +282,7 @@ const Initiatives = ({ language }) => {
         status: "gathering volunteers",
         currentVolunteers: 0,
         maxVolunteers: 10,
+        registrationLink: "",
       });
     }
     setInitiativeModal({ isOpen: true, mode, initiative });
@@ -293,6 +298,7 @@ const Initiatives = ({ language }) => {
       status: "gathering volunteers",
       currentVolunteers: 0,
       maxVolunteers: 10,
+      registrationLink: "",
     });
   };
 

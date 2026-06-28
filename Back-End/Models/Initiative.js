@@ -53,6 +53,11 @@ const initiativeSchema = new mongoose.Schema(
       type: String,
       required: false,
     },
+    registrationLink: {
+      type: String,
+      required: false,
+      trim: true,
+    },
     volunteers: [
       {
         volunteer: {

@@ -223,6 +223,7 @@ const Auth = () => {
 
               <CardContent>
                 <Tabs defaultValue="signin" className="w-full">
+                  {/*
                   <TabsList className="grid w-full grid-cols-2 mb-6">
                     <TabsTrigger
                       value="signin"
@@ -241,6 +242,7 @@ const Auth = () => {
                       {t("auth.signUp")}
                     </TabsTrigger>
                   </TabsList>
+                  */}
 
                   {/* Error/Success Alert */}
                   {error && (
@@ -373,6 +375,7 @@ const Auth = () => {
                   </TabsContent>
 
                   {/* Sign Up Tab */}
+                  {/*
                   <TabsContent value="signup">
                     <form onSubmit={handleSignUp} className="space-y-4">
                       <div className="space-y-2">
@@ -570,6 +573,7 @@ const Auth = () => {
                       </Button>
                     </form>
                   </TabsContent>
+                  */}
                 </Tabs>
 
                 {/* Back to Home */}

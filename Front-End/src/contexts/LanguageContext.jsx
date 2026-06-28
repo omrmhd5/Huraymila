@@ -601,7 +601,7 @@ export const LanguageProvider = ({ children }) => {
       // Auth
       auth: {
         title: "مرحباً بك",
-        subtitle: "سجل دخولك أو سجل كمتطوع جديد",
+        subtitle: "سجل دخولك إلى حسابك",
         signIn: "تسجيل الدخول",
         signUp: "سجل كمتطوع",
         email: "البريد الإلكتروني",
@@ -2291,7 +2291,7 @@ export const LanguageProvider = ({ children }) => {
       // Auth
       auth: {
         title: "Hello, Welcome",
-        subtitle: "Sign in or sign up as a volunteer",
+        subtitle: "Sign in to your account",
         signIn: "Sign In",
         signUp: "Sign Up as Volunteer",
         email: "Email",

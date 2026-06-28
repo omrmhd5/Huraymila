@@ -116,6 +116,7 @@ const createInitiative = async (req, res) => {
       status,
       maxVolunteers,
       volunteers,
+      registrationLink,
     } = req.body;
 
     // Get agency ID from authenticated user or request body (for governor)
@@ -169,6 +170,7 @@ const createInitiative = async (req, res) => {
       maxVolunteers,
       agency: agencyId,
       volunteers: volunteers || [],
+      registrationLink,
     });
 
     await initiative.save();
@@ -231,6 +233,7 @@ const updateInitiative = async (req, res) => {
       status,
       maxVolunteers,
       volunteers,
+      registrationLink,
     } = req.body;
 
     // Find initiative first to check ownership
@@ -261,6 +264,7 @@ const updateInitiative = async (req, res) => {
     if (status !== undefined) updateData.status = status;
     if (maxVolunteers !== undefined) updateData.maxVolunteers = maxVolunteers;
     if (volunteers !== undefined) updateData.volunteers = volunteers;
+    if (registrationLink !== undefined) updateData.registrationLink = registrationLink;
 
     // Handle image upload
     if (req.file) {
