@@ -4,8 +4,7 @@ const mapLocationSchema = new mongoose.Schema(
   {
     placeId: {
       type: String,
-      required: true,
-      unique: true,
+      sparse: true,
       trim: true,
     },
     name: {
@@ -20,7 +19,7 @@ const mapLocationSchema = new mongoose.Schema(
     category: {
       type: String,
       required: true,
-      enum: ["government", "local", "educational", "security", "health", "public"],
+      enum: ["government", "local", "educational", "security", "health", "public", "custom"],
     },
     lat: {
       type: Number,
@@ -40,6 +39,15 @@ const mapLocationSchema = new mongoose.Schema(
     icon: {
       type: String,
       default: "Building",
+    },
+    isCustom: {
+      type: Boolean,
+      default: false,
+    },
+    createdByAgency: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Agency",
+      default: null,
     },
   },
   {

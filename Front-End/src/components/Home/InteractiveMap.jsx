@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import {
   APIProvider,
   Map,
@@ -23,10 +23,12 @@ import {
   Navigation,
   Loader2,
   MapPin,
+  Home,
 } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useAuth } from "@/contexts/AuthContext";
 import { mapApi } from "@/lib/mapApi";
 
 const GOOGLE_MAPS_API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
@@ -79,6 +81,13 @@ const CATEGORY_CONFIG = {
     icon: Leaf,
     labelAr: "الخدمات العامة",
     labelEn: "Public Services",
+  },
+  custom: {
+    color: "bg-red-600",
+    borderColor: "border-red-700",
+    icon: Home,
+    labelAr: "مواقعنا الخاصة",
+    labelEn: "Our Custom Locations",
   },
 };
 
@@ -148,6 +157,13 @@ const ZoomControls = ({ onReset, zoomInLabel, zoomOutLabel, resetLabel }) => {
 const InteractiveMap = () => {
   const { language } = useLanguage();
   const isRTL = language === "ar";
+  const { user, token } = useAuth();
+
+  // Define allowed agencies: "الامن و السلامة" and "التنمية الصحية"
+  const isAllowedAgency =
+    user &&
+    user.type === "agency" &&
+    (user.name === "الامن و السلامة" || user.name === "التنمية الصحية");
 
   const [locations, setLocations] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -156,6 +172,18 @@ const InteractiveMap = () => {
   const [visibleCategories, setVisibleCategories] = useState(
     Object.keys(CATEGORY_CONFIG)
   );
+
+  // States for adding/editing custom markers
+  const [isAddingMode, setIsAddingMode] = useState(false);
+  const [isFormOpen, setIsFormOpen] = useState(false);
+  const [formCoords, setFormCoords] = useState(null);
+  const [editingLocation, setEditingLocation] = useState(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [formData, setFormData] = useState({
+    name: "",
+    nameEn: "",
+    address: "",
+  });
 
   const content = {
     ar: {
@@ -198,7 +226,7 @@ const InteractiveMap = () => {
       try {
         setLoading(true);
         setError(null);
-        const response = await mapApi.getMapLocations();
+        const response = await mapApi.getMapLocations(token);
         setLocations(response.data || []);
       } catch (err) {
         setError(t.errorLoading);
@@ -207,7 +235,7 @@ const InteractiveMap = () => {
       }
     };
     loadLocations();
-  }, []);
+  }, [token]);
 
   const toggleCategory = (category) => {
     setVisibleCategories((prev) =>
@@ -216,6 +244,11 @@ const InteractiveMap = () => {
         : [...prev, category]
     );
   };
+
+  // Filter which categories can be viewed in the filter section
+  const availableCategories = Object.keys(CATEGORY_CONFIG).filter(
+    (key) => key !== "custom" || isAllowedAgency
+  );
 
   const filteredLocations = locations.filter((loc) =>
     visibleCategories.includes(loc.category)
@@ -229,6 +262,107 @@ const InteractiveMap = () => {
 
   const getCategoryColor = (category) => {
     return CATEGORY_CONFIG[category]?.color || "bg-gray-500";
+  };
+
+  // Map Click Handler for placing custom markers
+  const handleMapClick = (e) => {
+    if (!isAddingMode) return;
+    let lat = null;
+    let lng = null;
+
+    if (e.detail?.latLng) {
+      lat = typeof e.detail.latLng.lat === "function" ? e.detail.latLng.lat() : e.detail.latLng.lat;
+      lng = typeof e.detail.latLng.lng === "function" ? e.detail.latLng.lng() : e.detail.latLng.lng;
+    } else if (e.latLng) {
+      lat = e.latLng.lat();
+      lng = e.latLng.lng();
+    }
+
+    if (lat !== null && lng !== null) {
+      setFormCoords({ lat, lng });
+      setEditingLocation(null);
+      setFormData({ name: "", nameEn: "", address: "" });
+      setIsFormOpen(true);
+      setIsAddingMode(false);
+    }
+  };
+
+  // Handle Edit Action
+  const handleStartEdit = (loc) => {
+    setEditingLocation(loc);
+    setFormData({
+      name: loc.name,
+      nameEn: loc.nameEn || "",
+      address: loc.address || "",
+    });
+    setFormCoords({
+      lat: loc.lat,
+      lng: loc.lng,
+    });
+    setIsFormOpen(true);
+  };
+
+  // Handle Delete Action
+  const handleDeleteClick = async (id) => {
+    const confirmMessage = isRTL
+      ? "هل أنت متأكد من رغبتك في حذف هذا الموقع المخصص؟"
+      : "Are you sure you want to delete this custom location?";
+    if (!confirm(confirmMessage)) return;
+
+    try {
+      setLoading(true);
+      await mapApi.deleteMapLocation(id, token);
+      setLocations((prev) => prev.filter((loc) => loc._id !== id));
+      setSelectedLocation(null);
+    } catch (err) {
+      alert(err.message || "Error deleting location");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Handle Form Submission (Create / Edit)
+  const handleFormSubmit = async (e) => {
+    e.preventDefault();
+    if (!formData.name.trim()) {
+      alert(isRTL ? "يرجى إدخال اسم الموقع" : "Please enter location name");
+      return;
+    }
+
+    try {
+      setIsSubmitting(true);
+      const payload = {
+        name: formData.name,
+        nameEn: formData.nameEn,
+        address: formData.address,
+        lat: formCoords.lat,
+        lng: formCoords.lng,
+      };
+
+      if (editingLocation) {
+        const response = await mapApi.updateMapLocation(
+          editingLocation._id,
+          payload,
+          token
+        );
+        setLocations((prev) =>
+          prev.map((loc) =>
+            loc._id === editingLocation._id ? response.data : loc
+          )
+        );
+        setSelectedLocation(response.data);
+      } else {
+        const response = await mapApi.createMapLocation(payload, token);
+        setLocations((prev) => [...prev, response.data]);
+      }
+
+      setIsFormOpen(false);
+      setEditingLocation(null);
+    } catch (err) {
+      alert(err.message || "Error saving location");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -255,6 +389,20 @@ const InteractiveMap = () => {
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
           {/* LEFT SIDEBAR */}
           <div className="space-y-4">
+            {/* Add Custom Location Button (Only visible to allowed agencies) */}
+            {isAllowedAgency && (
+              <Button
+                onClick={() => {
+                  setIsAddingMode(true);
+                  setSelectedLocation(null);
+                }}
+                disabled={isAddingMode}
+                className="w-full bg-[#186a3b] hover:bg-[#186a3b]/90 text-white font-bold flex items-center justify-center gap-2 py-3 rounded-lg shadow-md font-arabic">
+                <MapPin className="w-4 h-4" />
+                {isRTL ? "إضافة موقع مخصص جديد" : "Add Custom Location"}
+              </Button>
+            )}
+
             {/* Category Filters */}
             <Card>
               <CardContent className="space-y-3 p-4">
@@ -266,7 +414,8 @@ const InteractiveMap = () => {
                   {t.filterTitle}
                 </h3>
 
-                {Object.entries(CATEGORY_CONFIG).map(([key, config]) => {
+                {availableCategories.map((key) => {
+                  const config = CATEGORY_CONFIG[key];
                   const IconComponent = config.icon;
                   return (
                     <label
@@ -347,6 +496,26 @@ const InteractiveMap = () => {
                     </p>
                   )}
 
+                  {/* Actions for custom locations */}
+                  {isAllowedAgency && selectedLocation.isCustom && (
+                    <div className="flex gap-2 mt-4" dir={isRTL ? "rtl" : "ltr"}>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => handleStartEdit(selectedLocation)}
+                        className="flex-1 text-xs">
+                        {isRTL ? "تعديل" : "Edit"}
+                      </Button>
+                      <Button
+                        variant="destructive"
+                        size="sm"
+                        onClick={() => handleDeleteClick(selectedLocation._id)}
+                        className="flex-1 text-xs bg-red-600 hover:bg-red-700 text-white">
+                        {isRTL ? "حذف" : "Delete"}
+                      </Button>
+                    </div>
+                  )}
+
                   <Button
                     onClick={() => setSelectedLocation(null)}
                     variant="ghost"
@@ -381,9 +550,23 @@ const InteractiveMap = () => {
 
           {/* MAP AREA */}
           <div className="lg:col-span-3">
-            <Card className="overflow-hidden shadow-xl">
+            <Card className="overflow-hidden shadow-xl relative">
               <CardContent className="p-0">
                 <div className="relative h-[600px]">
+                  {/* Overlay Adding Mode Banner */}
+                  {isAddingMode && (
+                    <div className="absolute top-4 left-4 right-4 bg-primary text-white p-3 rounded-lg shadow-lg z-50 text-center text-sm font-semibold animate-pulse font-arabic flex justify-between items-center" dir="rtl">
+                      <span>📍 انقر فوق أي مكان على الخريطة لتحديد موقع العلامة المخصصة الجديدة.</span>
+                      <Button
+                        variant="secondary"
+                        size="sm"
+                        onClick={() => setIsAddingMode(false)}
+                        className="text-xs bg-white text-primary hover:bg-white/95 border-0">
+                        {isRTL ? "إلغاء" : "Cancel"}
+                      </Button>
+                    </div>
+                  )}
+
                   {loading ? (
                     <div className="absolute inset-0 flex items-center justify-center bg-muted/30">
                       <div className="text-center">
@@ -423,6 +606,7 @@ const InteractiveMap = () => {
                         defaultZoom={DEFAULT_ZOOM}
                         gestureHandling="greedy"
                         disableDefaultUI={true}
+                        onClick={handleMapClick}
                         className="w-full h-full">
                         {/* Custom Zoom Controls inside Map for useMap() access */}
                         <ZoomControls
@@ -465,6 +649,69 @@ const InteractiveMap = () => {
           </div>
         </div>
       </div>
+
+      {/* Elegant Overlay Modal for adding/editing a marker */}
+      {isFormOpen && (
+        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4 backdrop-blur-sm">
+          <Card className="w-full max-w-md shadow-2xl border border-gray-200">
+            <form onSubmit={handleFormSubmit}>
+              <CardContent className="p-6 space-y-4 font-arabic" dir="rtl">
+                <h3 className="text-lg font-bold text-right text-foreground border-b pb-2 mb-2">
+                  {editingLocation ? "تعديل موقع مخصص" : "إضافة موقع مخصص جديد"}
+                </h3>
+                
+                <div className="space-y-4 text-right">
+                  <div>
+                    <label className="text-sm font-semibold block text-right mb-1 text-gray-700">الاسم (بالعربية) *</label>
+                    <input
+                      type="text"
+                      value={formData.name}
+                      onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                      className="w-full border p-2.5 rounded-lg text-right text-sm focus:outline-none focus:ring-2 focus:ring-primary/50"
+                      placeholder="مثال: مقر الأمن والسلامة الجديد"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label className="text-sm font-semibold block text-right mb-1 text-gray-700">الاسم (بالإنجليزي)</label>
+                    <input
+                      type="text"
+                      value={formData.nameEn}
+                      onChange={(e) => setFormData({ ...formData, nameEn: e.target.value })}
+                      className="w-full border p-2.5 rounded-lg text-left text-sm focus:outline-none focus:ring-2 focus:ring-primary/50"
+                      placeholder="Example: Security & Safety HQ"
+                      dir="ltr"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-sm font-semibold block text-right mb-1 text-gray-700">العنوان</label>
+                    <input
+                      type="text"
+                      value={formData.address}
+                      onChange={(e) => setFormData({ ...formData, address: e.target.value })}
+                      className="w-full border p-2.5 rounded-lg text-right text-sm focus:outline-none focus:ring-2 focus:ring-primary/50"
+                      placeholder="العنوان أو الحي"
+                    />
+                  </div>
+                  <div className="flex gap-4 text-xs text-muted-foreground mt-2 border-t pt-2" dir="ltr">
+                    <span>Lat: {formCoords?.lat.toFixed(6)}</span>
+                    <span>Lng: {formCoords?.lng.toFixed(6)}</span>
+                  </div>
+                </div>
+
+                <div className="flex justify-end gap-2 pt-4 border-t mt-4">
+                  <Button variant="outline" type="button" onClick={() => setIsFormOpen(false)} className="px-4">
+                    إلغاء
+                  </Button>
+                  <Button type="submit" disabled={isSubmitting} className="px-4">
+                    {isSubmitting ? <Loader2 className="w-4 h-4 animate-spin" /> : "حفظ"}
+                  </Button>
+                </div>
+              </CardContent>
+            </form>
+          </Card>
+        </div>
+      )}
     </section>
   );
 };
