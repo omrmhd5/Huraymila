@@ -205,7 +205,7 @@ const PartnersSection = () => {
   const isRTL = language === "ar";
 
   return (
-    <section className="py-10 md:py-16 lg:py-20 bg-primary/10 overflow-hidden">
+    <section className="py-10 md:py-16 lg:py-20 bg-secondary/15 overflow-hidden">
       <div className="container mx-auto px-4">
         {/* Header */}
         <div className="text-center mb-8 md:mb-12 lg:mb-16">

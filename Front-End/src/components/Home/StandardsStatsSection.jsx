@@ -92,7 +92,7 @@ const StandardsStatsSection = () => {
   ];
 
   return (
-    <section className="py-16 bg-primary/10">
+    <section className="py-16 bg-secondary/15">
       <div className="container mx-auto px-4">
         {/* Section Header */}
         <div className="max-w-4xl mx-auto text-center mb-12">
