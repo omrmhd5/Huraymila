@@ -31,11 +31,19 @@ import {
 import { cn } from "@/lib/utils";
 import { useTheme } from "@/contexts/ThemeContext";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useAuth } from "@/contexts/AuthContext";
+import { partnerApi } from "@/lib/partnerApi";
+import PartnersManagementModal from "./PartnersManagementModal";
+import { Button } from "@/components/ui/button";
+import { Edit } from "lucide-react";
 
 const PartnersSection = () => {
   const { language } = useTheme();
   const { t } = useLanguage();
+  const { user } = useAuth();
   const [dimensions, setDimensions] = React.useState({ width: 0 });
+  const [connections, setConnections] = React.useState([]);
+  const [isModalOpen, setIsModalOpen] = React.useState(false);
 
   React.useEffect(() => {
     const handleResize = () => {
@@ -46,104 +54,46 @@ const PartnersSection = () => {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  const connections = [
-    {
-      name: t("successPartners.partners.ministryOfEnvironment"),
-      role: language === "ar" ? "بيئة وزراعة" : "Environment & Agriculture",
-      logo: "/assets/logos/وزارة البيئة والمياه والزراعة.jpg",
-      flow:
-        language === "ar"
-          ? "يقدم: برامج بيئية\nيستفيد: مشاركة مجتمعية"
-          : "Provides: Environmental Programs\nBenefits: Community Participation",
-    },
-    {
-      name: t("successPartners.partners.huraymilaHospital"),
-      role: language === "ar" ? "خدمات طبية" : "Medical Services",
-      logo: "/assets/logos/مستشفى حريملاء العام.jpg",
-      flow:
-        language === "ar"
-          ? "يقدم: رعاية طبية\nيستفيد: تقارير الصحة"
-          : "Provides: Medical Care\nBenefits: Health Reports",
-    },
-    {
-      name: t("successPartners.partners.civilDefense"),
-      role: language === "ar" ? "حماية مدنية" : "Civil Protection",
-      logo: "/assets/logos/الدفاع_المدني_السعودي.png",
-      flow:
-        language === "ar"
-          ? "يقدم: حماية وأمان\nيستفيد: آراء المواطنين"
-          : "Provides: Protection & Safety\nBenefits: Citizen Feedback",
-    },
-    {
-      name: t("successPartners.partners.nationalWaterCompany"),
-      role: language === "ar" ? "خدمات مياه" : "Water Services",
-      logo: "/assets/logos/شعار_شركة_المياه_الوطنية.jpeg",
-      flow:
-        language === "ar"
-          ? "يقدم: مياه صحية\nيستفيد: تقارير الجودة"
-          : "Provides: Clean Water\nBenefits: Quality Reports",
-    },
-    {
-      name: t("successPartners.partners.riyadhMunicipality"),
-      role: language === "ar" ? "خدمات بلدية" : "Municipal Services",
-      logo: "/assets/logos/امانة الرياض.ico",
-      flow:
-        language === "ar"
-          ? "يقدم: خدمات بلدية\nيستفيد: تقارير مجتمعية"
-          : "Provides: Municipal Services\nBenefits: Community Reports",
-    },
-    {
-      name: t("successPartners.partners.police"),
-      role: language === "ar" ? "أمن عام" : "Public Security",
-      logo: "/assets/logos/الشرطة.png",
-      flow:
-        language === "ar"
-          ? "يقدم: أمن وحماية\nيستفيد: آراء المواطنين"
-          : "Provides: Security & Protection\nBenefits: Citizen Feedback",
-    },
-    {
-      name: t("successPartners.partners.trafficDepartment"),
-      role: language === "ar" ? "إدارة مرور" : "Traffic Management",
-      logo: "/assets/logos/المرور.png",
-      flow:
-        language === "ar"
-          ? "يقدم: تنظيم المرور\nيستفيد: بيانات المرور"
-          : "Provides: Traffic Regulation\nBenefits: Traffic Data",
-    },
-    {
-      name: t("successPartners.partners.charityAssociation"),
-      role: language === "ar" ? "دعم اجتماعي" : "Social Support",
-      logo: "/assets/logos/جمعية حريملاء الخيرية.jpg",
-      flow:
-        language === "ar"
-          ? "يقدم: برامج خيرية\nيستفيد: تطوع المجتمع"
-          : "Provides: Charitable Programs\nBenefits: Community Volunteering",
-    },
-    {
-      name: t("successPartners.partners.developmentAssociation"),
-      role: language === "ar" ? "تنمية محلية" : "Local Development",
-      logo: "/assets/logos/جمعية التنمية الاهلية بحريملاء.jpg",
-      flow:
-        language === "ar"
-          ? "يقدم: برامج تنموية\nيستفيد: مشاركة أهالي"
-          : "Provides: Development Programs\nBenefits: Local Participation",
-    },
-    {
-      name: t("successPartners.partners.friendsOfPatients"),
-      role: language === "ar" ? "دعم صحي" : "Health Support",
-      logo: "/assets/logos/جمعية اصدقاء المرضى بحريملاء.png",
-      flow:
-        language === "ar"
-          ? "يقدم: دعم المرضى\nيستفيد: تطوع مجتمعي"
-          : "Provides: Patient Support\nBenefits: Community Volunteering",
-    },
-  ];
+  const fetchPartners = async () => {
+    try {
+      const data = await partnerApi.getAllPartners();
+      setConnections(data);
+    } catch (error) {
+      console.error("Failed to fetch partners", error);
+    }
+  };
+
+  React.useEffect(() => {
+    fetchPartners();
+  }, []);
 
   const isRTL = language === "ar";
+  
+  const getFullLogoUrl = (logoPath) => {
+    if (!logoPath) return "";
+    if (logoPath.startsWith("http")) return logoPath;
+    
+    const API_URL = import.meta.env.VITE_API_URL || 
+                    (window.location.hostname === "localhost" ? "http://localhost:5000/api" : "/api");
+    const baseUrl = API_URL.replace("/api", "");
+    return `${baseUrl}${logoPath}`;
+  };
 
   return (
     <section className="py-10 md:py-16 lg:py-20 bg-secondary/15 overflow-hidden">
-      <div className="container mx-auto px-4">
+      <div className="container mx-auto px-4 relative">
+        {user?.type === "governor" && (
+          <div className={`absolute top-0 ${isRTL ? 'left-4' : 'right-4'} z-30`}>
+            <Button 
+              onClick={() => setIsModalOpen(true)}
+              className="bg-amber-600 hover:bg-amber-700 text-white"
+            >
+              <Edit className="w-4 h-4 mr-2" />
+              {isRTL ? "إدارة الشركاء" : "Edit Partners"}
+            </Button>
+          </div>
+        )}
+
         {/* Header */}
         <div className="text-center mb-8 md:mb-12 lg:mb-16">
           <h2
@@ -203,7 +153,7 @@ const PartnersSection = () => {
                   {t("partnersSection.centerEntity.stats")}
                 </div>
                 <div className="text-amber-700 dark:text-amber-300 font-bold text-[9px] md:text-[10px] lg:text-xs hidden lg:block">
-                  {t("partnersSection.centerEntity.organizations")}
+                  {connections.length} {isRTL ? "لجان شريكة" : "Partner Committees"}
                 </div>
               </div>
             </div>
@@ -322,8 +272,8 @@ const PartnersSection = () => {
                   <CardContent className="p-1 md:p-1.5 lg:p-2 text-center relative z-10 h-full flex flex-col justify-center">
                     <div className="w-6 h-6 md:w-8 md:h-8 lg:w-10 lg:h-10 mx-auto mb-1 md:mb-1.5 lg:mb-2 group-hover:scale-110 transition-transform duration-300 flex items-center justify-center">
                       <img
-                        src={connection.logo}
-                        alt={connection.name}
+                        src={getFullLogoUrl(connection.logo)}
+                        alt={isRTL ? connection.name_ar : connection.name_en}
                         className="max-w-full max-h-full object-contain"
                         onError={(e) => {
                           e.target.style.display = "none";
@@ -333,7 +283,7 @@ const PartnersSection = () => {
                       <div
                         className="w-full h-full bg-muted rounded-full flex items-center justify-center text-xs text-muted-foreground"
                         style={{ display: "none" }}>
-                        {connection.name.charAt(0)}
+                        {(isRTL ? connection.name_ar : connection.name_en).charAt(0)}
                       </div>
                     </div>
                     <h4
@@ -341,7 +291,7 @@ const PartnersSection = () => {
                         "font-semibold text-amber-700 group-hover:text-black transition-colors text-[9px] md:text-[10px] lg:text-xs leading-tight",
                         isRTL ? "font-arabic" : "font-english"
                       )}>
-                      {connection.name}
+                      {isRTL ? connection.name_ar : connection.name_en}
                     </h4>
                   </CardContent>
 
@@ -412,6 +362,12 @@ const PartnersSection = () => {
           </Card>
         </div>
       </div>
+      
+      <PartnersManagementModal 
+        isOpen={isModalOpen} 
+        setIsOpen={setIsModalOpen} 
+        onPartnersUpdated={fetchPartners} 
+      />
     </section>
   );
 };

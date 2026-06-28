@@ -2,54 +2,35 @@ import React from "react";
 import { cn } from "@/lib/utils";
 import { useTheme } from "@/contexts/ThemeContext";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { partnerApi } from "@/lib/partnerApi";
 
 const SuccessPartners = () => {
   const { language } = useTheme();
   const { t } = useLanguage();
   const isRTL = language === "ar";
+  const [partners, setPartners] = React.useState([]);
 
-  const partners = [
-    {
-      name: t("successPartners.partners.ministryOfEnvironment"),
-      logo: "/assets/logos/وزارة البيئة والمياه والزراعة.jpg",
-    },
-    {
-      name: t("successPartners.partners.huraymilaHospital"),
-      logo: "/assets/logos/مستشفى حريملاء العام.jpg",
-    },
-    {
-      name: t("successPartners.partners.civilDefense"),
-      logo: "/assets/logos/الدفاع_المدني_السعودي.png",
-    },
-    {
-      name: t("successPartners.partners.nationalWaterCompany"),
-      logo: "/assets/logos/شعار_شركة_المياه_الوطنية.jpeg",
-    },
-    {
-      name: t("successPartners.partners.riyadhMunicipality"),
-      logo: "/assets/logos/امانة الرياض.ico",
-    },
-    {
-      name: t("successPartners.partners.police"),
-      logo: "/assets/logos/الشرطة.png",
-    },
-    {
-      name: t("successPartners.partners.trafficDepartment"),
-      logo: "/assets/logos/المرور.png",
-    },
-    {
-      name: t("successPartners.partners.charityAssociation"),
-      logo: "/assets/logos/جمعية حريملاء الخيرية.jpg",
-    },
-    {
-      name: t("successPartners.partners.developmentAssociation"),
-      logo: "/assets/logos/جمعية التنمية الاهلية بحريملاء.jpg",
-    },
-    {
-      name: t("successPartners.partners.friendsOfPatients"),
-      logo: "/assets/logos/جمعية اصدقاء المرضى بحريملاء.png",
-    },
-  ];
+  React.useEffect(() => {
+    const fetchPartners = async () => {
+      try {
+        const data = await partnerApi.getAllPartners();
+        setPartners(data);
+      } catch (error) {
+        console.error("Failed to fetch partners", error);
+      }
+    };
+    fetchPartners();
+  }, []);
+
+  const getFullLogoUrl = (logoPath) => {
+    if (!logoPath) return "";
+    if (logoPath.startsWith("http")) return logoPath;
+    
+    const API_URL = import.meta.env.VITE_API_URL || 
+                    (window.location.hostname === "localhost" ? "http://localhost:5000/api" : "/api");
+    const baseUrl = API_URL.replace("/api", "");
+    return `${baseUrl}${logoPath}`;
+  };
 
   return (
     <section className="w-full bg-primary/10 py-6 md:py-10 lg:py-12 overflow-hidden">
@@ -85,8 +66,8 @@ const SuccessPartners = () => {
                 className="flex-shrink-0 w-24 sm:w-32 md:w-36 lg:w-40 mx-1 sm:mx-2 bg-card backdrop-blur-md rounded-lg p-2 sm:p-3 md:p-4 text-center border border-border hover:bg-card/70 transition-all duration-300 group">
                 <div className="w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 mx-auto mb-2 sm:mb-2 md:mb-3 group-hover:scale-110 transition-transform duration-300 flex items-center justify-center">
                   <img
-                    src={partner.logo}
-                    alt={partner.name}
+                    src={getFullLogoUrl(partner.logo)}
+                    alt={isRTL ? partner.name_ar : partner.name_en}
                     className="max-w-full max-h-full object-contain"
                     onError={(e) => {
                       e.target.style.display = "none";
@@ -96,7 +77,7 @@ const SuccessPartners = () => {
                   <div
                     className="w-full h-full bg-muted rounded-full flex items-center justify-center text-xs text-muted-foreground"
                     style={{ display: "none" }}>
-                    {partner.name.charAt(0)}
+                    {(isRTL ? partner.name_ar : partner.name_en)?.charAt(0)}
                   </div>
                 </div>
                 <div
@@ -104,7 +85,7 @@ const SuccessPartners = () => {
                     "text-foreground text-[10px] sm:text-xs leading-tight",
                     isRTL ? "font-arabic" : "font-english"
                   )}>
-                  {partner.name}
+                  {isRTL ? partner.name_ar : partner.name_en}
                 </div>
               </div>
             ))}
@@ -116,8 +97,8 @@ const SuccessPartners = () => {
                 className="flex-shrink-0 w-24 sm:w-32 md:w-36 lg:w-40 mx-1 sm:mx-2 bg-card backdrop-blur-md rounded-lg p-2 sm:p-3 md:p-4 text-center border border-border hover:bg-card/70 transition-all duration-300 group">
                 <div className="w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 mx-auto mb-2 sm:mb-2 md:mb-3 group-hover:scale-110 transition-transform duration-300 flex items-center justify-center">
                   <img
-                    src={partner.logo}
-                    alt={partner.name}
+                    src={getFullLogoUrl(partner.logo)}
+                    alt={isRTL ? partner.name_ar : partner.name_en}
                     className="max-w-full max-h-full object-contain"
                     onError={(e) => {
                       e.target.style.display = "none";
@@ -127,7 +108,7 @@ const SuccessPartners = () => {
                   <div
                     className="w-full h-full bg-muted rounded-full flex items-center justify-center text-xs text-muted-foreground"
                     style={{ display: "none" }}>
-                    {partner.name.charAt(0)}
+                    {(isRTL ? partner.name_ar : partner.name_en)?.charAt(0)}
                   </div>
                 </div>
                 <div
@@ -135,7 +116,7 @@ const SuccessPartners = () => {
                     "text-foreground text-[10px] sm:text-xs leading-tight",
                     isRTL ? "font-arabic" : "font-english"
                   )}>
-                  {partner.name}
+                  {isRTL ? partner.name_ar : partner.name_en}
                 </div>
               </div>
             ))}
