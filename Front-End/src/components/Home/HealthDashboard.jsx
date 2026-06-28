@@ -234,7 +234,11 @@ const HealthDashboard = () => {
 
   const isRTL = language === "ar";
 
-  const calculateProgress = (value, target) => {
+  const calculateProgress = (value, target, inverted = false) => {
+    if (inverted) {
+      if (value === 0) return 100;
+      return Math.min((target / value) * 100, 100);
+    }
     return Math.min((value / target) * 100, 100);
   };
 
@@ -308,9 +312,10 @@ const HealthDashboard = () => {
             const IconComponent = indicator.icon;
             const progressValue = calculateProgress(
               indicator.value,
-              indicator.target
+              indicator.target,
+              indicator.inverted
             );
-            const isExcellent = indicator.value >= indicator.target * 0.9;
+            const isExcellent = progressValue >= 90;
 
             return (
               <Card

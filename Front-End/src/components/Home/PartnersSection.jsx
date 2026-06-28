@@ -58,6 +58,8 @@ const PartnersSection = () => {
     try {
       const data = await partnerApi.getAllPartners();
       setConnections(data);
+      // Dispatch event to trigger other components (like SuccessPartners) to refetch
+      window.dispatchEvent(new Event("partners-updated"));
     } catch (error) {
       console.error("Failed to fetch partners", error);
     }
@@ -83,7 +85,7 @@ const PartnersSection = () => {
     <section className="py-10 md:py-16 lg:py-20 bg-secondary/15 overflow-hidden">
       <div className="container mx-auto px-4 relative">
         {user?.type === "governor" && (
-          <div className={`absolute top-0 ${isRTL ? 'left-4' : 'right-4'} z-30`}>
+          <div className={`absolute top-0 ${isRTL ? 'right-4' : 'left-4'} z-30`}>
             <Button 
               onClick={() => setIsModalOpen(true)}
               className="bg-amber-600 hover:bg-amber-700 text-white"

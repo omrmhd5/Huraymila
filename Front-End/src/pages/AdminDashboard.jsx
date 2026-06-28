@@ -1646,12 +1646,11 @@ const AdminDashboard = () => {
                 };
 
                 const IconComponent = iconMap[indicator.id];
-                const progressValue = Math.min(
-                  (indicator.currentValue / indicator.targetValue) * 100,
-                  100
-                );
-                const isExcellent =
-                  indicator.currentValue >= indicator.targetValue * 0.9;
+                const isInverted = indicator.id === "trafficAccidents";
+                const progressValue = isInverted
+                  ? (indicator.currentValue === 0 ? 100 : Math.min((indicator.targetValue / indicator.currentValue) * 100, 100))
+                  : Math.min((indicator.currentValue / indicator.targetValue) * 100, 100);
+                const isExcellent = progressValue >= 90;
 
                 return (
                   <Card

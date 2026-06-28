@@ -6,8 +6,13 @@ const uploadPartnerLogo = require("../middleware/partnerFileUpload");
 // Public route to get partners
 router.get("/", partnerController.getPartners);
 
-// Protected route to update partner (requires governor access, which we can check in the frontend for now, or add an auth middleware if it exists)
-// We will use the upload middleware to handle multipart/form-data
+// Create a new partner
+router.post("/", uploadPartnerLogo.single("logoFile"), partnerController.createPartner);
+
+// Update partner
 router.put("/:id", uploadPartnerLogo.single("logoFile"), partnerController.updatePartner);
+
+// Delete partner
+router.delete("/:id", partnerController.deletePartner);
 
 module.exports = router;

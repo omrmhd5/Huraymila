@@ -10,17 +10,27 @@ const SuccessPartners = () => {
   const isRTL = language === "ar";
   const [partners, setPartners] = React.useState([]);
 
-  React.useEffect(() => {
-    const fetchPartners = async () => {
-      try {
-        const data = await partnerApi.getAllPartners();
-        setPartners(data);
-      } catch (error) {
-        console.error("Failed to fetch partners", error);
-      }
-    };
-    fetchPartners();
+  const fetchPartners = React.useCallback(async () => {
+    try {
+      const data = await partnerApi.getAllPartners();
+      setPartners(data);
+    } catch (error) {
+      console.error("Failed to fetch partners", error);
+    }
   }, []);
+
+  React.useEffect(() => {
+    fetchPartners();
+
+    const handleUpdate = () => {
+      fetchPartners();
+    };
+
+    window.addEventListener("partners-updated", handleUpdate);
+    return () => {
+      window.removeEventListener("partners-updated", handleUpdate);
+    };
+  }, [fetchPartners]);
 
   const getFullLogoUrl = (logoPath) => {
     if (!logoPath) return "";

@@ -496,6 +496,20 @@ const InteractiveMap = () => {
                     </p>
                   )}
 
+                  <Button
+                    onClick={() => {
+                      const url = `https://www.google.com/maps/dir/?api=1&destination=${selectedLocation.lat},${selectedLocation.lng}`;
+                      window.open(url, "_blank");
+                    }}
+                    className={cn(
+                      "w-full mt-4 bg-primary hover:bg-primary/95 text-white flex items-center justify-center gap-2 text-xs py-2 rounded-lg font-semibold",
+                      isRTL ? "font-arabic" : "font-english"
+                    )}
+                  >
+                    <Navigation className="w-3.5 h-3.5" />
+                    {isRTL ? "الاتجاهات (خرائط Google)" : "Directions (Google Maps)"}
+                  </Button>
+
                   {/* Actions for custom locations */}
                   {isAllowedAgency && selectedLocation.isCustom && (
                     <div className="flex gap-2 mt-4" dir={isRTL ? "rtl" : "ltr"}>
@@ -631,16 +645,7 @@ const InteractiveMap = () => {
                         ))}
                       </Map>
 
-                      {/* Click Hint */}
-                      <div className="absolute bottom-4 left-4 bg-background/80 backdrop-blur-sm px-3 py-2 rounded-lg border text-sm flex items-center gap-2 z-10 pointer-events-none">
-                        <Navigation className="h-4 w-4 text-primary" />
-                        <span
-                          className={cn(
-                            isRTL ? "font-arabic" : "font-english"
-                          )}>
-                          {t.clickHint}
-                        </span>
-                      </div>
+
                     </APIProvider>
                   )}
                 </div>
