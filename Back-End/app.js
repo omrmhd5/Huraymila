@@ -13,6 +13,7 @@ const newsRoutes = require("./Routes/newsRoutes");
 const successStoryRoutes = require("./Routes/successStoryRoutes");
 const healthIndicatorRoutes = require("./Routes/healthIndicatorRoutes");
 const reportRoutes = require("./Routes/reportRoutes");
+const mapLocationRoutes = require("./Routes/mapLocationRoutes");
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -43,6 +44,7 @@ apiRouter.use("/news", newsRoutes);
 apiRouter.use("/success-stories", successStoryRoutes);
 apiRouter.use("/health-indicators", healthIndicatorRoutes);
 apiRouter.use("/reports", reportRoutes);
+apiRouter.use("/map-locations", mapLocationRoutes);
 
 // --- FRONTEND STATIC FILES ---
 // Serve the static files from the Front-End/dist directory.

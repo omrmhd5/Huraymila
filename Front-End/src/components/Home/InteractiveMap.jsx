@@ -1,4 +1,10 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
+import {
+  APIProvider,
+  Map,
+  AdvancedMarker,
+  useMap,
+} from "@vis.gl/react-google-maps";
 
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -7,36 +13,149 @@ import { Button } from "@/components/ui/button";
 import {
   Heart,
   Building,
+  Building2,
   GraduationCap,
-  Droplets,
-  Car,
   Shield,
   Leaf,
   ZoomIn,
   ZoomOut,
   RotateCcw,
   Navigation,
+  Loader2,
+  MapPin,
 } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { mapApi } from "@/lib/mapApi";
+
+const GOOGLE_MAPS_API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
+const GOOGLE_MAPS_ID = import.meta.env.VITE_GOOGLE_MAPS_ID;
+
+// Huraymila city center
+const HURAYMILA_CENTER = { lat: 25.1158, lng: 46.104 };
+const DEFAULT_ZOOM = 13;
+
+// Category config
+const CATEGORY_CONFIG = {
+  government: {
+    color: "bg-blue-500",
+    borderColor: "border-blue-600",
+    icon: Building2,
+    labelAr: "جهات حكومية",
+    labelEn: "Government",
+  },
+  local: {
+    color: "bg-green-500",
+    borderColor: "border-green-600",
+    icon: Building,
+    labelAr: "جهات محلية / جمعيات",
+    labelEn: "Local & NGOs",
+  },
+  educational: {
+    color: "bg-purple-500",
+    borderColor: "border-purple-600",
+    icon: GraduationCap,
+    labelAr: "مؤسسات تعليمية",
+    labelEn: "Educational",
+  },
+  security: {
+    color: "bg-red-500",
+    borderColor: "border-red-600",
+    icon: Shield,
+    labelAr: "الأجهزة الأمنية",
+    labelEn: "Security",
+  },
+  health: {
+    color: "bg-teal-500",
+    borderColor: "border-teal-600",
+    icon: Heart,
+    labelAr: "الخدمات الصحية",
+    labelEn: "Health Services",
+  },
+  public: {
+    color: "bg-orange-500",
+    borderColor: "border-orange-600",
+    icon: Leaf,
+    labelAr: "الخدمات العامة",
+    labelEn: "Public Services",
+  },
+};
+
+// Custom Pin Component rendered inside AdvancedMarker
+const CategoryPin = ({ category, isSelected }) => {
+  const config = CATEGORY_CONFIG[category] || CATEGORY_CONFIG.public;
+  const IconComponent = config.icon;
+
+  return (
+    <div
+      className={cn(
+        "w-10 h-10 rounded-full flex items-center justify-center text-white shadow-lg transition-all duration-200 border-2",
+        config.color,
+        config.borderColor,
+        isSelected ? "scale-125 ring-4 ring-white/50 shadow-xl" : "hover:scale-110"
+      )}>
+      <IconComponent className="w-5 h-5" />
+    </div>
+  );
+};
+
+// Zoom Controls — uses useMap() hook, must be inside <Map> tree
+const ZoomControls = ({ onReset, zoomInLabel, zoomOutLabel, resetLabel }) => {
+  const map = useMap();
+
+  const handleZoomIn = () => {
+    if (map) map.setZoom((map.getZoom() || DEFAULT_ZOOM) + 1);
+  };
+  const handleZoomOut = () => {
+    if (map) map.setZoom(Math.max((map.getZoom() || DEFAULT_ZOOM) - 1, 8));
+  };
+  const handleReset = () => {
+    if (map) {
+      map.setCenter(HURAYMILA_CENTER);
+      map.setZoom(DEFAULT_ZOOM);
+    }
+    onReset();
+  };
+
+  return (
+    <div className="absolute top-4 right-4 z-10 flex flex-col gap-2">
+      <Button
+        onClick={handleZoomIn}
+        variant="outline"
+        size="sm"
+        className="bg-background/90 backdrop-blur-sm shadow-md w-9 h-9 p-0">
+        <ZoomIn className="w-4 h-4" />
+      </Button>
+      <Button
+        onClick={handleZoomOut}
+        variant="outline"
+        size="sm"
+        className="bg-background/90 backdrop-blur-sm shadow-md w-9 h-9 p-0">
+        <ZoomOut className="w-4 h-4" />
+      </Button>
+      <Button
+        onClick={handleReset}
+        variant="outline"
+        size="sm"
+        className="bg-background/90 backdrop-blur-sm shadow-md w-9 h-9 p-0">
+        <RotateCcw className="w-4 h-4" />
+      </Button>
+    </div>
+  );
+};
 
 const InteractiveMap = () => {
-  const { language } = useLanguage(); // ✅ fix missing language prop
+  const { language } = useLanguage();
+  const isRTL = language === "ar";
+
+  const [locations, setLocations] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [selectedLocation, setSelectedLocation] = useState(null);
-  const [mapZoom, setMapZoom] = useState(100);
-  const [visibleCategories, setVisibleCategories] = useState([
-    "حكومي",
-    "محلي",
-    "تعليمي",
-    "خدمي",
-    "أمني",
-    "Government",
-    "Local",
-    "Educational",
-    "Service",
-    "Security",
-  ]);
+  const [visibleCategories, setVisibleCategories] = useState(
+    Object.keys(CATEGORY_CONFIG)
+  );
 
   const content = {
     ar: {
@@ -47,146 +166,48 @@ const InteractiveMap = () => {
       reset: "إعادة تعيين",
       hideDetails: "إخفاء التفاصيل",
       filterTitle: "تصفية حسب النوع",
-      categories: {
-        حكومي: "اللجان الحكومية",
-        محلي: "اللجان المحلية",
-        تعليمي: "المؤسسات التعليمية",
-        خدمي: "الخدمات العامة",
-        أمني: "الأجهزة الأمنية",
-      },
-      locations: [
-        {
-          name: "وزارة الصحة",
-          type: "حكومي",
-          description: "الجهة المشرفة على برنامج المدن الصحية",
-          icon: Heart,
-          position: { top: "20%", left: "30%" },
-        },
-        {
-          name: "بلدية حريملاء",
-          type: "محلي",
-          description: "الشريك المحلي في تنفيذ المبادرات",
-          icon: Building,
-          position: { top: "45%", left: "50%" },
-        },
-        {
-          name: "إدارة التعليم",
-          type: "تعليمي",
-          description: "تطوير البرامج التعليمية والتوعوية",
-          icon: GraduationCap,
-          position: { top: "35%", left: "70%" },
-        },
-        {
-          name: "شركة المياه الوطنية",
-          type: "خدمي",
-          description: "ضمان جودة المياه وسلامة الشبكات",
-          icon: Droplets,
-          position: { top: "60%", left: "25%" },
-        },
-        {
-          name: "إدارة المرور",
-          type: "أمني",
-          description: "تحسين السلامة المرورية والنقل المستدام",
-          icon: Car,
-          position: { top: "65%", left: "65%" },
-        },
-        {
-          name: "الدفاع المدني",
-          type: "أمني",
-          description: "ضمان السلامة العامة وإدارة المخاطر",
-          icon: Shield,
-          position: { top: "25%", left: "75%" },
-        },
-      ],
+      clickHint: "انقر على العلامات للحصول على التفاصيل",
+      loading: "جاري تحميل الخريطة...",
+      noLocations: "لا توجد مواقع محفوظة. يرجى تشغيل أداة الاستيراد أولاً.",
+      errorLoading: "تعذر تحميل بيانات الخريطة",
+      address: "العنوان",
+      rating: "التقييم",
     },
-
     en: {
-      title: "Interactive Map of Harimlaa Governorate",
-      subtitle: "Explore partner locations and health facilities",
+      title: "Interactive Map of Huraymila Governorate",
+      subtitle: "Explore partner locations and health facilities in the governorate",
       zoomIn: "Zoom In",
       zoomOut: "Zoom Out",
       reset: "Reset",
       hideDetails: "Hide Details",
       filterTitle: "Filter by Category",
-      categories: {
-        Government: "Government Entities",
-        Local: "Local Authorities",
-        Educational: "Educational Institutions",
-        Service: "Public Services",
-        Security: "Security Agencies",
-      },
-      locations: [
-        {
-          name: "Ministry of Health",
-          type: "Government",
-          description: "Supervising authority for the Healthy Cities program",
-          icon: Heart,
-          position: { top: "20%", left: "30%" },
-        },
-        {
-          name: "Harimlaa Municipality",
-          type: "Local",
-          description: "Local partner in initiatives",
-          icon: Building,
-          position: { top: "45%", left: "50%" },
-        },
-        {
-          name: "Education Department",
-          type: "Educational",
-          description: "Developing educational programs",
-          icon: GraduationCap,
-          position: { top: "35%", left: "70%" },
-        },
-        {
-          name: "National Water Company",
-          type: "Service",
-          description: "Ensuring water safety",
-          icon: Droplets,
-          position: { top: "60%", left: "25%" },
-        },
-        {
-          name: "Traffic Department",
-          type: "Security",
-          description: "Traffic safety and sustainable mobility",
-          icon: Car,
-          position: { top: "65%", left: "65%" },
-        },
-        {
-          name: "Civil Defense",
-          type: "Security",
-          description: "Public safety and risk management",
-          icon: Shield,
-          position: { top: "25%", left: "75%" },
-        },
-      ],
+      clickHint: "Click markers for details",
+      loading: "Loading map...",
+      noLocations: "No locations found. Please run the seeder script first.",
+      errorLoading: "Failed to load map data",
+      address: "Address",
+      rating: "Rating",
     },
   };
 
-  const current = content[language] || content.en; // ✅ prevents crash
-  const isRTL = language === "ar";
+  const t = content[language] || content.en;
 
-  const getCategoryColor = (type) => {
-    const colors = {
-      حكومي: "bg-blue-500",
-      محلي: "bg-green-500",
-      تعليمي: "bg-purple-500",
-      خدمي: "bg-orange-500",
-      أمني: "bg-red-500",
-      Government: "bg-blue-500",
-      Local: "bg-green-500",
-      Educational: "bg-purple-500",
-      Service: "bg-orange-500",
-      Security: "bg-red-500",
+  // Load locations from our own backend (DB cache)
+  useEffect(() => {
+    const loadLocations = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        const response = await mapApi.getMapLocations();
+        setLocations(response.data || []);
+      } catch (err) {
+        setError(t.errorLoading);
+      } finally {
+        setLoading(false);
+      }
     };
-    return colors[type] || "bg-gray-500";
-  };
-
-  const handleZoomIn = () => setMapZoom((z) => Math.min(z + 20, 200));
-  const handleZoomOut = () => setMapZoom((z) => Math.max(z - 20, 50));
-  const handleReset = () => {
-    setMapZoom(100);
-    setSelectedLocation(null);
-  };
+    loadLocations();
+  }, []);
 
   const toggleCategory = (category) => {
     setVisibleCategories((prev) =>
@@ -196,9 +217,19 @@ const InteractiveMap = () => {
     );
   };
 
-  const filteredLocations = current.locations.filter((loc) =>
-    visibleCategories.includes(loc.type)
+  const filteredLocations = locations.filter((loc) =>
+    visibleCategories.includes(loc.category)
   );
+
+  const getCategoryLabel = (category) => {
+    const config = CATEGORY_CONFIG[category];
+    if (!config) return category;
+    return isRTL ? config.labelAr : config.labelEn;
+  };
+
+  const getCategoryColor = (category) => {
+    return CATEGORY_CONFIG[category]?.color || "bg-gray-500";
+  };
 
   return (
     <section className="py-20 bg-primary/10">
@@ -210,147 +241,224 @@ const InteractiveMap = () => {
               "text-4xl font-bold mb-4",
               isRTL ? "font-arabic" : "font-english"
             )}>
-            {current.title}
+            {t.title}
           </h2>
           <p
             className={cn(
               "text-xl text-muted-foreground",
               isRTL ? "font-arabic" : "font-english"
             )}>
-            {current.subtitle}
+            {t.subtitle}
           </p>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
-          {/* LEFT CONTROLS */}
+          {/* LEFT SIDEBAR */}
           <div className="space-y-4">
+            {/* Category Filters */}
             <Card>
-              <CardContent className="space-y-2 p-4">
-                <Button
-                  onClick={handleZoomIn}
-                  variant="outline"
-                  className="w-full">
-                  <ZoomIn className="w-4 h-4 mr-2" /> {current.zoomIn}
-                </Button>
-                <Button
-                  onClick={handleZoomOut}
-                  variant="outline"
-                  className="w-full">
-                  <ZoomOut className="w-4 h-4 mr-2" /> {current.zoomOut}
-                </Button>
-                <Button
-                  onClick={handleReset}
-                  variant="outline"
-                  className="w-full">
-                  <RotateCcw className="w-4 h-4 mr-2" /> {current.reset}
-                </Button>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardContent className="space-y-4 p-4">
+              <CardContent className="space-y-3 p-4">
                 <h3
                   className={cn(
-                    "font-semibold",
-                    isRTL ? "font-arabic" : "font-english"
+                    "font-semibold text-sm",
+                    isRTL ? "font-arabic text-right" : "font-english text-left"
                   )}>
-                  {current.filterTitle}
+                  {t.filterTitle}
                 </h3>
 
-                {Object.entries(current.categories).map(([key, label]) => (
-                  <label
-                    key={key}
-                    className="flex items-center gap-2 cursor-pointer">
-                    <input
-                      type="checkbox"
-                      checked={visibleCategories.includes(key)}
-                      onChange={() => toggleCategory(key)}
-                    />
-                    <div
+                {Object.entries(CATEGORY_CONFIG).map(([key, config]) => {
+                  const IconComponent = config.icon;
+                  return (
+                    <label
+                      key={key}
                       className={cn(
-                        "w-3 h-3 rounded-full",
-                        getCategoryColor(key)
-                      )}></div>
-                    {label}
-                  </label>
-                ))}
+                        "flex items-center gap-2 cursor-pointer select-none hover:opacity-80 transition-opacity",
+                        isRTL ? "flex-row-reverse" : "flex-row"
+                      )}>
+                      <input
+                        type="checkbox"
+                        checked={visibleCategories.includes(key)}
+                        onChange={() => toggleCategory(key)}
+                        className="accent-primary"
+                      />
+                      <div
+                        className={cn(
+                          "w-6 h-6 rounded-full flex items-center justify-center text-white flex-shrink-0",
+                          config.color
+                        )}>
+                        <IconComponent className="w-3 h-3" />
+                      </div>
+                      <span
+                        className={cn(
+                          "text-sm",
+                          isRTL ? "font-arabic" : "font-english"
+                        )}>
+                        {isRTL ? config.labelAr : config.labelEn}
+                      </span>
+                    </label>
+                  );
+                })}
               </CardContent>
             </Card>
 
-            {selectedLocation !== null &&
-              current.locations[selectedLocation] && (
-                <Card>
-                  <CardContent className="p-4">
-                    <h4 className="font-bold">
-                      {current.locations[selectedLocation].name}
+            {/* Selected Location Info Card */}
+            {selectedLocation && (
+              <Card className="border-primary/30 shadow-md">
+                <CardContent className="p-4">
+                  <div
+                    className={cn(
+                      "flex items-start gap-2 mb-2",
+                      isRTL ? "flex-row-reverse" : "flex-row"
+                    )}>
+                    <MapPin className="w-4 h-4 text-primary mt-1 flex-shrink-0" />
+                    <h4
+                      className={cn(
+                        "font-bold text-sm leading-tight",
+                        isRTL ? "font-arabic text-right" : "font-english text-left"
+                      )}>
+                      {isRTL
+                        ? selectedLocation.name
+                        : selectedLocation.nameEn || selectedLocation.name}
                     </h4>
-                    <Badge className="my-2">
-                      {current.locations[selectedLocation].type}
-                    </Badge>
-                    <p className="text-sm text-muted-foreground">
-                      {current.locations[selectedLocation].description}
+                  </div>
+
+                  <Badge
+                    className={cn(
+                      "mb-2 text-white text-xs",
+                      getCategoryColor(selectedLocation.category)
+                    )}>
+                    {getCategoryLabel(selectedLocation.category)}
+                  </Badge>
+
+                  {selectedLocation.address && (
+                    <p
+                      className={cn(
+                        "text-xs text-muted-foreground mt-2",
+                        isRTL ? "font-arabic text-right" : "font-english text-left"
+                      )}>
+                      <span className="font-medium">{t.address}: </span>
+                      {selectedLocation.address}
                     </p>
-                    <Button
-                      onClick={() => setSelectedLocation(null)}
-                      variant="ghost"
-                      className="w-full mt-2">
-                      {current.hideDetails}
-                    </Button>
-                  </CardContent>
-                </Card>
-              )}
+                  )}
+
+                  {selectedLocation.rating && (
+                    <p className="text-xs text-muted-foreground mt-1">
+                      ⭐ {t.rating}: {selectedLocation.rating}
+                    </p>
+                  )}
+
+                  <Button
+                    onClick={() => setSelectedLocation(null)}
+                    variant="ghost"
+                    size="sm"
+                    className={cn(
+                      "w-full mt-3 text-xs",
+                      isRTL ? "font-arabic" : "font-english"
+                    )}>
+                    {t.hideDetails}
+                  </Button>
+                </CardContent>
+              </Card>
+            )}
+
+            {/* Stats */}
+            {!loading && locations.length > 0 && (
+              <Card>
+                <CardContent className="p-4">
+                  <p
+                    className={cn(
+                      "text-xs text-muted-foreground",
+                      isRTL ? "font-arabic text-right" : "font-english text-left"
+                    )}>
+                    {isRTL
+                      ? `${filteredLocations.length} من ${locations.length} موقع`
+                      : `${filteredLocations.length} of ${locations.length} locations`}
+                  </p>
+                </CardContent>
+              </Card>
+            )}
           </div>
 
-          {/* MAP */}
+          {/* MAP AREA */}
           <div className="lg:col-span-3">
-            <Card className="overflow-hidden">
+            <Card className="overflow-hidden shadow-xl">
               <CardContent className="p-0">
-                <div className="relative h-[600px] bg-gradient-to-br from-green-100 to-blue-100 dark:from-green-900/20 dark:to-blue-900/20">
-                  {/* MAP ZOOM WRAPPER */}
-                  <div
-                    className="absolute inset-0 transition-transform duration-300"
-                    style={{
-                      transform: `scale(${mapZoom / 100})`,
-                      transformOrigin: "center",
-                    }}>
-                    {/* OUTLINE MAP */}
-                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-80 h-64 border-4 border-dashed border-primary/30 rounded-3xl bg-primary/10 flex items-center justify-center flex-col">
-                      <Leaf className="h-8 w-8 text-primary mb-2" />
-                      <span>
-                        {isRTL ? "محافظة حريملاء" : "Harimlaa Governorate"}
-                      </span>
-                    </div>
-
-                    {/* LOCATION MARKERS */}
-                    {filteredLocations.map((location, index) => (
-                      <div
-                        key={index}
-                        className="absolute transform -translate-x-1/2 -translate-y-1/2 cursor-pointer"
-                        style={{
-                          top: location.position.top,
-                          left: location.position.left,
-                        }}
-                        onClick={() => setSelectedLocation(index)}>
-                        <div
+                <div className="relative h-[600px]">
+                  {loading ? (
+                    <div className="absolute inset-0 flex items-center justify-center bg-muted/30">
+                      <div className="text-center">
+                        <Loader2 className="w-8 h-8 animate-spin text-primary mx-auto mb-2" />
+                        <p
                           className={cn(
-                            "w-12 h-12 rounded-full flex items-center justify-center text-white shadow-lg hover:scale-110 transition-all",
-                            getCategoryColor(location.type),
-                            selectedLocation === index &&
-                              "ring-4 ring-primary/30 scale-125"
+                            "text-sm text-muted-foreground",
+                            isRTL ? "font-arabic" : "font-english"
                           )}>
-                          <location.icon className="h-6 w-6" />
-                        </div>
+                          {t.loading}
+                        </p>
                       </div>
-                    ))}
-                  </div>
+                    </div>
+                  ) : error ? (
+                    <div className="absolute inset-0 flex items-center justify-center bg-muted/30">
+                      <div className="text-center space-y-3">
+                        <MapPin className="w-10 h-10 text-muted-foreground mx-auto" />
+                        <p
+                          className={cn(
+                            "text-sm text-muted-foreground",
+                            isRTL ? "font-arabic" : "font-english"
+                          )}>
+                          {error}
+                        </p>
+                        {locations.length === 0 && (
+                          <p className="text-xs text-muted-foreground font-mono bg-muted px-3 py-1 rounded">
+                            node Back-End/utils/seedMapLocations.js
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                  ) : (
+                    <APIProvider apiKey={GOOGLE_MAPS_API_KEY}>
+                      <Map
+                        mapId={GOOGLE_MAPS_ID}
+                        defaultCenter={HURAYMILA_CENTER}
+                        defaultZoom={DEFAULT_ZOOM}
+                        gestureHandling="greedy"
+                        disableDefaultUI={true}
+                        className="w-full h-full">
+                        {/* Custom Zoom Controls inside Map for useMap() access */}
+                        <ZoomControls
+                          onReset={() => setSelectedLocation(null)}
+                          zoomInLabel={t.zoomIn}
+                          zoomOutLabel={t.zoomOut}
+                          resetLabel={t.reset}
+                        />
 
-                  {/* NAV HINT */}
-                  <div className="absolute bottom-4 left-4 bg-background/80 backdrop-blur-sm px-3 py-2 rounded-lg border text-sm flex items-center gap-2">
-                    <Navigation className="h-4 w-4 text-primary" />
-                    {isRTL
-                      ? "انقر على العلامات للحصول على التفاصيل"
-                      : "Click markers for details"}
-                  </div>
+                        {/* Markers */}
+                        {filteredLocations.map((location) => (
+                          <AdvancedMarker
+                            key={location._id || location.placeId}
+                            position={{ lat: location.lat, lng: location.lng }}
+                            onClick={() => setSelectedLocation(location)}
+                            title={isRTL ? location.name : location.nameEn || location.name}>
+                            <CategoryPin
+                              category={location.category}
+                              isSelected={selectedLocation?._id === location._id}
+                            />
+                          </AdvancedMarker>
+                        ))}
+                      </Map>
+
+                      {/* Click Hint */}
+                      <div className="absolute bottom-4 left-4 bg-background/80 backdrop-blur-sm px-3 py-2 rounded-lg border text-sm flex items-center gap-2 z-10 pointer-events-none">
+                        <Navigation className="h-4 w-4 text-primary" />
+                        <span
+                          className={cn(
+                            isRTL ? "font-arabic" : "font-english"
+                          )}>
+                          {t.clickHint}
+                        </span>
+                      </div>
+                    </APIProvider>
+                  )}
                 </div>
               </CardContent>
             </Card>
