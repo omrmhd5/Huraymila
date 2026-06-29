@@ -160,33 +160,7 @@ const HealthyCityStructure = () => {
           </div>
         </div>
 
-        {/* Committees List Section */}
-        <div className="max-w-4xl mx-auto mt-16 font-arabic" dir="rtl">
-          <h2 className="text-2xl font-bold text-[#186a3b] mb-6 text-center border-b pb-2 border-gray-200">
-            أعضاء الهيكل التنظيمي واللجان الفرعية
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="bg-[#fcf8f2] p-6 rounded-xl border border-[#e8dcb8] shadow-sm">
-              <h3 className="font-bold text-[#186a3b] text-lg mb-3">الهيكل الإداري:</h3>
-              <ul className="list-disc list-inside space-y-2 text-gray-700 text-sm md:text-base leading-relaxed">
-                <li><strong>محافظ حريملاء (رئيس اللجنة الرئيسية لمدينة حريملاء الصحية):</strong> يتولى الإشراف والمتابعة العامة لأعمال البرنامج.</li>
-                <li><strong>اللجنة الرئيسية:</strong> تعنى برسم السياسات العامة وإقرار الخطط.</li>
-                <li><strong>اللجنة الاستشارية:</strong> تقديم المشورة والدعم الفني والخبرات.</li>
-                <li><strong>اللجنة المالية:</strong> إدارة الموارد وتخصيص الميزانيات للمشاريع.</li>
-              </ul>
-            </div>
-            <div className="bg-[#f4fbf7] p-6 rounded-xl border border-[#d8eedf] shadow-sm">
-              <h3 className="font-bold text-[#388e3c] text-lg mb-3">اللجان الفرعية:</h3>
-              <ul className="list-disc list-inside space-y-2 text-gray-700 text-sm md:text-base leading-relaxed">
-                <li><strong>لجنة التنمية الصحية:</strong> تعزيز الوعي الصحي وتطوير الخدمات الوقائية.</li>
-                <li><strong>لجنة الصحة المدرسية:</strong> العناية بالبيئة المدرسية وصحة الطلاب.</li>
-                <li><strong>لجنة الإصحاح البيئي:</strong> حماية البيئة والتخلص الآمن من النفايات والتشجير.</li>
-                <li><strong>لجنة الأمن والسلامة:</strong> التوعية بالوقاية من الحوادث وتطبيق معايير السلامة.</li>
-                <li><strong>لجنة التنمية الاجتماعية:</strong> الشراكة المجتمعية ودعم الفئات الأكثر احتياجاً.</li>
-              </ul>
-            </div>
-          </div>
-        </div>
+
       </div>
     </div>
   );
