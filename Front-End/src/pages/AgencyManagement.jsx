@@ -64,6 +64,7 @@ const AgencyManagement = () => {
     show: false,
     agency: null,
   });
+  const [activeTab, setActiveTab] = useState("agency"); // "agency" or "committee"
   const [showPassword, setShowPassword] = useState(false);
   const [isToggling, setIsToggling] = useState(false);
   const [formData, setFormData] = useState({
@@ -76,6 +77,7 @@ const AgencyManagement = () => {
       phoneNumber: "",
     },
     assignedStandards: [],
+    agencyType: "agency",
   });
 
   const [showSmsModal, setShowSmsModal] = useState(false);
@@ -187,13 +189,21 @@ const AgencyManagement = () => {
             agency._id === editingAgency._id ? updatedAgency : agency
           )
         );
-        toast.success(t("agencyManagement.agencyUpdated"));
+        toast.success(
+          language === "ar"
+            ? (editingAgency.agencyType === "committee" ? "تم تحديث بيانات اللجنة بنجاح" : "تم تحديث بيانات الجهة بنجاح")
+            : (editingAgency.agencyType === "committee" ? "Committee updated successfully" : "Agency updated successfully")
+        );
       } else {
         // Create new agency - exclude assignedStandards
         const { assignedStandards, ...agencyData } = formData;
         const newAgency = await createAgency(agencyData, token);
         setAgenciesList((prev) => [...prev, newAgency]);
-        toast.success(t("agencyManagement.agencyAdded"));
+        toast.success(
+          language === "ar"
+            ? (agencyData.agencyType === "committee" ? "تم إضافة اللجنة بنجاح" : "تم إضافة الجهة بنجاح")
+            : (agencyData.agencyType === "committee" ? "Committee added successfully" : "Agency added successfully")
+        );
       }
 
       setFormData({
@@ -206,6 +216,7 @@ const AgencyManagement = () => {
           phoneNumber: "",
         },
         assignedStandards: [],
+        agencyType: "agency",
       });
       setShowPassword(false);
       setShowAddForm(false);
@@ -214,6 +225,24 @@ const AgencyManagement = () => {
       // Error saving agency
       toast.error(t("agencyManagement.operationError"));
     }
+  };
+
+  const handleAddNew = () => {
+    setFormData({
+      name: "",
+      email: "",
+      password: "",
+      contactPerson: {
+        name: "",
+        email: "",
+        phoneNumber: "",
+      },
+      assignedStandards: [],
+      agencyType: activeTab,
+    });
+    setEditingAgency(null);
+    setShowPassword(false);
+    setShowAddForm(true);
   };
 
   const handleEdit = (agency) => {
@@ -228,6 +257,7 @@ const AgencyManagement = () => {
         phoneNumber: "",
       },
       assignedStandards: agency.assignedStandards || [],
+      agencyType: agency.agencyType || "agency",
     });
     setShowAddForm(true);
   };
@@ -243,7 +273,7 @@ const AgencyManagement = () => {
       setAgenciesList((prev) =>
         prev.filter((agency) => agency._id !== deleteConfirm.agencyId)
       );
-      toast.success(t("agencyManagement.agencyDeleted"));
+      toast.success(language === "ar" ? "تم حذف الحساب بنجاح" : "Account deleted successfully");
       setDeleteConfirm({ show: false, agencyId: null, agencyName: "" });
     } catch (error) {
       // Error deleting agency
@@ -309,9 +339,9 @@ const AgencyManagement = () => {
       }));
 
       toast.success(
-        assigned
-          ? t("agencyManagement.standardAssignedSuccess")
-          : t("agencyManagement.standardUnassignedSuccess")
+        language === "ar"
+          ? (assigned ? "تم التكليف بالمعيار بنجاح" : "تم إلغاء التكليف بالمعيار بنجاح")
+          : (assigned ? "Standard assigned successfully" : "Standard unassigned successfully")
       );
     } catch (error) {
       // Error toggling standard assignment
@@ -327,10 +357,12 @@ const AgencyManagement = () => {
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
           <h1 className="text-2xl md:text-3xl font-bold text-foreground mb-2">
-            {t("agencyManagement.title")}
+            {language === "ar" ? "إدارة الجهات واللجان" : "Agencies & Committees Management"}
           </h1>
           <p className="text-sm md:text-base text-muted-foreground">
-            {t("agencyManagement.subtitle")}
+            {language === "ar"
+              ? "إدارة الحسابات والصلاحيات للجان الرئيسية والجهات الشريكة"
+              : "Manage accounts and permissions for main committees and partner agencies"}
           </p>
         </div>
         <div className="flex flex-col md:flex-row gap-2 w-full md:w-auto">
@@ -339,27 +371,59 @@ const AgencyManagement = () => {
             variant="secondary"
             className="flex items-center gap-2 w-full md:w-auto bg-blue-600 hover:bg-blue-700 text-white">
             <MessageSquare className="w-4 h-4" />
-            {language === "ar" ? "إرسال رسالة نصية للجهات" : "Send SMS to Agencies"}
+            {language === "ar" ? "إرسال رسالة نصية جماعية" : "Send Broadcast SMS"}
           </Button>
           <Button
-            onClick={() => setShowAddForm(true)}
+            onClick={handleAddNew}
             className="flex items-center gap-2 w-full md:w-auto">
             <Plus className="w-4 h-4" />
-            {t("agencyManagement.addNewAgency")}
+            {activeTab === "agency"
+              ? (language === "ar" ? "إضافة جهة شريكة" : "Add Partner Agency")
+              : (language === "ar" ? "إضافة لجنة رئيسية" : "Add Main Committee")}
           </Button>
         </div>
       </div>
 
+      {/* Tab Selection */}
+      <div className="flex border-b border-muted">
+        <button
+          onClick={() => setActiveTab("agency")}
+          className={`px-6 py-3 font-semibold text-sm transition-all border-b-2 ${
+            activeTab === "agency"
+              ? "border-primary text-primary"
+              : "border-transparent text-muted-foreground hover:text-foreground"
+          } ${language === "ar" ? "font-arabic" : "font-english"}`}
+        >
+          {language === "ar" ? "الجهات الشريكة" : "Partner Agencies"}
+        </button>
+        <button
+          onClick={() => setActiveTab("committee")}
+          className={`px-6 py-3 font-semibold text-sm transition-all border-b-2 ${
+            activeTab === "committee"
+              ? "border-primary text-primary"
+              : "border-transparent text-muted-foreground hover:text-foreground"
+          } ${language === "ar" ? "font-arabic" : "font-english"}`}
+        >
+          {language === "ar" ? "اللجان الرئيسية" : "Main Committees"}
+        </button>
+      </div>
+
       <Card>
         <CardHeader>
-          <CardTitle>{t("agencyManagement.agenciesList")}</CardTitle>
+          <CardTitle>
+            {activeTab === "agency"
+              ? (language === "ar" ? "قائمة الجهات الشريكة" : "Partner Agencies List")
+              : (language === "ar" ? "قائمة اللجان الرئيسية" : "Main Committees List")}
+          </CardTitle>
           <CardDescription>
-            {t("agencyManagement.manageAgencies")}
+            {activeTab === "agency"
+              ? (language === "ar" ? "إدارة وتعديل بيانات الجهات الشريكة" : "Manage and update partner agencies data")
+              : (language === "ar" ? "إدارة وتعديل بيانات اللجان الرئيسية" : "Manage and update main committees data")}
           </CardDescription>
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
-            {agenciesList.map((agency) => (
+            {agenciesList.filter((agency) => (agency.agencyType || "agency") === activeTab).map((agency) => (
               <div key={agency.id} className="border rounded-lg p-3 md:p-4">
                 <div
                   className={`flex flex-col md:flex-row items-start md:justify-between gap-4`}>
@@ -378,11 +442,11 @@ const AgencyManagement = () => {
                       <div className="flex items-center gap-2 text-sm">
                         <CheckSquare className="w-4 h-4 text-green-600" />
                         <span className="font-medium">
-                          {t("agencyManagement.assignedStandards")}:
+                          {language === "ar" ? "المعايير المكلفة" : "Assigned Standards"}:
                         </span>
                         <Badge variant="outline" className="text-xs">
                           {agency.assignedStandards?.length || 0}{" "}
-                          {t("agencyManagement.standards")}
+                          {language === "ar" ? "معيار" : "Standard"}
                         </Badge>
                       </div>
                     </div>
@@ -394,19 +458,19 @@ const AgencyManagement = () => {
                         {[
                           {
                             key: "contactPerson",
-                            label: t("agencyManagement.contactPerson"),
+                            label: language === "ar" ? "الشخص المسؤول" : "Contact Person",
                             value: agency.contactPerson?.name || "",
                             order: 1,
                           },
                           {
                             key: "email",
-                            label: t("agencyManagement.personEmail"),
+                            label: language === "ar" ? "البريد الإلكتروني" : "Email",
                             value: agency.contactPerson?.email || "",
                             order: 2,
                           },
                           {
                             key: "phone",
-                            label: t("agencyManagement.phone"),
+                            label: language === "ar" ? "رقم الهاتف" : "Phone",
                             value: agency.contactPerson?.phoneNumber || "",
                             order: 3,
                           },
@@ -466,28 +530,53 @@ const AgencyManagement = () => {
             <CardHeader>
               <CardTitle>
                 {editingAgency
-                  ? t("agencyManagement.editAgency")
-                  : t("agencyManagement.addNewAgencyTitle")}
+                  ? (formData.agencyType === "committee"
+                      ? (language === "ar" ? "تعديل بيانات اللجنة الرئيسية" : "Edit Main Committee")
+                      : (language === "ar" ? "تعديل بيانات الجهة الشريكة" : "Edit Partner Agency"))
+                  : (formData.agencyType === "committee"
+                      ? (language === "ar" ? "إضافة لجنة رئيسية جديدة" : "Add New Main Committee")
+                      : (language === "ar" ? "إضافة جهة شريكة جديدة" : "Add New Partner Agency"))}
               </CardTitle>
               <CardDescription>
                 {editingAgency
-                  ? t("agencyManagement.updateAgencyData")
-                  : t("agencyManagement.enterNewAgencyData")}
+                  ? (language === "ar" ? "تحديث بيانات الحساب والمسؤول" : "Update account and contact person details")
+                  : (language === "ar" ? "أدخل بيانات الحساب والمسؤول لإنشاء الكيان الجديد" : "Enter account and contact person details to create the new entity")}
               </CardDescription>
             </CardHeader>
             <CardContent>
               <form onSubmit={handleSubmit} className="space-y-4">
-                <div className="grid grid-cols-1 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="agencyType">
+                      {language === "ar" ? "نوع الحساب" : "Account Type"} *
+                    </Label>
+                    <select
+                      id="agencyType"
+                      name="agencyType"
+                      value={formData.agencyType}
+                      onChange={handleInputChange}
+                      className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                    >
+                      <option value="agency">{language === "ar" ? "جهة شريكة" : "Partner Agency"}</option>
+                      <option value="committee">{language === "ar" ? "لجنة رئيسية" : "Main Committee"}</option>
+                    </select>
+                  </div>
                   <div className="space-y-2">
                     <Label htmlFor="name">
-                      {t("agencyManagement.agencyName")} *
+                      {formData.agencyType === "committee"
+                        ? (language === "ar" ? "اسم اللجنة" : "Committee Name")
+                        : (language === "ar" ? "اسم الجهة" : "Agency Name")} *
                     </Label>
                     <Input
                       id="name"
                       name="name"
                       value={formData.name}
                       onChange={handleInputChange}
-                      placeholder={t("agencyManagement.agencyNamePlaceholder")}
+                      placeholder={
+                        formData.agencyType === "committee"
+                          ? (language === "ar" ? "مثال: اللجنة التطبيقية بحريملاء" : "e.g. Applied College Committee")
+                          : (language === "ar" ? "مثال: مستشفى حريملاء العام" : "e.g. Huraymila General Hospital")
+                      }
                       required
                     />
                   </div>
@@ -496,7 +585,7 @@ const AgencyManagement = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <Label htmlFor="email">
-                      {t("agencyManagement.agencyEmailField")} *
+                      {language === "ar" ? "البريد الإلكتروني للحساب" : "Account Email"} *
                     </Label>
                     <Input
                       id="email"
@@ -504,13 +593,13 @@ const AgencyManagement = () => {
                       type="email"
                       value={formData.email}
                       onChange={handleInputChange}
-                      placeholder={t("agencyManagement.agencyEmailPlaceholder")}
+                      placeholder={language === "ar" ? "مثال: agency@example.com" : "e.g. agency@example.com"}
                       required
                     />
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="password">
-                      {t("agencyManagement.agencyPasswordField")}{" "}
+                      {language === "ar" ? "كلمة المرور" : "Password"}{" "}
                       {!editingAgency && "*"}
                     </Label>
                     <div className="relative">
@@ -546,28 +635,26 @@ const AgencyManagement = () => {
 
                 <div className="space-y-4">
                   <h3 className="text-lg font-semibold">
-                    {t("agencyManagement.contactPersonInfo")}
+                    {language === "ar" ? "بيانات الشخص المسؤول" : "Contact Person Information"}
                   </h3>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-2">
                       <Label htmlFor="contactPerson.name">
-                        {t("agencyManagement.contactPersonField")} *
+                        {language === "ar" ? "الاسم الكامل" : "Full Name"} *
                       </Label>
                       <Input
                         id="contactPerson.name"
                         name="contactPerson.name"
                         value={formData.contactPerson.name}
                         onChange={handleInputChange}
-                        placeholder={t(
-                          "agencyManagement.contactPersonPlaceholder"
-                        )}
+                        placeholder={language === "ar" ? "الاسم الرباعي" : "Full Name"}
                         required
                       />
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="contactPerson.email">
-                        {t("agencyManagement.personEmailField")} *
+                        {language === "ar" ? "البريد الإلكتروني للمسؤول" : "Contact Person Email"} *
                       </Label>
                       <Input
                         id="contactPerson.email"
@@ -583,14 +670,14 @@ const AgencyManagement = () => {
 
                   <div className="space-y-2">
                     <Label htmlFor="contactPerson.phoneNumber">
-                      {t("agencyManagement.phoneNumber")} *
+                      {language === "ar" ? "رقم الهاتف" : "Phone Number"} *
                     </Label>
                     <Input
                       id="contactPerson.phoneNumber"
                       name="contactPerson.phoneNumber"
                       value={formData.contactPerson.phoneNumber}
                       onChange={handleInputChange}
-                      placeholder={t("agencyManagement.phonePlaceholder")}
+                      placeholder={language === "ar" ? "05xxxxxxxx" : "05xxxxxxxx"}
                       required
                     />
                   </div>
@@ -599,8 +686,8 @@ const AgencyManagement = () => {
                 <div className="flex gap-2 pt-4">
                   <Button type="submit" className="flex-1">
                     {editingAgency
-                      ? t("agencyManagement.update")
-                      : t("agencyManagement.add")}
+                      ? (language === "ar" ? "تحديث البيانات" : "Update Details")
+                      : (language === "ar" ? "إضافة" : "Add")}
                   </Button>
                   <Button
                     type="button"
@@ -619,9 +706,10 @@ const AgencyManagement = () => {
                           phoneNumber: "",
                         },
                         assignedStandards: [],
+                        agencyType: "agency",
                       });
                     }}>
-                    {t("agencyManagement.cancel")}
+                    {language === "ar" ? "إلغاء" : "Cancel"}
                   </Button>
                 </div>
               </form>
@@ -637,16 +725,18 @@ const AgencyManagement = () => {
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-destructive">
                 <AlertCircle className="w-5 h-5" />
-                {t("agencyManagement.confirmDeletion")}
+                {language === "ar" ? "تأكيد الحذف" : "Confirm Deletion"}
               </CardTitle>
               <CardDescription>
-                {t("agencyManagement.confirmDeleteMessage")}
+                {language === "ar"
+                  ? "هل أنت متأكد من رغبتك في حذف هذا الحساب نهائياً؟ سيتم إلغاء جميع ارتباطات المعايير الإرشادية الخاصة به."
+                  : "Are you sure you want to permanently delete this account? All associated guide standard assignments will be unassigned."}
               </CardDescription>
             </CardHeader>
             <CardContent>
               <div className="mb-4 p-3 bg-muted rounded-lg">
                 <p className="font-medium">
-                  {t("agencyManagement.agencyNameLabel")}
+                  {language === "ar" ? "اسم الحساب:" : "Account Name:"}
                 </p>
                 <p className="text-muted-foreground">
                   {deleteConfirm.agencyName}

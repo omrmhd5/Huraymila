@@ -26,6 +26,11 @@ const agencySchema = new mongoose.Schema(
       default: "agency",
       immutable: true,
     },
+    agencyType: {
+      type: String,
+      enum: ["agency", "committee"],
+      default: "agency",
+    },
     contactPerson: {
       name: {
         type: String,

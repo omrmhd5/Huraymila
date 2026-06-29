@@ -113,7 +113,7 @@ const getAgencyById = async (req, res) => {
 // Create new agency
 const createAgency = async (req, res) => {
   try {
-    const { name, email, password, contactPerson, assignedStandards } =
+    const { name, email, password, contactPerson, assignedStandards, agencyType } =
       req.body;
 
     // Validate required fields
@@ -159,6 +159,7 @@ const createAgency = async (req, res) => {
       password: hashedPassword,
       contactPerson,
       assignedStandards: assignedStandards || [],
+      agencyType: agencyType || "agency",
     });
 
     await agency.save();
@@ -186,10 +187,10 @@ const createAgency = async (req, res) => {
 const updateAgency = async (req, res) => {
   try {
     const { id } = req.params;
-    const { name, email, password, contactPerson, assignedStandards } =
+    const { name, email, password, contactPerson, assignedStandards, agencyType } =
       req.body;
 
-    const updateData = { name, contactPerson, assignedStandards };
+    const updateData = { name, contactPerson, assignedStandards, agencyType };
 
     // Only update email if provided and different
     if (email) {

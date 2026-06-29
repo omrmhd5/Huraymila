@@ -124,8 +124,8 @@ const AgencyDashboard = () => {
         // Error loading agency stats
         toast.error(
           language === "ar"
-            ? "فشل في تحميل إحصائيات الجهة"
-            : "Failed to load agency statistics"
+            ? (user?.agencyType === "committee" ? "فشل في تحميل إحصائيات اللجنة" : "فشل في تحميل إحصائيات الجهة")
+            : (user?.agencyType === "committee" ? "Failed to load committee statistics" : "Failed to load agency statistics")
         );
       } finally {
         setStatsLoading(false);
@@ -266,15 +266,15 @@ const AgencyDashboard = () => {
                   className={`text-xl font-bold text-foreground ${
                     language === "ar" ? "font-arabic" : "font-sans"
                   }`}>
-                  {language === "ar" ? "لوحة التحكم للجهة" : "Agency Dashboard"}
+                  {language === "ar" ? (user?.agencyType === "committee" ? "لوحة التحكم للجنة" : "لوحة التحكم للجهة") : (user?.agencyType === "committee" ? "Committee Dashboard" : "Agency Dashboard")}
                 </h1>
                 <p
                   className={`text-sm text-muted-foreground ${
                     language === "ar" ? "font-arabic" : "font-sans"
                   }`}>
                   {language === "ar"
-                    ? "إدارة جميع البيانات الخاصة بالجهة"
-                    : "Manage all data related to the agency"}
+                    ? (user?.agencyType === "committee" ? "إدارة جميع البيانات الخاصة باللجنة" : "إدارة جميع البيانات الخاصة بالجهة")
+                    : (user?.agencyType === "committee" ? "Manage all data related to the committee" : "Manage all data related to the agency")}
                 </p>
               </div>
             </div>

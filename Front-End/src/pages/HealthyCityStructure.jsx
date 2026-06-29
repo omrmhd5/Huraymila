@@ -43,8 +43,9 @@ const HealthyCityStructure = () => {
             dir="rtl">
             {/* Level 0: Top Node */}
             <div className="relative flex flex-col items-center">
-              <div className="bg-[#186a3b] text-white font-bold text-2xl py-3 px-16 rounded-lg border-4 border-[#c09a47] shadow-md z-10">
-                منسق مدينة حريملاء الصحية
+              <div className="bg-[#186a3b] text-white font-bold text-xl py-3 px-8 rounded-lg border-4 border-[#c09a47] shadow-md z-10 text-center flex flex-col items-center justify-center">
+                <span>محافظ حريملاء</span>
+                <span className="text-sm font-normal mt-1 opacity-90">رئيس اللجنة الرئيسية لمدينة حريملاء الصحية</span>
               </div>
               {/* Vertical line down from top node */}
               <div className="w-0.5 h-10 bg-[#186a3b]"></div>
@@ -85,7 +86,7 @@ const HealthyCityStructure = () => {
                 <div className="flex flex-col items-center relative">
                   <div className="w-0.5 h-8 bg-[#186a3b]"></div>
                   <div className="bg-[#186a3b] text-white font-bold py-4 px-6 rounded-lg shadow-md z-10 text-center w-56 text-lg">
-                    مكتب التنسيق
+                    مكتب تنسيق المدينة
                   </div>
                 </div>
               </div>
@@ -135,8 +136,6 @@ const HealthyCityStructure = () => {
               </div>
 
               {/* Solid line from Node 1 (Right) turning LEFT into grey box */}
-              {/* -top-12 starts exactly at the bottom of the Level 1 nodes (because mt-12 = 3rem = 48px). */}
-              {/* height: calc(50% + 3rem) reaches exactly the middle of this container (grey box center). */}
               <div
                 className="absolute right-[12.5%] border-r-2 border-b-2 border-[#186a3b] -top-12 z-0"
                 style={{
@@ -157,6 +156,34 @@ const HealthyCityStructure = () => {
                 {/* Arrow head pointing right */}
                 <div className="absolute right-0 -bottom-[5px] w-0 h-0 border-t-[6px] border-b-[6px] border-l-[10px] border-solid border-transparent border-l-[#186a3b]"></div>
               </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Committees List Section */}
+        <div className="max-w-4xl mx-auto mt-16 font-arabic" dir="rtl">
+          <h2 className="text-2xl font-bold text-[#186a3b] mb-6 text-center border-b pb-2 border-gray-200">
+            أعضاء الهيكل التنظيمي واللجان الفرعية
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="bg-[#fcf8f2] p-6 rounded-xl border border-[#e8dcb8] shadow-sm">
+              <h3 className="font-bold text-[#186a3b] text-lg mb-3">الهيكل الإداري:</h3>
+              <ul className="list-disc list-inside space-y-2 text-gray-700 text-sm md:text-base leading-relaxed">
+                <li><strong>محافظ حريملاء (رئيس اللجنة الرئيسية لمدينة حريملاء الصحية):</strong> يتولى الإشراف والمتابعة العامة لأعمال البرنامج.</li>
+                <li><strong>اللجنة الرئيسية:</strong> تعنى برسم السياسات العامة وإقرار الخطط.</li>
+                <li><strong>اللجنة الاستشارية:</strong> تقديم المشورة والدعم الفني والخبرات.</li>
+                <li><strong>اللجنة المالية:</strong> إدارة الموارد وتخصيص الميزانيات للمشاريع.</li>
+              </ul>
+            </div>
+            <div className="bg-[#f4fbf7] p-6 rounded-xl border border-[#d8eedf] shadow-sm">
+              <h3 className="font-bold text-[#388e3c] text-lg mb-3">اللجان الفرعية:</h3>
+              <ul className="list-disc list-inside space-y-2 text-gray-700 text-sm md:text-base leading-relaxed">
+                <li><strong>لجنة التنمية الصحية:</strong> تعزيز الوعي الصحي وتطوير الخدمات الوقائية.</li>
+                <li><strong>لجنة الصحة المدرسية:</strong> العناية بالبيئة المدرسية وصحة الطلاب.</li>
+                <li><strong>لجنة الإصحاح البيئي:</strong> حماية البيئة والتخلص الآمن من النفايات والتشجير.</li>
+                <li><strong>لجنة الأمن والسلامة:</strong> التوعية بالوقاية من الحوادث وتطبيق معايير السلامة.</li>
+                <li><strong>لجنة التنمية الاجتماعية:</strong> الشراكة المجتمعية ودعم الفئات الأكثر احتياجاً.</li>
+              </ul>
             </div>
           </div>
         </div>
