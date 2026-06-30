@@ -24,16 +24,19 @@ import {
   Moon,
   Sun,
   Home,
+  KeyRound,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useTheme } from "@/contexts/ThemeContext";
 import { useAuth } from "@/contexts/AuthContext";
+import { ChangePasswordDialog } from "@/components/auth/ChangePasswordDialog";
 
 const AdminLayout = () => {
   const { language, theme, setLanguage, setTheme } = useTheme();
   const { user, logout, loading: authLoading } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
+  const [changePasswordOpen, setChangePasswordOpen] = useState(false);
   const isRTL = language === "ar";
 
   const content = {
@@ -263,6 +266,16 @@ const AdminLayout = () => {
                 <Globe className="w-4 h-4" />
                 {language === "ar" ? "EN" : "عربي"}
               </Button>
+              {/* Change Password Button */}
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setChangePasswordOpen(true)}
+                className="hidden sm:flex items-center gap-1.5"
+                title={language === "ar" ? "تغيير كلمة المرور" : "Change Password"}
+              >
+                <KeyRound className="w-4 h-4" />
+              </Button>
               {/* Theme Toggle */}
               <Button
                 variant="ghost"
@@ -394,6 +407,10 @@ const AdminLayout = () => {
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <Outlet />
       </main>
+      <ChangePasswordDialog
+        open={changePasswordOpen}
+        onOpenChange={setChangePasswordOpen}
+      />
     </div>
   );
 };

@@ -374,10 +374,66 @@ const resetPassword = async (req, res) => {
   }
 };
 
+// Change password (authenticated users)
+const changePassword = async (req, res) => {
+  try {
+    const { currentPassword, newPassword } = req.body;
+    const { type, email } = req.user;
+
+    if (!currentPassword || !newPassword) {
+      return res.status(400).json({
+        success: false,
+        message: "Current password and new password are required",
+      });
+    }
+
+    let user;
+    if (type === "governor") {
+      user = await Governor.findOne({ email });
+    } else if (type === "agency") {
+      user = await Agency.findOne({ email });
+    } else if (type === "volunteer") {
+      user = await Volunteer.findOne({ email });
+    }
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+
+    // Verify current password
+    const isMatch = await user.comparePassword(currentPassword);
+    if (!isMatch) {
+      return res.status(400).json({
+        success: false,
+        message: "Current password is incorrect",
+      });
+    }
+
+    // Hash and save new password
+    user.password = newPassword;
+    await user.save();
+
+    res.json({
+      success: true,
+      message: "Password has been changed successfully",
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Error changing password",
+      error: error.message,
+    });
+  }
+};
+
 module.exports = {
   unifiedLogin,
   getCurrentUser,
   volunteerSignup,
   forgotPassword,
   resetPassword,
+  changePassword,
 };

@@ -6,6 +6,7 @@ const {
   volunteerSignup,
   forgotPassword,
   resetPassword,
+  changePassword,
 } = require("../Controllers/authController");
 const { auth } = require("../middleware/authProtection");
 
@@ -17,5 +18,6 @@ router.post("/reset-password", resetPassword);
 
 // Protected routes
 router.get("/me", auth, getCurrentUser);
+router.post("/change-password", auth, changePassword);
 
 module.exports = router;

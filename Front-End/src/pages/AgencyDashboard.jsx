@@ -13,6 +13,7 @@ import {
   Moon,
   Sun,
   LogOut,
+  KeyRound,
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useTheme } from "@/contexts/ThemeContext";
@@ -26,6 +27,7 @@ import RequiredStandards from "@/components/AgencyDashboard/RequiredStandards";
 import Initiatives from "@/components/AgencyDashboard/Initiatives";
 import Volunteers from "@/components/AgencyDashboard/Volunteers";
 import { toast } from "sonner";
+import { ChangePasswordDialog } from "@/components/auth/ChangePasswordDialog";
 
 const AgencyDashboard = () => {
   const { user, loading, logout, token } = useAuth();
@@ -39,6 +41,7 @@ const AgencyDashboard = () => {
   const [initiativesCount, setInitiativesCount] = useState(0);
   const [volunteersCount, setVolunteersCount] = useState(0);
   const [statsLoading, setStatsLoading] = useState(true);
+  const [changePasswordOpen, setChangePasswordOpen] = useState(false);
 
   const isRTL = language === "ar";
 
@@ -298,6 +301,16 @@ const AgencyDashboard = () => {
                 <Globe className="w-4 h-4" />
                 {language === "ar" ? "EN" : "عربي"}
               </Button>
+              {/* Change Password Button */}
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setChangePasswordOpen(true)}
+                className="hidden sm:flex items-center gap-1.5"
+                title={language === "ar" ? "تغيير كلمة المرور" : "Change Password"}
+              >
+                <KeyRound className="w-4 h-4" />
+              </Button>
               {/* Theme Toggle */}
               <Button
                 variant="ghost"
@@ -554,6 +567,11 @@ const AgencyDashboard = () => {
           </TabsContent>
         </Tabs>
       </main>
+
+      <ChangePasswordDialog
+        open={changePasswordOpen}
+        onOpenChange={setChangePasswordOpen}
+      />
     </div>
   );
 };
