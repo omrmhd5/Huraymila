@@ -120,6 +120,39 @@ const NewsArticle = () => {
     }
   }, [id, language]);
 
+  const slideshowImages = news
+    ? (() => {
+        if (news.id === "mock-news-2" || news._id === "mock-news-2") {
+          return [
+            traditionalPotteryImg,
+            walkingInitiativeImg,
+            sustainableTransportImg,
+          ];
+        }
+        if (news.imageUrls && news.imageUrls.length > 0) {
+          return news.imageUrls.map((url) =>
+            news.isMock ? url : newsApi.getImageUrl(url)
+          );
+        }
+        if (news.imageUrl) {
+          return [
+            news.isMock ? news.imageUrl : newsApi.getImageUrl(news.imageUrl),
+          ];
+        }
+        return [];
+      })()
+    : [];
+
+  const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
+
+  useEffect(() => {
+    if (slideshowImages.length <= 1) return;
+    const interval = setInterval(() => {
+      setCurrentSlideIndex((prev) => (prev + 1) % slideshowImages.length);
+    }, 3000);
+    return () => clearInterval(interval);
+  }, [slideshowImages]);
+
   if (loading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
@@ -200,18 +233,74 @@ const NewsArticle = () => {
             <span>{formatDate(news.date)}</span>
           </div>
 
-          {/* News Image */}
-          {news.imageUrl && (
-            <div className="mb-8">
-              <img
-                src={
-                  news.isMock
-                    ? news.imageUrl
-                    : newsApi.getImageUrl(news.imageUrl)
-                }
-                alt={news.title}
-                className="w-full h-96 object-cover rounded-lg shadow-lg"
-              />
+          {/* News Images Slideshow */}
+          {slideshowImages.length > 0 && (
+            <div className="mb-8 relative w-full h-[450px] rounded-xl overflow-hidden shadow-lg group">
+              {slideshowImages.map((image, idx) => (
+                <div
+                  key={idx}
+                  className={`absolute inset-0 transition-all duration-1000 ease-in-out ${
+                    idx === currentSlideIndex
+                      ? "opacity-100 scale-100 pointer-events-auto"
+                      : "opacity-0 scale-95 pointer-events-none"
+                  }`}
+                >
+                  <img
+                    src={image}
+                    alt={`${news.title} - Slide ${idx + 1}`}
+                    className="w-full h-full object-cover"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent pointer-events-none" />
+                </div>
+              ))}
+
+              {/* Navigation Arrows (visible on hover) */}
+              {slideshowImages.length > 1 && (
+                <>
+                  {/* Left button: Previous Slide */}
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setCurrentSlideIndex(
+                        (prev) => (prev - 1 + slideshowImages.length) % slideshowImages.length
+                      )
+                    }
+                    className="absolute top-1/2 -translate-y-1/2 left-4 bg-black/40 hover:bg-black/60 text-white rounded-full p-2.5 transition-colors opacity-0 group-hover:opacity-100 z-10"
+                  >
+                    <ArrowLeft className="w-5 h-5" />
+                  </button>
+                  {/* Right button: Next Slide */}
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setCurrentSlideIndex((prev) => (prev + 1) % slideshowImages.length)
+                    }
+                    className="absolute top-1/2 -translate-y-1/2 right-4 bg-black/40 hover:bg-black/60 text-white rounded-full p-2.5 transition-colors opacity-0 group-hover:opacity-100 z-10"
+                  >
+                    <span className="transform rotate-180 inline-block">
+                      <ArrowLeft className="w-5 h-5" />
+                    </span>
+                  </button>
+                </>
+              )}
+
+              {/* Pagination Dots */}
+              {slideshowImages.length > 1 && (
+                <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2 z-10">
+                  {slideshowImages.map((_, idx) => (
+                    <button
+                      key={idx}
+                      type="button"
+                      onClick={() => setCurrentSlideIndex(idx)}
+                      className={`w-2.5 h-2.5 rounded-full transition-all duration-300 ${
+                        idx === currentSlideIndex
+                          ? "bg-white w-6 shadow"
+                          : "bg-white/50 hover:bg-white/80"
+                      }`}
+                    />
+                  ))}
+                </div>
+              )}
             </div>
           )}
 

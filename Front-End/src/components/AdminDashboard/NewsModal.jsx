@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/dialog";
 import { newsApi } from "@/lib/newsApi";
 import { toast } from "sonner";
+import { X } from "lucide-react";
 
 const NewsModal = ({
   isOpen,
@@ -31,6 +32,9 @@ const NewsModal = ({
   });
   const [imageFile, setImageFile] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
+  const [imageFiles, setImageFiles] = useState([]);
+  const [imagePreviews, setImagePreviews] = useState([]);
+  const [existingImageUrls, setExistingImageUrls] = useState([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const isRTL = language === "ar";
@@ -50,6 +54,7 @@ const NewsModal = ({
         setImagePreview(
           news.imageUrl ? newsApi.getImageUrl(news.imageUrl) : null
         );
+        setExistingImageUrls(news.imageUrls || []);
       } else {
         setFormData({
           title: "",
@@ -58,8 +63,11 @@ const NewsModal = ({
           date: new Date().toISOString().split("T")[0],
         });
         setImagePreview(null);
+        setExistingImageUrls([]);
       }
       setImageFile(null);
+      setImageFiles([]);
+      setImagePreviews([]);
     }
   }, [isOpen, mode, news]);
 
@@ -84,6 +92,30 @@ const NewsModal = ({
     }
   };
 
+  const handleMultipleImagesChange = (e) => {
+    const files = Array.from(e.target.files);
+    if (files.length > 0) {
+      setImageFiles((prev) => [...prev, ...files]);
+
+      files.forEach((file) => {
+        const reader = new FileReader();
+        reader.onload = (event) => {
+          setImagePreviews((prev) => [...prev, event.target.result]);
+        };
+        reader.readAsDataURL(file);
+      });
+    }
+  };
+
+  const handleRemoveExistingImage = (url) => {
+    setExistingImageUrls((prev) => prev.filter((existingUrl) => existingUrl !== url));
+  };
+
+  const handleRemoveNewImage = (index) => {
+    setImageFiles((prev) => prev.filter((_, i) => i !== index));
+    setImagePreviews((prev) => prev.filter((_, i) => i !== index));
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -99,7 +131,7 @@ const NewsModal = ({
     setIsSubmitting(true);
     try {
       if (mode === "add") {
-        await newsApi.createNews(loading, formData, imageFile);
+        await newsApi.createNews(loading, formData, imageFile, imageFiles);
         toast.success(
           language === "ar"
             ? "تم إنشاء الخبر بنجاح"
@@ -110,7 +142,9 @@ const NewsModal = ({
           loading,
           news._id || news.id,
           formData,
-          imageFile
+          imageFile,
+          imageFiles,
+          existingImageUrls
         );
         toast.success(
           language === "ar"
@@ -242,11 +276,12 @@ const NewsModal = ({
             />
           </div>
 
+          {/* Main Image Cover */}
           <div className="space-y-2">
             <Label
               htmlFor="image"
-              className={`${isRTL ? "text-right" : "text-left"}`}>
-              {language === "ar" ? "الصورة" : "Image"}
+              className={`block ${isRTL ? "text-right" : "text-left"}`}>
+              {language === "ar" ? "الصورة الرئيسية للغلاف (تظهر كصورة مصغرة)" : "Main Cover Image (Appears as thumbnail)"}
             </Label>
             <div className="relative">
               <Input
@@ -258,18 +293,95 @@ const NewsModal = ({
               />
             </div>
             {imagePreview && (
-              <div className="mt-3">
-                <p
-                  className={`text-sm text-muted-foreground mb-2 ${
-                    isRTL ? "text-right" : "text-left"
-                  }`}>
-                  {language === "ar" ? "معاينة الصورة:" : "Image Preview:"}
-                </p>
+              <div className="mt-3 relative w-32 h-24 border rounded-lg overflow-hidden shadow-sm">
                 <img
                   src={imagePreview}
                   alt="Preview"
-                  className="w-full h-48 object-cover rounded-lg border shadow-sm"
+                  className="w-full h-full object-cover"
                 />
+                <button
+                  type="button"
+                  onClick={() => {
+                    setImageFile(null);
+                    setImagePreview(null);
+                  }}
+                  className="absolute top-1 right-1 bg-red-600 hover:bg-red-700 text-white rounded-full p-1 shadow-md hover:scale-105 transition-transform"
+                >
+                  <X className="w-3.5 h-3.5" />
+                </button>
+              </div>
+            )}
+          </div>
+
+          {/* Additional Photos for Automatic Slideshow */}
+          <div className="space-y-3 pt-2 border-t">
+            <Label
+              htmlFor="images"
+              className={`block ${isRTL ? "text-right" : "text-left"}`}>
+              {language === "ar" ? "صور إضافية للمقالة (تظهر كعرض شرائح متحرك)" : "Additional Photos (Appears as automatic slideshow)"}
+            </Label>
+            <div className="relative">
+              <Input
+                id="images"
+                type="file"
+                accept="image/*"
+                multiple
+                onChange={handleMultipleImagesChange}
+                className="w-full h-full file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-medium file:bg-primary file:text-primary-foreground hover:file:bg-primary/90 file:cursor-pointer cursor-pointer file:transition-colors"
+              />
+            </div>
+
+            {/* Existing Photos list (for edit mode) */}
+            {mode === "edit" && existingImageUrls.length > 0 && (
+              <div className="space-y-2">
+                <p className={`text-xs text-muted-foreground font-semibold ${isRTL ? "text-right" : "text-left"}`}>
+                  {language === "ar" ? "الصور المرفوعة حالياً:" : "Currently Uploaded Photos:"}
+                </p>
+                <div className="grid grid-cols-4 sm:grid-cols-6 gap-3">
+                  {existingImageUrls.map((url, index) => (
+                    <div key={index} className="relative aspect-video border rounded-lg overflow-hidden group shadow-sm">
+                      <img
+                        src={newsApi.getImageUrl(url)}
+                        alt={`Existing ${index}`}
+                        className="w-full h-full object-cover"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => handleRemoveExistingImage(url)}
+                        className="absolute top-1 right-1 bg-red-600 hover:bg-red-700 text-white rounded-full p-1 shadow-md opacity-90 hover:opacity-100 transition-opacity"
+                      >
+                        <X className="w-3 h-3" />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* New additional photos preview list */}
+            {imagePreviews.length > 0 && (
+              <div className="space-y-2">
+                <p className={`text-xs text-muted-foreground font-semibold ${isRTL ? "text-right" : "text-left"}`}>
+                  {language === "ar" ? "الصور الجديدة المحددة للحفظ:" : "New Photos Selected to Save:"}
+                </p>
+                <div className="grid grid-cols-4 sm:grid-cols-6 gap-3">
+                  {imagePreviews.map((preview, index) => (
+                    <div key={index} className="relative aspect-video border rounded-lg overflow-hidden group shadow-sm">
+                      <img
+                        src={preview}
+                        alt={`New ${index}`}
+                        className="w-full h-full object-cover"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => handleRemoveNewImage(index)}
+                        className="absolute top-1 right-1 bg-red-600 hover:bg-red-700 text-white rounded-full p-1 shadow-md opacity-90 hover:opacity-100 transition-opacity"
+                      >
+                        <X className="w-3 h-3" />
+                      </button>
+                    </div>
+                  ))}
+                </div>
               </div>
             )}
           </div>

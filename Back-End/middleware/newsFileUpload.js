@@ -142,10 +142,49 @@ const cleanupTempFiles = (files) => {
   });
 };
 
+// Helper function to move multiple images to news-specific folder
+const moveImagesToNewsFolder = (newsId, tempFiles) => {
+  if (!tempFiles || tempFiles.length === 0) return [];
+  const newsDir = path.join(__dirname, "../public/news", newsId);
+
+  // Create news-specific directory
+  if (!fs.existsSync(newsDir)) {
+    fs.mkdirSync(newsDir, { recursive: true });
+  }
+
+  const urls = [];
+  for (const tempFile of tempFiles) {
+    const oldPath = tempFile.path;
+    const extension = path.extname(tempFile.originalname);
+    const nameWithoutExt = path.basename(tempFile.originalname, extension);
+    // Use timestamp and random suffix to avoid collisions among multiple uploaded files
+    const newFilename = `${Date.now()}-${Math.random().toString(36).substr(2, 5)}-${nameWithoutExt}${extension}`;
+    const newPath = path.join(newsDir, newFilename);
+
+    try {
+      fs.renameSync(oldPath, newPath);
+      urls.push(`/public/news/${newsId}/${newFilename}`);
+    } catch (error) {
+      throw error;
+    }
+  }
+  return urls;
+};
+
+// Helper function to delete an array of physical images
+const deleteNewsImages = (imageUrls) => {
+  if (!Array.isArray(imageUrls)) return;
+  imageUrls.forEach((url) => {
+    deleteNewsImage(url);
+  });
+};
+
 module.exports = {
   upload,
   moveImageToNewsFolder,
+  moveImagesToNewsFolder,
   deleteNewsImage,
+  deleteNewsImages,
   deleteNewsFolder,
   cleanupTempFiles,
 };

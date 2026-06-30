@@ -89,7 +89,7 @@ export const newsApi = {
   },
 
   // Create new news (governor only)
-  createNews: async (token, newsData, imageFile = null) => {
+  createNews: async (token, newsData, imageFile = null, imageFiles = []) => {
     const formData = new FormData();
 
     // Add text fields
@@ -100,9 +100,16 @@ export const newsApi = {
       formData.append("date", newsData.date);
     }
 
-    // Add image file if provided
+    // Add single image file if provided (fallback thumbnail)
     if (imageFile) {
       formData.append("image", imageFile);
+    }
+
+    // Add multiple image files if provided
+    if (imageFiles && imageFiles.length > 0) {
+      for (const file of imageFiles) {
+        formData.append("images", file);
+      }
     }
 
     const response = await fetch(`${API_BASE_URL}/news`, {
@@ -123,7 +130,7 @@ export const newsApi = {
   },
 
   // Update news (governor only)
-  updateNews: async (token, newsId, newsData, imageFile = null) => {
+  updateNews: async (token, newsId, newsData, imageFile = null, imageFiles = [], existingImageUrls = null) => {
     const formData = new FormData();
 
     // Add text fields
@@ -146,6 +153,18 @@ export const newsApi = {
     // Add image file if provided
     if (imageFile) {
       formData.append("image", imageFile);
+    }
+
+    // Add multiple image files if provided
+    if (imageFiles && imageFiles.length > 0) {
+      for (const file of imageFiles) {
+        formData.append("images", file);
+      }
+    }
+
+    // Add existing image URLs array for updates
+    if (existingImageUrls !== null) {
+      formData.append("existingImageUrls", JSON.stringify(existingImageUrls));
     }
 
     const response = await fetch(`${API_BASE_URL}/news/${newsId}`, {

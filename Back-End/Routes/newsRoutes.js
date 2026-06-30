@@ -22,8 +22,8 @@ router.use(governorOnly);
 
 // Governor routes
 router.get("/available-priorities", getAvailablePriorities);
-router.post("/", upload.single("image"), createNews);
-router.put("/:id", upload.single("image"), updateNews);
+router.post("/", upload.fields([{ name: "image", maxCount: 1 }, { name: "images", maxCount: 10 }]), createNews);
+router.put("/:id", upload.fields([{ name: "image", maxCount: 1 }, { name: "images", maxCount: 10 }]), updateNews);
 router.delete("/:id", deleteNews);
 
 module.exports = router;

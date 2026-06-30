@@ -1,7 +1,9 @@
 const News = require("../Models/News");
 const {
   moveImageToNewsFolder,
+  moveImagesToNewsFolder,
   deleteNewsImage,
+  deleteNewsImages,
   deleteNewsFolder,
   cleanupTempFiles,
 } = require("../middleware/newsFileUpload");
@@ -198,18 +200,42 @@ const createNews = async (req, res) => {
 
     // Handle image upload if provided
     let imageUrl = null;
-    if (req.file) {
+    let imageUrls = [];
+
+    if (req.files) {
       try {
-        imageUrl = moveImageToNewsFolder(news._id.toString(), req.file);
-        news.imageUrl = imageUrl;
-        await news.save();
+        // Handle single image thumbnail
+        if (req.files.image && req.files.image[0]) {
+          imageUrl = moveImageToNewsFolder(news._id.toString(), req.files.image[0]);
+          imageUrls.push(imageUrl);
+        }
+
+        // Handle multiple images
+        if (req.files.images && req.files.images.length > 0) {
+          const extraUrls = moveImagesToNewsFolder(news._id.toString(), req.files.images);
+          imageUrls = [...imageUrls, ...extraUrls];
+          if (!imageUrl && extraUrls.length > 0) {
+            imageUrl = extraUrls[0];
+          }
+        }
+
+        if (imageUrl || imageUrls.length > 0) {
+          news.imageUrl = imageUrl;
+          news.imageUrls = imageUrls;
+          await news.save();
+        }
       } catch (error) {
-        // Error moving image
         // Clean up the created news if image processing fails
         await News.findByIdAndDelete(news._id);
+        const allFiles = [];
+        if (req.files.image) allFiles.push(...req.files.image);
+        if (req.files.images) allFiles.push(...req.files.images);
+        cleanupTempFiles(allFiles);
+
         return res.status(500).json({
           success: false,
           message: "Error processing image",
+          error: error.message,
         });
       }
     }
@@ -220,13 +246,12 @@ const createNews = async (req, res) => {
       data: news,
     });
   } catch (error) {
-    // Clean up uploaded file if news creation failed
-    if (req.file) {
-      try {
-        cleanupTempFiles([req.file]);
-      } catch (cleanupError) {
-        // Error cleaning up temp file
-      }
+    // Clean up uploaded files if news creation failed
+    if (req.files) {
+      const allFiles = [];
+      if (req.files.image) allFiles.push(...req.files.image);
+      if (req.files.images) allFiles.push(...req.files.images);
+      cleanupTempFiles(allFiles);
     }
 
     res.status(500).json({
@@ -252,22 +277,60 @@ const updateNews = async (req, res) => {
       });
     }
 
-    // Handle image upload if provided
-    let imageUrl = news.imageUrl; // Keep existing image by default
-    if (req.file) {
+    // Handle image deletions and new uploads
+    let finalImageUrls = news.imageUrls || [];
+    let imageUrl = news.imageUrl;
+
+    // Parse existingImageUrls if provided to support image management
+    if (req.body.existingImageUrls) {
       try {
-        // Delete old image if it exists
-        if (news.imageUrl) {
-          deleteNewsImage(news.imageUrl);
+        const existingImageUrls = JSON.parse(req.body.existingImageUrls);
+        if (Array.isArray(existingImageUrls)) {
+          // Identify removed files and delete them physically
+          const filesToDelete = finalImageUrls.filter(
+            (url) => !existingImageUrls.includes(url)
+          );
+          if (filesToDelete.length > 0) {
+            deleteNewsImages(filesToDelete);
+          }
+          finalImageUrls = [...existingImageUrls];
+        }
+      } catch (err) {
+        // Ignored
+      }
+    }
+
+    if (req.files) {
+      try {
+        // Handle new single image thumbnail replacement
+        if (req.files.image && req.files.image[0]) {
+          if (imageUrl) {
+            deleteNewsImage(imageUrl);
+            finalImageUrls = finalImageUrls.filter((url) => url !== imageUrl);
+          }
+          imageUrl = moveImageToNewsFolder(id, req.files.image[0]);
+          finalImageUrls.push(imageUrl);
         }
 
-        // Move new image
-        imageUrl = moveImageToNewsFolder(id, req.file);
+        // Handle new multiple images additions
+        if (req.files.images && req.files.images.length > 0) {
+          const newUrls = moveImagesToNewsFolder(id, req.files.images);
+          finalImageUrls = [...finalImageUrls, ...newUrls];
+          if (!imageUrl && finalImageUrls.length > 0) {
+            imageUrl = finalImageUrls[0];
+          }
+        }
       } catch (error) {
-        // Error processing image
+        // Clean up uploaded temp files
+        const allFiles = [];
+        if (req.files.image) allFiles.push(...req.files.image);
+        if (req.files.images) allFiles.push(...req.files.images);
+        cleanupTempFiles(allFiles);
+
         return res.status(500).json({
           success: false,
           message: "Error processing image",
+          error: error.message,
         });
       }
     }
@@ -305,6 +368,7 @@ const updateNews = async (req, res) => {
       date: date ? new Date(date) : news.date,
       priority: finalPriority,
       imageUrl,
+      imageUrls: finalImageUrls,
     };
 
     const updatedNews = await News.findByIdAndUpdate(id, updateData, {
@@ -318,13 +382,12 @@ const updateNews = async (req, res) => {
       data: updatedNews,
     });
   } catch (error) {
-    // Clean up uploaded file if update failed
-    if (req.file) {
-      try {
-        cleanupTempFiles([req.file]);
-      } catch (cleanupError) {
-        // Error cleaning up temp file
-      }
+    // Clean up uploaded files if update failed
+    if (req.files) {
+      const allFiles = [];
+      if (req.files.image) allFiles.push(...req.files.image);
+      if (req.files.images) allFiles.push(...req.files.images);
+      cleanupTempFiles(allFiles);
     }
 
     res.status(500).json({

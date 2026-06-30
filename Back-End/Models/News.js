@@ -21,6 +21,10 @@ const newsSchema = new mongoose.Schema(
       type: String,
       required: false,
     },
+    imageUrls: {
+      type: [String],
+      default: [],
+    },
     date: {
       type: Date,
       required: true,
