@@ -655,6 +655,7 @@ const InteractiveMap = () => {
                         mapId={GOOGLE_MAPS_ID}
                         defaultCenter={HURAYMILA_CENTER}
                         defaultZoom={DEFAULT_ZOOM}
+                        mapTypeId="terrain"
                         gestureHandling="greedy"
                         disableDefaultUI={true}
                         onClick={handleMapClick}
