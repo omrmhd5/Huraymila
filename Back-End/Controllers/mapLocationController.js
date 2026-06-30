@@ -26,7 +26,9 @@ const getMapLocations = async (req, res) => {
           token,
           process.env.JWT_SECRET || "your-secret-key",
         );
-        if (decoded.type === "agency" && decoded.agencyId) {
+        if (decoded.type === "governor") {
+          includeCustom = true;
+        } else if (decoded.type === "agency" && decoded.agencyId) {
           const agency = await Agency.findById(decoded.agencyId);
           if (
             agency &&
@@ -78,19 +80,31 @@ const getMapLocationCount = async (req, res) => {
   }
 };
 
-// POST /api/map-locations — create a custom marker (authorized agencies only)
+// POST /api/map-locations — create a custom marker (authorized agencies and governor)
 const createCustomLocation = async (req, res) => {
   try {
-    const isAllowed = await getIsAllowedAgency(req);
+    const isGovernor = req.user && req.user.type === "governor";
+    const isAgency = req.user && req.user.type === "agency" && req.user.agencyId;
+    
+    let isAllowed = false;
+    
+    if (isGovernor) {
+      isAllowed = true;
+    } else if (isAgency) {
+      const agency = await Agency.findById(req.user.agencyId);
+      if (agency && (agency.name === "لجنة الامن و السلامة" || agency.name === "لجنة التنمية الصحية")) {
+        isAllowed = true;
+      }
+    }
+
     if (!isAllowed) {
       return res.status(403).json({
         success: false,
-        message:
-          "Access denied. Only specific agencies can create custom markers.",
+        message: "Access denied. You are not authorized to create markers.",
       });
     }
 
-    const { name, nameEn, lat, lng, address } = req.body;
+    const { name, nameEn, lat, lng, address, category } = req.body;
     if (!name || !lat || !lng) {
       return res.status(400).json({
         success: false,
@@ -98,20 +112,29 @@ const createCustomLocation = async (req, res) => {
       });
     }
 
-    // Generate a unique placeId to satisfy any database unique constraint on placeId
     const placeId = `custom_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+
+    // Governor can choose any category except "custom". If not provided, default to "public".
+    // Agency is forced to use "custom" category.
+    let finalCategory = "custom";
+    if (isGovernor) {
+      finalCategory = category || "public";
+      if (finalCategory === "custom") {
+        finalCategory = "public"; // Governor shouldn't create custom agency category pins
+      }
+    }
 
     const newLocation = new MapLocation({
       placeId,
       name,
       nameEn: nameEn || name,
-      category: "custom",
+      category: finalCategory,
       lat: Number(lat),
       lng: Number(lng),
       address: address || "",
-      icon: "Home",
+      icon: isGovernor ? "MapPin" : "Home",
       isCustom: true,
-      createdByAgency: req.user.agencyId,
+      createdByAgency: isAgency ? req.user.agencyId : null,
     });
 
     await newLocation.save();
@@ -129,19 +152,10 @@ const createCustomLocation = async (req, res) => {
   }
 };
 
-// PUT /api/map-locations/:id — update a custom marker (authorized agencies only)
+// PUT /api/map-locations/:id — update a custom marker
 const updateCustomLocation = async (req, res) => {
   try {
-    const isAllowed = await getIsAllowedAgency(req);
-    if (!isAllowed) {
-      return res.status(403).json({
-        success: false,
-        message:
-          "Access denied. Only specific agencies can modify custom markers.",
-      });
-    }
-
-    const { name, nameEn, lat, lng, address } = req.body;
+    const isGovernor = req.user && req.user.type === "governor";
     const location = await MapLocation.findById(req.params.id);
 
     if (!location) {
@@ -151,18 +165,46 @@ const updateCustomLocation = async (req, res) => {
       });
     }
 
-    if (!location.isCustom) {
-      return res.status(400).json({
+    let isAllowed = false;
+
+    if (location.category === "custom") {
+      // Owner agency OR governor can edit custom pins
+      if (isGovernor) {
+        isAllowed = true;
+      } else if (req.user && req.user.type === "agency" && String(location.createdByAgency) === String(req.user.agencyId)) {
+        isAllowed = true;
+      }
+    } else {
+      // Any other category pin: only Governor can customize/edit
+      if (isGovernor) {
+        isAllowed = true;
+      }
+    }
+
+    if (!isAllowed) {
+      return res.status(403).json({
         success: false,
-        message: "Cannot modify seeded locations.",
+        message: "Access denied. You are not authorized to modify this location.",
       });
     }
+
+    const { name, nameEn, lat, lng, address, category } = req.body;
 
     if (name) location.name = name;
     if (nameEn) location.nameEn = nameEn;
     if (lat) location.lat = Number(lat);
     if (lng) location.lng = Number(lng);
     if (address !== undefined) location.address = address;
+    
+    // Governor can change the category of standard pins
+    if (isGovernor && category && category !== "custom") {
+      location.category = category;
+    }
+
+    // Set isCustom to true if edited by governor to mark it modified
+    if (isGovernor) {
+      location.isCustom = true;
+    }
 
     await location.save();
 
@@ -173,24 +215,16 @@ const updateCustomLocation = async (req, res) => {
   } catch (error) {
     res.status(500).json({
       success: false,
-      message: "Error updating custom location",
+      message: "Error updating location",
       error: error.message,
     });
   }
 };
 
-// DELETE /api/map-locations/:id — delete a custom marker (authorized agencies only)
+// DELETE /api/map-locations/:id — delete a custom marker
 const deleteCustomLocation = async (req, res) => {
   try {
-    const isAllowed = await getIsAllowedAgency(req);
-    if (!isAllowed) {
-      return res.status(403).json({
-        success: false,
-        message:
-          "Access denied. Only specific agencies can delete custom markers.",
-      });
-    }
-
+    const isGovernor = req.user && req.user.type === "governor";
     const location = await MapLocation.findById(req.params.id);
 
     if (!location) {
@@ -200,10 +234,26 @@ const deleteCustomLocation = async (req, res) => {
       });
     }
 
-    if (!location.isCustom) {
-      return res.status(400).json({
+    let isAllowed = false;
+
+    if (location.category === "custom") {
+      // Owner agency OR governor can delete custom pins
+      if (isGovernor) {
+        isAllowed = true;
+      } else if (req.user && req.user.type === "agency" && String(location.createdByAgency) === String(req.user.agencyId)) {
+        isAllowed = true;
+      }
+    } else {
+      // Any other category pin: only Governor can delete
+      if (isGovernor) {
+        isAllowed = true;
+      }
+    }
+
+    if (!isAllowed) {
+      return res.status(403).json({
         success: false,
-        message: "Cannot delete seeded locations.",
+        message: "Access denied. You are not authorized to delete this location.",
       });
     }
 
@@ -211,12 +261,12 @@ const deleteCustomLocation = async (req, res) => {
 
     res.json({
       success: true,
-      message: "Custom location deleted successfully",
+      message: "Location deleted successfully",
     });
   } catch (error) {
     res.status(500).json({
       success: false,
-      message: "Error deleting custom location",
+      message: "Error deleting location",
       error: error.message,
     });
   }

@@ -168,6 +168,8 @@ const InteractiveMap = () => {
     (user.name === "لجنة الامن و السلامة" ||
       user.name === "لجنة التنمية الصحية");
 
+  const isAllowedGovernor = user && user.type === "governor";
+
   const [locations, setLocations] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -182,10 +184,13 @@ const InteractiveMap = () => {
   const [formCoords, setFormCoords] = useState(null);
   const [editingLocation, setEditingLocation] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false);
+  const [locationToDeleteId, setLocationToDeleteId] = useState(null);
   const [formData, setFormData] = useState({
     name: "",
     nameEn: "",
     address: "",
+    category: "public",
   });
 
   const content = {
@@ -251,7 +256,7 @@ const InteractiveMap = () => {
 
   // Filter which categories can be viewed in the filter section
   const availableCategories = Object.keys(CATEGORY_CONFIG).filter(
-    (key) => key !== "custom" || isAllowedAgency,
+    (key) => key !== "custom" || isAllowedAgency || isAllowedGovernor,
   );
 
   const filteredLocations = locations.filter((loc) =>
@@ -291,7 +296,7 @@ const InteractiveMap = () => {
     if (lat !== null && lng !== null) {
       setFormCoords({ lat, lng });
       setEditingLocation(null);
-      setFormData({ name: "", nameEn: "", address: "" });
+      setFormData({ name: "", nameEn: "", address: "", category: "public" });
       setIsFormOpen(true);
       setIsAddingMode(false);
     }
@@ -304,6 +309,7 @@ const InteractiveMap = () => {
       name: loc.name,
       nameEn: loc.nameEn || "",
       address: loc.address || "",
+      category: loc.category || "public",
     });
     setFormCoords({
       lat: loc.lat,
@@ -313,17 +319,22 @@ const InteractiveMap = () => {
   };
 
   // Handle Delete Action
-  const handleDeleteClick = async (id) => {
-    const confirmMessage = isRTL
-      ? "هل أنت متأكد من رغبتك في حذف هذا الموقع المخصص؟"
-      : "Are you sure you want to delete this custom location?";
-    if (!confirm(confirmMessage)) return;
+  // Handle Delete Action
+  const handleDeleteClick = (id) => {
+    setLocationToDeleteId(id);
+    setIsDeleteConfirmOpen(true);
+  };
 
+  // Handle Confirmed Delete Action
+  const handleConfirmDelete = async () => {
+    if (!locationToDeleteId) return;
     try {
       setLoading(true);
-      await mapApi.deleteMapLocation(id, token);
-      setLocations((prev) => prev.filter((loc) => loc._id !== id));
+      await mapApi.deleteMapLocation(locationToDeleteId, token);
+      setLocations((prev) => prev.filter((loc) => loc._id !== locationToDeleteId));
       setSelectedLocation(null);
+      setIsDeleteConfirmOpen(false);
+      setLocationToDeleteId(null);
     } catch (err) {
       alert(err.message || "Error deleting location");
     } finally {
@@ -347,6 +358,7 @@ const InteractiveMap = () => {
         address: formData.address,
         lat: formCoords.lat,
         lng: formCoords.lng,
+        category: formData.category,
       };
 
       if (editingLocation) {
@@ -400,7 +412,7 @@ const InteractiveMap = () => {
           {/* LEFT SIDEBAR */}
           <div className="space-y-4">
             {/* Add Custom Location Button (Only visible to allowed agencies) */}
-            {isAllowedAgency && (
+            {(isAllowedAgency || isAllowedGovernor) && (
               <Button
                 onClick={() => {
                   setIsAddingMode(true);
@@ -525,8 +537,9 @@ const InteractiveMap = () => {
                       : "Directions (Google Maps)"}
                   </Button>
 
-                  {/* Actions for custom locations */}
-                  {isAllowedAgency && selectedLocation.isCustom && (
+                  {/* Actions for locations */}
+                  {(isAllowedGovernor ||
+                    (isAllowedAgency && selectedLocation.isCustom && selectedLocation.category === "custom")) && (
                     <div
                       className="flex gap-2 mt-4"
                       dir={isRTL ? "rtl" : "ltr"}>
@@ -690,7 +703,9 @@ const InteractiveMap = () => {
             <form onSubmit={handleFormSubmit}>
               <CardContent className="p-6 space-y-4 font-arabic" dir="rtl">
                 <h3 className="text-lg font-bold text-right text-foreground border-b pb-2 mb-2">
-                  {editingLocation ? "تعديل موقع مخصص" : "إضافة موقع مخصص جديد"}
+                  {editingLocation 
+                    ? (isRTL ? "تعديل الموقع" : "Edit Location") 
+                    : (isRTL ? "إضافة موقع جديد" : "Add New Location")}
                 </h3>
 
                 <div className="space-y-4 text-right">
@@ -738,6 +753,27 @@ const InteractiveMap = () => {
                       placeholder="العنوان أو الحي"
                     />
                   </div>
+                  {isAllowedGovernor && (
+                    <div>
+                      <label className="text-sm font-semibold block text-right mb-1 text-gray-700">
+                        التصنيف / الفئة
+                      </label>
+                      <select
+                        value={formData.category || "public"}
+                        onChange={(e) =>
+                          setFormData({ ...formData, category: e.target.value })
+                        }
+                        className="w-full border p-2.5 rounded-lg text-right text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 bg-background"
+                      >
+                        <option value="government">جهات حكومية (Government)</option>
+                        <option value="local">جهات محلية / جمعيات (Local & NGOs)</option>
+                        <option value="educational">مؤسسات تعليمية (Educational)</option>
+                        <option value="security">الأجهزة الأمنية (Security)</option>
+                        <option value="health">الخدمات الصحية (Health Services)</option>
+                        <option value="public">الخدمات العامة (Public Services)</option>
+                      </select>
+                    </div>
+                  )}
                   <div
                     className="flex gap-4 text-xs text-muted-foreground mt-2 border-t pt-2"
                     dir="ltr">
@@ -767,6 +803,46 @@ const InteractiveMap = () => {
                 </div>
               </CardContent>
             </form>
+          </Card>
+        </div>
+      )}
+
+      {/* Delete Confirmation Modal */}
+      {isDeleteConfirmOpen && (
+        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4 backdrop-blur-sm">
+          <Card className="w-full max-w-sm shadow-2xl border border-gray-200">
+            <CardContent className="p-6 space-y-6 font-arabic text-center" dir="rtl">
+              <div className="space-y-2">
+                <h3 className="text-lg font-bold text-foreground">
+                  {isRTL ? "تأكيد الحذف" : "Confirm Deletion"}
+                </h3>
+                <p className="text-sm text-muted-foreground">
+                  {isRTL
+                    ? "هل أنت متأكد من رغبتك في حذف هذا الموقع المخصص؟"
+                    : "Are you sure you want to delete this custom location?"}
+                </p>
+              </div>
+
+              <div className="flex gap-2 justify-center">
+                <Button
+                  variant="destructive"
+                  onClick={handleConfirmDelete}
+                  className="px-6 bg-red-600 hover:bg-red-700 text-white font-semibold"
+                >
+                  {isRTL ? "حذف" : "Delete"}
+                </Button>
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    setIsDeleteConfirmOpen(false);
+                    setLocationToDeleteId(null);
+                  }}
+                  className="px-6"
+                >
+                  {isRTL ? "إلغاء" : "Cancel"}
+                </Button>
+              </div>
+            </CardContent>
           </Card>
         </div>
       )}

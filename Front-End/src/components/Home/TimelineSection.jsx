@@ -17,6 +17,19 @@ const TimelineSection = () => {
 
   const phases = [
     {
+      year: "2022",
+      title: isRTL ? "التأسيس والتخطيط" : "Foundation & Planning",
+      description: isRTL
+        ? "وضع الرؤية الاستراتيجية وتحديد الأهداف وتأسيس الهياكل التنظيمية الأولية لمبادرة حريملاء المحافظة الصحية"
+        : "Setting the strategic vision, defining goals, and establishing the initial organizational structures for the Huraymila Healthy Governorate initiative",
+      status: isRTL ? "مكتمل" : "Completed",
+      icon: CheckCircle2,
+      badgeColor:
+        "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300",
+      lineColor: "bg-green-500",
+      iconBg: "bg-green-500 text-white shadow-green-500/20",
+    },
+    {
       year: "2025",
       title: isRTL ? "إطلاق البرنامج" : "Program Launch",
       description: isRTL
@@ -41,18 +54,6 @@ const TimelineSection = () => {
         "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300",
       lineColor: "bg-blue-500",
       iconBg: "bg-blue-500 text-white shadow-blue-500/20",
-    },
-    {
-      year: "2027",
-      title: isRTL ? "التقييم والتحسين" : "Evaluation & Improvement",
-      description: isRTL
-        ? "تقييم النتائج وتطوير المبادرات القائمة لضمان الجودة والاستدامة"
-        : "Results evaluation and development of existing initiatives for quality and sustainability",
-      status: isRTL ? "مخطط" : "Planned",
-      icon: Activity,
-      badgeColor: "bg-muted text-muted-foreground",
-      lineColor: "bg-muted",
-      iconBg: "bg-muted text-muted-foreground",
     },
     {
       year: "2028",
