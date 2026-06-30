@@ -25,6 +25,7 @@ import {
   getAllStandardsByNumber,
   getSubmissionsByStandardNumber,
   updateSubmissionStatus,
+  getAllAgencies,
 } from "@/lib/api";
 import { mapBackendStandardsToLanguageContext } from "@/lib/utils";
 import {
@@ -52,6 +53,7 @@ const SubmissionsView = () => {
   const [standardsList, setStandardsList] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedAgency, setSelectedAgency] = useState("all");
+  const [agenciesList, setAgenciesList] = useState([]);
 
   // Find the standard by ID (handle both number and ObjectId)
   const standard = standardsList.find(
@@ -60,6 +62,21 @@ const SubmissionsView = () => {
 
   // Real submissions data - will be fetched from backend
   const [submissions, setSubmissions] = useState([]);
+
+  // Fetch all agencies to filter by agencyType
+  useEffect(() => {
+    const fetchAgencies = async () => {
+      if (token) {
+        try {
+          const agenciesData = await getAllAgencies(token);
+          setAgenciesList(agenciesData);
+        } catch (error) {
+          // Error fetching agencies
+        }
+      }
+    };
+    fetchAgencies();
+  }, [token]);
 
   // Fetch standards from backend and map to language context
   useEffect(() => {
@@ -160,18 +177,8 @@ const SubmissionsView = () => {
     );
   };
 
-  const toggleSubmissionStatus = async (submission) => {
+  const handleUpdateSubmissionStatus = async (submission, newStatus) => {
     try {
-      // Determine new status based on current status
-      let newStatus;
-      if (submission.status === "approved") {
-        newStatus = "rejected";
-      } else if (submission.status === "rejected") {
-        newStatus = "approved";
-      } else {
-        newStatus = "approved"; // Default pending to approved
-      }
-
       // Update via API
       const updatedSubmission = await updateSubmissionStatus(
         submission._id,
@@ -184,8 +191,17 @@ const SubmissionsView = () => {
         s._id === submission._id ? updatedSubmission : s
       );
       setSubmissions(updatedSubmissions);
+      toast.success(
+        language === "ar"
+          ? "تم تحديث حالة المستند بنجاح"
+          : "Submission status updated successfully"
+      );
     } catch (error) {
-      // Error updating submission status
+      toast.error(
+        language === "ar"
+          ? "فشل في تحديث حالة المستند"
+          : "Failed to update submission status"
+      );
     }
   };
 
@@ -583,25 +599,36 @@ const SubmissionsView = () => {
             <div className="flex items-center gap-4">
               <div className="space-y-2">
                 <label className="text-sm font-medium">
-                  {t("submissionsView.filterByAgency")}
+                  {language === "ar" ? "تصفية حسب اللجنة" : "Filter by Committee"}
                 </label>
                 <Select
                   value={selectedAgency}
                   onValueChange={setSelectedAgency}>
                   <SelectTrigger className="w-64">
                     <SelectValue
-                      placeholder={t("submissionsView.selectAgency")}
+                      placeholder={language === "ar" ? "اختر اللجنة" : "Select Committee"}
                     />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="all">
-                      {t("submissionsView.allAgencies")}
+                      {language === "ar" ? "جميع اللجان" : "All Committees"}
                     </SelectItem>
-                    {standard?.assigned_agencies.map((agency) => (
-                      <SelectItem key={agency} value={agency}>
-                        {agency}
-                      </SelectItem>
-                    ))}
+                    {standard?.assigned_agencies
+                      .filter((agencyName) => {
+                        const foundAgency = agenciesList.find(
+                          (a) => a.name === agencyName || a.name_ar === agencyName
+                        );
+                        if (!foundAgency) {
+                          // Fallback to true if agenciesList is not loaded yet
+                          return agenciesList.length === 0 ? true : false;
+                        }
+                        return foundAgency.agencyType === "committee";
+                      })
+                      .map((agency) => (
+                        <SelectItem key={agency} value={agency}>
+                          {agency}
+                        </SelectItem>
+                      ))}
                   </SelectContent>
                 </Select>
               </div>
@@ -613,8 +640,8 @@ const SubmissionsView = () => {
               <FileText className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
               <p className="text-muted-foreground">
                 {submissions.length === 0
-                  ? t("submissionsView.noSubmissionsYet")
-                  : t("submissionsView.noSubmissionsForAgency")}
+                  ? (language === "ar" ? "لا توجد مستندات مقدمة بعد" : "No submissions yet")
+                  : (language === "ar" ? "لا توجد مستندات مقدمة لهذه اللجنة" : "No submissions for this committee")}
               </p>
               {submissions.length === 0 && (
                 <p className="text-sm text-muted-foreground mt-2">
@@ -753,36 +780,52 @@ const SubmissionsView = () => {
                       </Button>
                     </div>
 
-                    {/* Status Toggle Button */}
-                    <Button
-                      size="sm"
-                      variant={
-                        submission.status === "approved" ||
-                        submission.status === "rejected"
-                          ? "default"
-                          : "outlined"
-                      }
-                      onClick={() => toggleSubmissionStatus(submission)}
-                      className={`w-full ${
-                        submission.status === "rejected" ||
-                        submission.status === "pending"
-                          ? "bg-green-700 dark:bg-green-600 text-green-50 border-green-200 dark:border-green-500 hover:bg-green-500 dark:hover:bg-green-500"
-                          : submission.status === "approved"
-                          ? "bg-red-700 dark:bg-red-600 text-red-50 border-red-200 dark:border-red-500 hover:bg-red-500 dark:hover:bg-red-500"
-                          : "bg-gray-700 dark:bg-gray-600 text-gray-50 border-gray-200 dark:border-gray-500"
-                      }`}>
-                      {submission.status === "approved" ? (
-                        <XCircle className="w-4 h-4 mr-1" />
-                      ) : (
-                        <CheckCircle className="w-4 h-4 mr-1" />
-                      )}
-                      {submission.status === "rejected" ||
-                      submission.status === "pending"
-                        ? t("submissionsView.approve")
-                        : submission.status === "approved"
-                        ? t("submissionsView.reject")
-                        : ""}
-                    </Button>
+                    {/* Status Actions */}
+                    {submission.status === "pending" ? (
+                      <div className="flex gap-2 w-full">
+                        <Button
+                          size="sm"
+                          onClick={() => handleUpdateSubmissionStatus(submission, "approved")}
+                          className="flex-1 bg-green-700 dark:bg-green-600 text-green-50 hover:bg-green-600 dark:hover:bg-green-500 gap-1 flex items-center justify-center">
+                          <CheckCircle className="w-4 h-4" />
+                          {t("submissionsView.approve")}
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="destructive"
+                          onClick={() => handleUpdateSubmissionStatus(submission, "rejected")}
+                          className="flex-1 bg-red-700 dark:bg-red-600 text-red-50 hover:bg-red-600 dark:hover:bg-red-500 gap-1 flex items-center justify-center">
+                          <XCircle className="w-4 h-4" />
+                          {t("submissionsView.reject")}
+                        </Button>
+                      </div>
+                    ) : (
+                      <Button
+                        size="sm"
+                        onClick={() =>
+                          handleUpdateSubmissionStatus(
+                            submission,
+                            submission.status === "approved" ? "rejected" : "approved"
+                          )
+                        }
+                        className={`w-full gap-1 flex items-center justify-center ${
+                          submission.status === "approved"
+                            ? "bg-red-700 dark:bg-red-600 text-red-50 hover:bg-red-600 dark:hover:bg-red-500"
+                            : "bg-green-700 dark:bg-green-600 text-green-50 hover:bg-green-600 dark:hover:bg-green-500"
+                        }`}>
+                        {submission.status === "approved" ? (
+                          <>
+                            <XCircle className="w-4 h-4" />
+                            {t("submissionsView.reject")}
+                          </>
+                        ) : (
+                          <>
+                            <CheckCircle className="w-4 h-4" />
+                            {t("submissionsView.approve")}
+                          </>
+                        )}
+                      </Button>
+                    )}
                   </CardContent>
                 </Card>
               ))}
