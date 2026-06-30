@@ -11,6 +11,7 @@ import Home from "./pages/Home";
 import About from "./pages/About";
 import Contact from "./pages/Contact";
 import Auth from "./pages/Auth";
+import ResetPassword from "./pages/ResetPassword";
 import NotFound from "./pages/NotFound";
 import AgencyDashboard from "./pages/AgencyDashboard";
 import VolunteerDashboard from "./pages/VolunteerDashboard";
@@ -47,6 +48,7 @@ const App = () => (
                   <Route path="/about" element={<About />} />
                   <Route path="/contact" element={<Contact />} />
                   <Route path="/auth" element={<Auth />} />
+                  <Route path="/reset-password" element={<ResetPassword />} />
                   <Route path="/news" element={<AllNews />} />
                   <Route path="/news/:id" element={<NewsArticle />} />
                   <Route

@@ -31,6 +31,12 @@ const agencySchema = new mongoose.Schema(
       enum: ["agency", "committee"],
       default: "agency",
     },
+    resetPasswordToken: {
+      type: String,
+    },
+    resetPasswordExpires: {
+      type: Date,
+    },
     contactPerson: {
       name: {
         type: String,

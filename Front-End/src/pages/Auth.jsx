@@ -27,6 +27,8 @@ const Auth = () => {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [forgotPasswordMode, setForgotPasswordMode] = useState(false);
+  const [forgotEmail, setForgotEmail] = useState("");
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -179,6 +181,64 @@ const Auth = () => {
     }
   };
 
+  const handleForgotPasswordSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setError("");
+    setSuccess("");
+
+    if (!forgotEmail) {
+      setError(
+        language === "ar"
+          ? "البريد الإلكتروني مطلوب"
+          : "Email is required",
+      );
+      setLoading(false);
+      return;
+    }
+
+    try {
+      const response = await fetch(
+        `${
+          import.meta.env.VITE_API_BASE_URL || "http://localhost:5000/api"
+        }/auth/forgot-password`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ email: forgotEmail }),
+        }
+      );
+
+      const data = await response.json();
+
+      if (response.ok && data.success) {
+        setSuccess(
+          language === "ar"
+            ? "تم إرسال رابط إعادة تعيين كلمة المرور بنجاح. يرجى التحقق من بريدك الإلكتروني."
+            : "Password reset link sent successfully. Please check your email.",
+        );
+        setForgotEmail("");
+      } else {
+        setError(
+          data.message ||
+            (language === "ar"
+              ? "فشل في إرسال رابط إعادة التعيين"
+              : "Failed to send reset link"),
+        );
+      }
+    } catch (err) {
+      setError(
+        language === "ar"
+          ? "حدث خطأ أثناء إرسال طلب إعادة التعيين"
+          : "An error occurred while sending reset request",
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
+
   // Content is now handled by the language context
 
   return (
@@ -222,57 +282,110 @@ const Auth = () => {
               </CardHeader>
 
               <CardContent>
-                <Tabs defaultValue="signin" className="w-full">
-                  {/*
-                  <TabsList className="grid w-full grid-cols-2 mb-6">
-                    <TabsTrigger
-                      value="signin"
+                {/* Error/Success Alert */}
+                {error && (
+                  <Alert className="mb-4 border-destructive/50 text-destructive">
+                    <AlertDescription
                       className={cn(
-                        "font-medium",
+                        language === "ar"
+                          ? "font-arabic text-right"
+                          : "font-english",
+                      )}>
+                      {error}
+                    </AlertDescription>
+                  </Alert>
+                )}
+
+                {success && (
+                  <Alert className="mb-4 border-green-500/50 text-green-700 bg-green-50 dark:bg-green-950 dark:text-green-400">
+                    <AlertDescription
+                      className={cn(
+                        language === "ar"
+                          ? "font-arabic text-right"
+                          : "font-english",
+                      )}>
+                      {success}
+                    </AlertDescription>
+                  </Alert>
+                )}
+
+                {forgotPasswordMode ? (
+                  <form onSubmit={handleForgotPasswordSubmit} className="space-y-4">
+                    <p className={cn(
+                      "text-sm text-muted-foreground mb-4",
+                      language === "ar" ? "font-arabic text-right" : "font-english"
+                    )}>
+                      {language === "ar"
+                        ? "أدخل بريدك الإلكتروني لإرسال رابط إعادة تعيين كلمة المرور."
+                        : "Enter your email address to receive a password reset link."}
+                    </p>
+                    <div className="space-y-2">
+                      <Label
+                        htmlFor="forgot-email"
+                        className={cn(
+                          language === "ar" ? "font-arabic" : "font-english",
+                        )}>
+                        {t("auth.email")}
+                      </Label>
+                      <div className="relative">
+                        <Mail
+                          className={cn(
+                            "absolute w-4 h-4 text-muted-foreground top-1/2 -translate-y-1/2",
+                            language === "ar" ? "right-3" : "left-3",
+                          )}
+                        />
+                        <Input
+                          id="forgot-email"
+                          type="email"
+                          value={forgotEmail}
+                          onChange={(e) => setForgotEmail(e.target.value)}
+                          placeholder={t("auth.emailPlaceholder")}
+                          className={cn(
+                            "h-12",
+                            language === "ar" ? "pr-10 text-right" : "pl-10",
+                          )}
+                          dir={language === "ar" ? "rtl" : "ltr"}
+                          required
+                        />
+                      </div>
+                    </div>
+
+                    <Button
+                      type="submit"
+                      className={cn(
+                        "w-full h-12 font-medium",
+                        language === "ar" ? "font-arabic" : "font-english",
+                      )}
+                      disabled={loading}>
+                      {loading ? (
+                        <>
+                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                          {language === "ar" ? "جاري الإرسال..." : "Sending..."}
+                        </>
+                      ) : (
+                        language === "ar" ? "إرسال رابط إعادة التعيين" : "Send Reset Link"
+                      )}
+                    </Button>
+
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      onClick={() => {
+                        setForgotPasswordMode(false);
+                        setError("");
+                        setSuccess("");
+                      }}
+                      className={cn(
+                        "w-full h-12 font-medium",
                         language === "ar" ? "font-arabic" : "font-english",
                       )}>
-                      {t("auth.signIn")}
-                    </TabsTrigger>
-                    <TabsTrigger
-                      value="signup"
-                      className={cn(
-                        "font-medium",
-                        language === "ar" ? "font-arabic" : "font-english",
-                      )}>
-                      {t("auth.signUp")}
-                    </TabsTrigger>
-                  </TabsList>
-                  */}
-
-                  {/* Error/Success Alert */}
-                  {error && (
-                    <Alert className="mb-4 border-destructive/50 text-destructive">
-                      <AlertDescription
-                        className={cn(
-                          language === "ar"
-                            ? "font-arabic text-right"
-                            : "font-english",
-                        )}>
-                        {error}
-                      </AlertDescription>
-                    </Alert>
-                  )}
-
-                  {success && (
-                    <Alert className="mb-4 border-green-500/50 text-green-700 bg-green-50 dark:bg-green-950 dark:text-green-400">
-                      <AlertDescription
-                        className={cn(
-                          language === "ar"
-                            ? "font-arabic text-right"
-                            : "font-english",
-                        )}>
-                        {success}
-                      </AlertDescription>
-                    </Alert>
-                  )}
-
-                  {/* Sign In Tab */}
-                  <TabsContent value="signin">
+                      {language === "ar" ? "العودة لتسجيل الدخول" : "Back to Sign In"}
+                    </Button>
+                  </form>
+                ) : (
+                  <Tabs defaultValue="signin" className="w-full">
+                    {/* Sign In Tab */}
+                    <TabsContent value="signin">
                     <form onSubmit={handleSignIn} className="space-y-4">
                       <div className="space-y-2">
                         <Label
@@ -351,6 +464,22 @@ const Auth = () => {
                             )}
                           </button>
                         </div>
+                      </div>
+
+                      <div className="flex justify-end pt-1">
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setForgotPasswordMode(true);
+                            setError("");
+                            setSuccess("");
+                          }}
+                          className={cn(
+                            "text-sm text-primary hover:underline",
+                            language === "ar" ? "font-arabic" : "font-english"
+                          )}>
+                          {language === "ar" ? "نسيت كلمة المرور؟" : "Forgot Password?"}
+                        </button>
                       </div>
 
                       <Button
@@ -575,6 +704,7 @@ const Auth = () => {
                   </TabsContent>
                   */}
                 </Tabs>
+              )}
 
                 {/* Back to Home */}
                 <div className="mt-6 pt-6 border-t border-border">

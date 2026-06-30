@@ -2,6 +2,8 @@ const Governor = require("../Models/Governor");
 const Agency = require("../Models/Agency");
 const Volunteer = require("../Models/Volunteer");
 const jwt = require("jsonwebtoken");
+const crypto = require("crypto");
+const { sendResetPasswordEmail } = require("../Services/emailService");
 
 // Unified login function that checks both Governor and Agency
 const unifiedLogin = async (req, res) => {
@@ -242,8 +244,140 @@ const volunteerSignup = async (req, res) => {
   }
 };
 
+// Forgot Password controller
+const forgotPassword = async (req, res) => {
+  try {
+    const { email } = req.body;
+    if (!email) {
+      return res.status(400).json({
+        success: false,
+        message: "Email is required",
+      });
+    }
+
+    // Try finding the user in all three collections
+    let user = await Governor.findOne({ email: email.toLowerCase() });
+
+    if (!user) {
+      user = await Agency.findOne({ email: email.toLowerCase() });
+    }
+
+    if (!user) {
+      user = await Volunteer.findOne({ email: email.toLowerCase() });
+    }
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "No user found with that email address",
+      });
+    }
+
+    // Generate secure random reset token
+    const resetToken = crypto.randomBytes(20).toString("hex");
+    
+    // Hash token and set it on schema with expiry (1 hour)
+    const hashedToken = crypto
+      .createHash("sha256")
+      .update(resetToken)
+      .digest("hex");
+
+    user.resetPasswordToken = hashedToken;
+    user.resetPasswordExpires = Date.now() + 3600000; // 1 hour
+
+    await user.save();
+
+    // Send reset link email
+    const baseUrl = (process.env.FRONTEND_URL || "http://localhost:5173").replace(/\/$/, "");
+    const resetUrl = `${baseUrl}/reset-password?token=${resetToken}&email=${encodeURIComponent(email)}`;
+    
+    await sendResetPasswordEmail(user.email, resetUrl);
+
+    res.json({
+      success: true,
+      message: "Reset link has been sent to your email",
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Error processing forgot password request",
+      error: error.message,
+    });
+  }
+};
+
+// Reset Password controller
+const resetPassword = async (req, res) => {
+  try {
+    const { token, email, password } = req.body;
+    
+    if (!token || !email || !password) {
+      return res.status(400).json({
+        success: false,
+        message: "Token, email, and password are required",
+      });
+    }
+
+    // Re-hash incoming token to match it against database
+    const hashedToken = crypto
+      .createHash("sha256")
+      .update(token)
+      .digest("hex");
+
+    // Search user
+    let user = await Governor.findOne({
+      email: email.toLowerCase(),
+      resetPasswordToken: hashedToken,
+      resetPasswordExpires: { $gt: Date.now() },
+    });
+
+    if (!user) {
+      user = await Agency.findOne({
+        email: email.toLowerCase(),
+        resetPasswordToken: hashedToken,
+        resetPasswordExpires: { $gt: Date.now() },
+      });
+    }
+
+    if (!user) {
+      user = await Volunteer.findOne({
+        email: email.toLowerCase(),
+        resetPasswordToken: hashedToken,
+        resetPasswordExpires: { $gt: Date.now() },
+      });
+    }
+
+    if (!user) {
+      return res.status(400).json({
+        success: false,
+        message: "Token is invalid or has expired",
+      });
+    }
+
+    // Set new password
+    user.password = password;
+    user.resetPasswordToken = undefined;
+    user.resetPasswordExpires = undefined;
+
+    await user.save();
+
+    res.json({
+      success: true,
+      message: "Password has been successfully updated",
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Error resetting password",
+      error: error.message,
+    });
+  }
+};
+
 module.exports = {
   unifiedLogin,
   getCurrentUser,
   volunteerSignup,
+  forgotPassword,
+  resetPassword,
 };

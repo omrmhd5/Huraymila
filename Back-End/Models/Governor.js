@@ -24,6 +24,12 @@ const governorSchema = new mongoose.Schema(
       default: "governor",
       immutable: true,
     },
+    resetPasswordToken: {
+      type: String,
+    },
+    resetPasswordExpires: {
+      type: Date,
+    },
   },
   {
     timestamps: true,
