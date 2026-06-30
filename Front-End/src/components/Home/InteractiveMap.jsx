@@ -102,7 +102,9 @@ const CategoryPin = ({ category, isSelected }) => {
         "w-10 h-10 rounded-full flex items-center justify-center text-white shadow-lg transition-all duration-200 border-2",
         config.color,
         config.borderColor,
-        isSelected ? "scale-125 ring-4 ring-white/50 shadow-xl" : "hover:scale-110"
+        isSelected
+          ? "scale-125 ring-4 ring-white/50 shadow-xl"
+          : "hover:scale-110",
       )}>
       <IconComponent className="w-5 h-5" />
     </div>
@@ -159,18 +161,19 @@ const InteractiveMap = () => {
   const isRTL = language === "ar";
   const { user, token } = useAuth();
 
-  // Define allowed agencies: "الامن و السلامة" and "التنمية الصحية"
+  // Define allowed agencies: "لجنة الامن و السلامة" and "لجنة التنمية الصحية"
   const isAllowedAgency =
     user &&
     user.type === "agency" &&
-    (user.name === "الامن و السلامة" || user.name === "التنمية الصحية");
+    (user.name === "لجنة الامن و السلامة" ||
+      user.name === "لجنة التنمية الصحية");
 
   const [locations, setLocations] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [selectedLocation, setSelectedLocation] = useState(null);
   const [visibleCategories, setVisibleCategories] = useState(
-    Object.keys(CATEGORY_CONFIG)
+    Object.keys(CATEGORY_CONFIG),
   );
 
   // States for adding/editing custom markers
@@ -203,7 +206,8 @@ const InteractiveMap = () => {
     },
     en: {
       title: "Interactive Map of Huraymila Governorate",
-      subtitle: "Explore partner locations and health facilities in the governorate",
+      subtitle:
+        "Explore partner locations and health facilities in the governorate",
       zoomIn: "Zoom In",
       zoomOut: "Zoom Out",
       reset: "Reset",
@@ -241,17 +245,17 @@ const InteractiveMap = () => {
     setVisibleCategories((prev) =>
       prev.includes(category)
         ? prev.filter((c) => c !== category)
-        : [...prev, category]
+        : [...prev, category],
     );
   };
 
   // Filter which categories can be viewed in the filter section
   const availableCategories = Object.keys(CATEGORY_CONFIG).filter(
-    (key) => key !== "custom" || isAllowedAgency
+    (key) => key !== "custom" || isAllowedAgency,
   );
 
   const filteredLocations = locations.filter((loc) =>
-    visibleCategories.includes(loc.category)
+    visibleCategories.includes(loc.category),
   );
 
   const getCategoryLabel = (category) => {
@@ -271,8 +275,14 @@ const InteractiveMap = () => {
     let lng = null;
 
     if (e.detail?.latLng) {
-      lat = typeof e.detail.latLng.lat === "function" ? e.detail.latLng.lat() : e.detail.latLng.lat;
-      lng = typeof e.detail.latLng.lng === "function" ? e.detail.latLng.lng() : e.detail.latLng.lng;
+      lat =
+        typeof e.detail.latLng.lat === "function"
+          ? e.detail.latLng.lat()
+          : e.detail.latLng.lat;
+      lng =
+        typeof e.detail.latLng.lng === "function"
+          ? e.detail.latLng.lng()
+          : e.detail.latLng.lng;
     } else if (e.latLng) {
       lat = e.latLng.lat();
       lng = e.latLng.lng();
@@ -343,12 +353,12 @@ const InteractiveMap = () => {
         const response = await mapApi.updateMapLocation(
           editingLocation._id,
           payload,
-          token
+          token,
         );
         setLocations((prev) =>
           prev.map((loc) =>
-            loc._id === editingLocation._id ? response.data : loc
-          )
+            loc._id === editingLocation._id ? response.data : loc,
+          ),
         );
         setSelectedLocation(response.data);
       } else {
@@ -373,14 +383,14 @@ const InteractiveMap = () => {
           <h2
             className={cn(
               "text-4xl font-bold mb-4",
-              isRTL ? "font-arabic" : "font-english"
+              isRTL ? "font-arabic" : "font-english",
             )}>
             {t.title}
           </h2>
           <p
             className={cn(
               "text-xl text-muted-foreground",
-              isRTL ? "font-arabic" : "font-english"
+              isRTL ? "font-arabic" : "font-english",
             )}>
             {t.subtitle}
           </p>
@@ -409,7 +419,7 @@ const InteractiveMap = () => {
                 <h3
                   className={cn(
                     "font-semibold text-sm",
-                    isRTL ? "font-arabic text-right" : "font-english text-left"
+                    isRTL ? "font-arabic text-right" : "font-english text-left",
                   )}>
                   {t.filterTitle}
                 </h3>
@@ -422,7 +432,7 @@ const InteractiveMap = () => {
                       key={key}
                       className={cn(
                         "flex items-center gap-2 cursor-pointer select-none hover:opacity-80 transition-opacity",
-                        isRTL ? "flex-row-reverse" : "flex-row"
+                        isRTL ? "flex-row-reverse" : "flex-row",
                       )}>
                       <input
                         type="checkbox"
@@ -433,14 +443,14 @@ const InteractiveMap = () => {
                       <div
                         className={cn(
                           "w-6 h-6 rounded-full flex items-center justify-center text-white flex-shrink-0",
-                          config.color
+                          config.color,
                         )}>
                         <IconComponent className="w-3 h-3" />
                       </div>
                       <span
                         className={cn(
                           "text-sm",
-                          isRTL ? "font-arabic" : "font-english"
+                          isRTL ? "font-arabic" : "font-english",
                         )}>
                         {isRTL ? config.labelAr : config.labelEn}
                       </span>
@@ -457,13 +467,15 @@ const InteractiveMap = () => {
                   <div
                     className={cn(
                       "flex items-start gap-2 mb-2",
-                      isRTL ? "flex-row-reverse" : "flex-row"
+                      isRTL ? "flex-row-reverse" : "flex-row",
                     )}>
                     <MapPin className="w-4 h-4 text-primary mt-1 flex-shrink-0" />
                     <h4
                       className={cn(
                         "font-bold text-sm leading-tight",
-                        isRTL ? "font-arabic text-right" : "font-english text-left"
+                        isRTL
+                          ? "font-arabic text-right"
+                          : "font-english text-left",
                       )}>
                       {isRTL
                         ? selectedLocation.name
@@ -474,7 +486,7 @@ const InteractiveMap = () => {
                   <Badge
                     className={cn(
                       "mb-2 text-white text-xs",
-                      getCategoryColor(selectedLocation.category)
+                      getCategoryColor(selectedLocation.category),
                     )}>
                     {getCategoryLabel(selectedLocation.category)}
                   </Badge>
@@ -483,7 +495,9 @@ const InteractiveMap = () => {
                     <p
                       className={cn(
                         "text-xs text-muted-foreground mt-2",
-                        isRTL ? "font-arabic text-right" : "font-english text-left"
+                        isRTL
+                          ? "font-arabic text-right"
+                          : "font-english text-left",
                       )}>
                       <span className="font-medium">{t.address}: </span>
                       {selectedLocation.address}
@@ -503,16 +517,19 @@ const InteractiveMap = () => {
                     }}
                     className={cn(
                       "w-full mt-4 bg-primary hover:bg-primary/95 text-white flex items-center justify-center gap-2 text-xs py-2 rounded-lg font-semibold",
-                      isRTL ? "font-arabic" : "font-english"
-                    )}
-                  >
+                      isRTL ? "font-arabic" : "font-english",
+                    )}>
                     <Navigation className="w-3.5 h-3.5" />
-                    {isRTL ? "الاتجاهات (خرائط Google)" : "Directions (Google Maps)"}
+                    {isRTL
+                      ? "الاتجاهات (خرائط Google)"
+                      : "Directions (Google Maps)"}
                   </Button>
 
                   {/* Actions for custom locations */}
                   {isAllowedAgency && selectedLocation.isCustom && (
-                    <div className="flex gap-2 mt-4" dir={isRTL ? "rtl" : "ltr"}>
+                    <div
+                      className="flex gap-2 mt-4"
+                      dir={isRTL ? "rtl" : "ltr"}>
                       <Button
                         variant="outline"
                         size="sm"
@@ -536,7 +553,7 @@ const InteractiveMap = () => {
                     size="sm"
                     className={cn(
                       "w-full mt-3 text-xs",
-                      isRTL ? "font-arabic" : "font-english"
+                      isRTL ? "font-arabic" : "font-english",
                     )}>
                     {t.hideDetails}
                   </Button>
@@ -551,7 +568,9 @@ const InteractiveMap = () => {
                   <p
                     className={cn(
                       "text-xs text-muted-foreground",
-                      isRTL ? "font-arabic text-right" : "font-english text-left"
+                      isRTL
+                        ? "font-arabic text-right"
+                        : "font-english text-left",
                     )}>
                     {isRTL
                       ? `${filteredLocations.length} من ${locations.length} موقع`
@@ -569,8 +588,13 @@ const InteractiveMap = () => {
                 <div className="relative h-[600px]">
                   {/* Overlay Adding Mode Banner */}
                   {isAddingMode && (
-                    <div className="absolute top-4 left-4 right-4 bg-primary text-white p-3 rounded-lg shadow-lg z-50 text-center text-sm font-semibold animate-pulse font-arabic flex justify-between items-center" dir="rtl">
-                      <span>📍 انقر فوق أي مكان على الخريطة لتحديد موقع العلامة المخصصة الجديدة.</span>
+                    <div
+                      className="absolute top-4 left-4 right-4 bg-primary text-white p-3 rounded-lg shadow-lg z-50 text-center text-sm font-semibold animate-pulse font-arabic flex justify-between items-center"
+                      dir="rtl">
+                      <span>
+                        📍 انقر فوق أي مكان على الخريطة لتحديد موقع العلامة
+                        المخصصة الجديدة.
+                      </span>
                       <Button
                         variant="secondary"
                         size="sm"
@@ -588,7 +612,7 @@ const InteractiveMap = () => {
                         <p
                           className={cn(
                             "text-sm text-muted-foreground",
-                            isRTL ? "font-arabic" : "font-english"
+                            isRTL ? "font-arabic" : "font-english",
                           )}>
                           {t.loading}
                         </p>
@@ -601,7 +625,7 @@ const InteractiveMap = () => {
                         <p
                           className={cn(
                             "text-sm text-muted-foreground",
-                            isRTL ? "font-arabic" : "font-english"
+                            isRTL ? "font-arabic" : "font-english",
                           )}>
                           {error}
                         </p>
@@ -636,16 +660,20 @@ const InteractiveMap = () => {
                             key={location._id || location.placeId}
                             position={{ lat: location.lat, lng: location.lng }}
                             onClick={() => setSelectedLocation(location)}
-                            title={isRTL ? location.name : location.nameEn || location.name}>
+                            title={
+                              isRTL
+                                ? location.name
+                                : location.nameEn || location.name
+                            }>
                             <CategoryPin
                               category={location.category}
-                              isSelected={selectedLocation?._id === location._id}
+                              isSelected={
+                                selectedLocation?._id === location._id
+                              }
                             />
                           </AdvancedMarker>
                         ))}
                       </Map>
-
-
                     </APIProvider>
                   )}
                 </div>
@@ -664,52 +692,77 @@ const InteractiveMap = () => {
                 <h3 className="text-lg font-bold text-right text-foreground border-b pb-2 mb-2">
                   {editingLocation ? "تعديل موقع مخصص" : "إضافة موقع مخصص جديد"}
                 </h3>
-                
+
                 <div className="space-y-4 text-right">
                   <div>
-                    <label className="text-sm font-semibold block text-right mb-1 text-gray-700">الاسم (بالعربية) *</label>
+                    <label className="text-sm font-semibold block text-right mb-1 text-gray-700">
+                      الاسم (بالعربية) *
+                    </label>
                     <input
                       type="text"
                       value={formData.name}
-                      onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                      onChange={(e) =>
+                        setFormData({ ...formData, name: e.target.value })
+                      }
                       className="w-full border p-2.5 rounded-lg text-right text-sm focus:outline-none focus:ring-2 focus:ring-primary/50"
                       placeholder="مثال: مقر الأمن والسلامة الجديد"
                       required
                     />
                   </div>
                   <div>
-                    <label className="text-sm font-semibold block text-right mb-1 text-gray-700">الاسم (بالإنجليزي)</label>
+                    <label className="text-sm font-semibold block text-right mb-1 text-gray-700">
+                      الاسم (بالإنجليزي)
+                    </label>
                     <input
                       type="text"
                       value={formData.nameEn}
-                      onChange={(e) => setFormData({ ...formData, nameEn: e.target.value })}
+                      onChange={(e) =>
+                        setFormData({ ...formData, nameEn: e.target.value })
+                      }
                       className="w-full border p-2.5 rounded-lg text-left text-sm focus:outline-none focus:ring-2 focus:ring-primary/50"
                       placeholder="Example: Security & Safety HQ"
                       dir="ltr"
                     />
                   </div>
                   <div>
-                    <label className="text-sm font-semibold block text-right mb-1 text-gray-700">العنوان</label>
+                    <label className="text-sm font-semibold block text-right mb-1 text-gray-700">
+                      العنوان
+                    </label>
                     <input
                       type="text"
                       value={formData.address}
-                      onChange={(e) => setFormData({ ...formData, address: e.target.value })}
+                      onChange={(e) =>
+                        setFormData({ ...formData, address: e.target.value })
+                      }
                       className="w-full border p-2.5 rounded-lg text-right text-sm focus:outline-none focus:ring-2 focus:ring-primary/50"
                       placeholder="العنوان أو الحي"
                     />
                   </div>
-                  <div className="flex gap-4 text-xs text-muted-foreground mt-2 border-t pt-2" dir="ltr">
+                  <div
+                    className="flex gap-4 text-xs text-muted-foreground mt-2 border-t pt-2"
+                    dir="ltr">
                     <span>Lat: {formCoords?.lat.toFixed(6)}</span>
                     <span>Lng: {formCoords?.lng.toFixed(6)}</span>
                   </div>
                 </div>
 
                 <div className="flex justify-end gap-2 pt-4 border-t mt-4">
-                  <Button variant="outline" type="button" onClick={() => setIsFormOpen(false)} className="px-4">
+                  <Button
+                    variant="outline"
+                    type="button"
+                    onClick={() => setIsFormOpen(false)}
+                    className="px-4">
                     إلغاء
                   </Button>
-                  <Button type="submit" disabled={isSubmitting} className="px-4">
-                    {isSubmitting ? <Loader2 className="w-4 h-4 animate-spin" /> : "حفظ"}
+                  <Button
+                    type="submit"
+                    disabled={isSubmitting}
+                    className="px-4">
+                    {isSubmitting ? (
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                    ) : (
+                      "حفظ"
+                    )}
                   </Button>
                 </div>
               </CardContent>

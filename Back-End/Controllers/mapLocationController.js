@@ -6,7 +6,11 @@ const jwt = require("jsonwebtoken");
 const getIsAllowedAgency = async (req) => {
   if (req.user && req.user.type === "agency" && req.user.agencyId) {
     const agency = await Agency.findById(req.user.agencyId);
-    return agency && (agency.name === "الامن و السلامة" || agency.name === "التنمية الصحية");
+    return (
+      agency &&
+      (agency.name === "لجنة الامن و السلامة" ||
+        agency.name === "لجنة التنمية الصحية")
+    );
   }
   return false;
 };
@@ -18,10 +22,17 @@ const getMapLocations = async (req, res) => {
     const token = req.header("Authorization")?.replace("Bearer ", "");
     if (token) {
       try {
-        const decoded = jwt.verify(token, process.env.JWT_SECRET || "your-secret-key");
+        const decoded = jwt.verify(
+          token,
+          process.env.JWT_SECRET || "your-secret-key",
+        );
         if (decoded.type === "agency" && decoded.agencyId) {
           const agency = await Agency.findById(decoded.agencyId);
-          if (agency && (agency.name === "الامن و السلامة" || agency.name === "التنمية الصحية")) {
+          if (
+            agency &&
+            (agency.name === "لجنة الامن و السلامة" ||
+              agency.name === "لجنة التنمية الصحية")
+          ) {
             includeCustom = true;
           }
         }
@@ -35,7 +46,10 @@ const getMapLocations = async (req, res) => {
       query = { isCustom: { $ne: true } };
     }
 
-    const locations = await MapLocation.find(query).sort({ category: 1, name: 1 });
+    const locations = await MapLocation.find(query).sort({
+      category: 1,
+      name: 1,
+    });
     res.json({
       success: true,
       count: locations.length,
@@ -71,7 +85,8 @@ const createCustomLocation = async (req, res) => {
     if (!isAllowed) {
       return res.status(403).json({
         success: false,
-        message: "Access denied. Only specific agencies can create custom markers.",
+        message:
+          "Access denied. Only specific agencies can create custom markers.",
       });
     }
 
@@ -121,7 +136,8 @@ const updateCustomLocation = async (req, res) => {
     if (!isAllowed) {
       return res.status(403).json({
         success: false,
-        message: "Access denied. Only specific agencies can modify custom markers.",
+        message:
+          "Access denied. Only specific agencies can modify custom markers.",
       });
     }
 
@@ -170,7 +186,8 @@ const deleteCustomLocation = async (req, res) => {
     if (!isAllowed) {
       return res.status(403).json({
         success: false,
-        message: "Access denied. Only specific agencies can delete custom markers.",
+        message:
+          "Access denied. Only specific agencies can delete custom markers.",
       });
     }
 
