@@ -9,6 +9,7 @@ const {
   updateMySubmission,
   getAllSubmissions,
   downloadSubmissionFile,
+  deleteSubmission,
 } = require("../Controllers/submissionController");
 const {
   governorOnly,
@@ -52,5 +53,8 @@ router.get(
   governorOrAgency,
   downloadSubmissionFile
 );
+
+// Delete submission (governor only)
+router.delete("/:id", governorOnly, deleteSubmission);
 
 module.exports = router;

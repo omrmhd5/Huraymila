@@ -67,8 +67,8 @@ const RequiredStandards = ({ assignedStandards, loading = false }) => {
         // Error loading submissions
         toast.error(
           language === "ar"
-            ? "فشل في تحميل التقديمات"
-            : "Failed to load submissions"
+            ? "فشل في تحميل الشواهد"
+            : "Failed to load submissions",
         );
       } finally {
         setSubmissionsLoading(false);
@@ -168,7 +168,7 @@ const RequiredStandards = ({ assignedStandards, loading = false }) => {
     mode,
     standardId,
     standardTitle,
-    submission = null
+    submission = null,
   ) => {
     setSubmissionModal({
       isOpen: true,
@@ -194,7 +194,7 @@ const RequiredStandards = ({ assignedStandards, loading = false }) => {
       if (submissionModal.mode === "add") {
         // Find the standard to get the standardNumber
         const standard = assignedStandards.find(
-          (s) => s.id === submissionModal.standardId
+          (s) => s.id === submissionModal.standardId,
         );
         if (!standard) {
           throw new Error("Standard not found");
@@ -210,7 +210,7 @@ const RequiredStandards = ({ assignedStandards, loading = false }) => {
         const response = await agencyApi.createSubmission(
           token,
           apiData,
-          submissionData.files
+          submissionData.files,
         );
 
         // Update local state
@@ -226,7 +226,7 @@ const RequiredStandards = ({ assignedStandards, loading = false }) => {
         toast.success(
           language === "ar"
             ? "تم إنشاء التقديم بنجاح"
-            : "Submission created successfully"
+            : "Submission created successfully",
         );
 
         // Optionally trigger a refresh of standards to update their status
@@ -235,7 +235,7 @@ const RequiredStandards = ({ assignedStandards, loading = false }) => {
           window.dispatchEvent(
             new CustomEvent("submissionUpdated", {
               detail: { standardNumber: standard.number },
-            })
+            }),
           );
         }
       } else if (submissionModal.mode === "edit") {
@@ -255,7 +255,7 @@ const RequiredStandards = ({ assignedStandards, loading = false }) => {
           token,
           submissionModal.submission._id,
           { ...updateData, existingFileUrls },
-          submissionData.files
+          submissionData.files,
         );
 
         // Update local state
@@ -263,7 +263,7 @@ const RequiredStandards = ({ assignedStandards, loading = false }) => {
           const standardNumber = submissionModal.submission.standardNumber;
           const existingSubmissions = prev[standardNumber] || [];
           const updatedSubmissions = existingSubmissions.map((sub) =>
-            sub._id === response.data._id ? response.data : sub
+            sub._id === response.data._id ? response.data : sub,
           );
           return {
             ...prev,
@@ -274,7 +274,7 @@ const RequiredStandards = ({ assignedStandards, loading = false }) => {
         toast.success(
           language === "ar"
             ? "تم تحديث التقديم بنجاح"
-            : "Submission updated successfully"
+            : "Submission updated successfully",
         );
 
         // Optionally trigger a refresh of standards to update their status
@@ -285,7 +285,7 @@ const RequiredStandards = ({ assignedStandards, loading = false }) => {
               detail: {
                 standardNumber: submissionModal.submission.standardNumber,
               },
-            })
+            }),
           );
         }
       }
@@ -294,7 +294,7 @@ const RequiredStandards = ({ assignedStandards, loading = false }) => {
       toast.error(
         language === "ar"
           ? "حدث خطأ في معالجة التقديم"
-          : "Error processing submission"
+          : "Error processing submission",
       );
     }
   };
@@ -639,7 +639,7 @@ const RequiredStandards = ({ assignedStandards, loading = false }) => {
                               "view",
                               standard.id,
                               standard.standard,
-                              getSubmissionForStandard(standard.id)
+                              getSubmissionForStandard(standard.id),
                             )
                           }
                           className={
@@ -658,7 +658,7 @@ const RequiredStandards = ({ assignedStandards, loading = false }) => {
                               "edit",
                               standard.id,
                               standard.standard,
-                              getSubmissionForStandard(standard.id)
+                              getSubmissionForStandard(standard.id),
                             )
                           }
                           className={
@@ -678,7 +678,7 @@ const RequiredStandards = ({ assignedStandards, loading = false }) => {
                           openSubmissionModal(
                             "add",
                             standard.id,
-                            standard.standard
+                            standard.standard,
                           )
                         }
                         className={

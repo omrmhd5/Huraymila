@@ -25,6 +25,7 @@ import {
   getAllStandardsByNumber,
   getSubmissionsByStandardNumber,
   updateSubmissionStatus,
+  deleteSubmission,
   getAllAgencies,
 } from "@/lib/api";
 import { mapBackendStandardsToLanguageContext } from "@/lib/utils";
@@ -40,6 +41,7 @@ import {
   AlertCircle,
   XCircle,
   X,
+  Trash2,
 } from "lucide-react";
 
 const SubmissionsView = () => {
@@ -54,6 +56,8 @@ const SubmissionsView = () => {
   const [loading, setLoading] = useState(true);
   const [selectedAgency, setSelectedAgency] = useState("all");
   const [agenciesList, setAgenciesList] = useState([]);
+  const [deleteConfirmId, setDeleteConfirmId] = useState(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   // Find the standard by ID (handle both number and ObjectId)
   const standard = standardsList.find(
@@ -202,6 +206,29 @@ const SubmissionsView = () => {
           ? "فشل في تحديث حالة المستند"
           : "Failed to update submission status"
       );
+    }
+  };
+
+  const handleDeleteSubmission = async () => {
+    if (!deleteConfirmId) return;
+    try {
+      setIsDeleting(true);
+      await deleteSubmission(deleteConfirmId, token);
+      setSubmissions((prev) => prev.filter((s) => s._id !== deleteConfirmId));
+      setDeleteConfirmId(null);
+      toast.success(
+        language === "ar"
+          ? "تم حذف المستند بنجاح"
+          : "Submission deleted successfully"
+      );
+    } catch (error) {
+      toast.error(
+        language === "ar"
+          ? "فشل في حذف المستند"
+          : "Failed to delete submission"
+      );
+    } finally {
+      setIsDeleting(false);
     }
   };
 
@@ -826,6 +853,16 @@ const SubmissionsView = () => {
                         )}
                       </Button>
                     )}
+
+                    {/* Delete Button */}
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      onClick={() => setDeleteConfirmId(submission._id)}
+                      className="w-full mt-1 text-red-500 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-950 gap-1 flex items-center justify-center border border-red-200 dark:border-red-800">
+                      <Trash2 className="w-4 h-4" />
+                      {language === "ar" ? "حذف المستند" : "Delete Submission"}
+                    </Button>
                   </CardContent>
                 </Card>
               ))}
@@ -854,6 +891,45 @@ const SubmissionsView = () => {
           </DialogHeader>
           <div className="flex justify-center items-center py-4">
             {renderModalContent()}
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Delete Confirmation Dialog */}
+      <Dialog open={!!deleteConfirmId} onOpenChange={(open) => { if (!open) setDeleteConfirmId(null); }}>
+        <DialogContent className="max-w-sm">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2 text-red-600">
+              <Trash2 className="w-5 h-5" />
+              {language === "ar" ? "تأكيد الحذف" : "Confirm Deletion"}
+            </DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 py-2">
+            <p className={`text-sm text-muted-foreground ${language === "ar" ? "text-right font-arabic" : "text-left"}`}>
+              {language === "ar"
+                ? "هل أنت متأكد من رغبتك في حذف هذا المستند؟ سيتم حذف المستند وجميع ملفاته بشكل نهائي ولا يمكن التراجع عن هذا الإجراء."
+                : "Are you sure you want to delete this submission? The submission and all its files will be permanently deleted and this action cannot be undone."}
+            </p>
+            <div className="flex gap-2 justify-end">
+              <Button
+                variant="outline"
+                onClick={() => setDeleteConfirmId(null)}
+                disabled={isDeleting}>
+                {language === "ar" ? "إلغاء" : "Cancel"}
+              </Button>
+              <Button
+                variant="destructive"
+                onClick={handleDeleteSubmission}
+                disabled={isDeleting}
+                className="bg-red-600 hover:bg-red-700 gap-1">
+                {isDeleting ? (
+                  <span className="animate-spin w-4 h-4 border-2 border-white border-t-transparent rounded-full inline-block" />
+                ) : (
+                  <Trash2 className="w-4 h-4" />
+                )}
+                {language === "ar" ? "حذف نهائي" : "Delete Permanently"}
+              </Button>
+            </div>
           </div>
         </DialogContent>
       </Dialog>

@@ -444,6 +444,60 @@ const getAllSubmissions = async (req, res) => {
   }
 };
 
+// Delete submission (governor only) — also deletes physical media files
+const deleteSubmission = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const submission = await Submission.findById(id);
+
+    if (!submission) {
+      return res.status(404).json({
+        success: false,
+        message: "Submission not found",
+      });
+    }
+
+    // Delete physical files if any exist
+    if (submission.filesUrls && submission.filesUrls.length > 0) {
+      deletePhysicalFiles(submission.filesUrls);
+    }
+
+    // Also try to remove the submission's folder entirely
+    const path = require("path");
+    const fs = require("fs");
+    const submissionFolder = path.join(
+      __dirname,
+      "..",
+      "public",
+      "submissions",
+      id
+    );
+    if (fs.existsSync(submissionFolder)) {
+      fs.rmSync(submissionFolder, { recursive: true, force: true });
+    }
+
+    await Submission.findByIdAndDelete(id);
+
+    // Recalculate the standard's status
+    try {
+      await updateStandardStatus(submission.standardNumber);
+    } catch (statusError) {
+      // Don't fail the deletion if status update fails
+    }
+
+    res.json({
+      success: true,
+      message: "Submission and its files deleted successfully",
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Error deleting submission",
+      error: error.message,
+    });
+  }
+};
+
 module.exports = {
   createSubmission,
   getSubmissionsByStandardNumber,
@@ -453,4 +507,5 @@ module.exports = {
   updateMySubmission,
   getAllSubmissions,
   downloadSubmissionFile,
+  deleteSubmission,
 };
