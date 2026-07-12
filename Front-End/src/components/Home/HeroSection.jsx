@@ -21,7 +21,7 @@ const HeroSection = () => {
     { value: "25+", label: t("home.healthInitiatives"), icon: Heart },
     { value: "500+", label: t("home.activeVolunteers"), icon: Users },
     { value: "15+", label: t("home.environmentalProjects"), icon: Leaf },
-    { value: "21", label: t("home.partnerOrganizations"), icon: Building2 },
+    { value: "18", label: t("home.partnerOrganizations"), icon: Building2 },
   ];
   const isRTL = language === "ar";
 

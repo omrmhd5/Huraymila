@@ -109,14 +109,33 @@ const About = () => {
                 </Badge>
               </AnimatedSection>
               <AnimatedSection animation="fadeIn" delay={300}>
-                <div className="max-w-5xl mx-auto mb-8">
+                <div className="max-w-5xl mx-auto mb-8 flex flex-col items-center">
+                  <img
+                    src="/assets/Prince.png"
+                    alt="صاحب السمو الملكي الأمير/ فيصل بن بندر بن عبدالعزيز"
+                    className="w-48 h-60 md:w-56 md:h-72 object-cover rounded-2xl shadow-lg border-4 border-primary/20 mb-6 transition-transform duration-300 hover:scale-105"
+                  />
                   <p
                     className={`text-lg md:text-xl text-foreground/90 leading-relaxed bg-primary/5 border border-primary/20 rounded-lg p-6 ${
-                      isRTL ? "font-arabic" : "font-sans"
+                      isRTL ? "font-arabic text-center" : "font-sans text-center"
                     }`}>
-                    {isRTL
-                      ? "انطلق برنامج مدينة حريملاء الصحية بتوجيهٍ كريم من صاحب السمو الملكي أمير منطقة الرياض – حفظه الله – ليكون نموذجًا تنمويًا شاملًا يُعزز الصحة العامة، ويحمي البيئة، ويُفعّل المشاركة المجتمعية، انسجامًا مع رؤية المملكة 2030 وبرنامج جودة الحياة"
-                      : "The Huraymila Healthy City Program was launched under the gracious directive of His Royal Highness the Prince of Riyadh Region – may God protect him – to be a comprehensive development model that promotes public health, protects the environment, and activates community participation, in line with the Kingdom's Vision 2030 and the Quality of Life Program"}
+                    {isRTL ? (
+                      <>
+                        انطلق برنامج مدينة حريملاء الصحية بتوجيهٍ كريم من{" "}
+                        <span className="text-yellow-600 dark:text-yellow-400 font-bold">
+                          صاحب السمو الملكي الأمير/ فيصل بن بندر بن عبدالعزيز
+                        </span>{" "}
+                        أمير منطقة الرياض – حفظه الله – ليكون نموذجًا تنمويًا شاملًا يُعزز الصحة العامة، ويحمي البيئة، ويُفعّل المشاركة المجتمعية، انسجامًا مع رؤية المملكة 2030 وبرنامج جودة الحياة
+                      </>
+                    ) : (
+                      <>
+                        The Huraymila Healthy City Program was launched under the gracious directive of{" "}
+                        <span className="text-yellow-600 dark:text-yellow-400 font-bold">
+                          His Royal Highness Prince Faisal bin Bandar bin Abdulaziz
+                        </span>{" "}
+                        the Prince of Riyadh Region – may God protect him – to be a comprehensive development model that promotes public health, protects the environment, and activates community participation, in line with the Kingdom's Vision 2030 and the Quality of Life Program
+                      </>
+                    )}
                   </p>
                 </div>
               </AnimatedSection>
@@ -130,7 +149,7 @@ const About = () => {
               </AnimatedSection>
               <AnimatedSection animation="fadeIn" delay={600}>
                 <p
-                  className={`text-xl text-muted-foreground max-w-4xl mx-auto leading-relaxed ${
+                  className={`text-xl text-muted-foreground max-w-4xl mx-auto leading-relaxed whitespace-pre-line ${
                     isRTL ? "font-arabic" : "font-sans"
                   }`}>
                   {t("aboutPage.description")}
@@ -219,7 +238,7 @@ const About = () => {
         </section>
       </AnimatedSection>
 
-      {/* Statistics */}
+      {/* Statistics
       <AnimatedSection animation="fadeInUp" delay={400}>
         <section className="py-20 bg-background">
           <div className="container mx-auto px-4">
@@ -264,8 +283,9 @@ const About = () => {
           </div>
         </section>
       </AnimatedSection>
+      */}
 
-      {/* Features */}
+      {/* Features
       <AnimatedSection animation="fadeInUp" delay={600}>
         <section className="py-20 bg-muted/30">
           <div className="container mx-auto px-4">
@@ -316,6 +336,7 @@ const About = () => {
           </div>
         </section>
       </AnimatedSection>
+      */}
 
       {/* Contact */}
       <AnimatedSection animation="fadeInUp" delay={1200}>

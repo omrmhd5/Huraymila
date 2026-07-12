@@ -58,68 +58,6 @@ const AllInitiatives = () => {
 
   const isRTL = language === "ar";
 
-  // Mock initiatives to append to backend data
-  const getMockInitiatives = () => [
-    {
-      _id: "mock-1",
-      id: "mock-1",
-      title:
-        language === "ar" ? "ورشة التثقيف الصحي" : "Health Education Workshop",
-      description:
-        language === "ar"
-          ? "انضم إلينا في ورشة عمل تفاعلية لتعزيز الوعي الصحي وتعلم أساسيات الحياة الصحية. سنغطي موضوعات التغذية، والتمارين الرياضية، والوقاية من الأمراض."
-          : "Join us for an interactive workshop to promote health awareness and learn the basics of healthy living. We'll cover topics on nutrition, exercise, and disease prevention.",
-      startDate: new Date("2025-11-15").toISOString(),
-      endDate: new Date("2025-11-16").toISOString(),
-      status: "gathering volunteers",
-      currentVolunteers: 12,
-      maxVolunteers: 30,
-      imageUrl: healthWorkshopImg,
-      isMock: true,
-      volunteers: [],
-    },
-    {
-      _id: "mock-2",
-      id: "mock-2",
-      title:
-        language === "ar"
-          ? "مبادرة الحديقة الخضراء"
-          : "Green Garden Initiative",
-      description:
-        language === "ar"
-          ? "ساعدنا في إنشاء مساحات خضراء جميلة في حريملاء. سنقوم بزراعة الأشجار والنباتات وتنسيق الحدائق لتعزيز جمال مدينتنا وجودة الهواء."
-          : "Help us create beautiful green spaces in Huraymila. We'll plant trees and plants, and landscape gardens to enhance our city's beauty and air quality.",
-      startDate: new Date("2025-11-20").toISOString(),
-      endDate: new Date("2025-11-22").toISOString(),
-      status: "active",
-      currentVolunteers: 25,
-      maxVolunteers: 40,
-      imageUrl: greenGardenImg,
-      isMock: true,
-      volunteers: [],
-    },
-    {
-      _id: "mock-3",
-      id: "mock-3",
-      title:
-        language === "ar"
-          ? "فعاليات المجتمع النجدي"
-          : "Najdi Community Activities",
-      description:
-        language === "ar"
-          ? "احتفل بالتراث النجدي الأصيل من خلال الأنشطة المجتمعية المتنوعة. فعاليات ثقافية، ألعاب تراثية، ومأكولات شعبية في أجواء عائلية رائعة."
-          : "Celebrate authentic Najdi heritage through diverse community activities. Cultural events, traditional games, and popular foods in a wonderful family atmosphere.",
-      startDate: new Date("2025-12-01").toISOString(),
-      endDate: new Date("2025-12-03").toISOString(),
-      status: "gathering volunteers",
-      currentVolunteers: 18,
-      maxVolunteers: 50,
-      imageUrl: communityActivitiesImg,
-      isMock: true,
-      volunteers: [],
-    },
-  ];
-
   // Load initiatives on component mount and language change
   useEffect(() => {
     loadInitiatives();
@@ -132,16 +70,9 @@ const AllInitiatives = () => {
       const response = await initiativeApi.getAllInitiatives();
       const backendInitiatives = response.data || [];
 
-      // Append mock initiatives to backend data
-      const mockInitiatives = getMockInitiatives();
-      const allInitiatives = [...backendInitiatives, ...mockInitiatives];
-
-      setInitiatives(allInitiatives);
+      setInitiatives(backendInitiatives);
     } catch (error) {
-      // Error loading initiatives - show only mock data
-      const mockInitiatives = getMockInitiatives();
-      setInitiatives(mockInitiatives);
-      setError(null); // Don't show error if we have mock data
+      setError(error.message);
     } finally {
       setLoading(false);
     }

@@ -24,6 +24,7 @@ import { Mail, Phone, MapPin, Clock, Send, MessageSquare, Youtube } from "lucide
 import { useAuth } from "@/contexts/AuthContext";
 import { useTheme } from "@/contexts/ThemeContext";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useLocation } from "react-router-dom";
 import { toast } from "sonner";
 
 // Custom X Logo Component
@@ -37,11 +38,15 @@ const Contact = () => {
   const { user, loading } = useAuth();
   const { language } = useTheme();
   const { t } = useLanguage();
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  const initialSubject = queryParams.get("subject") || "";
+
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     phone: "",
-    subject: "",
+    subject: initialSubject,
     message: "",
   });
   const [submitting, setSubmitting] = useState(false);
@@ -277,6 +282,9 @@ const Contact = () => {
                             </SelectItem>
                             <SelectItem value="volunteering">
                               {t("contact.volunteering")}
+                            </SelectItem>
+                            <SelectItem value="successStories">
+                              {t("contact.successStories")}
                             </SelectItem>
                             <SelectItem value="complaint">
                               {t("contact.complaintSuggestion")}

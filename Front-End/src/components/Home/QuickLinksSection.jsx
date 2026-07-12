@@ -1,7 +1,7 @@
 import React from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { MessageSquare, Search, LogIn, ArrowRight } from "lucide-react";
+import { MessageSquare, Search, LogIn, ArrowRight, Share2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useTheme } from "@/contexts/ThemeContext";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -23,7 +23,7 @@ const QuickLinksSection = () => {
       title: t("quickLinksSection.links.submitReport"),
       icon: MessageSquare,
       color: "bg-red-500",
-      href: "/report",
+      href: "/contact",
     },
     {
       id: 2,
@@ -32,15 +32,13 @@ const QuickLinksSection = () => {
       color: "bg-green-500",
       href: "/initiatives",
     },
-    /*
     {
       id: 3,
-      title: t("quickLinksSection.links.login"),
-      icon: LogIn,
+      title: t("quickLinksSection.links.shareSuccessStory"),
+      icon: Share2,
       color: "bg-blue-500",
-      href: "/login",
+      href: "/contact?subject=successStories",
     },
-    */
   ];
   const isRTL = language === "ar";
 
@@ -58,7 +56,7 @@ const QuickLinksSection = () => {
         </div>
 
         {/* Quick Links Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-2xl mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
           {quickLinks.map((link) => {
             const IconComponent = link.icon;
             return (

@@ -42,9 +42,11 @@ const Footer = () => {
           {/* About Section */}
           <div className="lg:col-span-1">
             <div className="flex items-center gap-3 mb-4">
-              <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-lg">ح</span>
-              </div>
+              <img
+                src="/assets/Logo.png"
+                alt="Logo"
+                className="w-12 h-12 object-contain"
+              />
               <h3 className="text-lg font-bold text-primary">
                 {t("nav.healthyCity")}
               </h3>

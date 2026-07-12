@@ -18,10 +18,10 @@ const TimelineSection = () => {
   const phases = [
     {
       year: "2022",
-      title: isRTL ? "التأسيس والتخطيط" : "Foundation & Planning",
+      title: isRTL ? "التأسيس والانطلاق" : "Foundation & Launch",
       description: isRTL
-        ? "وضع الرؤية الاستراتيجية وتحديد الأهداف وتأسيس الهياكل التنظيمية الأولية لمبادرة حريملاء المحافظة الصحية"
-        : "Setting the strategic vision, defining goals, and establishing the initial organizational structures for the Huraymila Healthy Governorate initiative",
+        ? "وضع الرؤية الاستراتيجية وتحديد الأهداف وتأسيس الهياكل التنظيمية الأولية لمبادرة حريملاء المحافظة الصحية وإطلاقها رسمياً"
+        : "Setting the strategic vision, defining goals, establishing the initial organizational structures and launching it officially",
       status: isRTL ? "مكتمل" : "Completed",
       icon: CheckCircle2,
       badgeColor:
@@ -30,11 +30,11 @@ const TimelineSection = () => {
       iconBg: "bg-green-500 text-white shadow-green-500/20",
     },
     {
-      year: "2025",
-      title: isRTL ? "إطلاق البرنامج" : "Program Launch",
+      year: "2023",
+      title: isRTL ? "التفعيل والتوسع" : "Activation & Expansion",
       description: isRTL
-        ? "بداية المبادرات الأساسية وتأسيس الشراكات واللجان الاستراتيجية"
-        : "Start of basic initiatives and establishing strategic partnerships and committees",
+        ? "بداية تفعيل المبادرات الأساسية وتأسيس الشراكات وتشكيل اللجان الاستراتيجية لبرنامج المدينة الصحية"
+        : "Start of activating basic initiatives, establishing partnerships and forming strategic committees for the healthy city program",
       status: isRTL ? "مكتمل" : "Completed",
       icon: Rocket,
       badgeColor:
@@ -43,29 +43,30 @@ const TimelineSection = () => {
       iconBg: "bg-green-500 text-white shadow-green-500/20",
     },
     {
-      year: "2026",
-      title: isRTL ? "التوسع والتطوير" : "Expansion & Development",
+      year: "2024–2025",
+      title: isRTL ? "التطوير والجاهزية" : "Development & Readiness",
       description: isRTL
-        ? "تنفيذ المشاريع الكبرى وزيادة المشاركة واللجان المجتمعية"
-        : "Implementation of major projects and increased community participation",
-      status: isRTL ? "قيد التنفيذ" : "In Progress",
+        ? "تنفيذ المشاريع الكبرى وقياس مؤشرات الأداء وجاهزية اللجان والجهات الشريكة"
+        : "Implementation of major projects, measuring performance indicators, and readiness of committees and partner agencies",
+      status: isRTL ? "مكتمل" : "Completed",
       icon: TrendingUp,
+      badgeColor:
+        "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300",
+      lineColor: "bg-green-500",
+      iconBg: "bg-green-500 text-white shadow-green-500/20",
+    },
+    {
+      year: "2026",
+      title: isRTL ? "الاعتماد والاستدامة" : "Accreditation & Sustainability",
+      description: isRTL
+        ? "الحصول على الاعتماد الرسمي لمدينة حريملاء الصحية من منظمة الصحة العالمية والعمل على استدامة البرامج والمبادرات"
+        : "Obtaining official WHO accreditation for Huraymila Healthy City and working on program and initiative sustainability",
+      status: isRTL ? "قيد التنفيذ" : "In Progress",
+      icon: Award,
       badgeColor:
         "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300",
       lineColor: "bg-blue-500",
       iconBg: "bg-blue-500 text-white shadow-blue-500/20",
-    },
-    {
-      year: "2028",
-      title: isRTL ? "الاعتماد العالمي والمحلي (KSA)" : "Global & National Accreditation (KSA)",
-      description: isRTL
-        ? "التقدم للحصول على الاعتماد الرسمي لمدينة حريملاء الصحية من منظمة الصحة العالمية وبرنامج المدن الصحية في المملكة"
-        : "Apply for official WHO and KSA Saudi Healthy Cities Program accreditation",
-      status: isRTL ? "مخطط" : "Planned",
-      icon: Award,
-      badgeColor: "bg-muted text-muted-foreground",
-      lineColor: "bg-muted",
-      iconBg: "bg-muted text-muted-foreground",
     },
   ];
 
