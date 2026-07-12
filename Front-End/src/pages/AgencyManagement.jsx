@@ -50,7 +50,7 @@ import { mapBackendStandardsToLanguageContext } from "@/lib/utils";
 const AgencyManagement = () => {
   const { user, loading, token } = useAuth();
   const { language } = useTheme();
-  const { t, standards } = useLanguage();
+  const { t } = useLanguage();
   const [showAddForm, setShowAddForm] = useState(false);
   const [editingAgency, setEditingAgency] = useState(null);
   const [agenciesList, setAgenciesList] = useState([]);
@@ -110,10 +110,11 @@ const AgencyManagement = () => {
         ]);
         setAgenciesList(agenciesData);
 
-        // Map backend standards to language context for proper text display
+        // Map backend standards using backend values
         const mappedStandards = mapBackendStandardsToLanguageContext(
           standardsData,
-          standards
+          undefined,
+          language
         );
         setAllStandards(mappedStandards);
       } catch (error) {
@@ -122,11 +123,11 @@ const AgencyManagement = () => {
       }
     };
 
-    // Only fetch data when standards are available and token exists
-    if (standards && Array.isArray(standards) && token) {
+    // Only fetch data when token exists
+    if (token) {
       fetchData();
     }
-  }, [standards, token]);
+  }, [token, language]);
 
   // Page title for better UX
   useEffect(() => {

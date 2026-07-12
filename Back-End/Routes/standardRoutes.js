@@ -16,7 +16,7 @@ router.get("/", getStandards);
 // router.get("/number/:number", getStandardByNumber);
 
 // Protected routes (governor only)
-// router.put("/number/:number", updateStandard);
+router.put("/number/:number", governorOnly, updateStandard);
 router.patch(
   "/:number/from-submissions",
   governorOnly,

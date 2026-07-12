@@ -32,6 +32,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import {
   getAllStandardsByNumber,
   getSubmissionsByStandardNumber,
+  updateStandard,
 } from "@/lib/api";
 import {
   mapBackendStandardsToLanguageContext,
@@ -44,7 +45,10 @@ import {
   CheckCircle,
   XCircle,
   AlertCircle,
+  Plus,
+  Trash2,
 } from "lucide-react";
+import { toast } from "sonner";
 
 const StandardsManagement = () => {
   const { language } = useTheme();
@@ -61,6 +65,15 @@ const StandardsManagement = () => {
   const [loading, setLoading] = useState(true);
   const [submissionsData, setSubmissionsData] = useState({});
 
+  // Edit standard states
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [editStandardNumber, setEditStandardNumber] = useState(null);
+  const [editStandardAr, setEditStandardAr] = useState("");
+  const [editStandardEn, setEditStandardEn] = useState("");
+  const [editReqsAr, setEditReqsAr] = useState([]);
+  const [editReqsEn, setEditReqsEn] = useState([]);
+  const [isSaving, setIsSaving] = useState(false);
+
   // Fetch standards from backend and map to language context
   useEffect(() => {
     const fetchStandards = async () => {
@@ -72,7 +85,8 @@ const StandardsManagement = () => {
         // Map backend data to language context data using reusable function
         const mappedStandards = mapBackendStandardsToLanguageContext(
           backendStandards,
-          languageStandards
+          languageStandards,
+          language
         );
 
         setStandardsList(mappedStandards);
@@ -259,12 +273,96 @@ const StandardsManagement = () => {
     setStandardsList(updatedStandardsList);
   };
 
+  const startEditing = (standard, e) => {
+    if (e) e.stopPropagation();
+    setEditStandardNumber(standard.number);
+    setEditStandardAr(standard.standard_ar || standard.standard || "");
+    setEditStandardEn(standard.standard_en || standard.standard || "");
+    setEditReqsAr(standard.requirements_ar || (language === "ar" ? standard.requirements : []));
+    setEditReqsEn(standard.requirements_en || (language === "en" ? standard.requirements : []));
+    setIsEditModalOpen(true);
+  };
+
+  const handleAddRequirementAr = () => {
+    setEditReqsAr([...editReqsAr, ""]);
+  };
+
+  const handleAddRequirementEn = () => {
+    setEditReqsEn([...editReqsEn, ""]);
+  };
+
+  const handleRemoveRequirementAr = (index) => {
+    setEditReqsAr(editReqsAr.filter((_, i) => i !== index));
+  };
+
+  const handleRemoveRequirementEn = (index) => {
+    setEditReqsEn(editReqsEn.filter((_, i) => i !== index));
+  };
+
+  const handleReqChangeAr = (index, value) => {
+    const updated = [...editReqsAr];
+    updated[index] = value;
+    setEditReqsAr(updated);
+  };
+
+  const handleReqChangeEn = (index, value) => {
+    const updated = [...editReqsEn];
+    updated[index] = value;
+    setEditReqsEn(updated);
+  };
+
+  const handleSaveStandard = async () => {
+    try {
+      setIsSaving(true);
+      const requirements_ar = editReqsAr.filter((r) => r.trim() !== "");
+      const requirements_en = editReqsEn.filter((r) => r.trim() !== "");
+
+      const updatedData = await updateStandard(
+        editStandardNumber,
+        {
+          standard_ar: editStandardAr,
+          standard_en: editStandardEn,
+          requirements_ar,
+          requirements_en,
+        },
+        token
+      );
+
+      const languageStandards = t("standards");
+      const mappedUpdated = mapBackendStandardsToLanguageContext(
+        [updatedData],
+        languageStandards,
+        language
+      )[0];
+
+      setStandardsList((prev) =>
+        prev.map((s) =>
+          s.number === editStandardNumber ? { ...s, ...mappedUpdated } : s
+        )
+      );
+
+      setIsEditModalOpen(false);
+      toast.success(
+        language === "ar" ? "تم تحديث المعيار بنجاح" : "Standard updated successfully"
+      );
+    } catch (err) {
+      console.error("Failed to update standard:", err);
+      toast.error(
+        language === "ar" ? "فشل تحديث المعيار" : "Failed to update standard"
+      );
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
-          <p className="text-muted-foreground">Loading standards...</p>
+          <p className="text-muted-foreground">
+            {language === "ar" ? "جاري تحميل المعايير..." : "Loading standards..."}
+          </p>
         </div>
       </div>
     );
@@ -540,14 +638,21 @@ const StandardsManagement = () => {
                       </div>
                     </TableCell>
                     <TableCell>
-                      <div className="flex flex-col gap-2">
+                      <div className="flex flex-col sm:flex-row gap-2">
                         <Button
                           size="sm"
                           variant="outline"
                           onClick={() => viewSubmissions(standard.id)}
-                          className="w-full">
+                          className="flex-1">
                           <Eye className="w-4 h-4 mr-1" />
                           {t("standardsManagement.view")}
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="secondary"
+                          onClick={(e) => startEditing(standard, e)}
+                          className="flex-1 bg-amber-50 hover:bg-amber-100 text-amber-700 hover:text-amber-800 border-amber-200 dark:bg-amber-950/40 dark:hover:bg-amber-950/60 dark:text-amber-300 transition-colors">
+                          {language === "ar" ? "تعديل" : "Edit"}
                         </Button>
                       </div>
                     </TableCell>
@@ -681,6 +786,172 @@ const StandardsManagement = () => {
               </div>
             </div>
           )}
+        </DialogContent>
+      </Dialog>
+
+      {/* Edit Standard Dialog */}
+      <Dialog open={isEditModalOpen} onOpenChange={setIsEditModalOpen}>
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className={language === "ar" ? "text-right font-arabic" : "text-left"}>
+              {language === "ar"
+                ? `تعديل المعيار رقم ${editStandardNumber}`
+                : `Edit Standard #${editStandardNumber}`}
+            </DialogTitle>
+          </DialogHeader>
+
+          <div className="space-y-6">
+            {/* Arabic Fields */}
+            <div className="space-y-4 border-b pb-6">
+              <h3 className={`text-lg font-semibold ${language === "ar" ? "text-right font-arabic text-primary" : "text-primary"}`}>
+                البيانات باللغة العربية
+              </h3>
+
+              <div className="space-y-2">
+                <label className={`block text-sm font-medium ${language === "ar" ? "text-right font-arabic" : ""}`}>
+                  نص المعيار (عربي)
+                </label>
+                <textarea
+                  value={editStandardAr}
+                  onChange={(e) => setEditStandardAr(e.target.value)}
+                  className={`flex min-h-[100px] w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 text-foreground ${language === "ar" ? "text-right font-arabic" : ""}`}
+                  dir="rtl"
+                />
+              </div>
+
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={handleAddRequirementAr}
+                    className={language === "ar" ? "font-arabic" : ""}
+                  >
+                    <Plus className="w-4 h-4 mr-1" />
+                    إضافة متطلب
+                  </Button>
+                  <label className={`text-sm font-medium ${language === "ar" ? "font-arabic" : ""}`}>
+                    المتطلبات (عربي)
+                  </label>
+                </div>
+
+                <div className="space-y-2">
+                  {editReqsAr.map((req, index) => (
+                    <div key={index} className="flex gap-2 items-center">
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => handleRemoveRequirementAr(index)}
+                        className="text-red-500 hover:text-red-700 hover:bg-red-50"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </Button>
+                      <Input
+                        value={req}
+                        onChange={(e) => handleReqChangeAr(index, e.target.value)}
+                        className={`flex-1 ${language === "ar" ? "text-right font-arabic" : ""}`}
+                        dir="rtl"
+                        placeholder={`المتطلب #${index + 1}`}
+                      />
+                    </div>
+                  ))}
+                  {editReqsAr.length === 0 && (
+                    <p className={`text-xs text-muted-foreground text-center py-2 ${language === "ar" ? "font-arabic" : ""}`}>
+                      لا توجد متطلبات مضافة حالياً
+                    </p>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            {/* English Fields */}
+            <div className="space-y-4 pb-6">
+              <h3 className={`text-lg font-semibold ${language === "ar" ? "text-right font-arabic text-primary" : "text-primary"}`}>
+                Data in English
+              </h3>
+
+              <div className="space-y-2">
+                <label className={`block text-sm font-medium ${language === "ar" ? "text-right font-arabic" : ""}`}>
+                  Standard Text (English)
+                </label>
+                <textarea
+                  value={editStandardEn}
+                  onChange={(e) => setEditStandardEn(e.target.value)}
+                  className="flex min-h-[100px] w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 text-foreground"
+                  dir="ltr"
+                />
+              </div>
+
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={handleAddRequirementEn}
+                    className={language === "ar" ? "font-arabic" : ""}
+                  >
+                    <Plus className="w-4 h-4 mr-1" />
+                    Add Requirement
+                  </Button>
+                  <label className={`text-sm font-medium ${language === "ar" ? "font-arabic" : ""}`}>
+                    Requirements (English)
+                  </label>
+                </div>
+
+                <div className="space-y-2">
+                  {editReqsEn.map((req, index) => (
+                    <div key={index} className="flex gap-2 items-center">
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => handleRemoveRequirementEn(index)}
+                        className="text-red-500 hover:text-red-700 hover:bg-red-50"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </Button>
+                      <Input
+                        value={req}
+                        onChange={(e) => handleReqChangeEn(index, e.target.value)}
+                        className="flex-1"
+                        dir="ltr"
+                        placeholder={`Requirement #${index + 1}`}
+                      />
+                    </div>
+                  ))}
+                  {editReqsEn.length === 0 && (
+                    <p className={`text-xs text-muted-foreground text-center py-2 ${language === "ar" ? "font-arabic" : ""}`}>
+                      No requirements added yet
+                    </p>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            {/* Actions */}
+            <div className="flex justify-end gap-3 border-t pt-4">
+              <Button
+                variant="outline"
+                onClick={() => setIsEditModalOpen(false)}
+                disabled={isSaving}
+                className={language === "ar" ? "font-arabic" : ""}
+              >
+                {language === "ar" ? "إلغاء" : "Cancel"}
+              </Button>
+              <Button
+                onClick={handleSaveStandard}
+                disabled={isSaving || !editStandardAr.trim() || !editStandardEn.trim()}
+                className={language === "ar" ? "font-arabic" : ""}
+              >
+                {isSaving
+                  ? (language === "ar" ? "جاري الحفظ..." : "Saving...")
+                  : (language === "ar" ? "حفظ التغييرات" : "Save Changes")}
+              </Button>
+            </div>
+          </div>
         </DialogContent>
       </Dialog>
     </div>

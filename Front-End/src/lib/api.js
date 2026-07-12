@@ -91,6 +91,23 @@ export const updateStandardFromSubmissions = async (
   return standard.data; // Returns updated standard
 };
 
+// Update standard details (governor only)
+export const updateStandard = async (standardNumber, data, token) => {
+  const response = await fetch(`${API_BASE_URL}/standards/number/${standardNumber}`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify(data),
+  });
+  if (!response.ok) {
+    throw new Error("Failed to update standard details");
+  }
+  const standard = await response.json();
+  return standard.data; // Returns updated standard
+};
+
 // Agency API functions
 export const getAllAgencies = async (token) => {
   const headers = {

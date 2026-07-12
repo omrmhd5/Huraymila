@@ -55,11 +55,28 @@ const getStandardByNumber = async (req, res) => {
 const updateStandard = async (req, res) => {
   try {
     const { number } = req.params;
-    const { assigned_agencies, status, progress } = req.body;
+    const {
+      assigned_agencies,
+      status,
+      progress,
+      standard_ar,
+      standard_en,
+      requirements_ar,
+      requirements_en,
+    } = req.body;
+
+    const updateObj = {};
+    if (assigned_agencies !== undefined) updateObj.assigned_agencies = assigned_agencies;
+    if (status !== undefined) updateObj.status = status;
+    if (progress !== undefined) updateObj.progress = progress;
+    if (standard_ar !== undefined) updateObj.standard_ar = standard_ar;
+    if (standard_en !== undefined) updateObj.standard_en = standard_en;
+    if (requirements_ar !== undefined) updateObj.requirements_ar = requirements_ar;
+    if (requirements_en !== undefined) updateObj.requirements_en = requirements_en;
 
     const standard = await Standard.findOneAndUpdate(
       { number },
-      { assigned_agencies, status, progress },
+      updateObj,
       { new: true, runValidators: true }
     ).populate("assigned_agencies", "name name_ar");
 

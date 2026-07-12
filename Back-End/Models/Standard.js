@@ -7,6 +7,22 @@ const standardSchema = new mongoose.Schema(
       required: true,
       unique: true,
     },
+    standard_ar: {
+      type: String,
+      required: true,
+    },
+    standard_en: {
+      type: String,
+      required: true,
+    },
+    requirements_ar: {
+      type: [String],
+      default: [],
+    },
+    requirements_en: {
+      type: [String],
+      default: [],
+    },
     assigned_agencies: [
       {
         type: mongoose.Schema.Types.ObjectId,

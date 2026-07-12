@@ -9,30 +9,60 @@ export function cn(...inputs) {
 // Reusable function to map backend standards to language context
 export const mapBackendStandardsToLanguageContext = (
   backendStandards,
-  languageStandards
+  languageStandards,
+  language = "ar"
 ) => {
-  // Safety check for undefined languageStandards
-  if (!languageStandards || !Array.isArray(languageStandards)) {
-    // Language standards not available, using fallback text
-    return backendStandards.map((backendStandard) => ({
-      _id: backendStandard._id,
-      id: backendStandard._id || backendStandard.number,
-      number: backendStandard.number,
-      standard: `Standard ${backendStandard.number}`,
-      requirements: [],
-      assigned_agencies:
-        backendStandard.assigned_agencies?.map(
-          (agency) => agency.name || agency.name_ar
-        ) || [],
-      status: backendStandard.status,
-      progress: backendStandard.progress,
-    }));
-  }
+  if (!backendStandards || !Array.isArray(backendStandards)) return [];
 
   return backendStandards.map((backendStandard) => {
+    // Check if MongoDB has the standard texts
+    const standardText = language === "ar" ? backendStandard.standard_ar : backendStandard.standard_en;
+    const requirementsText = language === "ar" ? backendStandard.requirements_ar : backendStandard.requirements_en;
+
+    if (standardText !== undefined && standardText !== null) {
+      return {
+        _id: backendStandard._id,
+        id: backendStandard._id || backendStandard.number,
+        number: backendStandard.number,
+        standard: standardText,
+        requirements: requirementsText || [],
+        assigned_agencies:
+          backendStandard.assigned_agencies?.map(
+            (agency) => agency.name || agency.name_ar || (typeof agency === "string" ? agency : "")
+          ) || [],
+        status: backendStandard.status,
+        progress: backendStandard.progress,
+        // Expose raw properties for editing
+        standard_ar: backendStandard.standard_ar,
+        standard_en: backendStandard.standard_en,
+        requirements_ar: backendStandard.requirements_ar || [],
+        requirements_en: backendStandard.requirements_en || [],
+      };
+    }
+
+    // Safety check for undefined languageStandards
+    if (!languageStandards || !Array.isArray(languageStandards)) {
+      // Language standards not available, using fallback text
+      return {
+        _id: backendStandard._id,
+        id: backendStandard._id || backendStandard.number,
+        number: backendStandard.number,
+        standard: `Standard ${backendStandard.number}`,
+        requirements: [],
+        assigned_agencies:
+          backendStandard.assigned_agencies?.map(
+            (agency) => agency.name || agency.name_ar || (typeof agency === "string" ? agency : "")
+          ) || [],
+        status: backendStandard.status,
+        progress: backendStandard.progress,
+      };
+    }
+
+    // Fallback: match from local language context
     const languageStandard = languageStandards.find(
-      (standard) => standard.number === backendStandard.number
+      (standard) => (standard.number === backendStandard.number || standard.id === backendStandard.number)
     );
+
     return {
       _id: backendStandard._id,
       id: backendStandard._id || backendStandard.number,
@@ -42,7 +72,7 @@ export const mapBackendStandardsToLanguageContext = (
       requirements: languageStandard?.requirements || [],
       assigned_agencies:
         backendStandard.assigned_agencies?.map(
-          (agency) => agency.name || agency.name_ar
+          (agency) => agency.name || agency.name_ar || (typeof agency === "string" ? agency : "")
         ) || [],
       status: backendStandard.status,
       progress: backendStandard.progress,
