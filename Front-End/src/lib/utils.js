@@ -37,6 +37,7 @@ export const mapBackendStandardsToLanguageContext = (
         standard_en: backendStandard.standard_en,
         requirements_ar: backendStandard.requirements_ar || [],
         requirements_en: backendStandard.requirements_en || [],
+        raw_assigned_agencies: backendStandard.assigned_agencies || [],
       };
     }
 
@@ -55,6 +56,7 @@ export const mapBackendStandardsToLanguageContext = (
           ) || [],
         status: backendStandard.status,
         progress: backendStandard.progress,
+        raw_assigned_agencies: backendStandard.assigned_agencies || [],
       };
     }
 
@@ -76,6 +78,7 @@ export const mapBackendStandardsToLanguageContext = (
         ) || [],
       status: backendStandard.status,
       progress: backendStandard.progress,
+      raw_assigned_agencies: backendStandard.assigned_agencies || [],
     };
   });
 };

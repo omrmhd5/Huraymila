@@ -26,7 +26,7 @@ const storage = multer.diskStorage({
   filename: (req, file, cb) => {
     // Use original filename for temp storage with timestamp to avoid conflicts
     const timestamp = Date.now();
-    const originalName = file.originalname;
+    const originalName = Buffer.from(file.originalname, "latin1").toString("utf8");
     const extension = path.extname(originalName);
     const nameWithoutExt = path.basename(originalName, extension);
     const filename = `${timestamp}-${nameWithoutExt}${extension}`;
@@ -69,7 +69,7 @@ const moveFilesToSubmissionFolder = (submissionId, tempFiles) => {
     const oldPath = file.path;
 
     // Use the exact original filename
-    const originalFilename = file.originalname;
+    const originalFilename = Buffer.from(file.originalname, "latin1").toString("utf8");
     let finalFilename = originalFilename;
     let counter = 1;
 
@@ -90,7 +90,7 @@ const moveFilesToSubmissionFolder = (submissionId, tempFiles) => {
       // Update file path for database storage
       movedFiles.push({
         filename: finalFilename,
-        originalname: file.originalname,
+        originalname: originalFilename,
         size: file.size,
         mimetype: file.mimetype,
         path: `/public/submissions/${submissionId}/${finalFilename}`,

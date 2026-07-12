@@ -65,6 +65,36 @@ const updateStandard = async (req, res) => {
       requirements_en,
     } = req.body;
 
+    // Handle two-way update for assigned_agencies if provided
+    if (assigned_agencies !== undefined) {
+      const oldStandard = await Standard.findOne({ number });
+      if (oldStandard) {
+        const oldAgencies = oldStandard.assigned_agencies.map(id => id.toString());
+        const newAgencies = assigned_agencies.map(id => id.toString());
+
+        // Find agencies to add
+        const agenciesToAdd = newAgencies.filter(id => !oldAgencies.includes(id));
+        // Find agencies to remove
+        const agenciesToRemove = oldAgencies.filter(id => !newAgencies.includes(id));
+
+        // Add standard to new agencies
+        for (const agencyId of agenciesToAdd) {
+          await Agency.findByIdAndUpdate(
+            agencyId,
+            { $addToSet: { assignedStandards: oldStandard._id } }
+          );
+        }
+
+        // Remove standard from removed agencies
+        for (const agencyId of agenciesToRemove) {
+          await Agency.findByIdAndUpdate(
+            agencyId,
+            { $pull: { assignedStandards: oldStandard._id } }
+          );
+        }
+      }
+    }
+
     const updateObj = {};
     if (assigned_agencies !== undefined) updateObj.assigned_agencies = assigned_agencies;
     if (status !== undefined) updateObj.status = status;

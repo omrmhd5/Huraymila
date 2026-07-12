@@ -33,6 +33,7 @@ import {
   getAllStandardsByNumber,
   getSubmissionsByStandardNumber,
   updateStandard,
+  getAllAgencies,
 } from "@/lib/api";
 import {
   mapBackendStandardsToLanguageContext,
@@ -73,13 +74,20 @@ const StandardsManagement = () => {
   const [editReqsAr, setEditReqsAr] = useState([]);
   const [editReqsEn, setEditReqsEn] = useState([]);
   const [isSaving, setIsSaving] = useState(false);
+  const [agenciesList, setAgenciesList] = useState([]);
+  const [editAssignedAgencies, setEditAssignedAgencies] = useState([]);
 
   // Fetch standards from backend and map to language context
   useEffect(() => {
     const fetchStandards = async () => {
       try {
         setLoading(true);
-        const backendStandards = await getAllStandardsByNumber();
+        const [backendStandards, agenciesData] = await Promise.all([
+          getAllStandardsByNumber(),
+          getAllAgencies(token),
+        ]);
+        setAgenciesList(agenciesData);
+        
         const languageStandards = t("standards");
 
         // Map backend data to language context data using reusable function
@@ -280,6 +288,13 @@ const StandardsManagement = () => {
     setEditStandardEn(standard.standard_en || standard.standard || "");
     setEditReqsAr(standard.requirements_ar || (language === "ar" ? standard.requirements : []));
     setEditReqsEn(standard.requirements_en || (language === "en" ? standard.requirements : []));
+    setEditAssignedAgencies(
+      standard.raw_assigned_agencies
+        ? standard.raw_assigned_agencies.map((agency) =>
+            typeof agency === "object" ? agency._id : agency
+          )
+        : []
+    );
     setIsEditModalOpen(true);
   };
 
@@ -324,6 +339,7 @@ const StandardsManagement = () => {
           standard_en: editStandardEn,
           requirements_ar,
           requirements_en,
+          assigned_agencies: editAssignedAgencies,
         },
         token
       );
@@ -801,6 +817,45 @@ const StandardsManagement = () => {
           </DialogHeader>
 
           <div className="space-y-6">
+            {/* Responsible Agencies Selection */}
+            <div className="space-y-4 border-b pb-6">
+              <h3 className={`text-lg font-semibold ${language === "ar" ? "text-right font-arabic text-primary" : "text-primary"}`}>
+                {language === "ar" ? "الجهات المسؤولة" : "Responsible Agencies"}
+              </h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3 max-h-[200px] overflow-y-auto p-2 border rounded-md">
+                {agenciesList.map((agency) => {
+                  const agencyId = agency._id;
+                  const isChecked = editAssignedAgencies.includes(agencyId);
+                  const displayName = language === "ar" ? agency.name_ar || agency.name : agency.name || agency.name_ar;
+
+                  return (
+                    <label
+                      key={agencyId}
+                      className={`flex items-center gap-3 p-2 rounded-md hover:bg-muted/50 cursor-pointer transition-colors ${
+                        language === "ar" ? "flex-row-reverse text-right" : ""
+                      }`}
+                    >
+                      <input
+                        type="checkbox"
+                        checked={isChecked}
+                        onChange={(e) => {
+                          if (e.target.checked) {
+                            setEditAssignedAgencies([...editAssignedAgencies, agencyId]);
+                          } else {
+                            setEditAssignedAgencies(editAssignedAgencies.filter((id) => id !== agencyId));
+                          }
+                        }}
+                        className="rounded border-input text-primary focus:ring-primary w-4 h-4 bg-background text-foreground"
+                      />
+                      <span className={`text-sm ${language === "ar" ? "font-arabic" : ""}`}>
+                        {displayName}
+                      </span>
+                    </label>
+                  );
+                })}
+              </div>
+            </div>
+
             {/* Arabic Fields */}
             <div className="space-y-4 border-b pb-6">
               <h3 className={`text-lg font-semibold ${language === "ar" ? "text-right font-arabic text-primary" : "text-primary"}`}>
