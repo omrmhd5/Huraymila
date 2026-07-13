@@ -548,12 +548,11 @@ const AdminDashboard = () => {
           const reportsRes = await reportApi.getAllReports(token);
           reports = (reportsRes.data || []).map((report) => ({
             id: report._id || report.id,
-            title: report.title,
-            details: report.details,
-            report_type: language === "ar" ? "مشاركة عامة" : "General Feedback",
-            status: report.status,
-            volunteer: report.volunteer,
-            filesUrls: report.filesUrls || [],
+            name: report.name || "",
+            email: report.email || "",
+            phone: report.phone || "",
+            subject: report.subject || "",
+            details: report.details || "",
             created_at: report.createdAt || report.created_at,
             reviewedBy: report.reviewedBy,
             reviewedAt: report.reviewedAt,
@@ -1261,11 +1260,9 @@ const AdminDashboard = () => {
     if (!successStorySearchTerm) return true;
     const searchLower = successStorySearchTerm.toLowerCase();
     return (
-      story.title.toLowerCase().includes(searchLower) ||
-      story.subtitle.toLowerCase().includes(searchLower) ||
-      story.description.toLowerCase().includes(searchLower) ||
-      story.author.toLowerCase().includes(searchLower) ||
-      story.quote.toLowerCase().includes(searchLower)
+      (story.author || "").toLowerCase().includes(searchLower) ||
+      (story.description || "").toLowerCase().includes(searchLower) ||
+      (story.email || "").toLowerCase().includes(searchLower)
     );
   });
 

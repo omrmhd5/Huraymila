@@ -349,46 +349,35 @@ const createPublicReport = async (req, res) => {
       });
     }
 
-    // Create report record in the database
+    // Success story submissions go ONLY to the SuccessStory collection — not reports
+    if (subject === "successStories") {
+      const SuccessStory = require("../Models/SuccessStory");
+
+      const newStory = new SuccessStory({
+        author: name,
+        email,
+        phone: phone || "",
+        description: message,
+        approvalStatus: "pending",
+      });
+
+      await newStory.save();
+
+      return res.status(201).json({
+        success: true,
+        message: "Success story submitted successfully and is pending approval",
+        data: newStory,
+      });
+    }
+
+    // All other subjects → save to Report collection
     const newReport = await Report.create({
-      volunteer: null,
       name,
       email,
       phone: phone || "",
       subject: subject || "general",
-      title: `${name} - ${subject || "اتصل بنا"}`,
       details: message,
-      filesUrls: [],
-      status: "pending",
     });
-
-    // If subject is "successStories", automatically create a pending success story
-    if (subject === "successStories") {
-      const SuccessStory = require("../Models/SuccessStory");
-      
-      const title = `${name} - قصة نجاح`;
-      const subtitle = "قصة نجاح مقدمة عبر نموذج اتصل بنا";
-      const description = message;
-      const author = name;
-      const quote = "مشاركة من اتصل بنا";
-      const before = "مرفقة بالتفاصيل";
-      const after = "مرفقة بالتفاصيل";
-
-      const newStory = new SuccessStory({
-        title,
-        subtitle,
-        description,
-        author,
-        email,
-        phone,
-        quote,
-        before,
-        after,
-        approvalStatus: "pending", // Pending approval so it goes to "قصص النجاح المعلقة"
-      });
-
-      await newStory.save();
-    }
 
     res.status(201).json({
       success: true,

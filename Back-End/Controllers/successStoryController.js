@@ -68,84 +68,25 @@ const getSuccessStoryById = async (req, res) => {
 // Create new success story (governor only - auto-approved)
 const createSuccessStory = async (req, res) => {
   try {
-    const {
-      title,
-      subtitle,
-      description,
-      author,
-      date,
-      quote,
-      before,
-      after,
-      priority,
-    } = req.body;
+    const { author, email, phone, description, date } = req.body;
 
-    // Validate required fields
-    if (
-      !title ||
-      !subtitle ||
-      !description ||
-      !author ||
-      !quote ||
-      !before ||
-      !after
-    ) {
+    if (!author || !description) {
       return res.status(400).json({
         success: false,
-        message: "All fields are required",
+        message: "Author and description are required",
       });
     }
 
-    // Create success story data
-    const successStoryData = {
-      title,
-      subtitle,
-      description,
+    const successStory = new SuccessStory({
       author,
+      email: email || "",
+      phone: phone || "",
+      description,
       date: date || new Date(),
-      quote,
-      before,
-      after,
-      approvalStatus: "approved", // Governor submissions are auto-approved
-    };
+      approvalStatus: "approved",
+    });
 
-    // Handle priority if provided
-    if (priority && priority >= 1 && priority <= 5) {
-      // Check if priority is already assigned to another success story
-      const existingSuccessStory = await SuccessStory.findOne({ priority });
-      if (existingSuccessStory) {
-        return res.status(400).json({
-          success: false,
-          message: `Priority ${priority} is already assigned to another success story`,
-        });
-      }
-      successStoryData.priority = priority;
-    }
-
-    // Create success story
-    const successStory = new SuccessStory(successStoryData);
     await successStory.save();
-
-    // Handle image upload if provided
-    if (req.file) {
-      try {
-        const imageUrl = moveImageToSuccessStoryFolder(
-          successStory._id.toString(),
-          req.file
-        );
-        successStory.imageUrl = imageUrl;
-        await successStory.save();
-      } catch (imageError) {
-        // Error handling image upload
-        // Clean up temp file
-        cleanupTempFiles([req.file]);
-        return res.status(500).json({
-          success: false,
-          message: "Error uploading image",
-          error: imageError.message,
-        });
-      }
-    }
 
     res.status(201).json({
       success: true,
@@ -153,7 +94,6 @@ const createSuccessStory = async (req, res) => {
       data: successStory,
     });
   } catch (error) {
-    // Error creating success story
     res.status(500).json({
       success: false,
       message: "Error creating success story",
@@ -245,17 +185,7 @@ const submitSuccessStoryByVolunteer = async (req, res) => {
 const updateSuccessStory = async (req, res) => {
   try {
     const { id } = req.params;
-    const {
-      title,
-      subtitle,
-      description,
-      author,
-      date,
-      quote,
-      before,
-      after,
-      priority,
-    } = req.body;
+    const { author, email, phone, description, date } = req.body;
 
     const successStory = await SuccessStory.findById(id);
     if (!successStory) {
@@ -265,87 +195,13 @@ const updateSuccessStory = async (req, res) => {
       });
     }
 
-    // Prepare update data - only include fields that are actually provided
     const updateData = {};
+    if (author) updateData.author = author;
+    if (email !== undefined) updateData.email = email;
+    if (phone !== undefined) updateData.phone = phone;
+    if (description) updateData.description = description;
+    if (date && date !== "undefined") updateData.date = date;
 
-    if (title !== undefined && title !== null && title !== "") {
-      updateData.title = title;
-    }
-    if (subtitle !== undefined && subtitle !== null && subtitle !== "") {
-      updateData.subtitle = subtitle;
-    }
-    if (
-      description !== undefined &&
-      description !== null &&
-      description !== ""
-    ) {
-      updateData.description = description;
-    }
-    if (author !== undefined && author !== null && author !== "") {
-      updateData.author = author;
-    }
-    if (
-      date !== undefined &&
-      date !== null &&
-      date !== "" &&
-      date !== "undefined"
-    ) {
-      updateData.date = date;
-    }
-    if (quote !== undefined && quote !== null && quote !== "") {
-      updateData.quote = quote;
-    }
-    if (before !== undefined && before !== null && before !== "") {
-      updateData.before = before;
-    }
-    if (after !== undefined && after !== null && after !== "") {
-      updateData.after = after;
-    }
-
-    // Handle priority update
-    if (priority !== undefined) {
-      if (priority === null || priority === "") {
-        // Remove priority
-        updateData.priority = null;
-      } else if (priority >= 1 && priority <= 5) {
-        // Check if priority is already assigned to another success story
-        const existingSuccessStory = await SuccessStory.findOne({
-          priority,
-          _id: { $ne: id },
-        });
-        if (existingSuccessStory) {
-          return res.status(400).json({
-            success: false,
-            message: `Priority ${priority} is already assigned to another success story`,
-          });
-        }
-        updateData.priority = priority;
-      }
-    }
-
-    // Handle image update if new image is provided
-    if (req.file) {
-      try {
-        // Delete old image if exists
-        if (successStory.imageUrl) {
-          deleteSuccessStoryImage(successStory.imageUrl);
-        }
-
-        // Move new image to permanent location
-        const imageUrl = moveImageToSuccessStoryFolder(id, req.file);
-        updateData.imageUrl = imageUrl;
-      } catch (imageError) {
-        // Error handling image update
-        cleanupTempFiles([req.file]);
-        return res.status(500).json({
-          success: false,
-          message: "Error updating image",
-          error: imageError.message,
-        });
-      }
-    }
-
-    // Update success story
     const updatedSuccessStory = await SuccessStory.findByIdAndUpdate(
       id,
       updateData,
@@ -358,7 +214,6 @@ const updateSuccessStory = async (req, res) => {
       data: updatedSuccessStory,
     });
   } catch (error) {
-    // Error updating success story
     res.status(500).json({
       success: false,
       message: "Error updating success story",
@@ -400,41 +255,14 @@ const deleteSuccessStory = async (req, res) => {
   }
 };
 
-// Get prioritized success stories for home page
+// Get recent success stories for home page (sorted by date)
 const getPrioritizedSuccessStories = async (req, res) => {
   try {
     const { limit = 3 } = req.query;
 
-    // Get success stories sorted by priority (ascending) then by date (descending)
-    // Priority 1 is highest, 5 is lowest, null priority comes last
-    // ONLY show approved success stories
-    const successStories = await SuccessStory.aggregate([
-      {
-        $match: { approvalStatus: "approved" }, // Filter for approved only
-      },
-      {
-        $addFields: {
-          sortPriority: {
-            $cond: {
-              if: { $eq: ["$priority", null] },
-              then: 999, // Put null priorities at the end
-              else: "$priority",
-            },
-          },
-        },
-      },
-      {
-        $sort: { sortPriority: 1, date: -1 },
-      },
-      {
-        $limit: parseInt(limit),
-      },
-      {
-        $project: {
-          sortPriority: 0, // Remove the temporary field
-        },
-      },
-    ]);
+    const successStories = await SuccessStory.find({ approvalStatus: "approved" })
+      .sort({ date: -1 })
+      .limit(parseInt(limit));
 
     res.json({
       success: true,
@@ -444,7 +272,7 @@ const getPrioritizedSuccessStories = async (req, res) => {
   } catch (error) {
     res.status(500).json({
       success: false,
-      message: "Error fetching prioritized success stories",
+      message: "Error fetching success stories",
       error: error.message,
     });
   }

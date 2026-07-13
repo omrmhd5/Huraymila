@@ -286,22 +286,22 @@ const Contact = () => {
                             />
                           </SelectTrigger>
                           <SelectContent>
-                            <SelectItem value="general">
+                            <SelectItem value="استفسار عام">
                               {t("contact.generalInquiry")}
                             </SelectItem>
-                            <SelectItem value="initiatives">
+                            <SelectItem value="مبادرات">
                               {t("contact.initiativeInfo")}
                             </SelectItem>
-                            <SelectItem value="volunteering">
+                            <SelectItem value="تطوع">
                               {t("contact.volunteering")}
                             </SelectItem>
                             <SelectItem value="successStories">
                               {t("contact.successStories")}
                             </SelectItem>
-                            <SelectItem value="complaint">
+                            <SelectItem value="شكوى أو اقتراح">
                               {t("contact.complaintSuggestion")}
                             </SelectItem>
-                            <SelectItem value="other">
+                            <SelectItem value="أخرى">
                               {t("contact.other")}
                             </SelectItem>
                           </SelectContent>
