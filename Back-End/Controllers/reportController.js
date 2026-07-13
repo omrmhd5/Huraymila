@@ -337,6 +337,73 @@ const getReportsStatistics = async (req, res) => {
   }
 };
 
+// Create a public report (Contact form submission - no authentication required)
+const createPublicReport = async (req, res) => {
+  try {
+    const { name, email, phone, subject, message } = req.body;
+
+    if (!name || !email || !message) {
+      return res.status(400).json({
+        success: false,
+        message: "Name, email, and message are required",
+      });
+    }
+
+    // Create report record in the database
+    const newReport = await Report.create({
+      volunteer: null,
+      name,
+      email,
+      phone: phone || "",
+      subject: subject || "general",
+      title: `${name} - ${subject || "اتصل بنا"}`,
+      details: message,
+      filesUrls: [],
+      status: "pending",
+    });
+
+    // If subject is "successStories", automatically create a pending success story
+    if (subject === "successStories") {
+      const SuccessStory = require("../Models/SuccessStory");
+      
+      const title = `${name} - قصة نجاح`;
+      const subtitle = "قصة نجاح مقدمة عبر نموذج اتصل بنا";
+      const description = message;
+      const author = name;
+      const quote = "مشاركة من اتصل بنا";
+      const before = "مرفقة بالتفاصيل";
+      const after = "مرفقة بالتفاصيل";
+
+      const newStory = new SuccessStory({
+        title,
+        subtitle,
+        description,
+        author,
+        email,
+        phone,
+        quote,
+        before,
+        after,
+        approvalStatus: "pending", // Pending approval so it goes to "قصص النجاح المعلقة"
+      });
+
+      await newStory.save();
+    }
+
+    res.status(201).json({
+      success: true,
+      message: "Submission received successfully",
+      data: newReport,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Error processing submission",
+      error: error.message,
+    });
+  }
+};
+
 module.exports = {
   createReport,
   getAllReports,
@@ -345,4 +412,5 @@ module.exports = {
   updateReportStatus,
   deleteReport,
   getReportsStatistics,
+  createPublicReport,
 };

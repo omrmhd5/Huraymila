@@ -59,7 +59,7 @@ const Navbar = () => {
     { href: "/", label: t("nav.home") },
     { href: "/about", label: t("nav.about") },
     { href: "/about-huraymila", label: t("nav.aboutHuraymila") },
-    { href: "/initiatives", label: t("nav.initiatives") },
+    { href: "/success-stories", label: t("nav.initiatives") },
     { href: "/news", label: t("nav.news") },
     { href: "/healthy-city-structure", label: "الهيكل التنظيمي" },
     { href: "/contact", label: t("nav.contact") },

@@ -82,10 +82,22 @@ const Contact = () => {
     }
 
     setSubmitting(true);
-
     try {
-      // Mock implementation - simulate contact form submission
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      const response = await fetch(
+        `${import.meta.env.VITE_API_BASE_URL || "http://localhost:5000/api"}/reports/public`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(formData),
+        }
+      );
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Failed to submit");
+      }
 
       toast.success(t("common.messageSent"));
       setFormData({
@@ -96,7 +108,7 @@ const Contact = () => {
         message: "",
       });
     } catch (error) {
-      toast.error(t("common.errorSending"));
+      toast.error(error.message || t("common.errorSending"));
     } finally {
       setSubmitting(false);
     }

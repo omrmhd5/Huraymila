@@ -259,7 +259,7 @@ const SortableSuccessStoryRow = ({
         isDragging && "shadow-lg border-2 border-primary"
       )}>
       {isRTL ? (
-        // Arabic order: right to left - Actions | Priority | Author | Date | Title
+        // Arabic order: right to left - Actions | Author | Date | Title
         <>
           <TableCell className="text-center">
             <div className="flex items-center justify-center gap-2">
@@ -286,27 +286,6 @@ const SortableSuccessStoryRow = ({
               </Button>
             </div>
           </TableCell>
-          <TableCell className="text-center">
-            <div className="flex items-center justify-center gap-2">
-              <div
-                {...attributes}
-                {...listeners}
-                className="cursor-grab active:cursor-grabbing p-1 hover:bg-muted rounded"
-                title={
-                  language === "ar" ? "اسحب لإعادة الترتيب" : "Drag to reorder"
-                }>
-                <GripVertical className="h-4 w-4 text-muted-foreground" />
-              </div>
-              {story.priority && (
-                <div className="flex items-center gap-1">
-                  <Star className="h-4 w-4 fill-current text-yellow-500" />
-                  <span className="text-sm font-bold text-yellow-600">
-                    {story.priority}
-                  </span>
-                </div>
-              )}
-            </div>
-          </TableCell>
           <TableCell className="text-right font-arabic">
             {story.author}
           </TableCell>
@@ -314,41 +293,20 @@ const SortableSuccessStoryRow = ({
             {formatDate(story.date)}
           </TableCell>
           <TableCell className="text-right font-arabic">
-            {story.title}
+            {story.title || story.description?.substring(0, 50)}
           </TableCell>
         </>
       ) : (
-        // English order: left to right - Title | Date | Author | Priority | Actions
+        // English order: left to right - Title | Date | Author | Actions
         <>
           <TableCell className="text-left font-english">
-            {story.title}
+            {story.title || story.description?.substring(0, 50)}
           </TableCell>
           <TableCell className="text-left font-english">
             {formatDate(story.date)}
           </TableCell>
           <TableCell className="text-left font-english">
             {story.author}
-          </TableCell>
-          <TableCell className="text-center">
-            <div className="flex items-center justify-center gap-2">
-              <div
-                {...attributes}
-                {...listeners}
-                className="cursor-grab active:cursor-grabbing p-1 hover:bg-muted rounded"
-                title={
-                  language === "ar" ? "اسحب لإعادة الترتيب" : "Drag to reorder"
-                }>
-                <GripVertical className="h-4 w-4 text-muted-foreground" />
-              </div>
-              {story.priority && (
-                <div className="flex items-center gap-1">
-                  <Star className="h-4 w-4 fill-current text-yellow-500" />
-                  <span className="text-sm font-bold text-yellow-600">
-                    {story.priority}
-                  </span>
-                </div>
-              )}
-            </div>
           </TableCell>
           <TableCell className="text-center">
             <div className="flex items-center justify-center gap-2">
@@ -2028,126 +1986,47 @@ const AdminDashboard = () => {
                       key={story._id}
                       className="border-l-4 border-l-purple-500">
                       <CardContent className="p-6">
-                        <div className="flex justify-between items-start mb-4">
-                          <div className="flex-1">
-                            <h3
-                              className={`text-lg font-semibold mb-2 ${
-                                language === "ar"
-                                  ? "font-arabic"
-                                  : "font-english"
-                              }`}>
-                              {story.title}
-                            </h3>
-                            <p
-                              className={`text-sm font-medium text-muted-foreground mb-2 ${
-                                language === "ar"
-                                  ? "font-arabic"
-                                  : "font-english"
-                              }`}>
-                              {story.subtitle}
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                          <div>
+                            <p className={`text-xs text-muted-foreground mb-1 ${language === "ar" ? "font-arabic text-right" : "font-english"}`}>
+                              {language === "ar" ? "الاسم الكامل" : "Full Name"}
                             </p>
-                            <p
-                              className={`text-muted-foreground mb-3 ${
-                                language === "ar"
-                                  ? "font-arabic"
-                                  : "font-english"
-                              }`}>
-                              {story.description}
+                            <p className={`font-medium ${language === "ar" ? "font-arabic text-right" : "font-english"}`}>
+                              {story.author || "—"}
                             </p>
-                            <div className="mb-3 p-3 bg-muted/50 rounded-lg italic">
-                              <p
-                                className={`text-sm ${
-                                  language === "ar"
-                                    ? "font-arabic"
-                                    : "font-english"
-                                }`}>
-                                "{story.quote}"
-                              </p>
-                            </div>
-                            <div className="grid md:grid-cols-2 gap-4 mb-3">
-                              <div>
-                                <h4
-                                  className={`text-sm font-semibold mb-1 ${
-                                    language === "ar"
-                                      ? "font-arabic"
-                                      : "font-english"
-                                  }`}>
-                                  {language === "ar" ? "قبل:" : "Before:"}
-                                </h4>
-                                <p
-                                  className={`text-sm text-muted-foreground ${
-                                    language === "ar"
-                                      ? "font-arabic"
-                                      : "font-english"
-                                  }`}>
-                                  {story.before}
-                                </p>
-                              </div>
-                              <div>
-                                <h4
-                                  className={`text-sm font-semibold mb-1 ${
-                                    language === "ar"
-                                      ? "font-arabic"
-                                      : "font-english"
-                                  }`}>
-                                  {language === "ar" ? "بعد:" : "After:"}
-                                </h4>
-                                <p
-                                  className={`text-sm text-muted-foreground ${
-                                    language === "ar"
-                                      ? "font-arabic"
-                                      : "font-english"
-                                  }`}>
-                                  {story.after}
-                                </p>
-                              </div>
-                            </div>
-                            <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                              <span
-                                className={`${
-                                  language === "ar"
-                                    ? "font-arabic"
-                                    : "font-english"
-                                }`}>
-                                {language === "ar" ? "الكاتب:" : "Author:"}{" "}
-                                {story.author}
-                              </span>
-                              <span
-                                className={`${
-                                  language === "ar"
-                                    ? "font-arabic"
-                                    : "font-english"
-                                }`}>
-                                {language === "ar" ? "المتطوع:" : "Volunteer:"}{" "}
-                                {story.submittedBy?.fullName ||
-                                  story.submittedBy?.email ||
-                                  "N/A"}
-                              </span>
-                              <span
-                                className={`${
-                                  language === "ar"
-                                    ? "font-arabic"
-                                    : "font-english"
-                                }`}>
-                                {language === "ar"
-                                  ? "تاريخ الإرسال:"
-                                  : "Submitted:"}{" "}
-                                {new Date(story.createdAt).toLocaleDateString()}
-                              </span>
-                            </div>
                           </div>
-                          {story.imageUrl && (
-                            <img
-                              src={`${
-                                import.meta.env.VITE_API_BASE_URL?.replace(
-                                  "/api",
-                                  ""
-                                ) || "http://localhost:5000"
-                              }${story.imageUrl}`}
-                              alt={story.title}
-                              className="w-32 h-32 object-cover rounded-lg ml-4"
-                            />
-                          )}
+                          <div>
+                            <p className={`text-xs text-muted-foreground mb-1 ${language === "ar" ? "font-arabic text-right" : "font-english"}`}>
+                              {language === "ar" ? "البريد الإلكتروني" : "Email"}
+                            </p>
+                            <p className={`font-medium ${language === "ar" ? "font-arabic text-right" : "font-english"}`}>
+                              {story.email || "—"}
+                            </p>
+                          </div>
+                          <div>
+                            <p className={`text-xs text-muted-foreground mb-1 ${language === "ar" ? "font-arabic text-right" : "font-english"}`}>
+                              {language === "ar" ? "رقم الهاتف" : "Phone"}
+                            </p>
+                            <p className={`font-medium ${language === "ar" ? "font-arabic text-right" : "font-english"}`}>
+                              {story.phone || "—"}
+                            </p>
+                          </div>
+                          <div>
+                            <p className={`text-xs text-muted-foreground mb-1 ${language === "ar" ? "font-arabic text-right" : "font-english"}`}>
+                              {language === "ar" ? "تاريخ الإرسال" : "Submitted"}
+                            </p>
+                            <p className={`font-medium ${language === "ar" ? "font-arabic text-right" : "font-english"}`}>
+                              {new Date(story.createdAt).toLocaleDateString()}
+                            </p>
+                          </div>
+                          <div className="md:col-span-2">
+                            <p className={`text-xs text-muted-foreground mb-1 ${language === "ar" ? "font-arabic text-right" : "font-english"}`}>
+                              {language === "ar" ? "الرسالة" : "Message"}
+                            </p>
+                            <p className={`text-sm ${language === "ar" ? "font-arabic text-right" : "font-english"}`}>
+                              {story.description || "—"}
+                            </p>
+                          </div>
                         </div>
                         <div className="flex gap-3 justify-end">
                           <Button
@@ -2661,38 +2540,32 @@ const AdminDashboard = () => {
                   <TableHeader>
                     <TableRow>
                       {language === "ar" ? (
-                        // Arabic order: right to left - Actions | Priority | Author | Date | Title
+                        // Arabic order: right to left - Actions | Author | Date | Title
                         <>
                           <TableHead className="text-center font-arabic">
                             الإجراءات
                           </TableHead>
-                          <TableHead className="text-center font-arabic">
-                            الأولوية
+                          <TableHead className="text-right font-arabic">
+                            الاسم الكامل
                           </TableHead>
                           <TableHead className="text-right font-arabic">
-                            المؤلف
+                            تاريخ الإرسال
                           </TableHead>
                           <TableHead className="text-right font-arabic">
-                            التاريخ
-                          </TableHead>
-                          <TableHead className="text-right font-arabic">
-                            العنوان
+                            الرسالة
                           </TableHead>
                         </>
                       ) : (
-                        // English order: left to right - Title | Date | Author | Priority | Actions
+                        // English order: left to right - Message | Date | Author | Actions
                         <>
                           <TableHead className="text-left font-english">
-                            Title
+                            Message
                           </TableHead>
                           <TableHead className="text-left font-english">
                             Date
                           </TableHead>
                           <TableHead className="text-left font-english">
-                            Author
-                          </TableHead>
-                          <TableHead className="text-center font-english">
-                            Priority
+                            Full Name
                           </TableHead>
                           <TableHead className="text-center font-english">
                             Actions
@@ -2909,49 +2782,25 @@ const AdminDashboard = () => {
                 <Table className="w-full">
                   <TableHeader>
                     <TableRow>
-                      {language === "ar" ? (
-                        // Arabic order: right to left - Actions | Created At | Status | Volunteer Email | Title
-                        <>
-                          <TableHead className="text-center font-arabic">
-                            الإجراءات
-                          </TableHead>
-                          <TableHead className="text-right font-arabic">
-                            تاريخ الإنشاء
-                          </TableHead>
-                          <TableHead className="text-center font-arabic">
-                            الحالة
-                          </TableHead>
-                          <TableHead className="text-right font-arabic">
-                            بريد المتطوع
-                          </TableHead>
-                          <TableHead className="text-right font-arabic">
-                            العنوان
-                          </TableHead>
-                        </>
-                      ) : (
-                        // English order: left to right - Title | Volunteer Email | Status | Created At | Actions
-                        <>
-                          <TableHead className="text-left font-english">
-                            Title
-                          </TableHead>
-                          <TableHead className="text-left font-english">
-                            Volunteer Email
-                          </TableHead>
-                          <TableHead className="text-center font-english">
-                            Status
-                          </TableHead>
-                          <TableHead className="text-left font-english">
-                            Created At
-                          </TableHead>
-                          <TableHead className="text-center font-english">
-                            Actions
-                          </TableHead>
-                        </>
-                      )}
+                      <TableHead className={language === "ar" ? "text-right font-arabic" : "text-left font-english"}>
+                        {language === "ar" ? "الاسم الكامل" : "Full Name"}
+                      </TableHead>
+                      <TableHead className={language === "ar" ? "text-right font-arabic" : "text-left font-english"}>
+                        {language === "ar" ? "البريد الإلكتروني" : "Email"}
+                      </TableHead>
+                      <TableHead className={language === "ar" ? "text-right font-arabic" : "text-left font-english"}>
+                        {language === "ar" ? "رقم الهاتف" : "Phone"}
+                      </TableHead>
+                      <TableHead className={language === "ar" ? "text-right font-arabic" : "text-left font-english"}>
+                        {language === "ar" ? "الموضوع" : "Subject"}
+                      </TableHead>
+                      <TableHead className={language === "ar" ? "text-right font-arabic" : "text-left font-english"}>
+                        {language === "ar" ? "الرسالة" : "Message"}
+                      </TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {data.reports.length === 0 ? (
+                    {data.reports.filter(r => r.subject !== "successStories").length === 0 ? (
                       <TableRow>
                         <TableCell
                           colSpan={5}
@@ -2964,185 +2813,27 @@ const AdminDashboard = () => {
                         </TableCell>
                       </TableRow>
                     ) : (
-                      data.reports.slice(0, 10).map((report) => {
-                        const statusConfig = reportApi.getStatusConfig(
-                          report.status,
-                          language
-                        );
-
-                        const handleStatusChange = async (newStatus) => {
-                          try {
-                            setActionLoading(true);
-                            await reportApi.updateReportStatus(
-                              token,
-                              report.id,
-                              newStatus
-                            );
-                            toast.success(
-                              language === "ar"
-                                ? "تم تحديث حالة المشاركة بنجاح"
-                                : "Feedback status updated successfully"
-                            );
-                            await fetchAllData();
-                          } catch (error) {
-                            // Error updating report status
-                            toast.error(
-                              language === "ar"
-                                ? "فشل في تحديث حالة المشاركة: " + error.message
-                                : "Failed to update feedback status: " +
-                                    error.message
-                            );
-                          } finally {
-                            setActionLoading(false);
-                          }
-                        };
-
-                        return (
-                          <TableRow key={report.id}>
-                            {language === "ar" ? (
-                              // Arabic order: right to left
-                              <>
-                                <TableCell className="text-center">
-                                  <div className="flex items-center justify-center gap-2 flex-wrap">
-                                    <Button
-                                      size="sm"
-                                      variant="outline"
-                                      className="h-8 w-8 p-0"
-                                      onClick={() => handleViewReport(report)}>
-                                      <Eye className="h-4 w-4" />
-                                    </Button>
-                                    <Button
-                                      size="sm"
-                                      variant="outline"
-                                      className="h-8 bg-green-50 hover:bg-green-100 text-green-700 border-green-300"
-                                      onClick={() =>
-                                        handleStatusChange("resolved")
-                                      }
-                                      disabled={
-                                        actionLoading ||
-                                        report.status === "resolved"
-                                      }>
-                                      <span className="text-xs">محلول</span>
-                                    </Button>
-                                    <Button
-                                      size="sm"
-                                      variant="outline"
-                                      className="h-8 bg-blue-50 hover:bg-blue-100 text-blue-700 border-blue-300"
-                                      onClick={() =>
-                                        handleStatusChange("under review")
-                                      }
-                                      disabled={
-                                        actionLoading ||
-                                        report.status === "under review"
-                                      }>
-                                      <span className="text-xs">
-                                        قيد المراجعة
-                                      </span>
-                                    </Button>
-                                    <Button
-                                      size="sm"
-                                      variant="outline"
-                                      className="h-8 bg-red-50 hover:bg-red-100 text-red-700 border-red-300"
-                                      onClick={() =>
-                                        handleStatusChange("rejected")
-                                      }
-                                      disabled={
-                                        actionLoading ||
-                                        report.status === "rejected"
-                                      }>
-                                      <span className="text-xs">مرفوض</span>
-                                    </Button>
-                                  </div>
-                                </TableCell>
-                                <TableCell className="text-right font-arabic">
-                                  {formatDate(report.created_at)}
-                                </TableCell>
-                                <TableCell className="text-center">
-                                  <Badge
-                                    className={`${statusConfig.color} text-white font-arabic`}>
-                                    {statusConfig.text}
-                                  </Badge>
-                                </TableCell>
-                                <TableCell className="text-right font-arabic">
-                                  {report.volunteer?.email || "N/A"}
-                                </TableCell>
-                                <TableCell className="text-right font-arabic">
-                                  {report.title}
-                                </TableCell>
-                              </>
-                            ) : (
-                              // English order: left to right
-                              <>
-                                <TableCell className="text-left font-english">
-                                  {report.title}
-                                </TableCell>
-                                <TableCell className="text-left font-english">
-                                  {report.volunteer?.email || "N/A"}
-                                </TableCell>
-                                <TableCell className="text-center">
-                                  <Badge
-                                    className={`${statusConfig.color} text-white font-english`}>
-                                    {statusConfig.text}
-                                  </Badge>
-                                </TableCell>
-                                <TableCell className="text-left font-english">
-                                  {formatDate(report.created_at)}
-                                </TableCell>
-                                <TableCell className="text-center">
-                                  <div className="flex items-center justify-center gap-2 flex-wrap">
-                                    <Button
-                                      size="sm"
-                                      variant="outline"
-                                      className="h-8 w-8 p-0"
-                                      onClick={() => handleViewReport(report)}>
-                                      <Eye className="h-4 w-4" />
-                                    </Button>
-                                    <Button
-                                      size="sm"
-                                      variant="outline"
-                                      className="h-8 bg-green-50 hover:bg-green-100 text-green-700 border-green-300"
-                                      onClick={() =>
-                                        handleStatusChange("resolved")
-                                      }
-                                      disabled={
-                                        actionLoading ||
-                                        report.status === "resolved"
-                                      }>
-                                      <span className="text-xs">Resolved</span>
-                                    </Button>
-                                    <Button
-                                      size="sm"
-                                      variant="outline"
-                                      className="h-8 bg-blue-50 hover:bg-blue-100 text-blue-700 border-blue-300"
-                                      onClick={() =>
-                                        handleStatusChange("under review")
-                                      }
-                                      disabled={
-                                        actionLoading ||
-                                        report.status === "under review"
-                                      }>
-                                      <span className="text-xs">Review</span>
-                                    </Button>
-                                    <Button
-                                      size="sm"
-                                      variant="outline"
-                                      className="h-8 bg-red-50 hover:bg-red-100 text-red-700 border-red-300"
-                                      onClick={() =>
-                                        handleStatusChange("rejected")
-                                      }
-                                      disabled={
-                                        actionLoading ||
-                                        report.status === "rejected"
-                                      }>
-                                      <span className="text-xs">Reject</span>
-                                    </Button>
-                                  </div>
-                                </TableCell>
-                              </>
-                            )}
+                      data.reports
+                        .filter(r => r.subject !== "successStories")
+                        .map((report) => (
+                          <TableRow key={report.id || report._id}>
+                            <TableCell className={language === "ar" ? "text-right font-arabic" : "text-left font-english"}>
+                              {report.name || report.volunteer?.fullName || "—"}
+                            </TableCell>
+                            <TableCell className={language === "ar" ? "text-right font-arabic" : "text-left font-english"}>
+                              {report.email || report.volunteer?.email || "—"}
+                            </TableCell>
+                            <TableCell className={language === "ar" ? "text-right font-arabic" : "text-left font-english"}>
+                              {report.phone || "—"}
+                            </TableCell>
+                            <TableCell className={language === "ar" ? "text-right font-arabic" : "text-left font-english"}>
+                              {report.subject || "—"}
+                            </TableCell>
+                            <TableCell className={language === "ar" ? "text-right font-arabic max-w-xs truncate" : "text-left font-english max-w-xs truncate"}>
+                              {report.details || "—"}
+                            </TableCell>
                           </TableRow>
-                        );
-                      })
+                        ))
                     )}
                   </TableBody>
                 </Table>
@@ -3291,22 +2982,115 @@ const AdminDashboard = () => {
                 </p>
               </div>
 
-              {/* Volunteer Info & Status Row */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              {/* Volunteer/Public Info & Status Row */}
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
+                {reportViewModal.report.volunteer ? (
+                  <div>
+                    <h3
+                      className={cn(
+                        "text-sm font-medium text-muted-foreground mb-2",
+                        language === "ar" ? "text-right" : "text-left"
+                      )}>
+                      {language === "ar" ? "بريد المتطوع" : "Volunteer Email"}
+                    </h3>
+                    <p
+                      className={cn(
+                        "text-base",
+                        language === "ar" ? "text-right" : "text-left"
+                      )}>
+                      {reportViewModal.report.volunteer?.email}
+                    </p>
+                  </div>
+                ) : (
+                  <>
+                    {reportViewModal.report.name && (
+                      <div>
+                        <h3
+                          className={cn(
+                            "text-sm font-medium text-muted-foreground mb-2",
+                            language === "ar" ? "text-right" : "text-left"
+                          )}>
+                          {language === "ar" ? "الاسم" : "Name"}
+                        </h3>
+                        <p
+                          className={cn(
+                            "text-base",
+                            language === "ar" ? "text-right" : "text-left"
+                          )}>
+                          {reportViewModal.report.name}
+                        </p>
+                      </div>
+                    )}
+                    {reportViewModal.report.email && (
+                      <div>
+                        <h3
+                          className={cn(
+                            "text-sm font-medium text-muted-foreground mb-2",
+                            language === "ar" ? "text-right" : "text-left"
+                          )}>
+                          {language === "ar" ? "البريد الإلكتروني" : "Email"}
+                        </h3>
+                        <p
+                          className={cn(
+                            "text-base",
+                            language === "ar" ? "text-right" : "text-left"
+                          )}>
+                          {reportViewModal.report.email}
+                        </p>
+                      </div>
+                    )}
+                    {reportViewModal.report.phone && (
+                      <div>
+                        <h3
+                          className={cn(
+                            "text-sm font-medium text-muted-foreground mb-2",
+                            language === "ar" ? "text-right" : "text-left"
+                          )}>
+                          {language === "ar" ? "الهاتف" : "Phone"}
+                        </h3>
+                        <p
+                          className={cn(
+                            "text-base",
+                            language === "ar" ? "text-right" : "text-left"
+                          )}>
+                          {reportViewModal.report.phone}
+                        </p>
+                      </div>
+                    )}
+                    {reportViewModal.report.subject && (
+                      <div>
+                        <h3
+                          className={cn(
+                            "text-sm font-medium text-muted-foreground mb-2",
+                            language === "ar" ? "text-right" : "text-left"
+                          )}>
+                          {language === "ar" ? "الموضوع" : "Subject"}
+                        </h3>
+                        <p
+                          className={cn(
+                            "text-base",
+                            language === "ar" ? "text-right" : "text-left"
+                          )}>
+                          {reportViewModal.report.subject === 'successStories' ? (language === 'ar' ? 'قصة نجاح' : 'Success Story') : reportViewModal.report.subject}
+                        </p>
+                      </div>
+                    )}
+                  </>
+                )}
                 <div>
                   <h3
                     className={cn(
                       "text-sm font-medium text-muted-foreground mb-2",
                       language === "ar" ? "text-right" : "text-left"
                     )}>
-                    {language === "ar" ? "بريد المتطوع" : "Volunteer Email"}
+                    {language === "ar" ? "الحالة" : "Status"}
                   </h3>
                   <p
                     className={cn(
                       "text-base",
                       language === "ar" ? "text-right" : "text-left"
                     )}>
-                    {reportViewModal.report.volunteer?.email || "N/A"}
+                    {reportViewModal.report.status}
                   </p>
                 </div>
 

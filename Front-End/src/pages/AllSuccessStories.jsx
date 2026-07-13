@@ -394,250 +394,16 @@ const AllSuccessStories = () => {
         {/* Add Story Button */}
         <AnimatedSection animation="fadeInUp" delay={100}>
           <div className="mb-8 flex justify-end">
-            <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-              <DialogTrigger asChild>
-                <Button className="bg-primary hover:bg-primary/90">
-                  <Plus className="w-4 h-4 mr-2" />
-                  {t("allSuccessStories.addStory")}
-                </Button>
-              </DialogTrigger>
-              <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
-                <DialogHeader>
-                  <DialogTitle>
-                    {language === "ar"
-                      ? "إضافة قصة نجاح جديدة"
-                      : "Add New Success Story"}
-                  </DialogTitle>
-                  <DialogDescription>
-                    {language === "ar"
-                      ? "شارك قصتك الملهمة مع المجتمع"
-                      : "Share your inspiring story with the community"}
-                  </DialogDescription>
-                </DialogHeader>
-                <form onSubmit={handleSubmit} className="space-y-6">
-                  <div className="space-y-6">
-                    {/* Title */}
-                    <div className="space-y-2">
-                      <Label htmlFor="title">
-                        {t("allSuccessStories.titleField")}
-                      </Label>
-                      <Input
-                        id="title"
-                        value={formData.title}
-                        onChange={(e) =>
-                          handleInputChange("title", e.target.value)
-                        }
-                        placeholder={
-                          language === "ar"
-                            ? "أدخل عنوان قصة النجاح"
-                            : "Enter success story title"
-                        }
-                        required
-                      />
-                    </div>
-
-                    {/* Subtitle */}
-                    <div className="space-y-2">
-                      <Label htmlFor="subtitle">
-                        {language === "ar" ? "العنوان الفرعي" : "Subtitle"}
-                      </Label>
-                      <Input
-                        id="subtitle"
-                        value={formData.subtitle}
-                        onChange={(e) =>
-                          handleInputChange("subtitle", e.target.value)
-                        }
-                        placeholder={
-                          language === "ar"
-                            ? "أدخل العنوان الفرعي"
-                            : "Enter subtitle"
-                        }
-                        required
-                      />
-                    </div>
-
-                    {/* Description */}
-                    <div className="space-y-2">
-                      <Label htmlFor="description">
-                        {language === "ar"
-                          ? "الوصف المختصر"
-                          : "Short Description"}
-                      </Label>
-                      <Textarea
-                        id="description"
-                        value={formData.description}
-                        onChange={(e) =>
-                          handleInputChange("description", e.target.value)
-                        }
-                        placeholder={
-                          language === "ar"
-                            ? "وصف مختصر عن قصة النجاح"
-                            : "Brief description of the success story"
-                        }
-                        rows={3}
-                        required
-                      />
-                    </div>
-
-                    {/* Date */}
-                    <div className="space-y-2">
-                      <Label htmlFor="date">
-                        {language === "ar" ? "التاريخ" : "Date"}
-                      </Label>
-                      <Input
-                        id="date"
-                        type="date"
-                        value={formData.date}
-                        onChange={(e) =>
-                          handleInputChange("date", e.target.value)
-                        }
-                        required
-                      />
-                    </div>
-
-                    {/* Quote */}
-                    <div className="space-y-2">
-                      <Label htmlFor="quote">
-                        {language === "ar" ? "الاقتباس" : "Quote"}
-                      </Label>
-                      <Textarea
-                        id="quote"
-                        value={formData.quote}
-                        onChange={(e) =>
-                          handleInputChange("quote", e.target.value)
-                        }
-                        placeholder={
-                          language === "ar"
-                            ? "أدخل اقتباس من قصة النجاح"
-                            : "Enter a quote from the success story"
-                        }
-                        rows={2}
-                        required
-                      />
-                    </div>
-
-                    {/* Author */}
-                    <div className="space-y-2">
-                      <Label htmlFor="author">
-                        {t("allSuccessStories.author")}
-                      </Label>
-                      <Input
-                        id="author"
-                        value={formData.author}
-                        onChange={(e) =>
-                          handleInputChange("author", e.target.value)
-                        }
-                        placeholder={
-                          language === "ar"
-                            ? "اسم المؤلف أو الشخص المسؤول"
-                            : "Author name or responsible person"
-                        }
-                        required
-                      />
-                    </div>
-
-                    {/* Before */}
-                    <div className="space-y-2">
-                      <Label htmlFor="before">
-                        {t("allSuccessStories.before")}
-                      </Label>
-                      <Textarea
-                        id="before"
-                        value={formData.before}
-                        onChange={(e) =>
-                          handleInputChange("before", e.target.value)
-                        }
-                        placeholder={
-                          language === "ar"
-                            ? "وصف الحالة قبل المبادرة (مثال: كان وزني 100 كجم، لم أكن أمارس الرياضة)"
-                            : "Describe the situation before the initiative (e.g., I weighed 100kg, I didn't exercise)"
-                        }
-                        rows={3}
-                        required
-                      />
-                    </div>
-
-                    {/* After */}
-                    <div className="space-y-2">
-                      <Label htmlFor="after">
-                        {t("allSuccessStories.after")}
-                      </Label>
-                      <Textarea
-                        id="after"
-                        value={formData.after}
-                        onChange={(e) =>
-                          handleInputChange("after", e.target.value)
-                        }
-                        placeholder={
-                          language === "ar"
-                            ? "وصف الحالة بعد المبادرة (مثال: أصبح وزني 75 كجم، أمارس الرياضة بانتظام)"
-                            : "Describe the situation after the initiative (e.g., I now weigh 75kg, I exercise regularly)"
-                        }
-                        rows={3}
-                        required
-                      />
-                    </div>
-
-                    {/* Body/Actual Text */}
-                    <div className="space-y-2">
-                      <Label htmlFor="body">
-                        {t("allSuccessStories.fullStory")}
-                      </Label>
-                      <Textarea
-                        id="body"
-                        value={formData.body}
-                        onChange={(e) =>
-                          handleInputChange("body", e.target.value)
-                        }
-                        placeholder={
-                          language === "ar"
-                            ? "اكتب القصة كاملة بالتفصيل"
-                            : "Write the complete story in detail"
-                        }
-                        rows={6}
-                        required
-                      />
-                    </div>
-
-                    {/* Author's Comment */}
-                    <div className="space-y-2">
-                      <Label htmlFor="authorComment">
-                        {language === "ar"
-                          ? "تعليق المؤلف"
-                          : "Author's Comment"}
-                      </Label>
-                      <Textarea
-                        id="authorComment"
-                        value={formData.authorComment}
-                        onChange={(e) =>
-                          handleInputChange("authorComment", e.target.value)
-                        }
-                        placeholder={
-                          language === "ar"
-                            ? "تعليق شخصي أو نصيحة من المؤلف"
-                            : "Personal comment or advice from the author"
-                        }
-                        rows={3}
-                      />
-                    </div>
-                  </div>
-
-                  <div className="flex justify-end space-x-4">
-                    <Button
-                      type="button"
-                      variant="outline"
-                      onClick={() => setIsModalOpen(false)}>
-                      {t("allSuccessStories.cancel")}
-                    </Button>
-                    <Button
-                      type="submit"
-                      className="bg-primary hover:bg-primary/90">
-                      {t("allSuccessStories.addStoryButton")}
-                    </Button>
-                  </div>
-                </form>
-              </DialogContent>
-            </Dialog>
+            <Button
+              className="bg-primary hover:bg-primary/90"
+              onClick={() => {
+                navigate("/contact?subject=successStories");
+                window.scrollTo({ top: 0, behavior: "smooth" });
+              }}
+            >
+              <Plus className="w-4 h-4 mr-2" />
+              {t("allSuccessStories.addStory")}
+            </Button>
           </div>
         </AnimatedSection>
 
@@ -788,26 +554,15 @@ const AllSuccessStories = () => {
                 animation="fadeInUp"
                 delay={index * 150}
                 className="group hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
-                {/* Story Image */}
-                <div className="relative h-48 overflow-hidden rounded-t-lg">
-                  <img
-                    src={
-                      story.imageUrl
-                        ? successStoryApi.getImageUrl(story.imageUrl)
-                        : "/assets/placeholder.svg"
-                    }
-                    alt={story.title}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                  />
-                  {story.priority && (
-                    <Badge className="absolute top-4 left-4 bg-yellow-500">
-                      <Star className="w-3 h-3 mr-1 fill-current" />
-                      {story.priority}
-                    </Badge>
-                  )}
-                </div>
-
                 <CardHeader>
+                  {story.priority && (
+                    <div className="flex items-center justify-start mb-2">
+                      <Badge className="bg-yellow-500 text-white">
+                        <Star className="w-3 h-3 mr-1 fill-current" />
+                        {story.priority}
+                      </Badge>
+                    </div>
+                  )}
                   <CardTitle
                     className={`text-lg line-clamp-2 ${
                       isRTL ? "font-arabic text-right" : "font-sans text-left"

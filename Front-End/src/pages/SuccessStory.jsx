@@ -281,16 +281,7 @@ const SuccessStory = () => {
             </div>
           </div>
 
-          {/* Story Image */}
-          {story.imageUrl && (
-            <div className="mb-8">
-              <img
-                src={successStoryApi.getImageUrl(story.imageUrl)}
-                alt={story.title}
-                className="w-full h-64 md:h-96 object-cover rounded-lg"
-              />
-            </div>
-          )}
+
 
           {/* Before/After Comparison */}
           <div className="mb-8">

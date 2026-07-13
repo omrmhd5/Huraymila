@@ -29,7 +29,7 @@ const Footer = () => {
   const quickLinks = [
     { name: t("nav.home"), href: "/" },
     { name: t("nav.about"), href: "/about" },
-    { name: t("nav.initiatives"), href: "/initiatives" },
+    { name: t("nav.initiatives"), href: "/success-stories" },
     { name: t("nav.contact"), href: "/contact" },
   ];
   const isRTL = language === "ar";

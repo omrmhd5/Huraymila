@@ -30,7 +30,7 @@ const QuickLinksSection = () => {
       title: t("quickLinksSection.links.volunteerInInitiatives"),
       icon: Search,
       color: "bg-green-500",
-      href: "/initiatives",
+      href: "/success-stories",
     },
     {
       id: 3,

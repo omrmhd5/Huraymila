@@ -59,8 +59,6 @@ const App = () => (
                     path="/success-stories/:id"
                     element={<SuccessStory />}
                   />
-                  <Route path="/initiatives" element={<AllSuccessStories />} />
-                  <Route path="/initiatives/:id" element={<SuccessStory />} />
                   <Route path="/report" element={<Report />} />
                   <Route path="/about-huraymila" element={<AboutHuraymila />} />
                   <Route path="/faq" element={<FAQ />} />

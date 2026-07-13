@@ -8,11 +8,13 @@ const {
   updateReportStatus,
   deleteReport,
   getReportsStatistics,
+  createPublicReport,
 } = require("../Controllers/reportController");
 const { reportFileUpload } = require("../middleware/reportFileUpload");
 const { auth } = require("../middleware/authProtection");
 
-// Public routes - None (all report operations require authentication)
+// Public routes
+router.post("/public", createPublicReport); // Public contact form submission
 
 // Volunteer routes (protected)
 router.post("/", auth, reportFileUpload, createReport); // Create new report
