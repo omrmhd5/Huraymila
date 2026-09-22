@@ -26,7 +26,7 @@ const allowedOrigins = (
   "http://localhost:5173"
 )
   .split(",")
-  .map((origin) => origin.trim())
+  .map((origin) => origin.trim().replace(/\/$/, ""))
   .filter(Boolean);
 
 app.use(
@@ -78,7 +78,9 @@ if (process.env.SERVE_FRONTEND === "true") {
 
 // MongoDB connection
 mongoose
-  .connect(process.env.MONGODB_URI || "mongodb://127.0.0.1:27017/huraymila-demo")
+  .connect(
+    process.env.MONGODB_URI || "mongodb://127.0.0.1:27017/huraymila-demo",
+  )
   .then(() => {
     app.listen(PORT, "0.0.0.0", () => {
       console.log(`Server is running on port ${PORT}`);
