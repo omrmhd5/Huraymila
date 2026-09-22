@@ -191,8 +191,6 @@ Home sections → About → About Huraymila → news article → organizational 
 
 [**View Live Demo**](https://huraymila-demo.vercel.app)
 
-API: https://huraymila-demo.onrender.com
-
 | Role     | Email                 | Password    |
 | -------- | --------------------- | ----------- |
 | Governor | governor@governor.com | governor123 |
