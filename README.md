@@ -97,9 +97,17 @@ The system improved document organization and retrieval by over **70%**, increas
   <img width="1919" height="914" alt="Volunteer Dashboard" src="https://github.com/user-attachments/assets/a9d8261c-0951-4fc3-a818-20c198ff6b82" />
 
 
-## Live Demo 🚀
+## View live demo
 
-[**View Live Demo**](https://huraymilahealth.com/)
+- App: https://huraymila-demo.vercel.app
+- API: https://huraymila-demo.onrender.com
+
+### Demo logins
+
+| Role | Email | Password |
+|------|-------|----------|
+| Governor | governor@governor.com | governor123 |
+| Agency | agency@agency.com | agency123 |
 
 ---
 
