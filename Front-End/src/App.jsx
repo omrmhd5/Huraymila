@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { ThemeProvider } from "@/contexts/ThemeContext";
 import { LanguageProvider } from "@/contexts/LanguageContext";
+import DemoBanner from "./components/DemoBanner";
 import Layout from "./pages/Layout";
 import Home from "./pages/Home";
 import About from "./pages/About";
@@ -38,6 +39,7 @@ const App = () => (
     <TooltipProvider>
       <ThemeProvider>
         <LanguageProvider>
+          <DemoBanner />
           <AuthProvider>
             <Toaster />
             <Sonner />

@@ -20,12 +20,31 @@ const partnerRoutes = require("./Routes/partnerRoutes");
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// Middleware
-app.use(cors());
+const allowedOrigins = (
+  process.env.CORS_ORIGIN ||
+  process.env.FRONTEND_URL ||
+  "http://localhost:5173"
+)
+  .split(",")
+  .map((origin) => origin.trim())
+  .filter(Boolean);
+
+app.use(
+  cors({
+    origin: allowedOrigins,
+    credentials: true,
+    allowedHeaders: [
+      "Content-Type",
+      "Authorization",
+      "Accept-Language",
+      "X-Language",
+    ],
+  }),
+);
 app.use(express.json());
 
 // Serve all backend public files (submissions, initiatives, etc.)
-app.use("/public", express.static("public"));
+app.use("/public", express.static(path.join(__dirname, "public")));
 
 // Create API router
 const apiRouter = express.Router();
@@ -50,22 +69,18 @@ apiRouter.use("/map-locations", mapLocationRoutes);
 apiRouter.use("/sms", smsRoutes);
 apiRouter.use("/partners", partnerRoutes);
 
-// --- FRONTEND STATIC FILES ---
-// Serve the static files from the Front-End/dist directory.
-app.use(express.static(path.join(__dirname, "../Front-End/dist")));
-
-// Catch-all route to handle React/Vite client-side routing.
-// This ensures refreshing the page doesn't return a 404.
-app.get("*", (req, res) => {
-  res.sendFile(path.join(__dirname, "../Front-End/dist", "index.html"));
-});
-// -----------------------------
+if (process.env.SERVE_FRONTEND === "true") {
+  app.use(express.static(path.join(__dirname, "../Front-End/dist")));
+  app.get("*", (req, res) => {
+    res.sendFile(path.join(__dirname, "../Front-End/dist", "index.html"));
+  });
+}
 
 // MongoDB connection
 mongoose
-  .connect(process.env.MONGODB_URI || "mongodb://localhost:27017/huraymila")
+  .connect(process.env.MONGODB_URI || "mongodb://127.0.0.1:27017/huraymila-demo")
   .then(() => {
-    app.listen(PORT, () => {
+    app.listen(PORT, "0.0.0.0", () => {
       console.log(`Server is running on port ${PORT}`);
     });
     console.log("MongoDB connected successfully");

@@ -5,7 +5,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { cn } from "@/lib/utils";
 
 const HealthyCityStructure = () => {
-  const { language } = useLanguage();
+  const { language, t } = useLanguage();
   const navigate = useNavigate();
   // We force Arabic for the diagram strings, but keep UI directional text dynamic
   const isRTL = language === "ar";
@@ -19,20 +19,28 @@ const HealthyCityStructure = () => {
             onClick={() => navigate("/")}
             className={cn(
               "flex items-center gap-2 px-4 py-2 border rounded-md hover:bg-gray-50 transition-colors text-gray-700 font-medium",
-              isRTL ? "font-arabic flex-row" : "font-english flex-row-reverse"
+              isRTL ? "font-arabic flex-row" : "font-english flex-row-reverse",
             )}>
             <ArrowLeft className={`w-4 h-4 ${isRTL ? "rotate-180" : ""}`} />
-            {language === "ar" ? "العودة للرئيسية" : "Back to Home"}
+            {t("common.backToHome")}
           </button>
         </div>
 
         {/* Title Section */}
         <div className="text-center mb-16">
-          <h1 className="text-3xl md:text-4xl font-bold text-[#186a3b] mb-3 font-arabic">
-            الهيكل التنظيمي لمدينة حريملاء الصحية
+          <h1
+            className={cn(
+              "text-3xl md:text-4xl font-bold text-[#186a3b] mb-3",
+              isRTL ? "font-arabic" : "font-english",
+            )}>
+            {t("structure.title")}
           </h1>
-          <p className="text-gray-500 text-lg md:text-xl font-arabic">
-            رسم بياني يوضح التسلسل الإداري واللجان المشكلة والعلاقات التنسيقية
+          <p
+            className={cn(
+              "text-gray-500 text-lg md:text-xl",
+              isRTL ? "font-arabic" : "font-english",
+            )}>
+            {t("structure.subtitle")}
           </p>
         </div>
 
@@ -45,7 +53,9 @@ const HealthyCityStructure = () => {
             <div className="relative flex flex-col items-center">
               <div className="bg-[#186a3b] text-white font-bold text-xl py-3 px-8 rounded-lg border-4 border-[#c09a47] shadow-md z-10 text-center flex flex-col items-center justify-center">
                 <span>محافظ حريملاء</span>
-                <span className="text-sm font-normal mt-1 opacity-90">رئيس اللجنة الرئيسية لمدينة حريملاء الصحية</span>
+                <span className="text-sm font-normal mt-1 opacity-90">
+                  رئيس اللجنة الرئيسية لمدينة حريملاء الصحية
+                </span>
               </div>
               {/* Vertical line down from top node */}
               <div className="w-0.5 h-10 bg-[#186a3b]"></div>
@@ -159,8 +169,6 @@ const HealthyCityStructure = () => {
             </div>
           </div>
         </div>
-
-
       </div>
     </div>
   );

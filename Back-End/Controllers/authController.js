@@ -4,6 +4,7 @@ const Volunteer = require("../Models/Volunteer");
 const jwt = require("jsonwebtoken");
 const crypto = require("crypto");
 const { sendResetPasswordEmail } = require("../Services/emailService");
+const { t } = require("../lib/i18n");
 
 // Unified login function that checks both Governor and Agency
 const unifiedLogin = async (req, res) => {
@@ -14,7 +15,7 @@ const unifiedLogin = async (req, res) => {
     if (!email || !password) {
       return res.status(400).json({
         success: false,
-        message: "Email and password are required",
+        message: t(req, "errors.emailPasswordRequired"),
       });
     }
 
@@ -38,7 +39,7 @@ const unifiedLogin = async (req, res) => {
     if (!user) {
       return res.status(401).json({
         success: false,
-        message: "Invalid email or password",
+        message: t(req, "errors.invalidCredentials"),
       });
     }
 
@@ -47,7 +48,7 @@ const unifiedLogin = async (req, res) => {
     if (!isPasswordValid) {
       return res.status(401).json({
         success: false,
-        message: "Invalid email or password",
+        message: t(req, "errors.invalidCredentials"),
       });
     }
 
@@ -95,7 +96,7 @@ const unifiedLogin = async (req, res) => {
 
     res.json({
       success: true,
-      message: "Login successful",
+      message: t(req, "success.login"),
       token,
       user: userData,
       type: userType,

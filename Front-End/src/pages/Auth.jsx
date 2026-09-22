@@ -279,6 +279,20 @@ const Auth = () => {
                   )}>
                   {t("auth.subtitle")}
                 </CardDescription>
+                <div className="mt-4 rounded-lg border border-amber-200 bg-amber-50 p-4 text-sm space-y-3 text-start">
+                  <p className="font-semibold text-amber-950">{t("demoLogin.title")}</p>
+                  <div>
+                    <p className="font-medium">{t("demoLogin.governor")}</p>
+                    <p>{t("demoLogin.email")}: governor@governor.com</p>
+                    <p>{t("demoLogin.password")}: governor123</p>
+                  </div>
+                  <div>
+                    <p className="font-medium">{t("demoLogin.agency")}</p>
+                    <p>{t("demoLogin.email")}: agency@agency.com</p>
+                    <p>{t("demoLogin.password")}: agency123</p>
+                  </div>
+                  <p className="text-xs text-amber-900/80">{t("demoLogin.hint")}</p>
+                </div>
               </CardHeader>
 
               <CardContent>

@@ -61,7 +61,7 @@ const Navbar = () => {
     { href: "/about-huraymila", label: t("nav.aboutHuraymila") },
     { href: "/success-stories", label: t("nav.initiatives") },
     { href: "/news", label: t("nav.news") },
-    { href: "/healthy-city-structure", label: "الهيكل التنظيمي" },
+    { href: "/healthy-city-structure", label: t("nav.structure") },
     { href: "/contact", label: t("nav.contact") },
   ];
 
@@ -181,14 +181,14 @@ const Navbar = () => {
                             ? "منسق مدينة حريملاء الصحية"
                             : "Healthy City Coordinator"
                           : user.type === "agency"
-                          ? language === "ar"
-                            ? "الوكالة"
-                            : "Agency"
-                          : user.type === "volunteer"
-                          ? language === "ar"
-                            ? "متطوع"
-                            : "Volunteer"
-                          : "User"}
+                            ? language === "ar"
+                              ? "الوكالة"
+                              : "Agency"
+                            : user.type === "volunteer"
+                              ? language === "ar"
+                                ? "متطوع"
+                                : "Volunteer"
+                              : "User"}
                       </p>
                     </div>
 
@@ -198,10 +198,10 @@ const Navbar = () => {
                           user.type === "governor"
                             ? "/admin"
                             : user.type === "agency"
-                            ? "/agency-dashboard"
-                            : user.type === "volunteer"
-                            ? "/volunteer-dashboard"
-                            : "/";
+                              ? "/agency-dashboard"
+                              : user.type === "volunteer"
+                                ? "/volunteer-dashboard"
+                                : "/";
                         navigateToTop(dashboardPath);
                         setIsUserMenuOpen(false);
                       }}
@@ -226,7 +226,9 @@ const Navbar = () => {
                             : "text-left"
                         }`}>
                         <Database className="w-4 h-4" />
-                        {language === "ar" ? "تقديم المعايير" : "Submit Standards"}
+                        {language === "ar"
+                          ? "تقديم المعايير"
+                          : "Submit Standards"}
                       </button>
                     )}
 

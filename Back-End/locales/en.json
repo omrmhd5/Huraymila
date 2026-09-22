@@ -1,0 +1,12 @@
+{
+  "errors": {
+    "emailPasswordRequired": "Email and password are required",
+    "invalidCredentials": "Invalid email or password",
+    "unauthorized": "Unauthorized",
+    "notFound": "Not found",
+    "serverError": "Something went wrong"
+  },
+  "success": {
+    "login": "Login successful"
+  }
+}
