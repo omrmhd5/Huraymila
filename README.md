@@ -9,6 +9,7 @@ The system improved document organization and retrieval by over **70%**, increas
 ## 🔧 Features
 
 ### 🏛️ Government Agencies
+
 - Upload and manage healthy-city standard compliance documents
 - Track submission and approval status in real time
 - View assigned standards and submission history
@@ -16,6 +17,7 @@ The system improved document organization and retrieval by over **70%**, increas
 - Secure access with role-based permissions
 
 ### 👑 Governor Dashboard (Secure Access)
+
 - JWT-based authentication with full system control
 - Monitor overall standards progress and approval statuses
 - Review, approve, or reject agency submissions
@@ -23,12 +25,14 @@ The system improved document organization and retrieval by over **70%**, increas
 - View system-wide statistics and health indicators
 
 ### 🤝 Volunteer Module
+
 - Register and securely log in
 - Join approved initiatives
 - Submit reports and success stories with file uploads
 - Track personal participation history
 
 ### 📊 System Capabilities
+
 - Centralized dashboard for standards progress tracking
 - Initiative creation, approval, and lifecycle management
 - Interactive health indicators (air quality, water quality, traffic accidents, etc.)
@@ -39,6 +43,7 @@ The system improved document organization and retrieval by over **70%**, increas
 ---
 
 ## 💡 Impact
+
 - Improved document organization and retrieval speed by **70%**
 - Increased agency participation and submission efficiency by **50%**
 - Reduced standard review and approval time by over **60%**
@@ -49,19 +54,20 @@ The system improved document organization and retrieval by over **70%**, increas
 
 ## 📦 Tech Stack
 
-| Layer         | Tech                              |
-|---------------|-----------------------------------|
-| Frontend      | React.js, Vite, TailwindCSS       |
-| Backend       | Node.js, Express.js               |
-| Database      | MongoDB                           |
-| Auth          | JWT (JSON Web Tokens)             |
-| File Uploads  | Multer                            |
-| State & Data  | TanStack Query                    |
-| Maps & Charts | Leaflet, Recharts                 |
+| Layer         | Tech                        |
+| ------------- | --------------------------- |
+| Frontend      | React.js, Vite, TailwindCSS |
+| Backend       | Node.js, Express.js         |
+| Database      | MongoDB                     |
+| Auth          | JWT (JSON Web Tokens)       |
+| File Uploads  | Multer                      |
+| State & Data  | TanStack Query              |
+| Maps & Charts | Leaflet, Recharts           |
 
 ---
 
 ## 🌐 Deployment Notes
+
 - Fully responsive UI (desktop, tablet, mobile)
 - RTL support for Arabic language
 - Designed for scalability across multiple cities
@@ -69,37 +75,128 @@ The system improved document organization and retrieval by over **70%**, increas
 
 ---
 
-## 📸 Screenshots
-* Homepage <img width="1919" height="916" alt="Home Page" src="https://github.com/user-attachments/assets/75d549e3-ab14-426c-8268-2e1afcda66c2" />
-* Mobile View
-* <img width="368" height="743" alt="Mobile View" src="https://github.com/user-attachments/assets/666a0002-28df-47dc-a6f9-667776663ff0" />
-* About Huramilya
-  <img width="1916" height="769" alt="About Huraymila" src="https://github.com/user-attachments/assets/d3971ad7-cf61-44b1-b048-58ea877b31c5" />
-* Health Indicators
-  <img width="1919" height="913" alt="Health Indicators" src="https://github.com/user-attachments/assets/6297ceef-c173-408e-b45f-a70a6f41621a" />
-* Partners Section
-  <img width="1919" height="916" alt="Partners Section" src="https://github.com/user-attachments/assets/48e80996-4e9e-45d8-91ec-ee40cb3943d6" />
-* Initiatives Page
-  <img width="1919" height="917" alt="Initiatives Page" src="https://github.com/user-attachments/assets/ad8ea444-c6b7-4d0c-b8c8-3d168782c854" />
-* Singe Initiative Page
-  <img width="1919" height="838" alt="Single Initiative Page" src="https://github.com/user-attachments/assets/c224c00e-52d3-4daa-9076-f8404da58ae6" />
-* Governor Dashboard
-  <img width="1919" height="914" alt="Governer Dashboard" src="https://github.com/user-attachments/assets/c66fcc98-8c7b-4acf-b902-c8bcd9d4136c" />
-* Governor Standards
-  <img width="1919" height="913" alt="Governer Standards" src="https://github.com/user-attachments/assets/238f52ea-e95e-43e5-bedb-e2fb2ae29e3d" />
-* Single Standard Pop-Up
-  <img width="1919" height="912" alt="Single Standard Pop-Up" src="https://github.com/user-attachments/assets/2d38e86e-eb30-4875-8b8a-dfd9ff53e0bc" />
-* Single Standard
-  <img width="1919" height="912" alt="Single Standard" src="https://github.com/user-attachments/assets/393bca6b-7380-49d8-81d1-c165fcea8c00" />
-* Agency Dashboard
-  <img width="1919" height="912" alt="Agency Dashboard" src="https://github.com/user-attachments/assets/bb70eaab-7179-4dbe-bf35-6425945a89a8" />
-* Volunteer Dashboard
-  <img width="1919" height="914" alt="Volunteer Dashboard" src="https://github.com/user-attachments/assets/a9d8261c-0951-4fc3-a818-20c198ff6b82" />
+## 🎬 Site Demo
 
+**[▶ Watch walkthrough](./docs/huraymila-demo-en.mp4)**
+
+Home sections → About → About Huraymila → news article → organizational structure → governor sign-in → agencies → standards and submissions → agency sign-in.
+
+---
+
+## 📸 Screenshots
+
+<table>
+  <tr>
+    <td width="50%" valign="top">
+      <strong>Hero</strong><br />
+      <img width="100%" alt="Hero" src="./docs/screenshots/english/01-hero.png" />
+    </td>
+    <td width="50%" valign="top">
+      <strong>Vision</strong><br />
+      <img width="100%" alt="Vision" src="./docs/screenshots/english/02-vision.png" />
+    </td>
+  </tr>
+  <tr>
+    <td width="50%" valign="top">
+      <strong>Timeline</strong><br />
+      <img width="100%" alt="Timeline" src="./docs/screenshots/english/03-timeline.png" />
+    </td>
+    <td width="50%" valign="top">
+      <strong>Latest News</strong><br />
+      <img width="100%" alt="Latest News" src="./docs/screenshots/english/04-latest-news.png" />
+    </td>
+  </tr>
+  <tr>
+    <td width="50%" valign="top">
+      <strong>Health Indicators</strong><br />
+      <img width="100%" alt="Health Indicators" src="./docs/screenshots/english/05-health-indicators.png" />
+    </td>
+    <td width="50%" valign="top">
+      <strong>Standards Progress</strong><br />
+      <img width="100%" alt="Standards Progress" src="./docs/screenshots/english/06-standards-progress.png" />
+    </td>
+  </tr>
+  <tr>
+    <td width="50%" valign="top">
+      <strong>Community Network</strong><br />
+      <img width="100%" alt="Community Network" src="./docs/screenshots/english/07-community-network.png" />
+    </td>
+    <td width="50%" valign="top">
+      <strong>About</strong><br />
+      <img width="100%" alt="About" src="./docs/screenshots/english/08-about.png" />
+    </td>
+  </tr>
+  <tr>
+    <td width="50%" valign="top">
+      <strong>About Huraymila</strong><br />
+      <img width="100%" alt="About Huraymila" src="./docs/screenshots/english/09-about-huraymila.png" />
+    </td>
+    <td width="50%" valign="top">
+      <strong>News</strong><br />
+      <img width="100%" alt="News" src="./docs/screenshots/english/10-news.png" />
+    </td>
+  </tr>
+  <tr>
+    <td width="50%" valign="top">
+      <strong>News Article</strong><br />
+      <img width="100%" alt="News Article" src="./docs/screenshots/english/11-news-article.png" />
+    </td>
+    <td width="50%" valign="top">
+      <strong>Organizational Structure</strong><br />
+      <img width="100%" alt="Organizational Structure" src="./docs/screenshots/english/12-structure.png" />
+    </td>
+  </tr>
+  <tr>
+    <td width="50%" valign="top">
+      <strong>Login</strong><br />
+      <img width="100%" alt="Login" src="./docs/screenshots/english/13-login.png" />
+    </td>
+    <td width="50%" valign="top">
+      <strong>Governor Dashboard</strong><br />
+      <img width="100%" alt="Governor Dashboard" src="./docs/screenshots/english/14-governor-dashboard.png" />
+    </td>
+  </tr>
+  <tr>
+    <td width="50%" valign="top">
+      <strong>Agencies</strong><br />
+      <img width="100%" alt="Agencies" src="./docs/screenshots/english/15-agencies.png" />
+    </td>
+    <td width="50%" valign="top">
+      <strong>Standards</strong><br />
+      <img width="100%" alt="Standards" src="./docs/screenshots/english/16-standards.png" />
+    </td>
+  </tr>
+  <tr>
+    <td width="50%" valign="top">
+      <strong>Standard Evidence</strong><br />
+      <img width="100%" alt="Standard Evidence" src="./docs/screenshots/english/17-standard-evidence.png" />
+    </td>
+    <td width="50%" valign="top">
+      <strong>Agency Standards</strong><br />
+      <img width="100%" alt="Agency Standards" src="./docs/screenshots/english/18-agency-standards.png" />
+    </td>
+  </tr>
+  <tr>
+    <td width="50%" valign="top">
+      <strong>Mobile Home</strong><br />
+      <img width="100%" alt="Mobile Home" src="./docs/screenshots/english/19-mobile-home.png" />
+    </td>
+    <td width="50%"></td>
+  </tr>
+</table>
+
+---
 
 ## Live Demo 🚀
 
-[**View Live Demo**](https://huraymilahealth.com/)
+[**View Live Demo**](https://huraymila-demo.vercel.app)
+
+API: https://huraymila-demo.onrender.com
+
+| Role     | Email                 | Password    |
+| -------- | --------------------- | ----------- |
+| Governor | governor@governor.com | governor123 |
+| Agency   | agency@agency.com     | agency123   |
 
 ---
 
@@ -110,4 +207,3 @@ The system improved document organization and retrieval by over **70%**, increas
 💼 [LinkedIn](https://www.linkedin.com/in/omrmhd5/)
 🌐 [Portfolio](https://omarmahmoud.dev/)
 🔗 [GitHub](https://github.com/omrmhd5)
-
