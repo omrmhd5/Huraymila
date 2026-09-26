@@ -17,6 +17,7 @@
   },
   "common": {
     "loading": "Loading...",
+    "serverStarting": "The server is starting, please wait",
     "search": "Search",
     "tryDifferentFilters": "Try different filters or search for something else",
     "filter": "Filter",

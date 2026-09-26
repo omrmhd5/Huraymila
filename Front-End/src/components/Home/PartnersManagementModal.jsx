@@ -18,7 +18,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { partnerApi } from "@/lib/partnerApi";
+import { partnerApi, getPublicAssetUrl } from "@/lib/partnerApi";
 import { Edit2, Save, X, Image as ImageIcon, Trash2, Plus } from "lucide-react";
 import { useTheme } from "@/contexts/ThemeContext";
 
@@ -154,15 +154,7 @@ const PartnersManagementModal = ({ isOpen, setIsOpen, onPartnersUpdated }) => {
     }
   };
 
-  const getFullLogoUrl = (logoPath) => {
-    if (!logoPath) return "";
-    if (logoPath.startsWith("http")) return logoPath;
-    
-    const API_URL = import.meta.env.VITE_API_URL || 
-                    (window.location.hostname === "localhost" ? "http://localhost:5000/api" : "/api");
-    const baseUrl = API_URL.replace("/api", "");
-    return `${baseUrl}${logoPath}`;
-  };
+  const getFullLogoUrl = (logoPath) => getPublicAssetUrl(logoPath);
 
   return (
     <>

@@ -2,7 +2,8 @@ import React from "react";
 import { cn } from "@/lib/utils";
 import { useTheme } from "@/contexts/ThemeContext";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { partnerApi } from "@/lib/partnerApi";
+import { partnerApi, getPublicAssetUrl } from "@/lib/partnerApi";
+import { retryUntilReady } from "@/lib/retryUntilReady";
 
 const SuccessPartners = () => {
   const { language } = useTheme();
@@ -10,12 +11,26 @@ const SuccessPartners = () => {
   const isRTL = language === "ar";
   const [partners, setPartners] = React.useState([]);
 
+  const abortRef = React.useRef(null);
+
   const fetchPartners = React.useCallback(async () => {
+    abortRef.current?.abort();
+    const controller = new AbortController();
+    abortRef.current = controller;
+
     try {
-      const data = await partnerApi.getAllPartners();
+      const data = await retryUntilReady(async () => {
+        const result = await partnerApi.getAllPartners();
+        if (!Array.isArray(result)) {
+          throw new Error("Partners are not ready");
+        }
+        return result;
+      }, { signal: controller.signal });
       setPartners(data);
     } catch (error) {
-      console.error("Failed to fetch partners", error);
+      if (error?.name !== "AbortError") {
+        console.error("Failed to fetch partners", error);
+      }
     }
   }, []);
 
@@ -28,19 +43,12 @@ const SuccessPartners = () => {
 
     window.addEventListener("partners-updated", handleUpdate);
     return () => {
+      abortRef.current?.abort();
       window.removeEventListener("partners-updated", handleUpdate);
     };
   }, [fetchPartners]);
 
-  const getFullLogoUrl = (logoPath) => {
-    if (!logoPath) return "";
-    if (logoPath.startsWith("http")) return logoPath;
-    
-    const API_URL = import.meta.env.VITE_API_URL || 
-                    (window.location.hostname === "localhost" ? "http://localhost:5000/api" : "/api");
-    const baseUrl = API_URL.replace("/api", "");
-    return `${baseUrl}${logoPath}`;
-  };
+  const getFullLogoUrl = (logoPath) => getPublicAssetUrl(logoPath);
 
   return (
     <section className="w-full bg-primary/10 py-6 md:py-10 lg:py-12 overflow-hidden">

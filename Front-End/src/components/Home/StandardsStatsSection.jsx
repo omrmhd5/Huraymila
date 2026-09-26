@@ -3,6 +3,8 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { useTheme } from "@/contexts/ThemeContext";
 import { getAllStandardsByNumber } from "@/lib/api";
+import { retryUntilReady } from "@/lib/retryUntilReady";
+import ServerBootStatus from "@/components/ServerBootStatus";
 import { cn } from "@/lib/utils";
 import { ClipboardCheck, CheckCircle2, Clock, XCircle, AlertCircle, TrendingUp } from "lucide-react";
 
@@ -10,29 +12,32 @@ const StandardsStatsSection = () => {
   const { language } = useTheme();
   const isRTL = language === "ar";
 
-  const [stats, setStats] = useState({
-    total: 80,
-    approved: 52,
-    pending: 18,
-    rejected: 4,
-    didntSubmit: 6,
-    complianceRate: 65,
-  });
+  const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    const controller = new AbortController();
+
     const fetchStats = async () => {
       try {
-        setLoading(true);
-        const standards = await getAllStandardsByNumber();
-        if (standards && Array.isArray(standards) && standards.length > 0) {
-          const total = standards.length;
-          const approved = standards.filter((s) => s.status === "approved").length;
-          const pending = standards.filter((s) => s.status === "pending_approval").length;
-          const rejected = standards.filter((s) => s.status === "rejected").length;
-          const didntSubmit = standards.filter((s) => s.status === "didnt_submit" || !s.status).length;
-          const complianceRate = Math.round((approved / total) * 100);
+        const standards = await retryUntilReady(async () => {
+          const result = await getAllStandardsByNumber();
+          if (!Array.isArray(result)) {
+            throw new Error("Standards are not ready");
+          }
+          return result;
+        }, { signal: controller.signal });
 
+        const total = standards.length;
+        const approved = standards.filter((s) => s.status === "approved").length;
+        const pending = standards.filter((s) => s.status === "pending_approval").length;
+        const rejected = standards.filter((s) => s.status === "rejected").length;
+        const didntSubmit = standards.filter(
+          (s) => s.status === "didnt_submit" || !s.status,
+        ).length;
+        const complianceRate = total === 0 ? 0 : Math.round((approved / total) * 100);
+
+        if (!controller.signal.aborted) {
           setStats({
             total,
             approved,
@@ -41,19 +46,20 @@ const StandardsStatsSection = () => {
             didntSubmit,
             complianceRate,
           });
+          setLoading(false);
         }
       } catch (error) {
-        // Fallback to default mock stats if API fails
-        console.warn("Failed to fetch standards stats, using mock fallbacks:", error);
-      } finally {
-        setLoading(false);
+        if (error?.name !== "AbortError") {
+          setLoading(true);
+        }
       }
     };
 
     fetchStats();
+    return () => controller.abort();
   }, []);
 
-  const cardData = [
+  const cardData = !stats ? [] : [
     {
       title: isRTL ? "إجمالي المعايير" : "Total Standards",
       value: stats.total,
@@ -116,6 +122,10 @@ const StandardsStatsSection = () => {
           </p>
         </div>
 
+        {loading || !stats ? (
+          <ServerBootStatus />
+        ) : (
+          <>
         {/* Highlight Stats + Overall Progress */}
         <div className="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8 items-center mb-12">
           {/* Progress Circular/Bar Card */}
@@ -185,6 +195,8 @@ const StandardsStatsSection = () => {
             );
           })}
         </div>
+          </>
+        )}
       </div>
     </section>
   );

@@ -1,16 +1,27 @@
-// Base API URL configuration
+// Same API host as the rest of the app. A relative "/api" hits the
+// Vercel site and returns index.html instead of JSON.
 const API_BASE_URL =
+  import.meta.env.VITE_API_BASE_URL ||
   import.meta.env.VITE_API_URL ||
   (window.location.hostname === "localhost"
     ? "http://localhost:5000/api"
-    : "/api");
+    : "https://huraymila-demo.onrender.com/api");
+
+export function getPublicAssetUrl(assetPath) {
+  if (!assetPath) return "";
+  if (assetPath.startsWith("http")) return assetPath;
+  const origin = API_BASE_URL.replace(/\/api\/?$/, "");
+  const path = assetPath.startsWith("/") ? assetPath : `/${assetPath}`;
+  return `${origin}${path}`;
+}
 
 export const partnerApi = {
   // Get all partners
   getAllPartners: async () => {
     try {
       const response = await fetch(`${API_BASE_URL}/partners`);
-      if (!response.ok) {
+      const contentType = response.headers.get("content-type") || "";
+      if (!response.ok || !contentType.includes("application/json")) {
         throw new Error("Failed to fetch partners");
       }
       return await response.json();

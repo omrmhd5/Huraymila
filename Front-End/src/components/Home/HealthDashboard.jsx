@@ -15,119 +15,19 @@ import {
   Target,
   Sparkles,
   Award,
-  Loader2,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useTheme } from "@/contexts/ThemeContext";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { getHealthIndicators } from "@/lib/healthIndicatorApi";
+import { retryUntilReady } from "@/lib/retryUntilReady";
+import ServerBootStatus from "@/components/ServerBootStatus";
 
 const HealthDashboard = () => {
   const { language } = useTheme();
   const { t } = useLanguage();
   const [indicators, setIndicators] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-
-  // Default indicators as fallback
-  const defaultIndicators = [
-    {
-      id: "airQuality",
-      title: t("healthDashboard.indicators.airQuality.title"),
-      value: 85,
-      status: t("healthDashboard.indicators.airQuality.status"),
-      trend: "up",
-      description: t("healthDashboard.indicators.airQuality.description"),
-      icon: Wind,
-      color: "text-green-600",
-      bgColor: "bg-green-100",
-      ringColor: "ring-green-500",
-      progressColor: "from-green-500 to-green-600",
-      target: 90,
-      detail: t("healthDashboard.indicators.airQuality.detail"),
-      inverted: false,
-    },
-    {
-      id: "waterQuality",
-      title: t("healthDashboard.indicators.waterQuality.title"),
-      value: 92,
-      status: t("healthDashboard.indicators.waterQuality.status"),
-      trend: "up",
-      description: t("healthDashboard.indicators.waterQuality.description"),
-      icon: Droplets,
-      color: "text-blue-600",
-      bgColor: "bg-blue-100",
-      ringColor: "ring-blue-500",
-      progressColor: "from-blue-500 to-blue-600",
-      target: 95,
-      detail: t("healthDashboard.indicators.waterQuality.detail"),
-      inverted: false,
-    },
-    {
-      id: "vaccination",
-      title: t("healthDashboard.indicators.vaccination.title"),
-      value: 96,
-      status: t("healthDashboard.indicators.vaccination.status"),
-      trend: "up",
-      description: t("healthDashboard.indicators.vaccination.description"),
-      icon: Shield,
-      color: "text-purple-600",
-      bgColor: "bg-purple-100",
-      ringColor: "ring-purple-500",
-      progressColor: "from-purple-500 to-purple-600",
-      target: 95,
-      detail: t("healthDashboard.indicators.vaccination.detail"),
-      inverted: false,
-    },
-    {
-      id: "physicalActivity",
-      title: t("healthDashboard.indicators.physicalActivity.title"),
-      value: 68,
-      status: t("healthDashboard.indicators.physicalActivity.status"),
-      trend: "up",
-      description: t("healthDashboard.indicators.physicalActivity.description"),
-      icon: Activity,
-      color: "text-orange-600",
-      bgColor: "bg-orange-100",
-      ringColor: "ring-orange-500",
-      progressColor: "from-orange-500 to-orange-600",
-      target: 80,
-      detail: t("healthDashboard.indicators.physicalActivity.detail"),
-      inverted: false,
-    },
-    {
-      id: "trafficAccidents",
-      title: t("healthDashboard.indicators.trafficAccidents.title"),
-      value: 12,
-      status: t("healthDashboard.indicators.trafficAccidents.status"),
-      trend: "down",
-      description: t("healthDashboard.indicators.trafficAccidents.description"),
-      icon: Car,
-      color: "text-red-600",
-      bgColor: "bg-red-100",
-      ringColor: "ring-red-500",
-      progressColor: "from-red-500 to-red-600",
-      target: 10,
-      detail: t("healthDashboard.indicators.trafficAccidents.detail"),
-      inverted: true, // Lower is better
-    },
-    {
-      id: "recycling",
-      title: t("healthDashboard.indicators.recycling.title"),
-      value: 74,
-      status: t("healthDashboard.indicators.recycling.status"),
-      trend: "up",
-      description: t("healthDashboard.indicators.recycling.description"),
-      icon: Recycle,
-      color: "text-teal-600",
-      bgColor: "bg-teal-100",
-      ringColor: "ring-teal-500",
-      progressColor: "from-teal-500 to-teal-600",
-      target: 80,
-      detail: t("healthDashboard.indicators.recycling.detail"),
-      inverted: false,
-    },
-  ];
 
   // Icon mapping for indicators
   const iconMap = {
@@ -179,58 +79,64 @@ const HealthDashboard = () => {
     },
   };
 
-  // Fetch health indicators from API
+  // Keep the spinner up until the API answers. A cold host returns HTML or 502.
   useEffect(() => {
+    const controller = new AbortController();
+
     const fetchIndicators = async () => {
       try {
         setLoading(true);
-        const data = await getHealthIndicators();
+        const data = await retryUntilReady(
+          async () => {
+            const result = await getHealthIndicators();
+            if (!result?.indicators) {
+              throw new Error("Health indicators are not ready");
+            }
+            return result;
+          },
+          { signal: controller.signal },
+        );
 
-        if (data && data.indicators) {
-          // Transform API data to match component format
-          const transformedIndicators = data.indicators.map((indicator) => {
-            const iconConfig = iconMap[indicator.id];
-            const colorConfig = colorMap[indicator.id];
+        const transformedIndicators = data.indicators.map((indicator) => {
+          const iconConfig = iconMap[indicator.id];
+          const colorConfig = colorMap[indicator.id];
 
-            return {
-              id: indicator.id,
-              title:
-                language === "ar" ? indicator.title.ar : indicator.title.en,
-              value: indicator.currentValue,
-              status:
-                language === "ar" ? indicator.status.ar : indicator.status.en,
-              trend: indicator.id === "trafficAccidents" ? "down" : "up",
-              description:
-                language === "ar"
-                  ? indicator.description.ar
-                  : indicator.description.en,
-              icon: iconConfig,
-              ...colorConfig,
-              target: indicator.targetValue,
-              detail:
-                language === "ar"
-                  ? indicator.description.ar
-                  : indicator.description.en,
-              inverted: indicator.id === "trafficAccidents",
-            };
-          });
+          return {
+            id: indicator.id,
+            title: language === "ar" ? indicator.title.ar : indicator.title.en,
+            value: indicator.currentValue,
+            status:
+              language === "ar" ? indicator.status.ar : indicator.status.en,
+            trend: indicator.id === "trafficAccidents" ? "down" : "up",
+            description:
+              language === "ar"
+                ? indicator.description.ar
+                : indicator.description.en,
+            icon: iconConfig,
+            ...colorConfig,
+            target: indicator.targetValue,
+            detail:
+              language === "ar"
+                ? indicator.description.ar
+                : indicator.description.en,
+            inverted: indicator.id === "trafficAccidents",
+          };
+        });
 
+        if (!controller.signal.aborted) {
           setIndicators(transformedIndicators);
-        } else {
-          throw new Error("Invalid data format received from API");
+          setLoading(false);
         }
       } catch (error) {
-        // Error fetching health indicators
-        setError(error.message);
-        // Fallback to default indicators
-        setIndicators(defaultIndicators);
-      } finally {
-        setLoading(false);
+        if (error?.name !== "AbortError") {
+          setLoading(true);
+        }
       }
     };
 
     fetchIndicators();
-  }, [language, t]);
+    return () => controller.abort();
+  }, [language]);
 
   const isRTL = language === "ar";
 
@@ -273,14 +179,7 @@ const HealthDashboard = () => {
               {t("healthDashboard.subtitle")}
             </p>
           </div>
-          <div className="flex items-center justify-center py-20">
-            <Loader2 className="h-8 w-8 animate-spin text-primary" />
-            <span className="ml-2 text-muted-foreground">
-              {language === "ar"
-                ? "جاري تحميل المؤشرات..."
-                : "Loading indicators..."}
-            </span>
-          </div>
+          <ServerBootStatus className="py-20" />
         </div>
       </section>
     );
@@ -297,13 +196,6 @@ const HealthDashboard = () => {
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
             {t("healthDashboard.subtitle")}
           </p>
-          {error && (
-            <div className="mt-4 text-sm text-orange-600">
-              {language === "ar"
-                ? "تم تحميل البيانات الافتراضية بسبب خطأ في الاتصال"
-                : "Loaded default data due to connection error"}
-            </div>
-          )}
         </div>
 
         {/* Indicators Grid */}

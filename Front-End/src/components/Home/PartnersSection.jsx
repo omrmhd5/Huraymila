@@ -32,7 +32,9 @@ import { cn } from "@/lib/utils";
 import { useTheme } from "@/contexts/ThemeContext";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useAuth } from "@/contexts/AuthContext";
-import { partnerApi } from "@/lib/partnerApi";
+import { partnerApi, getPublicAssetUrl } from "@/lib/partnerApi";
+import { retryUntilReady } from "@/lib/retryUntilReady";
+import ServerBootStatus from "@/components/ServerBootStatus";
 import PartnersManagementModal from "./PartnersManagementModal";
 import { Button } from "@/components/ui/button";
 import { Edit } from "lucide-react";
@@ -43,6 +45,7 @@ const PartnersSection = () => {
   const { user } = useAuth();
   const [dimensions, setDimensions] = React.useState({ width: 0 });
   const [connections, setConnections] = React.useState([]);
+  const [loadingPartners, setLoadingPartners] = React.useState(true);
   const [isModalOpen, setIsModalOpen] = React.useState(false);
 
   React.useEffect(() => {
@@ -54,32 +57,40 @@ const PartnersSection = () => {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  const fetchPartners = async () => {
+  const abortRef = React.useRef(null);
+
+  const fetchPartners = React.useCallback(async () => {
+    abortRef.current?.abort();
+    const controller = new AbortController();
+    abortRef.current = controller;
+
     try {
-      const data = await partnerApi.getAllPartners();
+      const data = await retryUntilReady(async () => {
+        const result = await partnerApi.getAllPartners();
+        if (!Array.isArray(result)) {
+          throw new Error("Partners are not ready");
+        }
+        return result;
+      }, { signal: controller.signal });
+
       setConnections(data);
-      // Dispatch event to trigger other components (like SuccessPartners) to refetch
+      setLoadingPartners(false);
       window.dispatchEvent(new Event("partners-updated"));
     } catch (error) {
-      console.error("Failed to fetch partners", error);
+      if (error?.name !== "AbortError") {
+        console.error("Failed to fetch partners", error);
+      }
     }
-  };
+  }, []);
 
   React.useEffect(() => {
     fetchPartners();
-  }, []);
+    return () => abortRef.current?.abort();
+  }, [fetchPartners]);
 
   const isRTL = language === "ar";
   
-  const getFullLogoUrl = (logoPath) => {
-    if (!logoPath) return "";
-    if (logoPath.startsWith("http")) return logoPath;
-    
-    const API_URL = import.meta.env.VITE_API_URL || 
-                    (window.location.hostname === "localhost" ? "http://localhost:5000/api" : "/api");
-    const baseUrl = API_URL.replace("/api", "");
-    return `${baseUrl}${logoPath}`;
-  };
+  const getFullLogoUrl = (logoPath) => getPublicAssetUrl(logoPath);
 
   return (
     <section className="py-10 md:py-16 lg:py-20 bg-secondary/15 overflow-hidden">
@@ -114,6 +125,10 @@ const PartnersSection = () => {
           </p>
         </div>
 
+        {loadingPartners ? (
+          <ServerBootStatus className="py-24" />
+        ) : (
+          <>
         {/* Hexagonal Network */}
         <div className="relative w-full max-w-7xl mx-auto h-[400px] md:h-[600px] lg:h-[800px] mb-8 md:mb-16 overflow-hidden">
           {/* Central Hub - Community */}
@@ -363,6 +378,8 @@ const PartnersSection = () => {
             </p>
           </Card>
         </div>
+          </>
+        )}
       </div>
       
       <PartnersManagementModal 
