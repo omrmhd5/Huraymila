@@ -218,7 +218,7 @@ async function seedDemoCommunity(initiatives) {
         "قصة تجريبية عن انطلاق مجموعة مشي أسبوعية شجعت الجيران على النشاط البدني.",
       date: addDays(-12),
       approvalStatus: "approved",
-      imageUrl: "/assets/walking-initiative.jpg",
+      imageUrl: "/assets/sustainable-transport.jpg",
     },
     {
       author: DEMO_PEOPLE[7],

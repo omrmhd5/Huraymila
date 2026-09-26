@@ -24,6 +24,8 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { cn } from "@/lib/utils";
 import { newsApi } from "@/lib/newsApi";
 import { formatDate } from "@/utils/dateUtils";
+import { retryUntilReady } from "@/lib/retryUntilReady";
+import ServerBootStatus from "@/components/ServerBootStatus";
 
 const NewsSection = () => {
   const { language } = useTheme();
@@ -40,22 +42,37 @@ const NewsSection = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  // Fetch prioritized news
+  // Fetch prioritized news once the API is ready.
   useEffect(() => {
+    const controller = new AbortController();
+
     const fetchPrioritizedNews = async () => {
       try {
         setLoading(true);
-        const response = await newsApi.getPrioritizedNews(5);
-        setNews(response.data || []);
+        const response = await retryUntilReady(
+          async () => {
+            const result = await newsApi.getPrioritizedNews(5);
+            if (!Array.isArray(result?.data)) {
+              throw new Error("News is not ready");
+            }
+            return result;
+          },
+          { signal: controller.signal },
+        );
+
+        if (!controller.signal.aborted) {
+          setNews(response.data);
+          setLoading(false);
+        }
       } catch (error) {
-        // Error fetching prioritized news
-        setNews([]);
-      } finally {
-        setLoading(false);
+        if (error?.name !== "AbortError") {
+          setLoading(true);
+        }
       }
     };
 
     fetchPrioritizedNews();
+    return () => controller.abort();
   }, []);
 
   // Auto-play slideshow
@@ -108,7 +125,7 @@ const NewsSection = () => {
             </p>
           </div>
           <div className="flex justify-center items-center py-20">
-            <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
+            <ServerBootStatus className="py-0" />
           </div>
         </div>
       </section>
@@ -219,7 +236,7 @@ const NewsSection = () => {
                         <h3
                           className={cn(
                             "text-2xl lg:text-3xl font-bold text-foreground mb-4",
-                            isRTL ? "font-arabic" : "font-english"
+                            isRTL ? "font-arabic" : "font-english",
                           )}>
                           {newsItem.title}
                         </h3>
@@ -227,7 +244,7 @@ const NewsSection = () => {
                         <p
                           className={cn(
                             "text-muted-foreground leading-relaxed mb-6 text-lg",
-                            isRTL ? "font-arabic" : "font-english"
+                            isRTL ? "font-arabic" : "font-english",
                           )}>
                           {newsItem.subtitle}
                         </p>
@@ -310,7 +327,7 @@ const NewsSection = () => {
                   "w-3 h-3 rounded-full transition-all duration-300",
                   index === currentSlide
                     ? "bg-primary w-8"
-                    : "bg-muted-foreground/30 hover:bg-muted-foreground/50"
+                    : "bg-muted-foreground/30 hover:bg-muted-foreground/50",
                 )}
               />
             ))}

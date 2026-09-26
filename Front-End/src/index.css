@@ -25,6 +25,11 @@
     overflow-x: hidden;
   }
 
+  .leaflet-container img {
+    max-width: none !important;
+    max-height: none !important;
+  }
+
   /* Optimize animations for better performance */
   .transition-all {
     will-change: opacity, transform;

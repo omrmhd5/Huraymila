@@ -205,6 +205,13 @@ const AllSuccessStories = () => {
                 animation="fadeInUp"
                 delay={index * 100}
                 className="group hover:shadow-lg transition-all duration-300 hover:-translate-y-1 flex flex-col">
+                {story.imageUrl && (
+                  <img
+                    src={successStoryApi.getImageUrl(story.imageUrl)}
+                    alt={story.author}
+                    className="h-48 w-full object-cover"
+                  />
+                )}
 
                 <CardHeader className="pb-3">
                   <CardTitle

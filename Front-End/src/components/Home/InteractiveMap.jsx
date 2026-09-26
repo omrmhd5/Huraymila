@@ -1,10 +1,12 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
-  APIProvider,
-  Map,
-  AdvancedMarker,
-  useMap,
-} from "@vis.gl/react-google-maps";
+  MapContainer,
+  Marker,
+  TileLayer,
+  useMapEvents,
+} from "react-leaflet";
+import L from "leaflet";
+import "leaflet/dist/leaflet.css";
 
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -31,12 +33,39 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { mapApi } from "@/lib/mapApi";
 
-const GOOGLE_MAPS_API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
-const GOOGLE_MAPS_ID = import.meta.env.VITE_GOOGLE_MAPS_ID;
-
-// Huraymila city center
 const HURAYMILA_CENTER = { lat: 25.1158, lng: 46.104 };
 const DEFAULT_ZOOM = 13;
+
+const PIN_COLORS = {
+  government: "#3b82f6",
+  local: "#22c55e",
+  educational: "#a855f7",
+  security: "#ef4444",
+  health: "#14b8a6",
+  public: "#f97316",
+  custom: "#dc2626",
+};
+
+function pinIcon(category, selected) {
+  const color = PIN_COLORS[category] || PIN_COLORS.public;
+  const size = selected ? 34 : 26;
+  return L.divIcon({
+    className: "",
+    iconSize: [size, size],
+    iconAnchor: [size / 2, size / 2],
+    html: `<div style="width:${size}px;height:${size}px;border-radius:9999px;background:${color};border:3px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,.35)"></div>`,
+  });
+}
+
+function MapPick({ enabled, onPick }) {
+  useMapEvents({
+    click(event) {
+      if (!enabled) return;
+      onPick({ lat: event.latlng.lat, lng: event.latlng.lng });
+    },
+  });
+  return null;
+}
 
 // Category config
 const CATEGORY_CONFIG = {
@@ -91,115 +120,42 @@ const CATEGORY_CONFIG = {
   },
 };
 
-// Custom Pin Component rendered inside AdvancedMarker
-const CategoryPin = ({ category, isSelected }) => {
-  const config = CATEGORY_CONFIG[category] || CATEGORY_CONFIG.public;
-  const IconComponent = config.icon;
-
-  return (
-    <div
-      className={cn(
-        "w-10 h-10 rounded-full flex items-center justify-center text-white shadow-lg transition-all duration-200 border-2",
-        config.color,
-        config.borderColor,
-        isSelected
-          ? "scale-125 ring-4 ring-white/50 shadow-xl"
-          : "hover:scale-110",
-      )}>
-      <IconComponent className="w-5 h-5" />
-    </div>
-  );
-};
-
-// AdvancedMarker sets marker.map immediately. Google throws getRootNode
-// when that happens before the map div is in the document.
-const MapMarkers = ({ locations, selectedId, isRTL, onSelect }) => {
-  const map = useMap();
-  const [ready, setReady] = useState(false);
-
-  useEffect(() => {
-    if (!map) {
-      setReady(false);
-      return;
-    }
-
-    let cancelled = false;
-    const markReady = () => {
-      if (cancelled) return;
-      const div = typeof map.getDiv === "function" ? map.getDiv() : null;
-      if (!div?.isConnected) return;
-      if (div.querySelector(".gm-err-container")) return;
-      setReady(true);
-    };
-
-    markReady();
-    const listener = map.addListener("idle", markReady);
-
-    return () => {
-      cancelled = true;
-      listener.remove();
-      setReady(false);
-    };
-  }, [map]);
-
-  if (!ready) return null;
-
-  return locations.map((location) => {
-    if (!Number.isFinite(location.lat) || !Number.isFinite(location.lng)) {
-      return null;
-    }
-
-    return (
-      <AdvancedMarker
-        key={location._id || location.placeId}
-        position={{ lat: location.lat, lng: location.lng }}
-        onClick={() => onSelect(location)}
-        title={isRTL ? location.name : location.nameEn || location.name}>
-        <CategoryPin
-          category={location.category}
-          isSelected={selectedId === location._id}
-        />
-      </AdvancedMarker>
-    );
-  });
-};
-
 // Zoom Controls — uses useMap() hook, must be inside <Map> tree
-const ZoomControls = ({ onReset, zoomInLabel, zoomOutLabel, resetLabel }) => {
-  const map = useMap();
-
-  const handleZoomIn = () => {
+const ZoomControls = ({ mapRef, onReset }) => {
+  const zoomIn = () => {
+    const map = mapRef.current;
     if (map) map.setZoom((map.getZoom() || DEFAULT_ZOOM) + 1);
   };
-  const handleZoomOut = () => {
+  const zoomOut = () => {
+    const map = mapRef.current;
     if (map) map.setZoom(Math.max((map.getZoom() || DEFAULT_ZOOM) - 1, 8));
   };
-  const handleReset = () => {
-    if (map) {
-      map.setCenter(HURAYMILA_CENTER);
-      map.setZoom(DEFAULT_ZOOM);
-    }
+  const reset = () => {
+    mapRef.current?.setView(
+      [HURAYMILA_CENTER.lat, HURAYMILA_CENTER.lng],
+      DEFAULT_ZOOM,
+    );
     onReset();
   };
 
   return (
-    <div className="absolute top-4 right-4 z-10 flex flex-col gap-2">
+    <div className="absolute top-4 right-4 z-[500] flex flex-col gap-2">
       <Button
-        onClick={handleZoomIn}
+        onClick={zoomIn}
         variant="outline"
         size="sm"
         className="bg-background/90 backdrop-blur-sm shadow-md w-9 h-9 p-0">
         <ZoomIn className="w-4 h-4" />
       </Button>
       <Button
-        onClick={handleZoomOut}
+        onClick={zoomOut}
         variant="outline"
         size="sm"
         className="bg-background/90 backdrop-blur-sm shadow-md w-9 h-9 p-0">
         <ZoomOut className="w-4 h-4" />
       </Button>
       <Button
-        onClick={handleReset}
+        onClick={reset}
         variant="outline"
         size="sm"
         className="bg-background/90 backdrop-blur-sm shadow-md w-9 h-9 p-0">
@@ -213,6 +169,8 @@ const InteractiveMap = () => {
   const { language } = useLanguage();
   const isRTL = language === "ar";
   const { user, token } = useAuth();
+
+  const mapRef = useRef(null);
 
   // Define allowed agencies: "لجنة الامن و السلامة" and "لجنة التنمية الصحية"
   const isAllowedAgency =
@@ -326,33 +284,12 @@ const InteractiveMap = () => {
     return CATEGORY_CONFIG[category]?.color || "bg-gray-500";
   };
 
-  // Map Click Handler for placing custom markers
-  const handleMapClick = (e) => {
-    if (!isAddingMode) return;
-    let lat = null;
-    let lng = null;
-
-    if (e.detail?.latLng) {
-      lat =
-        typeof e.detail.latLng.lat === "function"
-          ? e.detail.latLng.lat()
-          : e.detail.latLng.lat;
-      lng =
-        typeof e.detail.latLng.lng === "function"
-          ? e.detail.latLng.lng()
-          : e.detail.latLng.lng;
-    } else if (e.latLng) {
-      lat = e.latLng.lat();
-      lng = e.latLng.lng();
-    }
-
-    if (lat !== null && lng !== null) {
-      setFormCoords({ lat, lng });
-      setEditingLocation(null);
-      setFormData({ name: "", nameEn: "", address: "", category: "public" });
-      setIsFormOpen(true);
-      setIsAddingMode(false);
-    }
+  const handlePick = ({ lat, lng }) => {
+    setFormCoords({ lat, lng });
+    setEditingLocation(null);
+    setFormData({ name: "", nameEn: "", address: "", category: "public" });
+    setIsFormOpen(true);
+    setIsAddingMode(false);
   };
 
   // Handle Edit Action
@@ -703,32 +640,43 @@ const InteractiveMap = () => {
                       </div>
                     </div>
                   ) : (
-                    <APIProvider apiKey={GOOGLE_MAPS_API_KEY}>
-                      <Map
-                        mapId={GOOGLE_MAPS_ID}
-                        defaultCenter={HURAYMILA_CENTER}
-                        defaultZoom={DEFAULT_ZOOM}
-                        mapTypeId="terrain"
-                        gestureHandling="greedy"
-                        disableDefaultUI={true}
-                        onClick={handleMapClick}
-                        className="w-full h-full">
-                        {/* Custom Zoom Controls inside Map for useMap() access */}
-                        <ZoomControls
-                          onReset={() => setSelectedLocation(null)}
-                          zoomInLabel={t.zoomIn}
-                          zoomOutLabel={t.zoomOut}
-                          resetLabel={t.reset}
+                    <>
+                      <MapContainer
+                        center={[HURAYMILA_CENTER.lat, HURAYMILA_CENTER.lng]}
+                        zoom={DEFAULT_ZOOM}
+                        zoomControl={false}
+                        className="h-full w-full"
+                        ref={mapRef}>
+                        <TileLayer
+                          attribution="&copy; OpenStreetMap"
+                          url="https://tile.openstreetmap.org/{z}/{x}/{y}.png"
                         />
-
-                        <MapMarkers
-                          locations={filteredLocations}
-                          selectedId={selectedLocation?._id}
-                          isRTL={isRTL}
-                          onSelect={setSelectedLocation}
-                        />
-                      </Map>
-                    </APIProvider>
+                        <MapPick enabled={isAddingMode} onPick={handlePick} />
+                        {filteredLocations
+                          .filter(
+                            (location) =>
+                              Number.isFinite(location.lat) &&
+                              Number.isFinite(location.lng),
+                          )
+                          .map((location) => (
+                            <Marker
+                              key={location._id || location.placeId}
+                              position={[location.lat, location.lng]}
+                              icon={pinIcon(
+                                location.category,
+                                selectedLocation?._id === location._id,
+                              )}
+                              eventHandlers={{
+                                click: () => setSelectedLocation(location),
+                              }}
+                            />
+                          ))}
+                      </MapContainer>
+                      <ZoomControls
+                        mapRef={mapRef}
+                        onReset={() => setSelectedLocation(null)}
+                      />
+                    </>
                   )}
                 </div>
               </CardContent>

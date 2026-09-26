@@ -116,6 +116,14 @@ const SuccessStory = () => {
             </div>
           </div>
 
+          {story.imageUrl && (
+            <img
+              src={successStoryApi.getImageUrl(story.imageUrl)}
+              alt={story.author}
+              className="w-full h-80 object-cover rounded-xl"
+            />
+          )}
+
           {/* Story Message */}
           <Card>
             <CardContent className="p-6">
