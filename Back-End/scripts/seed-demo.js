@@ -58,7 +58,7 @@ const INITIATIVE_TEMPLATES = [
 ];
 
 function demoPhone(index) {
-  return `05${String(10000000 + index * 8642).slice(0, 8)}`;
+  return `05${String(index + 1).padStart(6, "0")}`;
 }
 
 function addDays(days) {
