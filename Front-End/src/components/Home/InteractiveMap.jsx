@@ -111,6 +111,59 @@ const CategoryPin = ({ category, isSelected }) => {
   );
 };
 
+// AdvancedMarker sets marker.map immediately. Google throws getRootNode
+// when that happens before the map div is in the document.
+const MapMarkers = ({ locations, selectedId, isRTL, onSelect }) => {
+  const map = useMap();
+  const [ready, setReady] = useState(false);
+
+  useEffect(() => {
+    if (!map) {
+      setReady(false);
+      return;
+    }
+
+    let cancelled = false;
+    const markReady = () => {
+      if (cancelled) return;
+      const div = typeof map.getDiv === "function" ? map.getDiv() : null;
+      if (!div?.isConnected) return;
+      if (div.querySelector(".gm-err-container")) return;
+      setReady(true);
+    };
+
+    markReady();
+    const listener = map.addListener("idle", markReady);
+
+    return () => {
+      cancelled = true;
+      listener.remove();
+      setReady(false);
+    };
+  }, [map]);
+
+  if (!ready) return null;
+
+  return locations.map((location) => {
+    if (!Number.isFinite(location.lat) || !Number.isFinite(location.lng)) {
+      return null;
+    }
+
+    return (
+      <AdvancedMarker
+        key={location._id || location.placeId}
+        position={{ lat: location.lat, lng: location.lng }}
+        onClick={() => onSelect(location)}
+        title={isRTL ? location.name : location.nameEn || location.name}>
+        <CategoryPin
+          category={location.category}
+          isSelected={selectedId === location._id}
+        />
+      </AdvancedMarker>
+    );
+  });
+};
+
 // Zoom Controls — uses useMap() hook, must be inside <Map> tree
 const ZoomControls = ({ onReset, zoomInLabel, zoomOutLabel, resetLabel }) => {
   const map = useMap();
@@ -668,25 +721,12 @@ const InteractiveMap = () => {
                           resetLabel={t.reset}
                         />
 
-                        {/* Markers */}
-                        {filteredLocations.map((location) => (
-                          <AdvancedMarker
-                            key={location._id || location.placeId}
-                            position={{ lat: location.lat, lng: location.lng }}
-                            onClick={() => setSelectedLocation(location)}
-                            title={
-                              isRTL
-                                ? location.name
-                                : location.nameEn || location.name
-                            }>
-                            <CategoryPin
-                              category={location.category}
-                              isSelected={
-                                selectedLocation?._id === location._id
-                              }
-                            />
-                          </AdvancedMarker>
-                        ))}
+                        <MapMarkers
+                          locations={filteredLocations}
+                          selectedId={selectedLocation?._id}
+                          isRTL={isRTL}
+                          onSelect={setSelectedLocation}
+                        />
                       </Map>
                     </APIProvider>
                   )}
