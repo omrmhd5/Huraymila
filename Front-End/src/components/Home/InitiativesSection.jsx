@@ -23,6 +23,7 @@ import { useNavigate } from "react-router-dom";
 import { useTheme } from "@/contexts/ThemeContext";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { initiativeApi } from "@/lib/initiativeApi";
+import { resolveMediaUrl } from "@/lib/mediaUrl";
 
 const InitiativesSection = () => {
   const { language } = useTheme();
@@ -195,12 +196,7 @@ const InitiativesSection = () => {
                   <img
                     src={
                       initiative.imageUrl
-                        ? `${
-                            import.meta.env.VITE_API_BASE_URL?.replace(
-                              "/api",
-                              ""
-                            ) || "http://localhost:5000"
-                          }${initiative.imageUrl}`
+                        ? resolveMediaUrl(initiative.imageUrl)
                         : "/assets/health-workshop.jpg"
                     }
                     alt={initiative.title}

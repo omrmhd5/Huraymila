@@ -24,6 +24,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { formatDate } from "@/utils/dateUtils";
 import { initiativeApi } from "@/lib/initiativeApi";
+import { resolveMediaUrl } from "@/lib/mediaUrl";
 import { toast } from "sonner";
 
 const Initiatives = ({ language }) => {
@@ -574,12 +575,7 @@ const Initiatives = ({ language }) => {
                           language === "ar" ? "ml-4" : "mr-4"
                         } flex-shrink-0`}>
                         <img
-                          src={`${
-                            import.meta.env.VITE_API_BASE_URL?.replace(
-                              "/api",
-                              ""
-                            ) || "http://localhost:5000"
-                          }${initiative.imageUrl}`}
+                          src={resolveMediaUrl(initiative.imageUrl)}
                           alt={initiative.title}
                           className="w-24 h-24 object-cover rounded-lg border"
                         />

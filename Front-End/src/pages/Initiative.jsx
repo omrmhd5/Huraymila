@@ -10,6 +10,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { formatDate } from "@/utils/dateUtils";
 import { useAuth } from "@/contexts/AuthContext";
 import { initiativeApi } from "@/lib/initiativeApi";
+import { resolveMediaUrl } from "@/lib/mediaUrl";
 import { toast } from "sonner";
 
 // Import mock images
@@ -314,10 +315,7 @@ const Initiative = () => {
                 src={
                   initiative.isMock
                     ? initiative.imageUrl
-                    : `${
-                        import.meta.env.VITE_API_BASE_URL?.replace("/api", "") ||
-                        "http://localhost:5000"
-                      }${initiative.imageUrl}`
+                    : resolveMediaUrl(initiative.imageUrl)
                 }
                 alt={initiative.title}
                 className="w-full h-64 md:h-96 object-cover rounded-lg"

@@ -1,4 +1,5 @@
 const HealthIndicator = require("../Models/HealthIndicator");
+const { applyIndicatorCopy } = require("../utils/healthIndicatorCopy");
 
 // Get health indicators (public route)
 const getHealthIndicators = async (req, res) => {
@@ -183,6 +184,7 @@ const updateHealthIndicators = async (req, res) => {
       if (newIndicator) {
         existingIndicator.currentValue = newIndicator.currentValue;
         existingIndicator.targetValue = newIndicator.targetValue;
+        applyIndicatorCopy(existingIndicator);
       }
     });
 

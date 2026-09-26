@@ -19,6 +19,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Upload } from "lucide-react";
+import { resolveMediaUrl } from "@/lib/mediaUrl";
 
 const InitiativeModal = ({
   isOpen,
@@ -374,10 +375,7 @@ const InitiativeModal = ({
               {mode === "edit" && initiative?.imageUrl && !imagePreview && (
                 <div className="mt-3">
                   <img
-                    src={`${
-                      import.meta.env.VITE_API_BASE_URL?.replace("/api", "") ||
-                      "http://localhost:5000"
-                    }${initiative.imageUrl}`}
+                    src={resolveMediaUrl(initiative.imageUrl)}
                     alt="Current initiative image"
                     className="w-full h-32 object-cover rounded-md border"
                   />

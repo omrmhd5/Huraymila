@@ -346,6 +346,7 @@ import DeleteNewsModal from "@/components/AdminDashboard/DeleteNewsModal";
 import SuccessStoryModal from "@/components/AdminDashboard/SuccessStoryModal";
 import DeleteSuccessStoryModal from "@/components/AdminDashboard/DeleteSuccessStoryModal";
 import { initiativeApi } from "@/lib/initiativeApi";
+import { resolveMediaUrl } from "@/lib/mediaUrl";
 import { newsApi } from "@/lib/newsApi";
 import { successStoryApi } from "@/lib/successStoryApi";
 import { reportApi } from "@/lib/reportApi";
@@ -1898,12 +1899,7 @@ const AdminDashboard = () => {
                           </div>
                           {initiative.imageUrl && (
                             <img
-                              src={`${
-                                import.meta.env.VITE_API_BASE_URL?.replace(
-                                  "/api",
-                                  ""
-                                ) || "http://localhost:5000"
-                              }${initiative.imageUrl}`}
+                              src={resolveMediaUrl(initiative.imageUrl)}
                               alt={initiative.title}
                               className="w-24 h-24 object-cover rounded-lg ml-4"
                             />
