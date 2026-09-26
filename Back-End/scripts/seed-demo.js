@@ -5,6 +5,9 @@ const mongoose = require("mongoose");
 const Agency = require("../Models/Agency");
 const Governor = require("../Models/Governor");
 const Initiative = require("../Models/Initiative");
+const Volunteer = require("../Models/Volunteer");
+const Report = require("../Models/Report");
+const SuccessStory = require("../Models/SuccessStory");
 const HealthIndicator = require("../Models/HealthIndicator");
 const { applyIndicatorCopy } = require("../utils/healthIndicatorCopy");
 
@@ -88,7 +91,8 @@ async function resetLogins() {
 
   for (let index = 0; index < agencies.length; index += 1) {
     const agency = agencies[index];
-    agency.email = index === 0 ? "agency@agency.com" : `agency${index}@agency.com`;
+    agency.email =
+      index === 0 ? "agency@agency.com" : `agency${index}@agency.com`;
     agency.password = "agency123";
     agency.contactPerson = {
       name: CONTACT_NAMES[index % CONTACT_NAMES.length],
@@ -117,27 +121,132 @@ async function demoizeHealthIndicators() {
 }
 
 async function seedDemoInitiatives() {
-  const agencies = await Agency.find().sort({ _id: 1 });
+  const agency = await Agency.findOne().sort({ _id: 1 });
+  if (!agency) throw new Error("No agencies found");
   await Initiative.deleteMany({});
 
-  const rows = agencies.flatMap((agency) =>
-    INITIATIVE_TEMPLATES.map((template) => ({
-      title: template.title(agency.name),
-      description: template.description(agency.name),
-      startDate: addDays(template.startOffset),
-      endDate: addDays(template.endOffset),
-      status: template.status,
-      approvalStatus: "approved",
-      maxVolunteers: template.maxVolunteers,
-      currentVolunteers: 0,
-      agency: agency._id,
-      imageUrl: template.imageUrl,
-      volunteers: [],
-    })),
-  );
+  const rows = INITIATIVE_TEMPLATES.map((template) => ({
+    title: template.title(agency.name),
+    description: template.description(agency.name),
+    startDate: addDays(template.startOffset),
+    endDate: addDays(template.endOffset),
+    status: template.status,
+    approvalStatus: "approved",
+    maxVolunteers: template.maxVolunteers,
+    currentVolunteers: 0,
+    agency: agency._id,
+    imageUrl: template.imageUrl,
+    volunteers: [],
+  }));
 
-  await Initiative.insertMany(rows);
-  console.log(`Seeded ${rows.length} demo initiatives`);
+  const initiatives = await Initiative.insertMany(rows);
+  console.log(`Seeded ${initiatives.length} demo initiatives`);
+  return initiatives;
+}
+
+const DEMO_PEOPLE = [
+  "عبدالله بن فهد السديري",
+  "يوسف بن سعد العتيبي",
+  "عمر بن خالد القحطاني",
+  "نورة بنت سعد الدوسري",
+  "محمد بن فهد الشمري",
+  "لمى بنت عبدالعزيز الحربي",
+  "سلطان بن ناصر المطيري",
+  "هند بنت وليد الزهراني",
+  "فيصل بن بندر الغامدي",
+];
+
+async function seedDemoCommunity(initiatives) {
+  await Volunteer.deleteMany({});
+  await Report.deleteMany({});
+  await SuccessStory.deleteMany({});
+
+  const volunteers = [];
+  for (let index = 0; index < 3; index += 1) {
+    const volunteer = await Volunteer.create({
+      fullName: DEMO_PEOPLE[index],
+      email:
+        index === 0
+          ? "volunteer@volunteer.com"
+          : `volunteer${index}@volunteer.com`,
+      password: "volunteer123",
+      phoneNumber: demoPhone(13 + index),
+      initiatives: [{ initiative: initiatives[index]._id }],
+      isActive: true,
+    });
+    volunteers.push(volunteer);
+
+    const initiative = await Initiative.findById(initiatives[index]._id);
+    initiative.volunteers.push({ volunteer: volunteer._id });
+    await initiative.save();
+  }
+
+  await Report.insertMany([
+    {
+      name: DEMO_PEOPLE[3],
+      email: "feedback1@demo.sa",
+      phone: demoPhone(16),
+      subject: "اقتراح مسار مشي",
+      details: "اقتراح تجريبي لإضافة مسار مشي مظلل قرب الحي السكني.",
+      status: "pending",
+    },
+    {
+      name: DEMO_PEOPLE[4],
+      email: "feedback2@demo.sa",
+      phone: demoPhone(17),
+      subject: "ملاحظة عن حديقة الحي",
+      details: "ملاحظة تجريبية عن الحاجة إلى مقاعد إضافية في الحديقة العامة.",
+      status: "under review",
+    },
+    {
+      name: DEMO_PEOPLE[5],
+      email: "feedback3@demo.sa",
+      phone: demoPhone(18),
+      subject: "شكر على الحملة التوعوية",
+      details: "مشاركة تجريبية للثناء على الحملة الصحية الأخيرة في المحافظة.",
+      status: "resolved",
+    },
+  ]);
+
+  await SuccessStory.insertMany([
+    {
+      author: DEMO_PEOPLE[6],
+      email: "story1@demo.sa",
+      phone: demoPhone(19),
+      title: "ممشى الحي",
+      description:
+        "قصة تجريبية عن انطلاق مجموعة مشي أسبوعية شجعت الجيران على النشاط البدني.",
+      date: addDays(-12),
+      approvalStatus: "approved",
+      imageUrl: "/assets/walking-initiative.jpg",
+    },
+    {
+      author: DEMO_PEOPLE[7],
+      email: "story2@demo.sa",
+      phone: demoPhone(20),
+      title: "حديقة الحي",
+      description:
+        "قصة تجريبية عن تحويل أرض فضاء إلى حديقة صغيرة يستخدمها الأطفال والعائلات.",
+      date: addDays(-20),
+      approvalStatus: "approved",
+      imageUrl: "/assets/green-garden.jpg",
+    },
+    {
+      author: DEMO_PEOPLE[8],
+      email: "story3@demo.sa",
+      phone: demoPhone(21),
+      title: "ورشة التوعية الصحية",
+      description:
+        "قصة تجريبية عن ورشة إسعافات أولية حضرها طلاب وأهالي المحافظة.",
+      date: addDays(-30),
+      approvalStatus: "approved",
+      imageUrl: "/assets/health-workshop.jpg",
+    },
+  ]);
+
+  console.log(
+    `Seeded ${volunteers.length} volunteers, 3 feedback entries, and 3 success stories`,
+  );
 }
 
 async function main() {
@@ -159,7 +268,8 @@ async function main() {
   await mongoose.connect(uri);
   await resetLogins();
   await demoizeHealthIndicators();
-  await seedDemoInitiatives();
+  const initiatives = await seedDemoInitiatives();
+  await seedDemoCommunity(initiatives);
   console.log("Demo logins set: governor@governor.com and agency@agency.com");
   await mongoose.disconnect();
 }

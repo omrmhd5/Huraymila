@@ -217,6 +217,13 @@ export const successStoryApi = {
   // Get image URL helper
   getImageUrl: (imagePath) => {
     if (!imagePath) return "/assets/placeholder.svg";
+    if (
+      imagePath.startsWith("http") ||
+      imagePath.startsWith("/assets/") ||
+      imagePath.startsWith("data:")
+    ) {
+      return imagePath;
+    }
     return `${API_BASE_URL.replace("/api", "")}${imagePath}`;
   },
 
