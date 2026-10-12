@@ -954,7 +954,7 @@
   },
   "banner": {
     "demo": "DEMO MODE",
-    "wake": "First load after idle may take a few seconds"
+    "wake": "If you read this, GitHub Actions probably owes you a coffee ☕ (not really)"
   },
   "demoLogin": {
     "title": "Demo login",
