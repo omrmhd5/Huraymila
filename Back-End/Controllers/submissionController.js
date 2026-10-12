@@ -4,7 +4,9 @@ const {
   moveFilesToSubmissionFolder,
   cleanupTempFiles,
   deletePhysicalFiles,
+  deleteSubmissionFolder,
 } = require("../middleware/fileUpload");
+const s3SubmissionStorage = require("../utils/s3SubmissionStorage");
 const { updateStandardStatus } = require("../utils/standardStatusUpdater");
 
 // Create a new submission (agency scoped)
@@ -51,9 +53,9 @@ const createSubmission = async (req, res) => {
     // Handle file uploads if any
     if (req.files && req.files.length > 0) {
       try {
-        const movedFiles = moveFilesToSubmissionFolder(
+        const movedFiles = await moveFilesToSubmissionFolder(
           newSubmission._id.toString(),
-          req.files
+          req.files,
         );
         filesUrls = movedFiles.map((file) => file.path);
 
@@ -185,7 +187,7 @@ const updateSubmissionStatus = async (req, res) => {
     const submission = await Submission.findByIdAndUpdate(
       id,
       { status },
-      { new: true, runValidators: true }
+      { new: true, runValidators: true },
     ).populate("agency", "name name_ar");
 
     if (!submission) {
@@ -272,18 +274,21 @@ const updateMySubmission = async (req, res) => {
     // Find files that were removed and delete them physically
     const currentFileUrls = existingSubmission.filesUrls || [];
     const filesToDelete = currentFileUrls.filter(
-      (fileUrl) => !existingFileUrls.includes(fileUrl)
+      (fileUrl) => !existingFileUrls.includes(fileUrl),
     );
 
     if (filesToDelete.length > 0) {
       // Log: Deleting removed files
-      deletePhysicalFiles(filesToDelete);
+      await deletePhysicalFiles(filesToDelete);
     }
 
     // Handle new file uploads if any
     if (req.files && req.files.length > 0) {
       try {
-        const movedFiles = moveFilesToSubmissionFolder(submissionId, req.files);
+        const movedFiles = await moveFilesToSubmissionFolder(
+          submissionId,
+          req.files,
+        );
         const newFileUrls = movedFiles.map((file) => file.path);
         finalFileUrls = [...finalFileUrls, ...newFileUrls];
       } catch (error) {
@@ -307,12 +312,12 @@ const updateMySubmission = async (req, res) => {
         filesUrls: finalFileUrls,
         updatedAt: new Date(),
       },
-      { new: true }
+      { new: true },
     );
 
     const populated = await Submission.findById(updatedSubmission._id).populate(
       "agency",
-      "name name_ar email"
+      "name name_ar email",
     );
 
     // Update standard status
@@ -370,18 +375,49 @@ const downloadSubmissionFile = async (req, res) => {
       });
     }
 
-    // Check if file exists in submission
-    const fileUrl = `/public/submissions/${submissionId}/${filename}`;
-    const fileExists = submission.filesUrls.includes(fileUrl);
+    const fileUrlEntry = (submission.filesUrls || []).find((url) => {
+      if (!s3SubmissionStorage.submissionMatchesFileUrl(submissionId, url)) {
+        return false;
+      }
+      const base = url.split("/").pop();
+      return base === filename || decodeURIComponent(base) === filename;
+    });
 
-    if (!fileExists) {
+    if (!fileUrlEntry) {
       return res.status(404).json({
         success: false,
         message: "File not found in submission",
       });
     }
 
-    // Construct file path
+    if (s3SubmissionStorage.isSubmissionS3Enabled()) {
+      const storedFilename =
+        s3SubmissionStorage.filenameFromPublicPath(fileUrlEntry) || filename;
+      try {
+        const s3Object = await s3SubmissionStorage.getReadStream(
+          submissionId,
+          storedFilename,
+        );
+        if (s3Object.ContentType) {
+          res.setHeader("Content-Type", s3Object.ContentType);
+        }
+        res.setHeader(
+          "Content-Disposition",
+          `attachment; filename="${storedFilename}"`,
+        );
+        s3Object.Body.pipe(res);
+        return;
+      } catch (err) {
+        if (err.name === "NoSuchKey" || err.$metadata?.httpStatusCode === 404) {
+          return res.status(404).json({
+            success: false,
+            message: "File not found in storage",
+          });
+        }
+        throw err;
+      }
+    }
+
     const path = require("path");
     const fs = require("fs");
     const filePath = path.join(
@@ -390,10 +426,9 @@ const downloadSubmissionFile = async (req, res) => {
       "public",
       "submissions",
       submissionId,
-      filename
+      filename,
     );
 
-    // Check if file exists on disk
     if (!fs.existsSync(filePath)) {
       return res.status(404).json({
         success: false,
@@ -401,16 +436,12 @@ const downloadSubmissionFile = async (req, res) => {
       });
     }
 
-    // Send file
     res.download(filePath, filename, (err) => {
-      if (err) {
-        // Error downloading file
-        if (!res.headersSent) {
-          res.status(500).json({
-            success: false,
-            message: "Error downloading file",
-          });
-        }
+      if (err && !res.headersSent) {
+        res.status(500).json({
+          success: false,
+          message: "Error downloading file",
+        });
       }
     });
   } catch (error) {
@@ -459,22 +490,10 @@ const deleteSubmission = async (req, res) => {
 
     // Delete physical files if any exist
     if (submission.filesUrls && submission.filesUrls.length > 0) {
-      deletePhysicalFiles(submission.filesUrls);
+      await deletePhysicalFiles(submission.filesUrls);
     }
 
-    // Also try to remove the submission's folder entirely
-    const path = require("path");
-    const fs = require("fs");
-    const submissionFolder = path.join(
-      __dirname,
-      "..",
-      "public",
-      "submissions",
-      id
-    );
-    if (fs.existsSync(submissionFolder)) {
-      fs.rmSync(submissionFolder, { recursive: true, force: true });
-    }
+    await deleteSubmissionFolder(id);
 
     await Submission.findByIdAndDelete(id);
 

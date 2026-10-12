@@ -1,6 +1,7 @@
 const multer = require("multer");
 const path = require("path");
 const fs = require("fs");
+const s3SubmissionStorage = require("../utils/s3SubmissionStorage");
 
 // Configure storage
 const storage = multer.diskStorage({
@@ -15,7 +16,7 @@ const storage = multer.diskStorage({
       fs.mkdirSync(submissionsDir, { recursive: true });
     }
 
-    // For now, store in temp folder - will move to submission-specific folder after creation
+    // Temp folder — multer writes here, then we move to disk or S3
     const tempDir = path.join(submissionsDir, "temp");
     if (!fs.existsSync(tempDir)) {
       fs.mkdirSync(tempDir, { recursive: true });
@@ -24,9 +25,10 @@ const storage = multer.diskStorage({
     cb(null, tempDir);
   },
   filename: (req, file, cb) => {
-    // Use original filename for temp storage with timestamp to avoid conflicts
     const timestamp = Date.now();
-    const originalName = Buffer.from(file.originalname, "latin1").toString("utf8");
+    const originalName = Buffer.from(file.originalname, "latin1").toString(
+      "utf8",
+    );
     const extension = path.extname(originalName);
     const nameWithoutExt = path.basename(originalName, extension);
     const filename = `${timestamp}-${nameWithoutExt}${extension}`;
@@ -34,31 +36,26 @@ const storage = multer.diskStorage({
   },
 });
 
-// File filter
 const fileFilter = (req, file, cb) => {
-  // Accept all file types for now
   cb(null, true);
 };
 
-// Configure multer
 const upload = multer({
   storage: storage,
   fileFilter: fileFilter,
   limits: {
-    fileSize: 50 * 1024 * 1024, // 50MB limit per file
-    files: 10, // Maximum 10 files per request
+    fileSize: 50 * 1024 * 1024,
+    files: 10,
   },
 });
 
-// Helper function to move files to submission-specific folder
-const moveFilesToSubmissionFolder = (submissionId, tempFiles) => {
+const moveFilesToLocalSubmissionFolder = (submissionId, tempFiles) => {
   const submissionDir = path.join(
     __dirname,
     "../public/submissions",
-    submissionId
+    submissionId,
   );
 
-  // Create submission-specific directory
   if (!fs.existsSync(submissionDir)) {
     fs.mkdirSync(submissionDir, { recursive: true });
   }
@@ -67,13 +64,12 @@ const moveFilesToSubmissionFolder = (submissionId, tempFiles) => {
 
   tempFiles.forEach((file) => {
     const oldPath = file.path;
-
-    // Use the exact original filename
-    const originalFilename = Buffer.from(file.originalname, "latin1").toString("utf8");
+    const originalFilename = Buffer.from(file.originalname, "latin1").toString(
+      "utf8",
+    );
     let finalFilename = originalFilename;
     let counter = 1;
 
-    // Check if file already exists and generate unique name if needed
     while (fs.existsSync(path.join(submissionDir, finalFilename))) {
       const extension = path.extname(originalFilename);
       const nameWithoutExt = path.basename(originalFilename, extension);
@@ -84,10 +80,7 @@ const moveFilesToSubmissionFolder = (submissionId, tempFiles) => {
     const newPath = path.join(submissionDir, finalFilename);
 
     try {
-      // Move file from temp to submission folder with original filename
       fs.renameSync(oldPath, newPath);
-
-      // Update file path for database storage
       movedFiles.push({
         filename: finalFilename,
         originalname: originalFilename,
@@ -96,14 +89,26 @@ const moveFilesToSubmissionFolder = (submissionId, tempFiles) => {
         path: `/public/submissions/${submissionId}/${finalFilename}`,
       });
     } catch (error) {
-      // Error moving file
+      // skip failed move
     }
   });
 
   return movedFiles;
 };
 
-// Helper function to clean up temp files
+const moveFilesToSubmissionFolder = async (submissionId, tempFiles) => {
+  if (s3SubmissionStorage.isSubmissionS3Enabled()) {
+    const movedFiles = [];
+    for (const file of tempFiles) {
+      movedFiles.push(
+        await s3SubmissionStorage.uploadFromMulterFile(submissionId, file),
+      );
+    }
+    return movedFiles;
+  }
+  return moveFilesToLocalSubmissionFolder(submissionId, tempFiles);
+};
+
 const cleanupTempFiles = (files) => {
   files.forEach((file) => {
     try {
@@ -111,17 +116,19 @@ const cleanupTempFiles = (files) => {
         fs.unlinkSync(file.path);
       }
     } catch (error) {
-      // Error cleaning up temp file
+      // best-effort
     }
   });
 };
 
-// Helper function to delete physical files from submission folder
-const deletePhysicalFiles = (fileUrls) => {
+const deletePhysicalFiles = async (fileUrls) => {
+  if (s3SubmissionStorage.isSubmissionS3Enabled()) {
+    await s3SubmissionStorage.deleteObjectsForUrls(fileUrls);
+    return;
+  }
+
   fileUrls.forEach((fileUrl) => {
     try {
-      // Convert URL path to actual file system path
-      // fileUrl format: "/submissions/{submissionId}/{filename}"
       const relativePath = fileUrl.startsWith("/")
         ? fileUrl.substring(1)
         : fileUrl;
@@ -129,37 +136,36 @@ const deletePhysicalFiles = (fileUrls) => {
 
       if (fs.existsSync(fullPath)) {
         fs.unlinkSync(fullPath);
-        // Deleted physical file
       }
     } catch (error) {
-      // Error deleting physical file
+      // best-effort
     }
   });
 };
 
-// Helper function to delete entire submission folder
-const deleteSubmissionFolder = (submissionId) => {
+const deleteSubmissionFolder = async (submissionId) => {
+  if (s3SubmissionStorage.isSubmissionS3Enabled()) {
+    await s3SubmissionStorage.deleteSubmissionPrefix(submissionId);
+    return;
+  }
+
   try {
     const submissionDir = path.join(
       __dirname,
       "../public/submissions",
-      submissionId
+      submissionId,
     );
 
     if (fs.existsSync(submissionDir)) {
-      // Remove all files in the directory
       const files = fs.readdirSync(submissionDir);
       files.forEach((file) => {
         const filePath = path.join(submissionDir, file);
         fs.unlinkSync(filePath);
       });
-
-      // Remove the directory itself
       fs.rmdirSync(submissionDir);
-      // Deleted submission folder
     }
   } catch (error) {
-    // Error deleting submission folder
+    // best-effort
   }
 };
 
