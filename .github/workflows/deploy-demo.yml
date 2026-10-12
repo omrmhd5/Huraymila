@@ -1,0 +1,35 @@
+# Deploy Huraymila to EC2 when demo branch is updated.
+# One-time setup: GitHub repo Secrets + EC2 docker group (see aws-ec2-huraymila-deploy.md stage 9).
+
+name: Deploy demo to EC2
+
+on:
+  push:
+    branches: [demo]
+  workflow_dispatch:
+
+concurrency:
+  group: huraymila-demo-ec2
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+
+    steps:
+      - name: Pull and rebuild on EC2
+        uses: appleboy/ssh-action@v1.2.2
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          command_timeout: 40m
+          script: |
+            set -euo pipefail
+            cd ~/Huraymila
+            git fetch origin demo
+            git checkout demo
+            git reset --hard origin/demo
+            docker compose up --build -d
+            docker compose ps
