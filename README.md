@@ -54,24 +54,27 @@ The system improved document organization and retrieval by over **70%**, increas
 
 ## 📦 Tech Stack
 
-| Layer         | Tech                        |
-| ------------- | --------------------------- |
-| Frontend      | React.js, Vite, TailwindCSS |
-| Backend       | Node.js, Express.js         |
-| Database      | MongoDB                     |
-| Auth          | JWT (JSON Web Tokens)       |
-| File Uploads  | Multer                      |
-| State & Data  | TanStack Query              |
-| Maps & Charts | Leaflet, Recharts           |
+| Layer         | Tech                                                                      |
+| ------------- | ------------------------------------------------------------------------- |
+| Frontend      | React.js, Vite, TailwindCSS                                               |
+| Backend       | Node.js, Express.js                                                       |
+| Database      | MongoDB                                                                   |
+| Auth          | JWT (JSON Web Tokens)                                                     |
+| File Uploads  | Multer                                                                    |
+| State & Data  | TanStack Query                                                            |
+| Maps & Charts | Leaflet, Recharts                                                         |
+| Deployment    | AWS EC2 (Docker Compose) · Vercel (FE), Render (BE), MongoDB Atlas (demo) |
 
 ---
 
 ## 🌐 Deployment Notes
 
-- Fully responsive UI (desktop, tablet, mobile)
-- RTL support for Arabic language
-- Designed for scalability across multiple cities
-- Cloud-ready architecture with environment-based configuration
+- Fully responsive UI (desktop, tablet, mobile) with RTL support for Arabic and English
+- Full stack in **Docker Compose** (MongoDB, API, nginx serving the production build with `/api` reverse proxy)
+- **AWS EC2** demo deploy (`eu-central-1`); environment and CORS configured for one public URL
+- **GitHub Actions** on push to `demo`: SSH pull, rebuild images, recreate containers
+- **Amazon S3** for private submission file storage (served through the API, not public object URLs)
+- Public live demo on **Vercel** (with Render API and MongoDB Atlas); first load after idle may take a few seconds
 
 ---
 
@@ -85,116 +88,29 @@ Home sections → About → About Huraymila → news article → organizational 
 
 ## 📸 Screenshots
 
-<table>
-  <tr>
-    <td width="50%" valign="top">
-      <strong>Hero</strong><br />
-      <img width="100%" alt="Hero" src="./docs/screenshots/english/01-hero.png" />
-    </td>
-    <td width="50%" valign="top">
-      <strong>Vision</strong><br />
-      <img width="100%" alt="Vision" src="./docs/screenshots/english/02-vision.png" />
-    </td>
-  </tr>
-  <tr>
-    <td width="50%" valign="top">
-      <strong>Timeline</strong><br />
-      <img width="100%" alt="Timeline" src="./docs/screenshots/english/03-timeline.png" />
-    </td>
-    <td width="50%" valign="top">
-      <strong>Latest News</strong><br />
-      <img width="100%" alt="Latest News" src="./docs/screenshots/english/04-latest-news.png" />
-    </td>
-  </tr>
-  <tr>
-    <td width="50%" valign="top">
-      <strong>Health Indicators</strong><br />
-      <img width="100%" alt="Health Indicators" src="./docs/screenshots/english/05-health-indicators.png" />
-    </td>
-    <td width="50%" valign="top">
-      <strong>Standards Progress</strong><br />
-      <img width="100%" alt="Standards Progress" src="./docs/screenshots/english/06-standards-progress.png" />
-    </td>
-  </tr>
-  <tr>
-    <td width="50%" valign="top">
-      <strong>Community Network</strong><br />
-      <img width="100%" alt="Community Network" src="./docs/screenshots/english/07-community-network.png" />
-    </td>
-    <td width="50%" valign="top">
-      <strong>About</strong><br />
-      <img width="100%" alt="About" src="./docs/screenshots/english/08-about.png" />
-    </td>
-  </tr>
-  <tr>
-    <td width="50%" valign="top">
-      <strong>About Huraymila</strong><br />
-      <img width="100%" alt="About Huraymila" src="./docs/screenshots/english/09-about-huraymila.png" />
-    </td>
-    <td width="50%" valign="top">
-      <strong>News</strong><br />
-      <img width="100%" alt="News" src="./docs/screenshots/english/10-news.png" />
-    </td>
-  </tr>
-  <tr>
-    <td width="50%" valign="top">
-      <strong>News Article</strong><br />
-      <img width="100%" alt="News Article" src="./docs/screenshots/english/11-news-article.png" />
-    </td>
-    <td width="50%" valign="top">
-      <strong>Organizational Structure</strong><br />
-      <img width="100%" alt="Organizational Structure" src="./docs/screenshots/english/12-structure.png" />
-    </td>
-  </tr>
-  <tr>
-    <td width="50%" valign="top">
-      <strong>Login</strong><br />
-      <img width="100%" alt="Login" src="./docs/screenshots/english/13-login.png" />
-    </td>
-    <td width="50%" valign="top">
-      <strong>Governor Dashboard</strong><br />
-      <img width="100%" alt="Governor Dashboard" src="./docs/screenshots/english/14-governor-dashboard.png" />
-    </td>
-  </tr>
-  <tr>
-    <td width="50%" valign="top">
-      <strong>Agencies</strong><br />
-      <img width="100%" alt="Agencies" src="./docs/screenshots/english/15-agencies.png" />
-    </td>
-    <td width="50%" valign="top">
-      <strong>Standards</strong><br />
-      <img width="100%" alt="Standards" src="./docs/screenshots/english/16-standards.png" />
-    </td>
-  </tr>
-  <tr>
-    <td width="50%" valign="top">
-      <strong>Standard Evidence</strong><br />
-      <img width="100%" alt="Standard Evidence" src="./docs/screenshots/english/17-standard-evidence.png" />
-    </td>
-    <td width="50%" valign="top">
-      <strong>Agency Standards</strong><br />
-      <img width="100%" alt="Agency Standards" src="./docs/screenshots/english/18-agency-standards.png" />
-    </td>
-  </tr>
-  <tr>
-    <td width="50%" valign="top">
-      <strong>Mobile Home</strong><br />
-      <img width="100%" alt="Mobile Home" src="./docs/screenshots/english/19-mobile-home.png" />
-    </td>
-    <td width="50%"></td>
-  </tr>
-</table>
+|                                                                                                 |                                                                                                       |
+| ----------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------- |
+| **Hero** ![Hero](./docs/screenshots/english/01-hero.png)                                        | **Vision** ![Vision](./docs/screenshots/english/02-vision.png)                                        |
+| **Timeline** ![Timeline](./docs/screenshots/english/03-timeline.png)                            | **Latest News** ![Latest News](./docs/screenshots/english/04-latest-news.png)                         |
+| **Health Indicators** ![Health Indicators](./docs/screenshots/english/05-health-indicators.png) | **Standards Progress** ![Standards Progress](./docs/screenshots/english/06-standards-progress.png)    |
+| **Community Network** ![Community Network](./docs/screenshots/english/07-community-network.png) | **About** ![About](./docs/screenshots/english/08-about.png)                                           |
+| **About Huraymila** ![About Huraymila](./docs/screenshots/english/09-about-huraymila.png)       | **News** ![News](./docs/screenshots/english/10-news.png)                                              |
+| **News Article** ![News Article](./docs/screenshots/english/11-news-article.png)                | **Organizational Structure** ![Organizational Structure](./docs/screenshots/english/12-structure.png) |
+| **Login** ![Login](./docs/screenshots/english/13-login.png)                                     | **Governor Dashboard** ![Governor Dashboard](./docs/screenshots/english/14-governor-dashboard.png)    |
+| **Agencies** ![Agencies](./docs/screenshots/english/15-agencies.png)                            | **Standards** ![Standards](./docs/screenshots/english/16-standards.png)                               |
+| **Standard Evidence** ![Standard Evidence](./docs/screenshots/english/17-standard-evidence.png) | **Agency Standards** ![Agency Standards](./docs/screenshots/english/18-agency-standards.png)          |
+| **Mobile Home** ![Mobile Home](./docs/screenshots/english/19-mobile-home.png)                   |                                                                                                       |
 
 ---
 
 ## Live Demo 🚀
 
-[**View Live Demo**](https://huraymila-demo.vercel.app)
+**[View Live Demo](https://huraymila-demo.vercel.app)**
 
-| Role     | Email                 | Password    |
-| -------- | --------------------- | ----------- |
-| Governor | governor@governor.com | governor123 |
-| Agency   | agency@agency.com     | agency123   |
+| Role     | Email                                                 | Password    |
+| -------- | ----------------------------------------------------- | ----------- |
+| Governor | [governor@governor.com](mailto:governor@governor.com) | governor123 |
+| Agency   | [agency@agency.com](mailto:agency@agency.com)         | agency123   |
 
 ---
 
